@@ -4,6 +4,7 @@ use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
 use crate::grib2_section1::grib2_section1::Grib2Section1;
@@ -21,6 +22,7 @@ impl Grib2Section1Reader {
         let local_table_version = reader.read_u8()?;
         let ref_time_significance = Grib2Section1Reader::read_ref_time_significance(reader)?;
         let ref_time = Grib2Section1Reader::read_ref_time(reader)?;
+        let production_status = Grib2Section1Reader::read_production_status(reader)?;
         let section1 = Grib2Section1::new(
             length,
             section_number,
@@ -29,7 +31,8 @@ impl Grib2Section1Reader {
             master_table_version,
             local_table_version,
             ref_time_significance,
-            ref_time
+            ref_time,
+            production_status
         )?;
 
         return Ok(section1);
@@ -64,5 +67,26 @@ impl Grib2Section1Reader {
         );
 
         return Ok(ref_time);
+    }
+
+
+    fn read_production_status(reader: &mut BufReader<File>) -> Result<Grib2ProductionStatus, Box<dyn Error>> {
+        let value = reader.read_u8()?;
+        let ref_time_significance = match value {
+            0 => Grib2ProductionStatus::Operational,
+            1 => Grib2ProductionStatus::Test,
+            2 => Grib2ProductionStatus::Research,
+            3 => Grib2ProductionStatus::ReAnalysis,
+            4 => Grib2ProductionStatus::Thorpex,
+            5 => Grib2ProductionStatus::ThorpexTest,
+            6 => Grib2ProductionStatus::S2sOperational,
+            7 => Grib2ProductionStatus::S2sTest,
+            8 => Grib2ProductionStatus::Uerra,
+            9 => Grib2ProductionStatus::UerraTest,
+            255 => Grib2ProductionStatus::Missing,
+            _ => Grib2ProductionStatus::Unknown(value)
+        };
+
+        return Ok(ref_time_significance);
     }
 }

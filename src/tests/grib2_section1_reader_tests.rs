@@ -1,6 +1,7 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
+use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
 
 const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
@@ -68,4 +69,14 @@ fn it_reads_the_correct_reference_time() {
 
     assert_eq!(Grib2RefTimeSignificance::StartOfForecast, result1);
     assert_eq!(expected_time, result2);
+}
+
+
+#[test]
+fn it_reads_the_correct_production_status() {
+    let layer = read_test_layer();
+
+    let result = layer.section1.production_status;
+
+    assert_eq!(Grib2ProductionStatus::Operational, result);
 }

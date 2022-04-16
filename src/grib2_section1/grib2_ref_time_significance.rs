@@ -4,6 +4,6 @@ pub enum Grib2RefTimeSignificance {
     StartOfForecast,
     VerifyingTimeOfForecast,
     ObservationTime,
-    Unknown(u8),
     Missing,
+    Unknown(u8),
 }
