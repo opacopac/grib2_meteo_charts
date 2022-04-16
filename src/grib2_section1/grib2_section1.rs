@@ -1,5 +1,6 @@
 use std::error::Error;
 use chrono::NaiveDateTime;
+use crate::grib2_section1::grib2_processed_data_type::Grib2ProcessedDataType;
 use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
 
@@ -13,7 +14,8 @@ pub struct Grib2Section1 {
     pub local_table_version: u8,
     pub ref_time_significance: Grib2RefTimeSignificance,
     pub ref_time: NaiveDateTime,
-    pub production_status: Grib2ProductionStatus
+    pub production_status: Grib2ProductionStatus,
+    pub processed_data_type: Grib2ProcessedDataType
 }
 
 
@@ -27,7 +29,8 @@ impl Grib2Section1 {
         local_table_version: u8,
         ref_time_significance: Grib2RefTimeSignificance,
         ref_time: NaiveDateTime,
-        production_status: Grib2ProductionStatus
+        production_status: Grib2ProductionStatus,
+        processed_data_type: Grib2ProcessedDataType
     ) -> Result<Grib2Section1, Box<dyn Error>> {
         return Ok(Grib2Section1 {
             length,
@@ -38,7 +41,8 @@ impl Grib2Section1 {
             local_table_version,
             ref_time_significance,
             ref_time,
-            production_status
+            production_status,
+            processed_data_type
         });
     }
 }

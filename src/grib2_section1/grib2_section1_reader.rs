@@ -4,6 +4,7 @@ use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+use crate::grib2_section1::grib2_processed_data_type::Grib2ProcessedDataType;
 use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
@@ -23,6 +24,7 @@ impl Grib2Section1Reader {
         let ref_time_significance = Grib2Section1Reader::read_ref_time_significance(reader)?;
         let ref_time = Grib2Section1Reader::read_ref_time(reader)?;
         let production_status = Grib2Section1Reader::read_production_status(reader)?;
+        let processed_data_type = Grib2Section1Reader::read_processed_data_type(reader)?;
         let section1 = Grib2Section1::new(
             length,
             section_number,
@@ -32,7 +34,8 @@ impl Grib2Section1Reader {
             local_table_version,
             ref_time_significance,
             ref_time,
-            production_status
+            production_status,
+            processed_data_type
         )?;
 
         return Ok(section1);
@@ -72,7 +75,7 @@ impl Grib2Section1Reader {
 
     fn read_production_status(reader: &mut BufReader<File>) -> Result<Grib2ProductionStatus, Box<dyn Error>> {
         let value = reader.read_u8()?;
-        let ref_time_significance = match value {
+        let production_status = match value {
             0 => Grib2ProductionStatus::Operational,
             1 => Grib2ProductionStatus::Test,
             2 => Grib2ProductionStatus::Research,
@@ -85,6 +88,27 @@ impl Grib2Section1Reader {
             9 => Grib2ProductionStatus::UerraTest,
             255 => Grib2ProductionStatus::Missing,
             _ => Grib2ProductionStatus::Unknown(value)
+        };
+
+        return Ok(production_status);
+    }
+
+
+    fn read_processed_data_type(reader: &mut BufReader<File>) -> Result<Grib2ProcessedDataType, Box<dyn Error>> {
+        let value = reader.read_u8()?;
+        let ref_time_significance = match value {
+            0 => Grib2ProcessedDataType::Analysis,
+            1 => Grib2ProcessedDataType::Forecast,
+            2 => Grib2ProcessedDataType::AnalysisAndForecast,
+            3 => Grib2ProcessedDataType::ControlForecast,
+            4 => Grib2ProcessedDataType::PerturbedForecast,
+            5 => Grib2ProcessedDataType::ControlAndPerturbedForecast,
+            6 => Grib2ProcessedDataType::ProcessedSatelliteObservations,
+            7 => Grib2ProcessedDataType::ProcessedRadarObservations,
+            8 => Grib2ProcessedDataType::EventProbability,
+            192 => Grib2ProcessedDataType::Experimental,
+            255 => Grib2ProcessedDataType::Missing,
+            _ => Grib2ProcessedDataType::Unknown(value)
         };
 
         return Ok(ref_time_significance);

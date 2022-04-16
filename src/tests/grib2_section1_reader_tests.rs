@@ -1,6 +1,7 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
+use crate::grib2_section1::grib2_processed_data_type::Grib2ProcessedDataType;
 use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
 
@@ -79,4 +80,14 @@ fn it_reads_the_correct_production_status() {
     let result = layer.section1.production_status;
 
     assert_eq!(Grib2ProductionStatus::Operational, result);
+}
+
+
+#[test]
+fn it_reads_the_correct_type_of_data() {
+    let layer = read_test_layer();
+
+    let result = layer.section1.processed_data_type;
+
+    assert_eq!(Grib2ProcessedDataType::Forecast, result);
 }
