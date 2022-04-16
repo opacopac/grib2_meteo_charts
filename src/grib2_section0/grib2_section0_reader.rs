@@ -15,7 +15,7 @@ pub struct Grib2Section0Reader;
 impl Grib2Section0Reader {
     pub fn read(reader: &mut BufReader<File>) -> Result<Grib2Section0, Box<dyn Error>> {
         let magic = Grib2Section0Reader::read_magic(reader)?;
-        reader.consume(2); // consume 2 reserved bytes
+        reader.consume(2); // 2 reserved bytes
         let discipline = Grib2Section0Reader::read_discipline(reader)?;
         let edition = reader.read_u8()?;
         let length = reader.read_u64::<BigEndian>()?;
