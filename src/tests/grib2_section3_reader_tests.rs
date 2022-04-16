@@ -1,6 +1,7 @@
 use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
 use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
+use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
 
 const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
 
@@ -57,4 +58,14 @@ fn it_reads_the_correct_length_of_opt_points() {
     let result = layer.section3.optional_point_length;
 
     assert_eq!(0, result);
+}
+
+
+#[test]
+fn it_reads_the_correct_optional_point_interpretation() {
+    let layer = read_test_layer();
+
+    let result = layer.section3.optional_point_interpretation;
+
+    assert_eq!(Grib2OptionalPointInterpretation::None, result);
 }
