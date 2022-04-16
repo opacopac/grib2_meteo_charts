@@ -1,6 +1,5 @@
 use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
-use crate::grib2_section0::grib2_discipline::Grib2Discipline;
 
 const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
 
@@ -11,31 +10,20 @@ fn read_test_layer() -> Grib2CloudCoverLayer {
 
 
 #[test]
-fn it_reads_the_correct_discipline() {
+fn it_reads_the_correct_section_length() {
     let layer = read_test_layer();
 
-    let result = layer.section0.discipline;
+    let result = layer.section2.length;
 
-    assert_eq!(Grib2Discipline::Meteorological, result);
+    assert_eq!(27, result);
 }
 
 
 #[test]
-fn it_reads_the_correct_edition() {
+fn it_reads_the_correct_section_number() {
     let layer = read_test_layer();
 
-    let result = layer.section0.edition;
+    let result = layer.section2.section_number;
 
     assert_eq!(2, result);
-}
-
-
-#[test]
-fn it_reads_the_correct_length() {
-    let layer = read_test_layer();
-
-    let result = layer.section0.length;
-    println!("{}", result);
-
-    assert_eq!(true, result > 1000);
 }

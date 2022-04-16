@@ -5,6 +5,7 @@ use std::io::BufReader;
 use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_section0::grib2_section0_reader::Grib2Section0Reader;
 use crate::grib2_section1::grib2_section1_reader::Grib2Section1Reader;
+use crate::grib2_section2::grib2_section2_reader::Grib2Section2Reader;
 
 pub struct Grib2CloudCoverReader;
 
@@ -15,9 +16,11 @@ impl Grib2CloudCoverReader {
         let mut reader = BufReader::new(file);
         let section0 = Grib2Section0Reader::read(&mut reader)?;
         let section1 = Grib2Section1Reader::read(&mut reader)?;
+        let section2 = Grib2Section2Reader::read(&mut reader)?;
         let layer = Grib2CloudCoverLayer::new(
             section0,
-            section1
+            section1,
+            section2
         );
 
         return Ok(layer);

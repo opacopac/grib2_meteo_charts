@@ -19,7 +19,7 @@ fn it_reads_the_correct_section_length() {
 
     let result = layer.section1.length;
 
-    assert_eq!(true, result == 21);
+    assert_eq!(21, result);
 }
 
 
