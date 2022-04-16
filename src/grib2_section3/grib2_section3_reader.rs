@@ -3,6 +3,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
+use crate::grib2_section3::grib2_grid_definition_template_type::Grib2GridDefinitionTemplateType;
 use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
 
 use crate::grib2_section3::grib2_section3::Grib2Section3;
@@ -18,6 +19,7 @@ impl Grib2Section3Reader {
         let number_of_datapoints = reader.read_u32::<BigEndian>()?;
         let optional_point_length = reader.read_u8()?;
         let optional_point_interpretation = Grib2Section3Reader::read_optional_point_interpretation(reader)?;
+        let grid_definition_template_type = Grib2Section3Reader::read_grid_definition_template_type(reader)?;
         reader.consume(length as usize - 5);
         let section3 = Grib2Section3::new(
             length,
@@ -25,7 +27,8 @@ impl Grib2Section3Reader {
             grid_definition_source,
             number_of_datapoints,
             optional_point_length,
-            optional_point_interpretation
+            optional_point_interpretation,
+            grid_definition_template_type
         )?;
 
         return Ok(section3);
@@ -57,5 +60,21 @@ impl Grib2Section3Reader {
         };
 
         return Ok(opt_point_interpretation);
+    }
+
+
+    fn read_grid_definition_template_type(reader: &mut BufReader<File>) -> Result<Grib2GridDefinitionTemplateType, Box<dyn Error>> {
+        let value = reader.read_u16::<BigEndian>()?;
+        let grid_def_tpl_type = match value {
+            0 => Grib2GridDefinitionTemplateType::LatLon,
+            1 => Grib2GridDefinitionTemplateType::LatLonRotated,
+            2 => Grib2GridDefinitionTemplateType::LatLonStretched,
+            3 => Grib2GridDefinitionTemplateType::LatLonRotatedAndStretched,
+            101 => Grib2GridDefinitionTemplateType::UnstructuredGrid,
+            65535 => Grib2GridDefinitionTemplateType::Missing,
+            _ => Grib2GridDefinitionTemplateType::Unknown(value)
+        };
+
+        return Ok(grid_def_tpl_type);
     }
 }
