@@ -6,7 +6,6 @@ use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::grib2_section0::grib2_section0_reader::Grib2Section0Reader;
 use crate::grib2_section1::grib2_section1_reader::Grib2Section1Reader;
 use crate::grib2_section2::grib2_section2_reader::Grib2Section2Reader;
-use crate::grib2_section3::grib2_section3::Grib2Section3;
 use crate::grib2_section3::grib2_section3_reader::Grib2Section3Reader;
 
 pub struct Grib2CloudCoverReader;
