@@ -4,7 +4,6 @@ use std::io::{BufRead, BufReader, Read};
 use std::str::from_utf8;
 
 use byteorder::{BigEndian, ReadBytesExt};
-use simple_error::bail;
 
 use crate::grib2_section0::grib2_discipline::Grib2Discipline;
 use crate::grib2_section0::grib2_section0::Grib2Section0;
@@ -42,7 +41,8 @@ impl Grib2Section0Reader {
 
 
     fn read_discipline(reader: &mut BufReader<File>) -> Result<Grib2Discipline, Box<dyn Error>> {
-        let discipline = match reader.read_u8()? {
+        let value = reader.read_u8()?;
+        let discipline = match value {
             0 => Grib2Discipline::Meteorological,
             1 => Grib2Discipline::Hydrological,
             2 => Grib2Discipline::LandSurface,
@@ -50,7 +50,7 @@ impl Grib2Section0Reader {
             4 => Grib2Discipline::SpaceWeather,
             10 => Grib2Discipline::Oceanographic,
             255 => Grib2Discipline::Missing,
-            _ => bail!("unknown discipline")
+            _ => Grib2Discipline::Unknown(value)
         };
 
         return Ok(discipline);

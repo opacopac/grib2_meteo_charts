@@ -6,5 +6,6 @@ pub enum Grib2Discipline {
     SatelliteRemoteSensing,
     SpaceWeather,
     Oceanographic,
-    Missing
+    Missing,
+    Unknown(u8)
 }

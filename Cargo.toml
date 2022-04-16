@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 simple-error = "0.2.3"
 byteorder = "1"
+chrono = "0.4"
