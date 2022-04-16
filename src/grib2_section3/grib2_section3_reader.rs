@@ -15,12 +15,14 @@ impl Grib2Section3Reader {
         let section_number = reader.read_u8()?;
         let grid_definition_source = Grib2Section3Reader::read_grid_definition_source(reader)?;
         let number_of_datapoints = reader.read_u32::<BigEndian>()?;
+        let optional_point_length = reader.read_u8()?;
         reader.consume(length as usize - 5);
         let section3 = Grib2Section3::new(
             length,
             section_number,
             grid_definition_source,
-            number_of_datapoints
+            number_of_datapoints,
+            optional_point_length
         )?;
 
         return Ok(section3);

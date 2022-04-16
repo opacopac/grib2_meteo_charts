@@ -48,3 +48,13 @@ fn it_reads_the_correct_number_of_datapoints() {
 
     assert_eq!(2949120, result);
 }
+
+
+#[test]
+fn it_reads_the_correct_length_of_opt_points() {
+    let layer = read_test_layer();
+
+    let result = layer.section3.optional_point_length;
+
+    assert_eq!(0, result);
+}
