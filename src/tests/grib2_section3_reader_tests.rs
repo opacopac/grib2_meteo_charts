@@ -38,3 +38,13 @@ fn it_reads_the_correct_grid_definition_source() {
 
     assert_eq!(Grib2GridDefinitionSource::GridDefinitionTemplate, result);
 }
+
+
+#[test]
+fn it_reads_the_correct_number_of_datapoints() {
+    let layer = read_test_layer();
+
+    let result = layer.section3.number_of_datapoints;
+
+    assert_eq!(2949120, result);
+}
