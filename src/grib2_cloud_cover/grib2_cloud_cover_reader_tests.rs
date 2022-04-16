@@ -20,4 +20,14 @@ mod grib2_cloud_cover_reader_tests {
 
         assert_eq!(true, result.is_err());
     }
+
+
+    #[test]
+    fn it_returns_an_error_if_the_file_isnt_in_grib2_format() {
+        let grib2_file = "not_a_grib2_file.grib2";
+
+        let result = Grib2CloudCoverReader::read_file(grib2_file);
+
+        assert_eq!(true, result.is_err());
+    }
 }
