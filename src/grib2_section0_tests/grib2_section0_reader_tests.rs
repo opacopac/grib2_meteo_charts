@@ -22,3 +22,14 @@ fn it_reads_the_correct_edition() {
 
     assert_eq!(2, result);
 }
+
+
+#[test]
+fn it_reads_the_correct_length() {
+    let layer = Grib2CloudCoverReader::read_file(CLCT_TEST_FILE).unwrap();
+
+    let result = layer.section0.length;
+    println!("{}", result);
+
+    assert_eq!(true, result > 1000);
+}
