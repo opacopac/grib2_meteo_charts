@@ -1,4 +1,6 @@
 #[cfg(test)]
+mod test_common;
+#[cfg(test)]
 mod grib2_cloud_cover_reader_tests;
 #[cfg(test)]
 mod grib2_section0_reader_tests;

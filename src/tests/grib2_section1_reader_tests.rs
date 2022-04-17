@@ -1,17 +1,9 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
-use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
+
 use crate::grib2_section1::grib2_processed_data_type::Grib2ProcessedDataType;
 use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
 use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
-
-const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
-
-
-fn read_test_layer() -> Grib2CloudCoverLayer {
-    return Grib2CloudCoverReader::read_file(CLCT_TEST_FILE).unwrap();
-}
-
+use crate::tests::test_common::read_test_layer;
 
 #[test]
 fn it_reads_the_correct_section_length() {

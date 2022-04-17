@@ -1,10 +1,9 @@
-use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
-
-const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
+use crate::Grib2CloudCoverReader;
+use crate::tests::test_common::{DATA_DIR, read_test_layer_result};
 
 #[test]
 fn it_reads_an_existing_grib2_file() {
-    let result = Grib2CloudCoverReader::read_file(CLCT_TEST_FILE);
+    let result = read_test_layer_result();
 
     assert_eq!(false, result.is_err());
 }
@@ -12,9 +11,9 @@ fn it_reads_an_existing_grib2_file() {
 
 #[test]
 fn it_returns_an_error_if_the_file_doesnt_exist() {
-    let grib2_file = "notfound.grib2";
+    let grib2_file =  DATA_DIR.to_string() + "notfound.grib2";
 
-    let result = Grib2CloudCoverReader::read_file(grib2_file);
+    let result = Grib2CloudCoverReader::read_file(&grib2_file);
 
     assert_eq!(true, result.is_err());
 }
@@ -22,9 +21,9 @@ fn it_returns_an_error_if_the_file_doesnt_exist() {
 
 #[test]
 fn it_returns_an_error_if_the_file_isnt_in_grib2_format() {
-    let grib2_file = "not_a_grib2_file.grib2";
+    let grib2_file = DATA_DIR.to_string() + "not_a_grib2_file.grib2";
 
-    let result = Grib2CloudCoverReader::read_file(grib2_file);
+    let result = Grib2CloudCoverReader::read_file(&grib2_file);
 
     assert_eq!(true, result.is_err());
 }

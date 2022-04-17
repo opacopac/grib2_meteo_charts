@@ -1,16 +1,8 @@
-use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
-use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
 use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
+use crate::grib2_section3::grib2_grid_definition_template::Grib2GridDefinitionTemplate;
 use crate::grib2_section3::grib2_grid_definition_template_type::Grib2GridDefinitionTemplateType;
 use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
-
-const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
-
-
-fn read_test_layer() -> Grib2CloudCoverLayer {
-    return Grib2CloudCoverReader::read_file(CLCT_TEST_FILE).unwrap();
-}
-
+use crate::tests::test_common::read_test_layer;
 
 #[test]
 fn it_reads_the_correct_section_length() {
@@ -80,3 +72,14 @@ fn it_reads_the_correct_grid_definition_template_type() {
 
     assert_eq!(Grib2GridDefinitionTemplateType::UnstructuredGrid, result);
 }
+
+
+/*#[test]
+fn it_reads_the_correct_grid_definition_template() {
+    let layer = read_test_layer();
+
+    let result = layer.section3.grid_definition_template;
+
+    assert_eq!(Grib2GridDefinitionTemplate::UnstructuredGrid, result);
+}
+*/
