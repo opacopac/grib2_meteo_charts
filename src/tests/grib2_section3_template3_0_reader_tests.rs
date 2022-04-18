@@ -115,3 +115,15 @@ fn it_reads_the_correct_last_grid_point_lat_lon() {
 }
 
 
+#[test]
+fn it_reads_the_correct_i_and_j_direction_increments() {
+    let tpl30 = read_tpl_3_0();
+
+    let result = tpl30.i_direction_increment;
+    assert_eq!(0.020000, result);
+
+    let result = tpl30.j_direction_increment;
+    assert_eq!(0.020000, result);
+}
+
+

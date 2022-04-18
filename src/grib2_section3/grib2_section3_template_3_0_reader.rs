@@ -26,6 +26,8 @@ impl Grib2Section3Template3_0Reader {
         let first_grid_point = LatLonReader::read(reader)?;
         let resolution_component_flags = Grib2Section3Template3_0Reader::read_resolution_and_component_flags(reader)?;
         let last_grid_point = LatLonReader::read(reader)?;
+        let i_direction_increment = LatLonReader::read_angle(reader)?;
+        let j_direction_increment = LatLonReader::read_angle(reader)?;
         let tpl_3_0 = Grib2gridDefinitionTemplate3_0::new(
             shape_of_earth,
             spherical_earth_radius,
@@ -37,7 +39,9 @@ impl Grib2Section3Template3_0Reader {
             initial_production_domain_subdivision,
             first_grid_point,
             resolution_component_flags,
-            last_grid_point
+            last_grid_point,
+            i_direction_increment,
+            j_direction_increment
         );
 
         return Ok(tpl_3_0);

@@ -15,6 +15,8 @@ pub struct Grib2gridDefinitionTemplate3_0 {
     pub first_grid_point: LatLon,
     pub resolution_component_flags: Grib2ResolutionAndComponentFlags,
     pub last_grid_point: LatLon,
+    pub i_direction_increment: f32,
+    pub j_direction_increment: f32,
 }
 
 
@@ -30,7 +32,9 @@ impl Grib2gridDefinitionTemplate3_0 {
         initial_production_domain_subdivision: u32,
         first_grid_point: LatLon,
         resolution_component_flags: Grib2ResolutionAndComponentFlags,
-        last_grid_point: LatLon
+        last_grid_point: LatLon,
+        i_direction_increment: f32,
+        j_direction_increment: f32
     ) -> Grib2gridDefinitionTemplate3_0 {
         return Grib2gridDefinitionTemplate3_0 {
             shape_of_earth,
@@ -43,7 +47,9 @@ impl Grib2gridDefinitionTemplate3_0 {
             initial_production_domain_subdivision,
             first_grid_point,
             resolution_component_flags,
-            last_grid_point
+            last_grid_point,
+            i_direction_increment,
+            j_direction_increment
         }
     }
 }
