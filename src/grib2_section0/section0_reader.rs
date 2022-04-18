@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufReader, Read};
 use std::str::from_utf8;
 
 use byteorder::{BigEndian, ReadBytesExt};
@@ -14,7 +14,7 @@ pub struct Section0Reader;
 impl Section0Reader {
     pub fn read(reader: &mut BufReader<File>) -> Result<Section0, Box<dyn Error>> {
         let magic = Section0Reader::read_magic(reader)?;
-        reader.consume(2); // 2 reserved bytes
+        reader.seek_relative(2)?; // 2 reserved bytes
         let discipline = Section0Reader::read_discipline(reader)?;
         let edition = reader.read_u8()?;
         let length = reader.read_u64::<BigEndian>()?;

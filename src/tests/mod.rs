@@ -18,3 +18,5 @@ mod grib2_section4_reader_tests;
 mod grib2_section5_reader_tests;
 #[cfg(test)]
 mod grib2_section6_reader_tests;
+#[cfg(test)]
+mod grib2_section7_reader_tests;

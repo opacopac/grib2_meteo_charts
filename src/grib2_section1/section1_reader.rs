@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
@@ -25,7 +25,6 @@ impl Section1Reader {
         let ref_time = Section1Reader::read_ref_time(reader)?;
         let production_status = Section1Reader::read_production_status(reader)?;
         let processed_data_type = Section1Reader::read_processed_data_type(reader)?;
-        reader.consume(length as usize - 21);
         let section1 = Section1::new(
             length,
             section_number,
@@ -38,6 +37,8 @@ impl Section1Reader {
             production_status,
             processed_data_type
         )?;
+
+        reader.seek_relative(length as i64 - 21)?;
 
         return Ok(section1);
     }
