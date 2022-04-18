@@ -50,7 +50,7 @@ fn it_reads_the_correct_number_of_bits() {
 
     let result = tpl.number_of_bits;
 
-    assert_eq!(8, result);
+    assert_eq!(16, result);
 }
 
 
