@@ -7,6 +7,7 @@ use crate::grib2_section0::section0_reader::Section0Reader;
 use crate::grib2_section1::section1_reader::Section1Reader;
 use crate::grib2_section2::section2_reader::Section2Reader;
 use crate::grib2_section3::section3_reader::Section3Reader;
+use crate::grib2_section4::section4_reader::Section4Reader;
 
 pub struct CloudCoverReader;
 
@@ -19,11 +20,13 @@ impl CloudCoverReader {
         let section1 = Section1Reader::read(&mut reader)?;
         let section2 = Section2Reader::read(&mut reader)?;
         let section3 = Section3Reader::read(&mut reader)?;
+        let section4 = Section4Reader::read(&mut reader)?;
         let layer = CloudCoverLayer::new(
             section0,
             section1,
             section2,
-            section3
+            section3,
+            section4
         );
 
         return Ok(layer);

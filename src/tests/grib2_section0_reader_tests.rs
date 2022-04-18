@@ -1,7 +1,6 @@
 use crate::grib2_section0::discipline::Discipline;
 use crate::tests::test_common::read_test_layer;
 
-
 #[test]
 fn it_reads_the_correct_discipline() {
     let layer = read_test_layer();
@@ -27,7 +26,6 @@ fn it_reads_the_correct_length() {
     let layer = read_test_layer();
 
     let result = layer.section0.length;
-    println!("{}", result);
 
-    assert_eq!(true, result > 1000);
+    assert_eq!(1623229, result);
 }

@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -22,7 +22,6 @@ impl Section3Reader {
         let optional_point_length = reader.read_u8()?;
         let optional_point_interpretation = Section3Reader::read_optional_point_interpretation(reader)?;
         let grid_definition_template = Section3Reader::read_grid_definition_template(reader)?;
-        reader.consume(length as usize - 5);
         let section3 = Section3::new(
             length,
             section_number,

@@ -9,6 +9,7 @@ mod grib2_section3;
 
 #[cfg(test)]
 mod tests;
+mod grib2_section4;
 
 
 const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
