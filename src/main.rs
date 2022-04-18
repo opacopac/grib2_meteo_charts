@@ -10,6 +10,7 @@ mod grib2_section4;
 mod grib2_section5;
 mod grib2_section6;
 mod grib2_section7;
+mod grib2_section8;
 
 #[cfg(test)]
 mod tests;

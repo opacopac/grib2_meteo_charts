@@ -1,10 +1,10 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{BufReader, Read};
-use std::str::from_utf8;
+use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::grib2_common::string_reader::StringReader;
 use crate::grib2_section0::discipline::Discipline;
 use crate::grib2_section0::section0::Section0;
 
@@ -13,7 +13,7 @@ pub struct Section0Reader;
 
 impl Section0Reader {
     pub fn read(reader: &mut BufReader<File>) -> Result<Section0, Box<dyn Error>> {
-        let magic = Section0Reader::read_magic(reader)?;
+        let magic = StringReader::read_4_chars(reader)?;
         reader.seek_relative(2)?; // 2 reserved bytes
         let discipline = Section0Reader::read_discipline(reader)?;
         let edition = reader.read_u8()?;
@@ -27,16 +27,6 @@ impl Section0Reader {
         )?;
 
         return Ok(section0);
-    }
-
-
-    fn read_magic(reader: &mut BufReader<File>) -> Result<String, Box<dyn Error>> {
-        let mut buf = [0; 4];
-        reader.read_exact(&mut buf)?;
-
-        let magic = from_utf8(&buf)?.to_string();
-
-        return Ok(magic);
     }
 
 
