@@ -1,4 +1,4 @@
-use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
+use crate::grib2_cloud_cover::cloud_cover_reader::CloudCoverReader;
 
 mod grib2_common;
 mod grib2_cloud_cover;
@@ -16,5 +16,5 @@ const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_00
 
 fn main() {
     println!("Hello, world!");
-    let _layer = Grib2CloudCoverReader::read_file(CLCT_TEST_FILE).unwrap();
+    let _layer = CloudCoverReader::read_file(CLCT_TEST_FILE).unwrap();
 }

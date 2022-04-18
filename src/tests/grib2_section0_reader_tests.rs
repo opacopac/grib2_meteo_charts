@@ -1,4 +1,4 @@
-use crate::grib2_section0::grib2_discipline::Grib2Discipline;
+use crate::grib2_section0::discipline::Discipline;
 use crate::tests::test_common::read_test_layer;
 
 
@@ -8,7 +8,7 @@ fn it_reads_the_correct_discipline() {
 
     let result = layer.section0.discipline;
 
-    assert_eq!(Grib2Discipline::Meteorological, result);
+    assert_eq!(Discipline::Meteorological, result);
 }
 
 

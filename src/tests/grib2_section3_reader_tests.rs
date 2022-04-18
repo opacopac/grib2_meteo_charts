@@ -1,6 +1,6 @@
-use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
-use crate::grib2_section3::grib2_grid_definition_template::Grib2GridDefinitionTemplate;
-use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
+use crate::grib2_section3::grid_definition_source::GridDefinitionSource;
+use crate::grib2_section3::grid_definition_template::GridDefinitionTemplate;
+use crate::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
 use crate::tests::test_common::read_test_layer;
 
 #[test]
@@ -29,7 +29,7 @@ fn it_reads_the_correct_grid_definition_source() {
 
     let result = layer.section3.grid_definition_source;
 
-    assert_eq!(Grib2GridDefinitionSource::GridDefinitionTemplate, result);
+    assert_eq!(GridDefinitionSource::GridDefinitionTemplate, result);
 }
 
 
@@ -59,7 +59,7 @@ fn it_reads_the_correct_optional_point_interpretation() {
 
     let result = layer.section3.optional_point_interpretation;
 
-    assert_eq!(Grib2OptionalPointInterpretation::None, result);
+    assert_eq!(OptionalPointInterpretation::None, result);
 }
 
 
@@ -70,8 +70,8 @@ fn it_reads_the_correct_grid_definition_template() {
     let result = layer.section3.grid_definition_template;
 
     match result {
-        Grib2GridDefinitionTemplate::LatLon(_tpl) => {},
-        Grib2GridDefinitionTemplate::Missing => panic!("wrong grid definition template: 255"),
-        Grib2GridDefinitionTemplate::Unknown(nr) => panic!("wrong grid definition template: {}", nr)
+        GridDefinitionTemplate::LatLon(_tpl) => {},
+        GridDefinitionTemplate::Missing => panic!("wrong grid definition template: 255"),
+        GridDefinitionTemplate::Unknown(nr) => panic!("wrong grid definition template: {}", nr)
     };
 }

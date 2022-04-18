@@ -1,11 +1,11 @@
 use crate::grib2_common::lat_lon::LatLon;
 use crate::grib2_common::scale_factor_value::ScaleFactorValue;
-use crate::grib2_section3::grib2_resolution_and_component_flags::Grib2ResolutionAndComponentFlags;
-use crate::grib2_section3::grib2_scanning_mode_flags::Grib2ScanningModeFlags;
-use crate::grib2_section3::grib2_shape_of_earth::Grib2ShapeOfEarth;
+use crate::grib2_section3::resolution_and_component_flags::ResolutionAndComponentFlags;
+use crate::grib2_section3::scanning_mode_flags::ScanningModeFlags;
+use crate::grib2_section3::shape_of_earth::ShapeOfEarth;
 
-pub struct Grib2gridDefinitionTemplate3_0 {
-    pub shape_of_earth: Grib2ShapeOfEarth,
+pub struct GridDefinitionTemplate3_0 {
+    pub shape_of_earth: ShapeOfEarth,
     pub spherical_earth_radius: ScaleFactorValue,
     pub oblated_spheroid_earth_major_axis: ScaleFactorValue,
     pub oblated_spheroid_earth_minor_axis: ScaleFactorValue,
@@ -14,17 +14,17 @@ pub struct Grib2gridDefinitionTemplate3_0 {
     pub initial_production_domain_basic_angle: u32,
     pub initial_production_domain_subdivision: u32,
     pub first_grid_point: LatLon,
-    pub resolution_component_flags: Grib2ResolutionAndComponentFlags,
+    pub resolution_component_flags: ResolutionAndComponentFlags,
     pub last_grid_point: LatLon,
     pub i_direction_increment: f32,
     pub j_direction_increment: f32,
-    pub scanning_mode_flags: Grib2ScanningModeFlags
+    pub scanning_mode_flags: ScanningModeFlags
 }
 
 
-impl Grib2gridDefinitionTemplate3_0 {
+impl GridDefinitionTemplate3_0 {
     pub fn new(
-        shape_of_earth: Grib2ShapeOfEarth,
+        shape_of_earth: ShapeOfEarth,
         spherical_earth_radius: ScaleFactorValue,
         oblated_spheroid_earth_major_axis: ScaleFactorValue,
         oblated_spheroid_earth_minor_axis: ScaleFactorValue,
@@ -33,13 +33,13 @@ impl Grib2gridDefinitionTemplate3_0 {
         initial_production_domain_basic_angle: u32,
         initial_production_domain_subdivision: u32,
         first_grid_point: LatLon,
-        resolution_component_flags: Grib2ResolutionAndComponentFlags,
+        resolution_component_flags: ResolutionAndComponentFlags,
         last_grid_point: LatLon,
         i_direction_increment: f32,
         j_direction_increment: f32,
-        scanning_mode_flags: Grib2ScanningModeFlags
-    ) -> Grib2gridDefinitionTemplate3_0 {
-        return Grib2gridDefinitionTemplate3_0 {
+        scanning_mode_flags: ScanningModeFlags
+    ) -> GridDefinitionTemplate3_0 {
+        return GridDefinitionTemplate3_0 {
             shape_of_earth,
             spherical_earth_radius,
             oblated_spheroid_earth_major_axis,

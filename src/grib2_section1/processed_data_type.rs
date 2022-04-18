@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2ProcessedDataType {
+pub enum ProcessedDataType {
     Analysis,
     Forecast,
     AnalysisAndForecast,

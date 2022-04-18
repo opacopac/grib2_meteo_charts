@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2ProductionStatus {
+pub enum ProductionStatus {
     Operational,
     Test,
     Research,

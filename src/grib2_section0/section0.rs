@@ -2,29 +2,29 @@ use std::error::Error;
 
 use simple_error::bail;
 
-use crate::grib2_section0::grib2_discipline::Grib2Discipline;
+use crate::grib2_section0::discipline::Discipline;
 
-pub struct Grib2Section0 {
+pub struct Section0 {
     pub magic: String,
-    pub discipline: Grib2Discipline,
+    pub discipline: Discipline,
     pub edition: u8,
     pub length: u64
 }
 
 const GRIB2_MAGIC: &str = "GRIB";
 
-impl Grib2Section0 {
+impl Section0 {
     pub fn new(
         magic: String,
-        discipline: Grib2Discipline,
+        discipline: Discipline,
         edition: u8,
         length: u64
-    ) -> Result<Grib2Section0, Box<dyn Error>> {
+    ) -> Result<Section0, Box<dyn Error>> {
         if magic != GRIB2_MAGIC {
             bail!("Invalid magic");
         }
 
-        return Ok(Grib2Section0 {
+        return Ok(Section0 {
             magic,
             discipline,
             edition,

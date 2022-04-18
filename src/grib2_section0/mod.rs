@@ -1,3 +1,3 @@
-pub(crate) mod grib2_section0_reader;
-pub(crate) mod grib2_section0;
-pub(crate) mod grib2_discipline;
+pub(crate) mod section0_reader;
+pub(crate) mod section0;
+pub(crate) mod discipline;

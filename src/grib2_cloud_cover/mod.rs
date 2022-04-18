@@ -1,2 +1,2 @@
-pub(crate) mod grib2_cloud_cover_layer;
-pub(crate) mod grib2_cloud_cover_reader;
+pub(crate) mod cloud_cover_layer;
+pub(crate) mod cloud_cover_reader;

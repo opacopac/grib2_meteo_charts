@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2GridDefinitionSource {
+pub enum GridDefinitionSource {
     GridDefinitionTemplate,
     PredeterminedGridDefinition,
     None,

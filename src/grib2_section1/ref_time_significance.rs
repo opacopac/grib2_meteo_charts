@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2RefTimeSignificance {
+pub enum RefTimeSignificance {
     Analysis,
     StartOfForecast,
     VerifyingTimeOfForecast,

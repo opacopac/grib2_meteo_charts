@@ -1,4 +1,4 @@
-pub struct Grib2ScanningModeFlags {
+pub struct ScanningModeFlags {
     pub scan_direction_first_row_i_is_positive: bool,
     pub scan_direction_first_row_j_is_negative: bool,
     pub adjacent_points_in_i_direction_consecutive: bool,
@@ -10,7 +10,7 @@ pub struct Grib2ScanningModeFlags {
 }
 
 
-impl Grib2ScanningModeFlags {
+impl ScanningModeFlags {
     pub fn new(
         scan_direction_first_row_i_is_positive: bool,
         scan_direction_first_row_j_is_negative: bool,
@@ -20,8 +20,8 @@ impl Grib2ScanningModeFlags {
         even_rows_offset_in_i_direction: bool,
         points_not_offset_in_j_direction: bool,
         rows_have_ni_points_cols_have_nj_points: bool
-    ) -> Grib2ScanningModeFlags {
-        return Grib2ScanningModeFlags {
+    ) -> ScanningModeFlags {
+        return ScanningModeFlags {
             scan_direction_first_row_i_is_positive,
             scan_direction_first_row_j_is_negative,
             adjacent_points_in_i_direction_consecutive,

@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2Discipline {
+pub enum Discipline {
     Meteorological,
     Hydrological,
     LandSurface,

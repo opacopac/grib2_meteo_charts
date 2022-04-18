@@ -1,4 +1,4 @@
-pub mod lat_lon;
-pub mod scale_factor_value;
-pub mod angle_reader;
-pub mod scale_factor_value_reader;
+pub(crate) mod lat_lon;
+pub(crate) mod scale_factor_value;
+pub(crate) mod angle_reader;
+pub(crate) mod scale_factor_value_reader;

@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum Grib2OptionalPointInterpretation {
+pub enum OptionalPointInterpretation {
     None,
     FullCoordinateCircles,
     CoordinateLines,

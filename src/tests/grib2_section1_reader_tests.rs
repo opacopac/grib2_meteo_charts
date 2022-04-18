@@ -1,8 +1,8 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 
-use crate::grib2_section1::grib2_processed_data_type::Grib2ProcessedDataType;
-use crate::grib2_section1::grib2_production_status::Grib2ProductionStatus;
-use crate::grib2_section1::grib2_ref_time_significance::Grib2RefTimeSignificance;
+use crate::grib2_section1::processed_data_type::ProcessedDataType;
+use crate::grib2_section1::production_status::ProductionStatus;
+use crate::grib2_section1::ref_time_significance::RefTimeSignificance;
 use crate::tests::test_common::read_test_layer;
 
 #[test]
@@ -60,7 +60,7 @@ fn it_reads_the_correct_reference_time() {
         NaiveTime::from_hms(0, 0, 0)
     );
 
-    assert_eq!(Grib2RefTimeSignificance::StartOfForecast, result1);
+    assert_eq!(RefTimeSignificance::StartOfForecast, result1);
     assert_eq!(expected_time, result2);
 }
 
@@ -71,7 +71,7 @@ fn it_reads_the_correct_production_status() {
 
     let result = layer.section1.production_status;
 
-    assert_eq!(Grib2ProductionStatus::Operational, result);
+    assert_eq!(ProductionStatus::Operational, result);
 }
 
 
@@ -81,5 +81,5 @@ fn it_reads_the_correct_type_of_data() {
 
     let result = layer.section1.processed_data_type;
 
-    assert_eq!(Grib2ProcessedDataType::Forecast, result);
+    assert_eq!(ProcessedDataType::Forecast, result);
 }
