@@ -93,15 +93,10 @@ fn it_reads_the_correct_first_grid_point_lat_lon() {
 fn it_reads_the_correct_resolution_and_component_flags() {
     let tpl30 = read_tpl_3_0();
 
-    let flags = tpl30.resolution_component_flags;
-    let result = flags.has_i_direction_increments;
-    assert_eq!(false, result);
-
-    let result = flags.has_j_direction_increments;
-    assert_eq!(false, result);
-
-    let result = flags.u_v_relative_to_e_n;
-    assert_eq!(true, result);
+    let result = tpl30.resolution_component_flags;
+    assert_eq!(false, result.has_i_direction_increments);
+    assert_eq!(false, result.has_j_direction_increments);
+    assert_eq!(true, result.u_v_relative_to_e_n);
 }
 
 
@@ -127,3 +122,17 @@ fn it_reads_the_correct_i_and_j_direction_increments() {
 }
 
 
+#[test]
+fn it_reads_the_correct_scanning_mode_flags() {
+    let tpl30 = read_tpl_3_0();
+
+    let result = tpl30.scanning_mode_flags;
+    assert_eq!(true, result.scan_direction_first_row_i_is_positive);
+    assert_eq!(true, result.scan_direction_first_row_j_is_negative);
+    assert_eq!(true, result.adjacent_points_in_i_direction_consecutive);
+    assert_eq!(true, result.all_rows_same_scan_direction);
+    assert_eq!(true, result.odd_rows_offset_in_i_direction);
+    assert_eq!(true, result.even_rows_offset_in_i_direction);
+    assert_eq!(false, result.points_not_offset_in_j_direction);
+    assert_eq!(true, result.rows_have_ni_points_cols_have_nj_points);
+}

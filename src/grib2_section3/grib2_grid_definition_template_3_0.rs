@@ -1,6 +1,7 @@
 use crate::grib2_common::lat_lon::LatLon;
 use crate::grib2_common::scale_factor_value::ScaleFactorValue;
 use crate::grib2_section3::grib2_resolution_and_component_flags::Grib2ResolutionAndComponentFlags;
+use crate::grib2_section3::grib2_scanning_mode_flags::Grib2ScanningModeFlags;
 use crate::grib2_section3::grib2_shape_of_earth::Grib2ShapeOfEarth;
 
 pub struct Grib2gridDefinitionTemplate3_0 {
@@ -17,6 +18,7 @@ pub struct Grib2gridDefinitionTemplate3_0 {
     pub last_grid_point: LatLon,
     pub i_direction_increment: f32,
     pub j_direction_increment: f32,
+    pub scanning_mode_flags: Grib2ScanningModeFlags
 }
 
 
@@ -34,7 +36,8 @@ impl Grib2gridDefinitionTemplate3_0 {
         resolution_component_flags: Grib2ResolutionAndComponentFlags,
         last_grid_point: LatLon,
         i_direction_increment: f32,
-        j_direction_increment: f32
+        j_direction_increment: f32,
+        scanning_mode_flags: Grib2ScanningModeFlags
     ) -> Grib2gridDefinitionTemplate3_0 {
         return Grib2gridDefinitionTemplate3_0 {
             shape_of_earth,
@@ -49,7 +52,8 @@ impl Grib2gridDefinitionTemplate3_0 {
             resolution_component_flags,
             last_grid_point,
             i_direction_increment,
-            j_direction_increment
+            j_direction_increment,
+            scanning_mode_flags
         }
     }
 }

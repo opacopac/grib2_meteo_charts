@@ -7,3 +7,4 @@ pub mod grib2_grid_definition_template;
 pub mod grib2_grid_definition_template_3_0;
 pub mod grib2_shape_of_earth;
 pub mod grib2_resolution_and_component_flags;
+pub mod grib2_scanning_mode_flags;

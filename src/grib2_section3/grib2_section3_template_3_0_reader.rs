@@ -4,10 +4,11 @@ use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
-use crate::grib2_common::lat_lon_reader::LatLonReader;
+use crate::grib2_common::angle_reader::AngleReader;
 use crate::grib2_common::scale_factor_value_reader::ScaleFactorValueReader;
 use crate::grib2_section3::grib2_grid_definition_template_3_0::Grib2gridDefinitionTemplate3_0;
 use crate::grib2_section3::grib2_resolution_and_component_flags::Grib2ResolutionAndComponentFlags;
+use crate::grib2_section3::grib2_scanning_mode_flags::Grib2ScanningModeFlags;
 use crate::grib2_section3::grib2_shape_of_earth::Grib2ShapeOfEarth;
 
 pub struct Grib2Section3Template3_0Reader;
@@ -23,11 +24,12 @@ impl Grib2Section3Template3_0Reader {
         let number_of_points_along_meridian = reader.read_u32::<BigEndian>()?;
         let initial_production_domain_basic_angle = reader.read_u32::<BigEndian>()?;
         let initial_production_domain_subdivision = reader.read_u32::<BigEndian>()?;
-        let first_grid_point = LatLonReader::read(reader)?;
+        let first_grid_point = AngleReader::read_lat_lon(reader)?;
         let resolution_component_flags = Grib2Section3Template3_0Reader::read_resolution_and_component_flags(reader)?;
-        let last_grid_point = LatLonReader::read(reader)?;
-        let i_direction_increment = LatLonReader::read_angle(reader)?;
-        let j_direction_increment = LatLonReader::read_angle(reader)?;
+        let last_grid_point = AngleReader::read_lat_lon(reader)?;
+        let i_direction_increment = AngleReader::read_angle(reader)?;
+        let j_direction_increment = AngleReader::read_angle(reader)?;
+        let scanning_mode_flags = Grib2Section3Template3_0Reader::read_scanning_mode_flags(reader)?;
         let tpl_3_0 = Grib2gridDefinitionTemplate3_0::new(
             shape_of_earth,
             spherical_earth_radius,
@@ -41,7 +43,8 @@ impl Grib2Section3Template3_0Reader {
             resolution_component_flags,
             last_grid_point,
             i_direction_increment,
-            j_direction_increment
+            j_direction_increment,
+            scanning_mode_flags
         );
 
         return Ok(tpl_3_0);
@@ -62,13 +65,30 @@ impl Grib2Section3Template3_0Reader {
 
     fn read_resolution_and_component_flags(reader: &mut BufReader<File>) -> Result<Grib2ResolutionAndComponentFlags, Box<dyn Error>> {
         let value = reader.read_u8()?;
-        let has_i_direction_increments = (value & 0b00000100) > 0;
-        let has_j_direction_increments = (value & 0b00001000) > 0;
-        let u_v_relative_to_e_n = (value & 0b00010000) > 0;
         let flags = Grib2ResolutionAndComponentFlags::new(
-            has_i_direction_increments,
-            has_j_direction_increments,
-            u_v_relative_to_e_n
+            (value & 0b00000100) > 0,
+            (value & 0b00001000) > 0,
+            (value & 0b00010000) > 0
+        );
+
+        return Ok(flags);
+    }
+
+
+    fn read_scanning_mode_flags(reader: &mut BufReader<File>) -> Result<Grib2ScanningModeFlags, Box<dyn Error>> {
+        let value = reader.read_u8()?;
+
+        println!("MEEP{}", value);
+
+        let flags = Grib2ScanningModeFlags::new(
+            (value & 0b00000001) == 0,
+            (value & 0b00000010) == 0,
+            (value & 0b00000100) == 0,
+            (value & 0b00001000) == 0,
+            (value & 0b00010000) == 0,
+            (value & 0b00100000) == 0,
+            (value & 0b01000000) == 0,
+            (value & 0b10000000) == 0
         );
 
         return Ok(flags);
