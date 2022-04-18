@@ -3,7 +3,7 @@ use crate::grib2_cloud_cover::grib2_cloud_cover_layer::Grib2CloudCoverLayer;
 use crate::Grib2CloudCoverReader;
 
 pub const DATA_DIR: &str = "./src/tests/data/";
-pub const CLCT_TEST_FILE: &str = "./src/tests/data/icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
+pub const CLCT_TEST_FILE: &str = "./src/tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
 
 
 pub fn read_test_layer_result() -> Result<Grib2CloudCoverLayer, Box<dyn Error>> {

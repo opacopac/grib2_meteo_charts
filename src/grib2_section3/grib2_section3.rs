@@ -2,7 +2,6 @@ use std::error::Error;
 
 use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
 use crate::grib2_section3::grib2_grid_definition_template::Grib2GridDefinitionTemplate;
-use crate::grib2_section3::grib2_grid_definition_template_type::Grib2GridDefinitionTemplateType;
 use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
 
 pub struct Grib2Section3 {
@@ -12,8 +11,7 @@ pub struct Grib2Section3 {
     pub number_of_datapoints: u32,
     pub optional_point_length: u8,
     pub optional_point_interpretation: Grib2OptionalPointInterpretation,
-    pub grid_definition_template_type: Grib2GridDefinitionTemplateType,
-    pub grid_definition_template: Grib2GridDefinitionTemplate
+    pub grid_definition_template: Grib2GridDefinitionTemplate,
 }
 
 
@@ -25,8 +23,7 @@ impl Grib2Section3 {
         number_of_datapoints: u32,
         optional_point_length: u8,
         optional_point_interpretation: Grib2OptionalPointInterpretation,
-        grid_definition_template_type: Grib2GridDefinitionTemplateType,
-        grid_definition_template: Grib2GridDefinitionTemplate
+        grid_definition_template: Grib2GridDefinitionTemplate,
     ) -> Result<Grib2Section3, Box<dyn Error>> {
         return Ok(Grib2Section3 {
             length,
@@ -35,8 +32,7 @@ impl Grib2Section3 {
             number_of_datapoints,
             optional_point_length,
             optional_point_interpretation,
-            grid_definition_template_type,
-            grid_definition_template
+            grid_definition_template,
         });
     }
 }

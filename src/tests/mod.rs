@@ -10,3 +10,5 @@ mod grib2_section1_reader_tests;
 mod grib2_section2_reader_tests;
 #[cfg(test)]
 mod grib2_section3_reader_tests;
+#[cfg(test)]
+mod grib2_section3_template3_0_reader_tests;

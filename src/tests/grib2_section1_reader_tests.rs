@@ -56,7 +56,7 @@ fn it_reads_the_correct_reference_time() {
     let result1 = layer.section1.ref_time_significance;
     let result2 = layer.section1.ref_time;
     let expected_time = NaiveDateTime::new(
-        NaiveDate::from_ymd(2022, 4, 15),
+        NaiveDate::from_ymd(2022, 4, 17),
         NaiveTime::from_hms(0, 0, 0)
     );
 

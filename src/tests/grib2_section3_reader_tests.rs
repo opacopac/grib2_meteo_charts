@@ -1,6 +1,5 @@
 use crate::grib2_section3::grib2_grid_definition_source::Grib2GridDefinitionSource;
 use crate::grib2_section3::grib2_grid_definition_template::Grib2GridDefinitionTemplate;
-use crate::grib2_section3::grib2_grid_definition_template_type::Grib2GridDefinitionTemplateType;
 use crate::grib2_section3::grib2_optional_point_interpretation::Grib2OptionalPointInterpretation;
 use crate::tests::test_common::read_test_layer;
 
@@ -10,7 +9,7 @@ fn it_reads_the_correct_section_length() {
 
     let result = layer.section3.length;
 
-    assert_eq!(35, result);
+    assert_eq!(72, result);
 }
 
 
@@ -40,7 +39,7 @@ fn it_reads_the_correct_number_of_datapoints() {
 
     let result = layer.section3.number_of_datapoints;
 
-    assert_eq!(2949120, result);
+    assert_eq!(906390, result);
 }
 
 
@@ -65,21 +64,14 @@ fn it_reads_the_correct_optional_point_interpretation() {
 
 
 #[test]
-fn it_reads_the_correct_grid_definition_template_type() {
-    let layer = read_test_layer();
-
-    let result = layer.section3.grid_definition_template_type;
-
-    assert_eq!(Grib2GridDefinitionTemplateType::UnstructuredGrid, result);
-}
-
-
-/*#[test]
 fn it_reads_the_correct_grid_definition_template() {
     let layer = read_test_layer();
 
     let result = layer.section3.grid_definition_template;
 
-    assert_eq!(Grib2GridDefinitionTemplate::UnstructuredGrid, result);
+    match result {
+        Grib2GridDefinitionTemplate::LatLon(_tpl) => {},
+        Grib2GridDefinitionTemplate::Missing => panic!("wrong grid definition template: 255"),
+        Grib2GridDefinitionTemplate::Unknown(nr) => panic!("wrong grid definition template: {}", nr)
+    };
 }
-*/
