@@ -16,7 +16,7 @@ mod grib2_section8;
 mod tests;
 
 
-const CLCT_TEST_FILE: &str = "icon_global_icosahedral_single-level_2022041500_000_CLCT.grib2";
+const CLCT_TEST_FILE: &str = "./src/tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
 
 
 fn main() {

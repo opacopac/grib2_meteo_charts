@@ -1,10 +1,10 @@
-use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::grib2_common::angle_reader::AngleReader;
+use crate::grib2_common::grib2_error::Grib2Error;
 use crate::grib2_common::scale_factor_value_reader::ScaleFactorValueReader;
 use crate::grib2_section3::grid_definition_template_3_0::GridDefinitionTemplate3_0;
 use crate::grib2_section3::resolution_and_component_flags::ResolutionAndComponentFlags;
@@ -15,7 +15,7 @@ pub struct Section3Template3_0Reader;
 
 
 impl Section3Template3_0Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate3_0, Box<dyn Error>> {
+    pub fn read(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate3_0, Grib2Error> {
         let shape_of_earth = Section3Template3_0Reader::read_shape_of_earth(reader)?;
         let spherical_earth_radius = ScaleFactorValueReader::read(reader)?;
         let oblated_spheroid_earth_major_axis = ScaleFactorValueReader::read(reader)?;
@@ -51,7 +51,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_shape_of_earth(reader: &mut BufReader<File>) -> Result<ShapeOfEarth, Box<dyn Error>> {
+    fn read_shape_of_earth(reader: &mut BufReader<File>) -> Result<ShapeOfEarth, Grib2Error> {
         let value = reader.read_u8()?;
         let shape_of_earth = match value {
             6 => ShapeOfEarth::SphericalRadius6371229,
@@ -63,7 +63,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_resolution_and_component_flags(reader: &mut BufReader<File>) -> Result<ResolutionAndComponentFlags, Box<dyn Error>> {
+    fn read_resolution_and_component_flags(reader: &mut BufReader<File>) -> Result<ResolutionAndComponentFlags, Grib2Error> {
         let value = reader.read_u8()?;
         let flags = ResolutionAndComponentFlags::new(
             (value & 0b00000100) == 0,
@@ -75,7 +75,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_scanning_mode_flags(reader: &mut BufReader<File>) -> Result<ScanningModeFlags, Box<dyn Error>> {
+    fn read_scanning_mode_flags(reader: &mut BufReader<File>) -> Result<ScanningModeFlags, Grib2Error> {
         let value = reader.read_u8()?;
         let flags = ScanningModeFlags::new(
             (value & 0b00000001) == 0,

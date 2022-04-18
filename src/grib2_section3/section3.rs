@@ -1,5 +1,4 @@
-use std::error::Error;
-
+use crate::grib2_common::grib2_error::Grib2Error;
 use crate::grib2_section3::grid_definition_source::GridDefinitionSource;
 use crate::grib2_section3::grid_definition_template::GridDefinitionTemplate;
 use crate::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
@@ -15,6 +14,8 @@ pub struct Section3 {
 }
 
 
+const SECTION_NUMBER: u8 = 3;
+
 impl Section3 {
     pub fn new(
         length: u32,
@@ -24,7 +25,13 @@ impl Section3 {
         optional_point_length: u8,
         optional_point_interpretation: OptionalPointInterpretation,
         grid_definition_template: GridDefinitionTemplate,
-    ) -> Result<Section3, Box<dyn Error>> {
+    ) -> Result<Section3, Grib2Error> {
+        if section_number != SECTION_NUMBER {
+            return Err(Grib2Error::InvalidData(
+                format!("invalid section number '{}', expected: {}", section_number, SECTION_NUMBER)
+            ));
+        }
+
         return Ok(Section3 {
             length,
             section_number,
@@ -34,5 +41,31 @@ impl Section3 {
             optional_point_interpretation,
             grid_definition_template,
         });
+    }
+}
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use crate::grib2_section3::grid_definition_source::GridDefinitionSource;
+    use crate::grib2_section3::grid_definition_template::GridDefinitionTemplate;
+    use crate::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
+    use crate::grib2_section3::section3::Section3;
+
+    #[test]
+    fn it_detects_an_incorrect_section_number() {
+        let result = Section3::new(
+            0,
+            0,
+            GridDefinitionSource::None,
+            0,
+            0,
+            OptionalPointInterpretation::None,
+            GridDefinitionTemplate::Missing
+        );
+
+        assert!(result.is_err());
     }
 }

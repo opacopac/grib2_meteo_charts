@@ -1,9 +1,9 @@
-use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::grib2_common::grib2_error::Grib2Error;
 use crate::grib2_common::string_reader::StringReader;
 use crate::grib2_section0::discipline::Discipline;
 use crate::grib2_section0::section0::Section0;
@@ -12,7 +12,7 @@ pub struct Section0Reader;
 
 
 impl Section0Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<Section0, Box<dyn Error>> {
+    pub fn read(reader: &mut BufReader<File>) -> Result<Section0, Grib2Error> {
         let magic = StringReader::read_4_chars(reader)?;
         reader.seek_relative(2)?; // 2 reserved bytes
         let discipline = Section0Reader::read_discipline(reader)?;
@@ -30,7 +30,7 @@ impl Section0Reader {
     }
 
 
-    fn read_discipline(reader: &mut BufReader<File>) -> Result<Discipline, Box<dyn Error>> {
+    fn read_discipline(reader: &mut BufReader<File>) -> Result<Discipline, Grib2Error> {
         let value = reader.read_u8()?;
         let discipline = match value {
             0 => Discipline::Meteorological,

@@ -1,8 +1,8 @@
-use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 
 use byteorder::{BigEndian, ReadBytesExt};
+use crate::grib2_common::grib2_error::Grib2Error;
 
 use crate::grib2_section3::grid_definition_source::GridDefinitionSource;
 use crate::grib2_section3::grid_definition_template::GridDefinitionTemplate;
@@ -14,7 +14,7 @@ pub struct Section3Reader;
 
 
 impl Section3Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<Section3, Box<dyn Error>> {
+    pub fn read(reader: &mut BufReader<File>) -> Result<Section3, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let grid_definition_source = Section3Reader::read_grid_definition_source(reader)?;
@@ -36,7 +36,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_source(reader: &mut BufReader<File>) -> Result<GridDefinitionSource, Box<dyn Error>> {
+    fn read_grid_definition_source(reader: &mut BufReader<File>) -> Result<GridDefinitionSource, Grib2Error> {
         let value = reader.read_u8()?;
         let grid_def_source = match value {
             0 => GridDefinitionSource::GridDefinitionTemplate,
@@ -49,7 +49,7 @@ impl Section3Reader {
     }
 
 
-    fn read_optional_point_interpretation(reader: &mut BufReader<File>) -> Result<OptionalPointInterpretation, Box<dyn Error>> {
+    fn read_optional_point_interpretation(reader: &mut BufReader<File>) -> Result<OptionalPointInterpretation, Grib2Error> {
         let value = reader.read_u8()?;
         let opt_point_interpretation = match value {
             0 => OptionalPointInterpretation::None,
@@ -64,7 +64,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_template(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate, Box<dyn Error>> {
+    fn read_grid_definition_template(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
         let grid_def_tpl_type = match tpl_number {
             0 => {

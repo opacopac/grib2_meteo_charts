@@ -1,9 +1,9 @@
-use std::error::Error;
 use chrono::NaiveDateTime;
+
+use crate::grib2_common::grib2_error::Grib2Error;
 use crate::grib2_section1::processed_data_type::ProcessedDataType;
 use crate::grib2_section1::production_status::ProductionStatus;
 use crate::grib2_section1::ref_time_significance::RefTimeSignificance;
-
 
 pub struct Section1 {
     pub length: u32,
@@ -19,6 +19,8 @@ pub struct Section1 {
 }
 
 
+const SECTION_NUMBER: u8 = 1;
+
 impl Section1 {
     pub fn new(
         length: u32,
@@ -31,7 +33,13 @@ impl Section1 {
         ref_time: NaiveDateTime,
         production_status: ProductionStatus,
         processed_data_type: ProcessedDataType
-    ) -> Result<Section1, Box<dyn Error>> {
+    ) -> Result<Section1, Grib2Error> {
+        if section_number != SECTION_NUMBER {
+            return Err(Grib2Error::InvalidData(
+                format!("invalid section number '{}', expected: {}", section_number, SECTION_NUMBER)
+            ));
+        }
+
         return Ok(Section1 {
             length,
             section_number,
@@ -44,5 +52,37 @@ impl Section1 {
             production_status,
             processed_data_type
         });
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+
+    use crate::grib2_section1::processed_data_type::ProcessedDataType;
+    use crate::grib2_section1::production_status::ProductionStatus;
+    use crate::grib2_section1::ref_time_significance::RefTimeSignificance;
+    use crate::grib2_section1::section1::Section1;
+
+    #[test]
+    fn it_detects_an_incorrect_section_number() {
+        let result = Section1::new(
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            RefTimeSignificance::Missing,
+            NaiveDateTime::new(
+                NaiveDate::from_ymd(2022, 04, 18),
+                NaiveTime::from_hms(0, 0, 0)
+            ),
+            ProductionStatus::Missing,
+            ProcessedDataType::Missing
+        );
+
+        assert!(result.is_err());
     }
 }

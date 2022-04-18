@@ -1,8 +1,8 @@
-use std::error::Error;
 use std::fs::File;
 use std::io::BufReader;
 
 use crate::grib2_cloud_cover::cloud_cover_layer::CloudCoverLayer;
+use crate::grib2_common::grib2_error::Grib2Error;
 use crate::grib2_section0::section0_reader::Section0Reader;
 use crate::grib2_section1::section1_reader::Section1Reader;
 use crate::grib2_section2::section2_reader::Section2Reader;
@@ -17,7 +17,7 @@ pub struct CloudCoverReader;
 
 
 impl CloudCoverReader {
-    pub fn read_file(filename: &str) -> Result<CloudCoverLayer, Box<dyn Error>> {
+    pub fn read_file(filename: &str) -> Result<CloudCoverLayer, Grib2Error> {
         let file = File::open(filename)?;
         let mut reader = BufReader::new(file);
         let section0 = Section0Reader::read(&mut reader)?;
