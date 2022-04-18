@@ -94,9 +94,9 @@ fn it_reads_the_correct_resolution_and_component_flags() {
     let tpl30 = read_tpl_3_0();
 
     let result = tpl30.resolution_component_flags;
-    assert_eq!(false, result.has_i_direction_increments);
-    assert_eq!(false, result.has_j_direction_increments);
-    assert_eq!(true, result.u_v_relative_to_e_n);
+    assert_eq!(true, result.i_direction_increments_not_given);
+    assert_eq!(true, result.j_direction_increments_not_given);
+    assert_eq!(false, result.u_v_relative_to_e_n);
 }
 
 

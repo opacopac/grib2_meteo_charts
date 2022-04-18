@@ -66,9 +66,9 @@ impl Grib2Section3Template3_0Reader {
     fn read_resolution_and_component_flags(reader: &mut BufReader<File>) -> Result<Grib2ResolutionAndComponentFlags, Box<dyn Error>> {
         let value = reader.read_u8()?;
         let flags = Grib2ResolutionAndComponentFlags::new(
-            (value & 0b00000100) > 0,
-            (value & 0b00001000) > 0,
-            (value & 0b00010000) > 0
+            (value & 0b00000100) == 0,
+            (value & 0b00001000) == 0,
+            (value & 0b00010000) == 0
         );
 
         return Ok(flags);
@@ -77,9 +77,6 @@ impl Grib2Section3Template3_0Reader {
 
     fn read_scanning_mode_flags(reader: &mut BufReader<File>) -> Result<Grib2ScanningModeFlags, Box<dyn Error>> {
         let value = reader.read_u8()?;
-
-        println!("MEEP{}", value);
-
         let flags = Grib2ScanningModeFlags::new(
             (value & 0b00000001) == 0,
             (value & 0b00000010) == 0,
