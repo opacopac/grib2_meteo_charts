@@ -1,5 +1,6 @@
 use crate::grib2_cloud_cover::grib2_cloud_cover_reader::Grib2CloudCoverReader;
 
+mod grib2_common;
 mod grib2_cloud_cover;
 mod grib2_section0;
 mod grib2_section1;
