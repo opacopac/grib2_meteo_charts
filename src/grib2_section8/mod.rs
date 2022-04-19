@@ -1,2 +1,2 @@
-pub(crate) mod section8;
-pub(crate) mod section8_reader;
+pub mod section8;
+pub mod section8_reader;
