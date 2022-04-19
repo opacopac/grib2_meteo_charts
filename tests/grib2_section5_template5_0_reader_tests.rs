@@ -1,6 +1,6 @@
-use meteo_grib2_renderer::grib2_section5::data_representation_template::DataRepresentationTemplate;
-use meteo_grib2_renderer::grib2_section5::data_representation_template_5_0::DataRepresentationTemplate5_0;
-use meteo_grib2_renderer::grib2_section5::original_field_type::OriginalFieldType;
+use meteo_grib2_renderer::grib2::section5::data_representation_template::DataRepresentationTemplate;
+use meteo_grib2_renderer::grib2::section5::data_representation_template_5_0::DataRepresentationTemplate5_0;
+use meteo_grib2_renderer::grib2::section5::original_field_type::OriginalFieldType;
 
 use crate::test_common::read_test_layer;
 

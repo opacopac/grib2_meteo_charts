@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::grib2_section5::data_representation_template::DataRepresentationTemplate;
+use meteo_grib2_renderer::grib2::section5::data_representation_template::DataRepresentationTemplate;
 
 use crate::test_common::read_test_layer;
 

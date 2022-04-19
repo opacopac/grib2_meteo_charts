@@ -1,8 +1,8 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 
-use meteo_grib2_renderer::grib2_section1::processed_data_type::ProcessedDataType;
-use meteo_grib2_renderer::grib2_section1::production_status::ProductionStatus;
-use meteo_grib2_renderer::grib2_section1::ref_time_significance::RefTimeSignificance;
+use meteo_grib2_renderer::grib2::section1::processed_data_type::ProcessedDataType;
+use meteo_grib2_renderer::grib2::section1::production_status::ProductionStatus;
+use meteo_grib2_renderer::grib2::section1::ref_time_significance::RefTimeSignificance;
 
 use crate::test_common::read_test_layer;
 

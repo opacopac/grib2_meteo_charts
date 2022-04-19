@@ -1,6 +1,6 @@
-use meteo_grib2_renderer::grib2_section3::grid_definition_template::GridDefinitionTemplate;
-use meteo_grib2_renderer::grib2_section3::grid_definition_template_3_0::GridDefinitionTemplate3_0;
-use meteo_grib2_renderer::grib2_section3::shape_of_earth::ShapeOfEarth;
+use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate;
+use meteo_grib2_renderer::grib2::section3::grid_definition_template_3_0::GridDefinitionTemplate3_0;
+use meteo_grib2_renderer::grib2::section3::shape_of_earth::ShapeOfEarth;
 use crate::test_common::read_test_layer;
 
 mod test_common;

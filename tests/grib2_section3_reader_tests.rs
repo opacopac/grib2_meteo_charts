@@ -1,6 +1,6 @@
-use meteo_grib2_renderer::grib2_section3::grid_definition_source::GridDefinitionSource;
-use meteo_grib2_renderer::grib2_section3::grid_definition_template::GridDefinitionTemplate;
-use meteo_grib2_renderer::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
+use meteo_grib2_renderer::grib2::section3::grid_definition_source::GridDefinitionSource;
+use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate;
+use meteo_grib2_renderer::grib2::section3::optional_point_interpretation::OptionalPointInterpretation;
 
 use crate::test_common::read_test_layer;
 

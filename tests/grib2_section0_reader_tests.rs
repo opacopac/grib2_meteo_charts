@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::grib2_section0::discipline::Discipline;
+use meteo_grib2_renderer::grib2::section0::discipline::Discipline;
 
 use crate::test_common::read_test_layer;
 
