@@ -1,10 +1,10 @@
 pub(crate) mod section3;
 pub(crate) mod section3_reader;
 pub(crate) mod section3_template_3_0_reader;
-pub(crate) mod grid_definition_source;
-pub(crate) mod optional_point_interpretation;
-pub(crate) mod grid_definition_template;
-pub(crate) mod grid_definition_template_3_0;
-pub(crate) mod shape_of_earth;
+pub mod grid_definition_source;
+pub mod optional_point_interpretation;
+pub mod grid_definition_template;
+pub mod grid_definition_template_3_0;
+pub mod shape_of_earth;
 pub(crate) mod resolution_and_component_flags;
 pub(crate) mod scanning_mode_flags;

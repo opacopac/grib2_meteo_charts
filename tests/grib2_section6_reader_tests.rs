@@ -1,4 +1,6 @@
-use crate::tests::test_common::read_test_layer;
+use crate::test_common::read_test_layer;
+
+mod test_common;
 
 #[test]
 fn it_reads_the_correct_section_length() {

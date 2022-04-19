@@ -1,7 +1,10 @@
-use crate::grib2_section3::grid_definition_source::GridDefinitionSource;
-use crate::grib2_section3::grid_definition_template::GridDefinitionTemplate;
-use crate::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
-use crate::tests::test_common::read_test_layer;
+use meteo_grib2_renderer::grib2_section3::grid_definition_source::GridDefinitionSource;
+use meteo_grib2_renderer::grib2_section3::grid_definition_template::GridDefinitionTemplate;
+use meteo_grib2_renderer::grib2_section3::optional_point_interpretation::OptionalPointInterpretation;
+
+use crate::test_common::read_test_layer;
+
+mod test_common;
 
 #[test]
 fn it_reads_the_correct_section_length() {

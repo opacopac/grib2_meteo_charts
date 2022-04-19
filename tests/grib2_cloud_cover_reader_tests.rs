@@ -1,5 +1,8 @@
-use crate::CloudCoverReader;
-use crate::tests::test_common::{DATA_DIR, read_test_layer_result};
+use meteo_grib2_renderer::grib2_cloud_cover::cloud_cover_reader::CloudCoverReader;
+
+use crate::test_common::{DATA_DIR, read_test_layer_result};
+
+mod test_common;
 
 #[test]
 fn it_reads_an_existing_grib2_file() {

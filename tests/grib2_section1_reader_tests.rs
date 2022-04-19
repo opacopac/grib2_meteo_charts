@@ -1,9 +1,12 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 
-use crate::grib2_section1::processed_data_type::ProcessedDataType;
-use crate::grib2_section1::production_status::ProductionStatus;
-use crate::grib2_section1::ref_time_significance::RefTimeSignificance;
-use crate::tests::test_common::read_test_layer;
+use meteo_grib2_renderer::grib2_section1::processed_data_type::ProcessedDataType;
+use meteo_grib2_renderer::grib2_section1::production_status::ProductionStatus;
+use meteo_grib2_renderer::grib2_section1::ref_time_significance::RefTimeSignificance;
+
+use crate::test_common::read_test_layer;
+
+mod test_common;
 
 #[test]
 fn it_reads_the_correct_section_length() {

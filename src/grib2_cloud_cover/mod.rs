@@ -1,2 +1,2 @@
-pub(crate) mod cloud_cover_layer;
-pub(crate) mod cloud_cover_reader;
+pub mod cloud_cover_layer;
+pub mod cloud_cover_reader;
