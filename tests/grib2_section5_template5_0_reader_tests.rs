@@ -31,9 +31,9 @@ fn it_reads_the_correct_reference_value() {
 fn it_reads_the_correct_binary_scale_factor() {
     let tpl = read_tpl_5_0();
 
-    let result = tpl.binary_scale_factor;
+    let result = tpl.binary_scale_factor_e;
 
-    assert_eq!(32783, result);
+    assert_eq!(-15, result);
 }
 
 
@@ -41,7 +41,7 @@ fn it_reads_the_correct_binary_scale_factor() {
 fn it_reads_the_correct_decimal_scale_factor() {
     let tpl = read_tpl_5_0();
 
-    let result = tpl.decimal_scale_factor;
+    let result = tpl.decimal_scale_factor_d;
 
     assert_eq!(0, result);
 }

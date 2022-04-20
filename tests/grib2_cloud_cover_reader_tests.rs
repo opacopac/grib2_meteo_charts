@@ -1,6 +1,7 @@
+use meteo_grib2_renderer::grib2::cloud_cover::cloud_cover_layer::CloudCoverLayer;
 use meteo_grib2_renderer::grib2::cloud_cover::cloud_cover_reader::CloudCoverReader;
 
-use crate::test_common::{DATA_DIR, read_test_layer_result};
+use crate::test_common::{DATA_DIR, read_test_layer, read_test_layer_result};
 
 mod test_common;
 
@@ -29,4 +30,14 @@ fn it_returns_an_error_if_the_file_isnt_in_grib2_format() {
     let result = CloudCoverReader::read_file(&grib2_file);
 
     assert_eq!(true, result.is_err());
+}
+
+
+#[test]
+fn it_returns_the_value_of_the_first_data_point() {
+    let layer = read_test_layer();
+
+    let result = layer.get_value(0);
+
+    assert_eq!(0.0, result);
 }

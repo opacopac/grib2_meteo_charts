@@ -38,7 +38,8 @@ mod tests {
     fn it_detects_an_incorrect_section_number() {
         let result = Section7::new(
             0,
-            0
+            0,
+            vec![1, 2, 3]
         );
 
         assert!(result.is_err());
