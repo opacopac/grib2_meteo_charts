@@ -28,5 +28,5 @@ fn it_reads_all_data_points() {
 
     let result = layer.section7.data_points;
 
-    assert_eq!(377431, result.len());
+    assert_eq!(754862, result.len());
 }

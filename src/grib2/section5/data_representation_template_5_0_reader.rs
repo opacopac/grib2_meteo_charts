@@ -12,7 +12,7 @@ pub struct DataRepresentationTemplate5_0Reader;
 
 impl DataRepresentationTemplate5_0Reader {
     pub fn read(reader: &mut BufReader<File>) -> Result<DataRepresentationTemplate5_0, Grib2Error> {
-        let reference_value = reader.read_u32::<BigEndian>()?;
+        let reference_value = reader.read_f32::<BigEndian>()?;
         let binary_scale_factor = reader.read_u16::<BigEndian>()?;
         let decimal_scale_factor = reader.read_u16::<BigEndian>()?;
         let number_of_bits = reader.read_u8()?;

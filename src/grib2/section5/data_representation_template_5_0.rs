@@ -1,7 +1,7 @@
 use crate::grib2::section5::original_field_type::OriginalFieldType;
 
 pub struct DataRepresentationTemplate5_0 {
-    pub reference_value: u32,
+    pub reference_value: f32,
     pub binary_scale_factor: u16,
     pub decimal_scale_factor: u16,
     pub number_of_bits: u8,
@@ -11,7 +11,7 @@ pub struct DataRepresentationTemplate5_0 {
 
 impl DataRepresentationTemplate5_0 {
     pub fn new(
-        reference_value: u32,
+        reference_value: f32,
         binary_scale_factor: u16,
         decimal_scale_factor: u16,
         number_of_bits: u8,

@@ -23,7 +23,7 @@ fn it_reads_the_correct_reference_value() {
 
     let result = tpl.reference_value;
 
-    assert_eq!(0, result);
+    assert_eq!(0.0, result);
 }
 
 
