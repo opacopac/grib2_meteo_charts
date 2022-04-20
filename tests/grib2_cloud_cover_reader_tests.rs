@@ -34,10 +34,12 @@ fn it_returns_an_error_if_the_file_isnt_in_grib2_format() {
 
 
 #[test]
-fn it_returns_the_value_of_the_first_data_point() {
+fn it_returns_the_value_some_data_points() {
     let layer = read_test_layer();
 
-    let result = layer.get_value(0);
+    let result1 = layer.get_value(0);
+    assert_eq!(0.0, result1);
 
-    assert_eq!(0.0, result);
+    let result2 = layer.get_value(912);
+    assert_eq!(0.6885376, result2);
 }
