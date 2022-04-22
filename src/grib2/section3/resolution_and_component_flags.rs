@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct ResolutionAndComponentFlags {
     pub i_direction_increments_not_given: bool,
     pub j_direction_increments_not_given: bool,

@@ -1,4 +1,3 @@
-pub mod cloud_cover;
 pub mod common;
 pub mod section0;
 pub mod section1;
@@ -9,3 +8,4 @@ pub mod section5;
 pub mod section6;
 pub mod section7;
 pub mod section8;
+pub mod document;

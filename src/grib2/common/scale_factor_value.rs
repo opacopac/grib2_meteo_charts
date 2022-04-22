@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct ScaleFactorValue {
     pub factor: u8,
     pub value: u32

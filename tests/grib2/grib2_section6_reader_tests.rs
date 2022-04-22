@@ -1,10 +1,8 @@
-use crate::test_common::read_test_layer;
-
-mod test_common;
+use crate::read_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section6.length;
 
@@ -14,7 +12,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section6.section_number;
 
@@ -24,7 +22,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_bitmap_indicator() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section6.bitmap_indicator;
 

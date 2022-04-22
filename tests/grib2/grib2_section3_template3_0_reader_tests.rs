@@ -1,13 +1,11 @@
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template_3_0::GridDefinitionTemplate3_0;
 use meteo_grib2_renderer::grib2::section3::shape_of_earth::ShapeOfEarth;
-use crate::test_common::read_test_layer;
 
-mod test_common;
-
+use crate::read_test_document;
 
 fn read_tpl_3_0() -> GridDefinitionTemplate3_0 {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section3.grid_definition_template;
     return match result {

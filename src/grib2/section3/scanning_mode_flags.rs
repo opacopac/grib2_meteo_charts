@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct ScanningModeFlags {
     pub scan_direction_first_row_i_is_positive: bool,
     pub scan_direction_first_row_j_is_negative: bool,

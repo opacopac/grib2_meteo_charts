@@ -1,12 +1,10 @@
 use meteo_grib2_renderer::grib2::section5::data_representation_template::DataRepresentationTemplate;
 
-use crate::test_common::read_test_layer;
-
-mod test_common;
+use crate::read_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section5.length;
 
@@ -16,7 +14,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section5.section_number;
 
@@ -26,7 +24,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_number_of_data_points() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section5.data_points;
 
@@ -36,7 +34,7 @@ fn it_reads_the_correct_number_of_data_points() {
 
 #[test]
 fn it_reads_the_correct_data_representation_template() {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section5.data_representation_template;
 

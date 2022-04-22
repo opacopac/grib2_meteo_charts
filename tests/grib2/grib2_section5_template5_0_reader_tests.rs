@@ -2,12 +2,10 @@ use meteo_grib2_renderer::grib2::section5::data_representation_template::DataRep
 use meteo_grib2_renderer::grib2::section5::data_representation_template_5_0::DataRepresentationTemplate5_0;
 use meteo_grib2_renderer::grib2::section5::original_field_type::OriginalFieldType;
 
-use crate::test_common::read_test_layer;
-
-mod test_common;
+use crate::read_test_document;
 
 fn read_tpl_5_0() -> DataRepresentationTemplate5_0 {
-    let layer = read_test_layer();
+    let layer = read_test_document();
 
     let result = layer.section5.data_representation_template;
     return match result {
