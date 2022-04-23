@@ -69,7 +69,7 @@ impl Section3Reader {
         let grid_def_tpl_type = match tpl_number {
             0 => {
                 let tpl_3_0 = Section3Template3_0Reader::read(reader)?;
-                GridDefinitionTemplate::LatLon(tpl_3_0)
+                GridDefinitionTemplate::LatitudeLongitude(tpl_3_0)
             },
             65535 => GridDefinitionTemplate::Missing,
             _ => GridDefinitionTemplate::Unknown(tpl_number)

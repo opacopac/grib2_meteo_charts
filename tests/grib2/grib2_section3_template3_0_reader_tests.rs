@@ -9,7 +9,7 @@ fn read_tpl_3_0() -> GridDefinitionTemplate3_0 {
 
     let result = layer.section3.grid_definition_template;
     return match result {
-        GridDefinitionTemplate::LatLon(tpl) => tpl,
+        GridDefinitionTemplate::LatitudeLongitude(tpl) => tpl,
         _ => panic!("wrong grid defintion template")
     }
 }

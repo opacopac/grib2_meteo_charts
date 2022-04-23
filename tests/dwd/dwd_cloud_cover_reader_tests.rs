@@ -15,12 +15,53 @@ fn it_returns_the_value_of_data_points_by_index() {
 
 
 #[test]
+fn it_returns_the_correct_index_by_exact_lat_lon() {
+    let layer = read_test_cloud_cover_layer();
+
+    // first point
+    let result1 = layer.get_index_by_lat_lon(&LatLon::new(43.18, 356.06));
+    assert_eq!(0, result1);
+
+    // second point
+    let result1 = layer.get_index_by_lat_lon(&LatLon::new(43.18, 356.06 + 0.02));
+    assert_eq!(1, result1);
+
+    // first point in second row
+    let result1 = layer.get_index_by_lat_lon(&LatLon::new(43.18 + 0.02, 356.06));
+    assert_eq!(1215, result1);
+
+    // last point
+    let result2 = layer.get_index_by_lat_lon(&LatLon::new(58.08, 20.34));
+    assert_eq!(1215 * 746 - 1, result2);
+}
+
+
+#[test]
+fn it_returns_the_correct_index_by_approximate_lat_lon() {
+    let layer = read_test_cloud_cover_layer();
+
+    // near first point
+    let result1 = layer.get_index_by_lat_lon(&LatLon::new(43.1801, 356.0601));
+    assert_eq!(0, result1);
+
+    // near last point
+    let result2 = layer.get_index_by_lat_lon(&LatLon::new(58.0801, 20.3401));
+    assert_eq!(1215 * 746 - 1, result2);
+
+    // near middle point (50.64, 8.20)
+    let result3 = layer.get_index_by_lat_lon(&LatLon::new(43.18 + 373.0 * 0.02, (356.06 + 607.0 * 0.02) % 360.0));
+    assert_eq!(373 * 1215 + 607, result3);
+}
+
+
+/*#[test]
 fn it_returns_the_value_of_data_points_by_lat_lon() {
     let layer = read_test_cloud_cover_layer();
 
-    let result1 = layer.get_value_by_lat_lon(LatLon::new(43.18, 356.06));
+    let result1 = layer.tmp_get_value_by_lat_lon(LatLon::new(43.18, 356.06));
     assert_eq!(0.0, result1);
 
-    /*let result2 = layer.get_value_by_lat_lon(LatLon::new(50.00, 359.00));
-    assert_eq!(99.0, result2);*/
+    let result2 = layer.tmp_get_value_by_lat_lon(LatLon::new(43.18, 14.3));
+    assert_eq!(0.6885376, result2);
 }
+*/

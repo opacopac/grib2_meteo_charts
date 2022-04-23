@@ -71,7 +71,7 @@ fn it_reads_the_correct_grid_definition_template() {
     let result = layer.section3.grid_definition_template;
 
     match result {
-        GridDefinitionTemplate::LatLon(_tpl) => {},
+        GridDefinitionTemplate::LatitudeLongitude(_tpl) => {},
         GridDefinitionTemplate::Missing => panic!("wrong grid definition template: 255"),
         GridDefinitionTemplate::Unknown(nr) => panic!("wrong grid definition template: {}", nr)
     };

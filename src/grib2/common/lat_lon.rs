@@ -15,4 +15,9 @@ impl LatLon {
             lon
         }
     }
+
+
+    pub fn clone(&self) -> LatLon {
+        return LatLon::new(self.lat, self.lon);
+    }
 }
