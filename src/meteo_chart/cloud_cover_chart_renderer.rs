@@ -38,16 +38,16 @@ impl CloudCoverChartRenderer {
         let lat_inc = (end_pos.lat - start_pos.lat) / tile_size_px;
 
         for i in 0..MapTileCoord::TILE_SIZE_PX {
-            let lat = i as f32 * lat_inc;
+            let lat = start_pos.lat + i as f32 * lat_inc;
             for j in 0..MapTileCoord::TILE_SIZE_PX {
-                let lon = j as f32 * lon_inc;
+                let lon = start_pos.lon + j as f32 * lon_inc;
                 let value = layer.get_value_by_lat_lon(&LatLon::new(lat, lon));
 
                 if value != CloudCoverLayer::MISSING_VALUE {
                     let color_value = (value  * 255.0).floor() as u8;
                     let color = [color_value, color_value, color_value, 255]; // TODO
 
-                    drawable.draw_point(j, MapTileCoord::TILE_SIZE_PX - i - 1, color);
+                    drawable.draw_point(j, i, color);
                 }
             }
         }
