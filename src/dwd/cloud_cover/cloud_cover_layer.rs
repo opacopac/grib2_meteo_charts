@@ -14,7 +14,7 @@ pub struct CloudCoverLayer {
 
 
 impl CloudCoverLayer {
-    pub const NO_VALUE: f32 = -1.0; // TODO
+    pub const MISSING_VALUE: f32 = -1.0; // TODO
 
     pub fn new(
         document: Grib2Document
@@ -80,7 +80,7 @@ impl CloudCoverLayer {
                 data_points.push(data_value);
                 j += 1;
             } else {
-                data_points.push(CloudCoverLayer::NO_VALUE);
+                data_points.push(CloudCoverLayer::MISSING_VALUE);
             }
         }
 
