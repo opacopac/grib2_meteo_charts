@@ -28,3 +28,14 @@ fn it_reads_the_correct_bitmap_indicator() {
 
     assert_eq!(0, result);
 }
+
+
+#[test]
+fn it_reads_the_correct_bitmap() {
+    let layer = read_test_document();
+
+    let result = layer.section6.bitmap;
+    let expected = ((1215.0 * 746.0 / 8.0) as f64).ceil() as usize;
+
+    assert_eq!(expected, result.len());
+}

@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -14,14 +14,23 @@ impl Section6Reader {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let bitmap_indicator = reader.read_u8()?;
+        let bitmap = Section6Reader::read_bitmap(reader, (length - 6) as usize)?;
+
         let section6 = Section6::new(
             length,
             section_number,
-            bitmap_indicator
+            bitmap_indicator,
+            bitmap
         )?;
 
-        reader.seek_relative(length as i64 - 6)?; // TODO: temp
-
         return Ok(section6);
+    }
+
+
+    fn read_bitmap(reader: &mut BufReader<File>, size: usize) -> Result<Vec<u8>, Grib2Error> {
+        let mut buf = vec![0; size];
+        reader.read_exact(&mut buf)?;
+
+        return Ok(buf);
     }
 }
