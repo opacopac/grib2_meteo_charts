@@ -104,7 +104,7 @@ impl CloudCoverLayer {
         let mut data_points: Vec<f32> = vec![];
         let mut j = 0;
         for i in 0..document.section3.number_of_datapoints {
-            let bitmask = 0b00000001 << (i % 8);
+            let bitmask = 0b10000000 >> (i % 8);
             if bitmap[(i / 8) as usize] & bitmask > 0 {
                 let raw_value = raw_data_points[j] as f32;
                 let data_value = (ref_value + raw_value * c1) as f32 / c2;
