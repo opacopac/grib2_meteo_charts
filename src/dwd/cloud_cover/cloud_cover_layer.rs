@@ -9,7 +9,8 @@ pub struct CloudCoverLayer {
     first_grid_point: LatLon,
     i_direction_increment: f32,
     j_direction_increment: f32,
-    number_of_points_along_parallel: u32
+    number_of_points_along_parallel: u32,
+    number_of_points_along_meridian: u32
 }
 
 
@@ -20,17 +21,47 @@ impl CloudCoverLayer {
         document: Grib2Document
     ) -> Result<CloudCoverLayer, Grib2Error> {
         let data_points = CloudCoverLayer::calculate_data_points(&document)?;
-        let (first_grid_point, i_direction_increment, j_direction_increment, number_of_points_along_parallel) = CloudCoverLayer::get_grid_definition(&document)?;
+        let (first_grid_point,
+            i_direction_increment,
+            j_direction_increment,
+            number_of_points_along_parallel,
+            number_of_points_along_meridian) = CloudCoverLayer::get_grid_definition(&document)?;
 
         let ccl = CloudCoverLayer {
             data_points,
             first_grid_point,
             i_direction_increment,
             j_direction_increment,
-            number_of_points_along_parallel
+            number_of_points_along_parallel,
+            number_of_points_along_meridian
         };
 
         return Ok(ccl);
+    }
+
+
+    pub fn lat_grid_points(&self) -> u32 {
+        return self.number_of_points_along_meridian;
+    }
+
+
+    pub fn lon_grid_points(&self) -> u32 {
+        return self.number_of_points_along_parallel;
+    }
+
+
+    pub fn lat_inc_deg(&self) -> f32 {
+        return self.i_direction_increment;
+    }
+
+
+    pub fn lon_inc_deg(&self) -> f32 {
+        return self.j_direction_increment;
+    }
+
+
+    pub fn first_grid_point(&self) -> LatLon {
+        return self.first_grid_point.clone();
     }
 
 
@@ -88,10 +119,16 @@ impl CloudCoverLayer {
     }
 
 
-    fn get_grid_definition(document: &Grib2Document) -> Result<(LatLon, f32, f32, u32), Grib2Error> {
+    fn get_grid_definition(document: &Grib2Document) -> Result<(LatLon, f32, f32, u32, u32), Grib2Error> {
         return match &document.section3.grid_definition_template {
             GridDefinitionTemplate::LatitudeLongitude(tpl) => {
-                Ok((tpl.first_grid_point.clone(), tpl.i_direction_increment, tpl.j_direction_increment, tpl.number_of_points_along_parallel))
+                Ok((
+                    tpl.first_grid_point.clone(),
+                    tpl.i_direction_increment,
+                    tpl.j_direction_increment,
+                    tpl.number_of_points_along_parallel,
+                    tpl.number_of_points_along_meridian
+                ))
             }
             _ => return Err(Grib2Error::InvalidData(format!("invalid grid definition template")))
         };

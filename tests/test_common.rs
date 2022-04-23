@@ -5,6 +5,7 @@ use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentR
 
 mod grib2;
 mod dwd;
+mod meteo_chart;
 
 pub const DATA_DIR: &str = "./tests/data/";
 pub const CLCT_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";

@@ -24,3 +24,10 @@ impl std::convert::From<std::convert::Infallible> for Grib2Error {
         return Grib2Error::Internal(err.to_string());
     }
 }
+
+
+impl std::convert::From<image::ImageError> for Grib2Error {
+    fn from(err: image::ImageError) -> Self {
+        return Grib2Error::Internal(err.to_string());
+    }
+}

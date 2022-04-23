@@ -4,6 +4,40 @@ use meteo_grib2_renderer::grib2::common::lat_lon::LatLon;
 use crate::read_test_cloud_cover_layer;
 
 #[test]
+fn it_returns_the_correct_lat_lon_grid_points() {
+    let layer = read_test_cloud_cover_layer();
+
+    let result1 = layer.lat_grid_points();
+    assert_eq!(746, result1);
+
+    let result1 = layer.lon_grid_points();
+    assert_eq!(1215, result1);
+}
+
+
+#[test]
+fn it_returns_the_correct_lat_lon_increments() {
+    let layer = read_test_cloud_cover_layer();
+
+    let result1 = layer.lat_inc_deg();
+    assert_eq!(0.02, result1);
+
+    let result1 = layer.lon_inc_deg();
+    assert_eq!(0.02, result1);
+}
+
+
+#[test]
+fn it_returns_the_correct_first_grid_point() {
+    let layer = read_test_cloud_cover_layer();
+
+    let result1 = layer.first_grid_point();
+    assert_eq!(43.18, result1.lat);
+    assert_eq!(356.06, result1.lon);
+}
+
+
+#[test]
 fn it_returns_the_value_of_data_points_by_index() {
     let layer = read_test_cloud_cover_layer();
 
