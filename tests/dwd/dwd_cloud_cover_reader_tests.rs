@@ -1,5 +1,5 @@
 use meteo_grib2_renderer::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
-use meteo_grib2_renderer::grib2::common::lat_lon::LatLon;
+use meteo_grib2_renderer::geo::lat_lon::LatLon;
 
 use crate::read_test_cloud_cover_layer;
 

@@ -1,5 +1,5 @@
 use crate::grib2::common::grib2_error::Grib2Error;
-use crate::grib2::common::lat_lon::LatLon;
+use crate::geo::lat_lon::LatLon;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate::GridPointDataSimplePacking;
@@ -66,7 +66,11 @@ impl CloudCoverLayer {
 
 
     pub fn get_value_by_index(&self, index: usize) -> f32 {
-        return self.data_points[index];
+        return if index > self.data_points.len() {
+            CloudCoverLayer::MISSING_VALUE
+        } else {
+            self.data_points[index]
+        }
     }
 
 

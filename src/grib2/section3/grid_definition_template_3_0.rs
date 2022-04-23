@@ -1,4 +1,4 @@
-use crate::grib2::common::lat_lon::LatLon;
+use crate::geo::lat_lon::LatLon;
 use crate::grib2::common::scale_factor_value::ScaleFactorValue;
 use crate::grib2::section3::resolution_and_component_flags::ResolutionAndComponentFlags;
 use crate::grib2::section3::scanning_mode_flags::ScanningModeFlags;

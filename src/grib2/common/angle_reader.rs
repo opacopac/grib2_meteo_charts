@@ -4,7 +4,7 @@ use std::io::BufReader;
 use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::grib2::common::grib2_error::Grib2Error;
-use crate::grib2::common::lat_lon::LatLon;
+use crate::geo::lat_lon::LatLon;
 
 pub struct AngleReader;
 

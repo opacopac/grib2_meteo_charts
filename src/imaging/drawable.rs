@@ -68,7 +68,7 @@ impl Drawable {
     }
 
 
-    pub fn safe_image(&self, filename: &str) -> Result<bool, Grib2Error> {
+    pub fn safe_image(&self, filename: &str) -> Result<(), Grib2Error> {
         image::save_buffer(
             filename,
             &*self.color_values,
@@ -77,6 +77,6 @@ impl Drawable {
             ColorType::Rgba8
         )?;
 
-        return Result::Ok(true);
+        return Result::Ok(());
     }
 }
