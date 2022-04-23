@@ -14,9 +14,9 @@ pub struct Section3 {
 }
 
 
-const SECTION_NUMBER: u8 = 3;
-
 impl Section3 {
+    pub const SECTION_NUMBER: u8 = 3;
+
     pub fn new(
         length: u32,
         section_number: u8,
@@ -26,9 +26,9 @@ impl Section3 {
         optional_point_interpretation: OptionalPointInterpretation,
         grid_definition_template: GridDefinitionTemplate,
     ) -> Result<Section3, Grib2Error> {
-        if section_number != SECTION_NUMBER {
+        if section_number != Section3::SECTION_NUMBER {
             return Err(Grib2Error::InvalidData(
-                format!("invalid section number '{}', expected: {}", section_number, SECTION_NUMBER)
+                format!("invalid section number '{}', expected: {}", section_number, Section3::SECTION_NUMBER)
             ));
         }
 

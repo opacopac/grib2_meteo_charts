@@ -14,6 +14,8 @@ pub struct CloudCoverLayer {
 
 
 impl CloudCoverLayer {
+    pub const NO_VALUE: f32 = -1.0; // TODO
+
     pub fn new(
         document: Grib2Document
     ) -> Result<CloudCoverLayer, Grib2Error> {
@@ -39,10 +41,7 @@ impl CloudCoverLayer {
 
     pub fn get_index_by_lat_lon(&self, pos: &LatLon) -> usize {
         let lon_idx = (((pos.lon - &self.first_grid_point.lon + 360.0) % 360.0) / &self.j_direction_increment).round() as u32;
-        println!("{}", lon_idx);
-
         let lat_idx = (((pos.lat - &self.first_grid_point.lat + 360.0) % 360.0) / &self.i_direction_increment).round() as u32;
-        println!("{}", lat_idx);
 
         let idx = (lat_idx * &self.number_of_points_along_parallel + lon_idx) as usize;
 
@@ -68,10 +67,22 @@ impl CloudCoverLayer {
             _ => return Err(Grib2Error::InvalidData(format!("invalid data representation template")))
         };
 
+        let bitmap = &document.section6.bitmap;
         let raw_data_points = &document.section7.data_points;
-        let data_points = raw_data_points.iter()
-            .map(|raw_value| (ref_value + *raw_value as f32 * c1) as f32 / c2)
-            .collect();
+
+        let mut data_points: Vec<f32> = vec![];
+        let mut j = 0;
+        for i in 0..document.section3.number_of_datapoints {
+            let bitmask = 0b00000001 << (i % 8);
+            if bitmap[(i / 8) as usize] & bitmask > 0 {
+                let raw_value = raw_data_points[j] as f32;
+                let data_value = (ref_value + raw_value * c1) as f32 / c2;
+                data_points.push(data_value);
+                j += 1;
+            } else {
+                data_points.push(CloudCoverLayer::NO_VALUE);
+            }
+        }
 
         return Ok(data_points);
     }
