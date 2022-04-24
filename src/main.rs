@@ -1,4 +1,5 @@
-use std::time::Instant;
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 
 use meteo_grib2_renderer::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
 use meteo_grib2_renderer::geo::map_tile_coord::MapTileCoord;
@@ -50,11 +51,13 @@ fn create_map_tile() {
     let map_tile_coord = MapTileCoord::new(535, 359, 10);
     //let map_tile_coord = MapTileCoord::new(33, 22, 6);
     //let map_tile_coord = MapTileCoord::new(0, 0, 0);
-    let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
+    //let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
+    //img.safe_image("CCL_TILE.png").unwrap();
+
+    CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 12), "./");
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 
-    img.safe_image("CCL_TILE.png").unwrap();
     let elapsed = start.elapsed();
     println!("save img {}", elapsed.as_millis());
 }

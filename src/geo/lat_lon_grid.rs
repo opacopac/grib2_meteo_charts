@@ -1,4 +1,5 @@
 use derive_more::Constructor;
+use min_max::{max, min};
 
 use crate::geo::lat_lon::LatLon;
 
@@ -37,6 +38,22 @@ impl LatLonGrid {
 
         return true;
     }
+
+
+    pub fn get_min_pos(&self) -> LatLon {
+        let lat = min(self.start_pos.lat, self.end_pos.lat);
+        let lon = min(self.start_pos.lon, self.end_pos.lon);
+
+        return LatLon::new(lat, lon);
+    }
+
+
+    pub fn get_max_pos(&self) -> LatLon {
+        let lat = max(self.start_pos.lat, self.end_pos.lat);
+        let lon = max(self.start_pos.lon, self.end_pos.lon);
+
+        return LatLon::new(lat, lon);
+    }
 }
 
 
@@ -45,47 +62,76 @@ mod tests {
     use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_grid::LatLonGrid;
 
-
     #[test]
     fn it_correctly_detects_if_a_pos_is_inside() {
-        let extent = LatLonGrid::new(
+        let grid = LatLonGrid::new(
             LatLon::new(47.0, 7.0),
             LatLon::new(48.0, 8.0),
-            0.1,
-            0.1,
-            10,
-            10
+            0.1, 0.1, 10, 10
         );
 
-        let result = extent.is_pos_inside(&LatLon::new(47.5, 7.5));
+        let result = grid.is_pos_inside(&LatLon::new(47.5, 7.5));
         assert_eq!(true, result);
 
-        let result = extent.is_pos_inside(&LatLon::new(48.1, 7.5));
+        let result = grid.is_pos_inside(&LatLon::new(48.1, 7.5));
         assert_eq!(false, result);
 
-        let result = extent.is_pos_inside(&LatLon::new(47.5, 6.9));
+        let result = grid.is_pos_inside(&LatLon::new(47.5, 6.9));
         assert_eq!(false, result);
     }
 
 
     #[test]
     fn it_correctly_detects_if_a_pos_is_inside_across_0_deg_line() {
-        let extent = LatLonGrid::new(
+        let grid = LatLonGrid::new(
             LatLon::new(-20.0, 330.0),
             LatLon::new(33.0, 44.0),
-            0.1,
-            0.1,
-            10,
-            10
+            0.1, 0.1, 10, 10
         );
 
-        let result = extent.is_pos_inside(&LatLon::new(-10.0, 340.0));
+        let result = grid.is_pos_inside(&LatLon::new(-10.0, 340.0));
         assert_eq!(true, result);
 
-        let result = extent.is_pos_inside(&LatLon::new(-21.0, 0.0));
+        let result = grid.is_pos_inside(&LatLon::new(-21.0, 0.0));
         assert_eq!(false, result);
 
-        let result = extent.is_pos_inside(&LatLon::new(0.0, 320.0));
+        let result = grid.is_pos_inside(&LatLon::new(0.0, 320.0));
         assert_eq!(false, result);
+    }
+
+
+    #[test]
+    fn it_calculates_the_correct_min_max_pos() {
+        let grid = LatLonGrid::new(
+            LatLon::new(22.0, 33.0),
+            LatLon::new(44.0, 55.0),
+            0.1, 0.1, 10, 10
+        );
+
+        let result = grid.get_min_pos();
+        assert_eq!(22.0, result.lat);
+        assert_eq!(33.0, result.lon);
+
+        let result = grid.get_max_pos();
+        assert_eq!(44.0, result.lat);
+        assert_eq!(55.0, result.lon);
+    }
+
+
+    #[test]
+    fn it_calculates_the_correct_min_max_pos_for_reversed_grids() {
+        let grid = LatLonGrid::new(
+            LatLon::new(-20.0, 44.0),
+            LatLon::new(33.0, 330.0),
+            -0.1, -0.1, 10, 10
+        );
+
+        let result = grid.get_min_pos();
+        assert_eq!(-20.0, result.lat);
+        assert_eq!(-30.0, result.lon);
+
+        let result = grid.get_max_pos();
+        assert_eq!(33.0, result.lat);
+        assert_eq!(44.0, result.lon);
     }
 }

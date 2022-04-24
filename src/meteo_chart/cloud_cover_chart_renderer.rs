@@ -1,3 +1,7 @@
+use std::fs;
+use min_max::{max, min};
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+
 use crate::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
 use crate::geo::lat_lon::LatLon;
 use crate::geo::map_tile_coord::MapTileCoord;
@@ -53,5 +57,50 @@ impl CloudCoverChartRenderer {
         }
 
         return Ok(drawable);
+    }
+
+
+    pub fn create_all_tiles(
+        layer: &CloudCoverLayer,
+        zoom_range: (u32, u32),
+        base_path: &str
+    ) -> Result<(), Grib2Error> {
+        let min_pos = layer.grid.get_min_pos();
+        let max_pos = layer.grid.get_max_pos();
+        let pos_tl = LatLon::new(min_pos.lat, max_pos.lon);
+        let pos_br = LatLon::new(max_pos.lat, min_pos.lon);
+
+        for zoom in zoom_range.0..=zoom_range.1 {
+            let tile_tl = MapTileCoord::from_position(&pos_tl, zoom);
+            let tile_br = MapTileCoord::from_position(&pos_br, zoom);
+            let x_range = (min(tile_tl.x, tile_br.x), max(tile_tl.x, tile_br.x));
+            let y_range = (min(tile_tl.y, tile_br.y), max(tile_tl.y, tile_br.y));
+
+            for x in x_range.0..=x_range.1 {
+                (y_range.0..=y_range.1).into_par_iter().for_each(|y| {
+                    println!("rendering tile x: {}, y: {}, z: {}", x, y, zoom);
+                    let map_tile_coords = &MapTileCoord::new(x, y, zoom);
+                    let tile = CloudCoverChartRenderer::create_single_tile(layer, map_tile_coords).unwrap(); // TODO
+                    CloudCoverChartRenderer::save_tile(&tile, zoom, x, y, base_path);
+                })
+            }
+        }
+
+        Ok(())
+    }
+
+
+    fn save_tile(
+        tile: &Drawable,
+        zoom: u32,
+        x: u32,
+        y: u32,
+        base_path: &str
+    ) {
+        let path = format!("{}/{}/{}", base_path, zoom, x);
+        fs::create_dir_all(&path).unwrap();
+
+        let filename = format!("{}/{}.png", &path, y);
+        let _result = tile.safe_image(&filename);
     }
 }
