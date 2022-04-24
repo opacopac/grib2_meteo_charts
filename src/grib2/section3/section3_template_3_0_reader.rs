@@ -39,9 +39,11 @@ impl Section3Template3_0Reader {
             number_of_points_along_meridian,
             initial_production_domain_basic_angle,
             initial_production_domain_subdivision,
-            first_grid_point,
+            first_grid_point.0,
+            first_grid_point.1,
             resolution_component_flags,
-            last_grid_point,
+            last_grid_point.0,
+            last_grid_point.1,
             i_direction_increment,
             j_direction_increment,
             scanning_mode_flags

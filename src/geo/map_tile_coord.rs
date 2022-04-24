@@ -1,8 +1,10 @@
 use std::f32::consts::PI;
 
+use derive_more::Constructor;
+
 use crate::geo::lat_lon::LatLon;
 
-#[derive(Debug)]
+#[derive(Debug, Constructor)]
 pub struct MapTileCoord {
     pub x: u32,
     pub y: u32,
@@ -12,11 +14,6 @@ pub struct MapTileCoord {
 
 impl MapTileCoord {
     pub const TILE_SIZE_PX: u32 = 256;
-
-
-    pub fn new(x_tile: u32, y_tile: u32, zoom: u32) -> MapTileCoord {
-        return MapTileCoord { x: x_tile, y: y_tile, zoom };
-    }
 
 
     pub fn from_position(pos: &LatLon, zoom: u32) -> MapTileCoord {

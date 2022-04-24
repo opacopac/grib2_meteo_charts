@@ -83,9 +83,8 @@ fn it_reads_the_correct_initial_production_domain_basic_angle_and_subdivision() 
 fn it_reads_the_correct_first_grid_point_lat_lon() {
     let tpl30 = read_tpl_3_0();
 
-    let result = tpl30.first_grid_point;
-    assert_eq!(43.180000, result.lat);
-    assert_eq!(356.060000, result.lon);
+    assert_eq!(43.180000, tpl30.first_grid_point_lat);
+    assert_eq!(356.060000, tpl30.first_grid_point_lon);
 }
 
 
@@ -104,9 +103,8 @@ fn it_reads_the_correct_resolution_and_component_flags() {
 fn it_reads_the_correct_last_grid_point_lat_lon() {
     let tpl30 = read_tpl_3_0();
 
-    let result = tpl30.last_grid_point;
-    assert_eq!(58.080000, result.lat);
-    assert_eq!(20.340000, result.lon);
+    assert_eq!(58.080000, tpl30.last_grid_point_lat);
+    assert_eq!(20.340000, tpl30.last_grid_point_lon);
 }
 
 

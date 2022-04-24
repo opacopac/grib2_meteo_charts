@@ -8,18 +8,18 @@ pub struct CloudCoverChartRenderer;
 
 impl CloudCoverChartRenderer {
     pub fn create_single_chart(layer: &CloudCoverLayer) -> Result<Drawable, Grib2Error> {
-        let mut drawable = Drawable::create_empty(layer.lon_grid_points(), layer.lat_grid_points())?;
+        let mut drawable = Drawable::create_empty(layer.grid.lon_grid_points, layer.grid.lat_grid_points)?;
 
-        for i in 0..layer.lat_grid_points() {
-            for j in 0..layer.lon_grid_points() {
-                let idx = i * layer.lon_grid_points() + j;
+        for i in 0..layer.grid.lat_grid_points {
+            for j in 0..layer.grid.lon_grid_points {
+                let idx = i * layer.grid.lon_grid_points + j;
                 let value = layer.get_value_by_index(idx as usize);
 
                 if value != CloudCoverLayer::MISSING_VALUE {
                     let color_value = (value  * 255.0).floor() as u8;
                     let color = [color_value, color_value, color_value, 255]; // TODO
 
-                    drawable.draw_point(j, layer.lat_grid_points() - i - 1, color);
+                    drawable.draw_point(j, layer.grid.lat_grid_points - i - 1, color);
                 }
             }
         }
@@ -50,6 +50,7 @@ impl CloudCoverChartRenderer {
                     drawable.draw_point(j, i, color);
                 }
             }
+            break;
         }
 
         return Ok(drawable);
