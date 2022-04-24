@@ -50,7 +50,6 @@ impl CloudCoverChartRenderer {
                     drawable.draw_point(j, i, color);
                 }
             }
-            break;
         }
 
         return Ok(drawable);
