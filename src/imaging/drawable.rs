@@ -11,7 +11,7 @@ pub struct Drawable {
 
 
 impl Drawable {
-    const INIT_COLOR_VALUE: u8 = 50;
+    const INIT_COLOR_VALUE: u8 = 0;
 
 
     pub fn create_with_data(width: u32, height: u32, px_rows: Vec<Vec<[u8; 4]>>) -> Result<Drawable, Grib2Error> {

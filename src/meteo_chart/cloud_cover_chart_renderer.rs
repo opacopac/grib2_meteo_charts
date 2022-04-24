@@ -20,8 +20,7 @@ impl CloudCoverChartRenderer {
                 let value = layer.get_value_by_index(idx as usize);
 
                 if value != CloudCoverLayer::MISSING_VALUE {
-                    let color_value = (value  * 255.0).floor() as u8;
-                    let color = [color_value, color_value, color_value, 255]; // TODO
+                    let color = CloudCoverChartRenderer::get_color(value);
 
                     drawable.draw_point(j, layer.grid.lat_grid_points - i - 1, color);
                 }
@@ -48,8 +47,7 @@ impl CloudCoverChartRenderer {
                 let value = layer.get_value_by_lat_lon(&LatLon::new(lat, lon));
 
                 if value != CloudCoverLayer::MISSING_VALUE {
-                    let color_value = (value  * 255.0).floor() as u8;
-                    let color = [color_value, color_value, color_value, 255]; // TODO
+                    let color = CloudCoverChartRenderer::get_color(value);
 
                     drawable.draw_point(j, i, color);
                 }
@@ -87,6 +85,13 @@ impl CloudCoverChartRenderer {
         }
 
         Ok(())
+    }
+
+
+    fn get_color(value: f32) -> [u8; 4] {
+        let u8_value = (value  * 255.0).floor() as u8;
+
+        return [255, 255, 255, u8_value]; // TODO
     }
 
 
