@@ -2,7 +2,9 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_grid::LatLonGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
+use crate::grib2::section0::discipline::Discipline;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
+use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate::GridPointDataSimplePacking;
 
 pub struct DwdCloudCoverLayer {
@@ -17,6 +19,19 @@ impl DwdCloudCoverLayer {
     pub fn new(
         document: Grib2Document
     ) -> Result<DwdCloudCoverLayer, Grib2Error> {
+        if document.section0.discipline != Discipline::Meteorological {
+            return Err(Grib2Error::InvalidData("invalid discipline".to_string()));
+        }
+
+        match &document.section4.product_definition_template {
+            ProductDefinitionTemplate::Template4_0(tpl) => {
+                if tpl.parameter_category != 6 {
+                    return Err(Grib2Error::InvalidData("invalid parameter category".to_string()));
+                }
+            },
+            _ => return Err(Grib2Error::InvalidData("invalid product definition template".to_string()))
+        }
+
         let data_points = DwdCloudCoverLayer::calculate_data_points(&document)?;
         let grid= DwdCloudCoverLayer::get_grid(&document)?;
 

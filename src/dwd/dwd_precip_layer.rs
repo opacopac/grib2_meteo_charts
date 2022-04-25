@@ -4,28 +4,38 @@ use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section0::discipline::Discipline;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
+use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate::GridPointDataSimplePacking;
 
-pub struct PrecipLayer {
+pub struct DwdPrecipLayer {
     data_points: Vec<f32>,
     pub grid: LatLonGrid
 }
 
 
-impl PrecipLayer {
+impl DwdPrecipLayer {
     pub const MISSING_VALUE: f32 = -1.0; // TODO
 
     pub fn new(
         document: Grib2Document
-    ) -> Result<PrecipLayer, Grib2Error> {
+    ) -> Result<DwdPrecipLayer, Grib2Error> {
         if document.section0.discipline != Discipline::Meteorological {
-            return Err(Grib2Error::InvalidData("MEEP".to_string())); // TODO
+            return Err(Grib2Error::InvalidData("invalid discipline".to_string()));
         }
 
-        let data_points = PrecipLayer::calculate_data_points(&document)?;
-        let grid= PrecipLayer::get_grid(&document)?;
+        match &document.section4.product_definition_template {
+            ProductDefinitionTemplate::Template4_0(tpl) => {
+                if tpl.parameter_category != 1 {
+                    return Err(Grib2Error::InvalidData("invalid parameter category".to_string()));
+                }
+            },
+            _ => return Err(Grib2Error::InvalidData("invalid product definition template".to_string()))
+        }
 
-        let ccl = PrecipLayer {
+        let data_points = DwdPrecipLayer::calculate_data_points(&document)?;
+        let grid= DwdPrecipLayer::get_grid(&document)?;
+
+        let ccl = DwdPrecipLayer {
             data_points,
             grid
         };
@@ -36,7 +46,7 @@ impl PrecipLayer {
 
     pub fn get_value_by_index(&self, index: usize) -> f32 {
         return if index >= self.data_points.len() {
-            PrecipLayer::MISSING_VALUE
+            DwdPrecipLayer::MISSING_VALUE
         } else {
             self.data_points[index]
         }
@@ -92,7 +102,7 @@ impl PrecipLayer {
                 data_points.push(data_value);
                 j += 1;
             } else {
-                data_points.push(PrecipLayer::MISSING_VALUE);
+                data_points.push(DwdPrecipLayer::MISSING_VALUE);
             }
         }
 
