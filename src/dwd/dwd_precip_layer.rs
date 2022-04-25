@@ -1,3 +1,4 @@
+use crate::dwd::discipline_checker::DisciplineChecker;
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_grid::LatLonGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
@@ -5,7 +6,6 @@ use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section0::discipline::Discipline;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
 use crate::grib2::section4::meteo_parameter_category::MeteoParameterCategory;
-use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate::GridPointDataSimplePacking;
 
 pub struct DwdPrecipLayer {
@@ -20,25 +20,11 @@ impl DwdPrecipLayer {
     pub fn new(
         document: Grib2Document
     ) -> Result<DwdPrecipLayer, Grib2Error> {
-        if document.section0.discipline != Discipline::Meteorological {
-            return Err(Grib2Error::InvalidData(
-                format!("invalid discipline '{:?}'", document.section0.discipline)
-            ));
-        }
-
-        match &document.section4.product_definition_template {
-            ProductDefinitionTemplate::Template4_0(tpl) => {
-                match &tpl.parameter_category {
-                    MeteoParameterCategory::Missing => {},
-                    _ => return Err(Grib2Error::InvalidData(
-                        format!("invalid parameter category '{:?}'", tpl.parameter_category)
-                    ))
-                }
-            },
-            _ => return Err(Grib2Error::InvalidData(
-                format!("invalid product definition template '{:?}'", document.section4.product_definition_template)
-            ))
-        }
+        DisciplineChecker::check(
+            &document,
+            Discipline::Meteorological,
+            MeteoParameterCategory::Moisture
+        )?;
 
         let data_points = DwdPrecipLayer::calculate_data_points(&document)?;
         let grid= DwdPrecipLayer::get_grid(&document)?;
