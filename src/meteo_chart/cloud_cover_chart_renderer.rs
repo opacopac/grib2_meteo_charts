@@ -2,7 +2,7 @@ use std::fs;
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
+use crate::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
 use crate::geo::lat_lon::LatLon;
 use crate::geo::map_tile_coord::MapTileCoord;
 use crate::grib2::common::grib2_error::Grib2Error;
@@ -11,7 +11,7 @@ use crate::imaging::drawable::Drawable;
 pub struct CloudCoverChartRenderer;
 
 impl CloudCoverChartRenderer {
-    pub fn create_single_chart(layer: &CloudCoverLayer) -> Result<Drawable, Grib2Error> {
+    pub fn create_single_chart(layer: &DwdCloudCoverLayer) -> Result<Drawable, Grib2Error> {
         let mut drawable = Drawable::create_empty(layer.grid.lon_grid_points, layer.grid.lat_grid_points)?;
 
         for i in 0..layer.grid.lat_grid_points {
@@ -19,7 +19,7 @@ impl CloudCoverChartRenderer {
                 let idx = i * layer.grid.lon_grid_points + j;
                 let value = layer.get_value_by_index(idx as usize);
 
-                if value != CloudCoverLayer::MISSING_VALUE {
+                if value != DwdCloudCoverLayer::MISSING_VALUE {
                     let color = CloudCoverChartRenderer::get_color(value);
 
                     drawable.draw_point(j, layer.grid.lat_grid_points - i - 1, color);
@@ -31,7 +31,7 @@ impl CloudCoverChartRenderer {
     }
 
 
-    pub fn create_single_tile(layer: &CloudCoverLayer, map_tile_coords: &MapTileCoord) -> Result<Drawable, Grib2Error> {
+    pub fn create_single_tile(layer: &DwdCloudCoverLayer, map_tile_coords: &MapTileCoord) -> Result<Drawable, Grib2Error> {
         let mut drawable = Drawable::create_empty(MapTileCoord::TILE_SIZE_PX, MapTileCoord::TILE_SIZE_PX)?;
 
         let start_pos = map_tile_coords.to_position();
@@ -46,7 +46,7 @@ impl CloudCoverChartRenderer {
                 let lon = start_pos.lon + j as f32 * lon_inc;
                 let value = layer.get_value_by_lat_lon(&LatLon::new(lat, lon));
 
-                if value != CloudCoverLayer::MISSING_VALUE {
+                if value != DwdCloudCoverLayer::MISSING_VALUE {
                     let color = CloudCoverChartRenderer::get_color(value);
 
                     drawable.draw_point(j, i, color);
@@ -59,7 +59,7 @@ impl CloudCoverChartRenderer {
 
 
     pub fn create_all_tiles(
-        layer: &CloudCoverLayer,
+        layer: &DwdCloudCoverLayer,
         zoom_range: (u32, u32),
         base_path: &str
     ) -> Result<(), Grib2Error> {

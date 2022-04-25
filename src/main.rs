@@ -1,7 +1,7 @@
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-use meteo_grib2_renderer::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
+use meteo_grib2_renderer::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
 use meteo_grib2_renderer::geo::map_tile_coord::MapTileCoord;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::meteo_chart::cloud_cover_chart_renderer::CloudCoverChartRenderer;
@@ -26,7 +26,7 @@ fn create_series() {
         //println!("{}", file);
 
         let doc = Grib2DocumentReader::read_file(&file).unwrap();
-        let ccl = CloudCoverLayer::new(doc).unwrap();
+        let ccl = DwdCloudCoverLayer::new(doc).unwrap();
         let dir = &format!("./{}/", &nr);
         CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 7), dir);
     }
@@ -40,7 +40,7 @@ fn create_img() {
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
-    let ccl = CloudCoverLayer::new(doc).unwrap();
+    let ccl = DwdCloudCoverLayer::new(doc).unwrap();
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
@@ -61,7 +61,7 @@ fn create_map_tile() {
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
-    let ccl = CloudCoverLayer::new(doc).unwrap();
+    let ccl = DwdCloudCoverLayer::new(doc).unwrap();
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 

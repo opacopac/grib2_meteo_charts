@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
+use meteo_grib2_renderer::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
 use meteo_grib2_renderer::grib2::common::grib2_error::Grib2Error;
 use meteo_grib2_renderer::grib2::document::grib2_document::Grib2Document;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
@@ -21,9 +21,9 @@ pub fn read_test_document() -> Grib2Document {
 }
 
 
-pub fn read_test_cloud_cover_layer() -> CloudCoverLayer {
+pub fn read_test_cloud_cover_layer() -> DwdCloudCoverLayer {
     let doc = read_test_document();
-    let ccl = CloudCoverLayer::new(doc).unwrap();
+    let ccl = DwdCloudCoverLayer::new(doc).unwrap();
 
     return ccl;
 }

@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::dwd::cloud_cover::cloud_cover_layer::CloudCoverLayer;
+use meteo_grib2_renderer::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 
 use crate::read_test_cloud_cover_layer;
@@ -34,7 +34,7 @@ fn it_returns_the_value_of_data_points_by_index() {
     let layer = read_test_cloud_cover_layer();
 
     let result1 = layer.get_value_by_index(0);
-    assert_eq!(CloudCoverLayer::MISSING_VALUE, result1);
+    assert_eq!(DwdCloudCoverLayer::MISSING_VALUE, result1);
 
     let result2 = layer.get_value_by_index(208);
     assert_eq!(0.5387573, result2);
@@ -124,11 +124,11 @@ fn it_returns_the_value_of_data_points_by_lat_lon() {
 
     // first point value
     let result1 = layer.get_value_by_lat_lon(&LatLon::new(43.18, 356.06));
-    assert_eq!(CloudCoverLayer::MISSING_VALUE, result1);
+    assert_eq!(DwdCloudCoverLayer::MISSING_VALUE, result1);
 
     // last point value
     let result2 = layer.get_value_by_lat_lon(&LatLon::new(58.08, 20.34));
-    assert_eq!(CloudCoverLayer::MISSING_VALUE, result2);
+    assert_eq!(DwdCloudCoverLayer::MISSING_VALUE, result2);
 
     // middle point value
     let result3 = layer.get_value_by_lat_lon(&LatLon::new(43.18, 0.22));
