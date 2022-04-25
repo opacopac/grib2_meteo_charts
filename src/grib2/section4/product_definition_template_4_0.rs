@@ -1,10 +1,11 @@
 use derive_more::Constructor;
 
 use crate::grib2::common::scale_factor_value::ScaleFactorValue;
+use crate::grib2::section4::meteo_parameter_category::MeteoParameterCategory;
 
 #[derive(Debug, Constructor)]
 pub struct ProductDefinitionTemplate4_0 {
-    pub parameter_category: u8,
+    pub parameter_category: MeteoParameterCategory,
     pub parameter_number: u8,
     pub generating_process_type: u8,
     pub generating_process_identifier: u8,
