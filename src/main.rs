@@ -1,8 +1,6 @@
-use std::thread::sleep;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use meteo_grib2_renderer::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
-use meteo_grib2_renderer::geo::map_tile_coord::MapTileCoord;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::meteo_chart::cloud_cover_chart_renderer::CloudCoverChartRenderer;
 
@@ -10,8 +8,8 @@ const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_20220
 //const CLCT_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
 
 fn main() {
-    //create_img();
-    //create_map_tile();
+    create_img();
+    create_map_tile();
     create_series();
 }
 
@@ -28,7 +26,7 @@ fn create_series() {
         let doc = Grib2DocumentReader::read_file(&file).unwrap();
         let ccl = DwdCloudCoverLayer::new(doc).unwrap();
         let dir = &format!("./{}/", &nr);
-        CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 7), dir);
+        let _result = CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 7), dir);
     }
 }
 
@@ -66,13 +64,13 @@ fn create_map_tile() {
     println!("create ccl {}", elapsed.as_millis());
 
     //let map_tile_coord = MapTileCoord::new(1070, 718, 11);
-    let map_tile_coord = MapTileCoord::new(535, 359, 10);
+    //let map_tile_coord = MapTileCoord::new(535, 359, 10);
     //let map_tile_coord = MapTileCoord::new(33, 22, 6);
     //let map_tile_coord = MapTileCoord::new(0, 0, 0);
     //let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
     //img.safe_image("CCL_TILE.png").unwrap();
 
-    CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 7), "./007/");
+    let _result = CloudCoverChartRenderer::create_all_tiles(&ccl, (0, 7), "./007/");
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 

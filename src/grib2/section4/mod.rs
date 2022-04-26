@@ -4,3 +4,5 @@ pub mod product_definition_template;
 pub mod product_definition_template_4_0;
 pub mod section4_template_4_0_reader;
 pub mod meteo_parameter_category;
+pub mod product_definition_template_4_8;
+pub mod section4_template_4_8_reader;

@@ -36,13 +36,16 @@ impl Section4 {
 
 #[cfg(test)]
 mod tests {
+    use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
     use crate::grib2::section4::section4::Section4;
 
     #[test]
     fn it_detects_an_incorrect_section_number() {
         let result = Section4::new(
             0,
-            0
+            0,
+            0,
+            ProductDefinitionTemplate::Missing
         );
 
         assert!(result.is_err());

@@ -40,7 +40,6 @@ fn it_reads_the_correct_product_definition_template() {
 
     match result {
         ProductDefinitionTemplate::Template4_0(_tpl) => {},
-        ProductDefinitionTemplate::Missing => panic!("wrong product definition template: 255"),
-        ProductDefinitionTemplate::Unknown(nr) => panic!("wrong product definition template: {}", nr)
+        _ => panic!("wrong product definition template: {:?}", result),
     };
 }

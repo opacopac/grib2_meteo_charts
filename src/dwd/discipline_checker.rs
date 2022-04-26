@@ -21,8 +21,14 @@ impl DisciplineChecker {
 
         match &document.section4.product_definition_template {
             ProductDefinitionTemplate::Template4_0(tpl) => {
-                if let MeteoParameterCategory::Cloud = expected_parameter_category {
-                } else {
+                if tpl.parameter_category != expected_parameter_category {
+                    return Err(Grib2Error::InvalidData(
+                        format!("invalid parameter category '{:?}'", tpl.parameter_category)
+                    ));
+                }
+            },
+            ProductDefinitionTemplate::Template4_8(tpl) => {
+                if tpl.parameter_category != expected_parameter_category {
                     return Err(Grib2Error::InvalidData(
                         format!("invalid parameter category '{:?}'", tpl.parameter_category)
                     ));

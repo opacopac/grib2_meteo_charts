@@ -49,7 +49,7 @@ impl Section4Template4_0Reader {
     }
 
 
-    fn read_parameter_category(reader: &mut BufReader<File>) -> Result<MeteoParameterCategory, Grib2Error> {
+    pub fn read_parameter_category(reader: &mut BufReader<File>) -> Result<MeteoParameterCategory, Grib2Error> {
         let cat_nr = reader.read_u8()?;
         let meteo_parameter_category = match cat_nr {
             1 => MeteoParameterCategory::Moisture,
