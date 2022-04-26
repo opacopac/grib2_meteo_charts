@@ -1,6 +1,5 @@
 use crate::dwd::discipline_checker::DisciplineChecker;
 use crate::dwd::value_grid::ValueGrid;
-use crate::geo::lat_lon::LatLon;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section0::discipline::Discipline;
@@ -26,19 +25,9 @@ impl DwdCloudCoverLayer {
     }
 
 
-    pub fn get_value_by_index(&self, index: usize) -> f32 {
-        return self.value_grid.get_value_by_index(index);
+    pub fn color_by_value(value: f32) -> [u8; 4] {
+        let u8_value = (value  * 255.0).floor() as u8;
+
+        return [255, 255, 255, u8_value]; // TODO
     }
-
-
-    pub fn get_index_by_lat_lon(&self, pos: &LatLon) -> usize {
-        return self.value_grid.get_index_by_lat_lon(pos);
-    }
-
-
-    pub fn get_value_by_lat_lon(&self, pos: &LatLon) -> f32 {
-        return self.value_grid.get_value_by_lat_lon(pos);
-    }
-
-
 }

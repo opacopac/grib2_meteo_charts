@@ -9,30 +9,14 @@ use crate::geo::map_tile_coord::MapTileCoord;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
-pub struct ValueGridChartRenderer;
+pub struct MapTileRenderer;
 
-impl ValueGridChartRenderer {
-    pub fn create_single_chart(value_grid: &ValueGrid) -> Result<Drawable, Grib2Error> {
-        let mut drawable = Drawable::create_empty(value_grid.grid.lon_grid_points, value_grid.grid.lat_grid_points)?;
-
-        for i in 0..value_grid.grid.lat_grid_points {
-            for j in 0..value_grid.grid.lon_grid_points {
-                let idx = i * value_grid.grid.lon_grid_points + j;
-                let value = value_grid.get_value_by_index(idx as usize);
-
-                if value != ValueGrid::MISSING_VALUE {
-                    let color = Self::get_color(value);
-
-                    drawable.draw_point(j, value_grid.grid.lat_grid_points - i - 1, color);
-                }
-            }
-        }
-
-        return Ok(drawable);
-    }
-
-
-    pub fn create_single_tile(value_grid: &ValueGrid, map_tile_coords: &MapTileCoord) -> Result<Drawable, Grib2Error> {
+impl MapTileRenderer {
+    pub fn create_single_tile(
+        value_grid: &ValueGrid,
+        map_tile_coords: &MapTileCoord,
+        color_fn: fn(f32) -> [u8; 4]
+    ) -> Result<Drawable, Grib2Error> {
         let mut drawable = Drawable::create_empty(MapTileCoord::TILE_SIZE_PX, MapTileCoord::TILE_SIZE_PX)?;
 
         let start_pos = map_tile_coords.to_position();
@@ -48,7 +32,7 @@ impl ValueGridChartRenderer {
                 let value = value_grid.get_value_by_lat_lon(&LatLon::new(lat, lon));
 
                 if value != ValueGrid::MISSING_VALUE {
-                    let color = Self::get_color(value);
+                    let color = color_fn(value);
 
                     drawable.draw_point(j, i, color);
                 }
@@ -62,7 +46,8 @@ impl ValueGridChartRenderer {
     pub fn create_all_tiles(
         value_grid: &ValueGrid,
         zoom_range: (u32, u32),
-        base_path: &str
+        base_path: &str,
+        color_fn: fn(f32) -> [u8; 4]
     ) -> Result<(), Grib2Error> {
         let min_pos = value_grid.grid.get_min_pos();
         let max_pos = value_grid.grid.get_max_pos();
@@ -79,20 +64,13 @@ impl ValueGridChartRenderer {
                 (y_range.0..=y_range.1).into_par_iter().for_each(|y| {
                     println!("rendering tile x: {}, y: {}, z: {}", x, y, zoom);
                     let map_tile_coords = &MapTileCoord::new(x, y, zoom);
-                    let tile = Self::create_single_tile(value_grid, map_tile_coords).unwrap(); // TODO
+                    let tile = Self::create_single_tile(value_grid, map_tile_coords, color_fn).unwrap(); // TODO
                     Self::save_tile(&tile, zoom, x, y, base_path);
                 })
             }
         }
 
         Ok(())
-    }
-
-
-    fn get_color(value: f32) -> [u8; 4] {
-        let u8_value = (value  * 255.0).floor() as u8;
-
-        return [255, 255, 255, u8_value]; // TODO
     }
 
 

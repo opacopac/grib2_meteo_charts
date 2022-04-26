@@ -4,8 +4,10 @@
 use std::time::Instant;
 
 use meteo_grib2_renderer::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
+use meteo_grib2_renderer::dwd::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::meteo_chart::cloud_cover_chart_renderer::ValueGridChartRenderer;
+use meteo_grib2_renderer::meteo_chart::map_tile_renderer::MapTileRenderer;
+use meteo_grib2_renderer::meteo_chart::single_chart_renderer::SingleChartRenderer;
 
 const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042415_007_2d_clct_mod.grib2";
 const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
@@ -29,7 +31,12 @@ fn create_series() {
         let doc = Grib2DocumentReader::read_file(&file).unwrap();
         let ccl = DwdCloudCoverLayer::from_grib2(doc).unwrap();
         let dir = &format!("./{}/", &nr);
-        let _result = ValueGridChartRenderer::create_all_tiles(&ccl.value_grid, (0, 7), dir);
+        let _result = MapTileRenderer::create_all_tiles(
+            &ccl.value_grid,
+            (0, 7),
+            dir,
+            DwdCloudCoverLayer::color_by_value
+        );
     }
 }
 
@@ -45,7 +52,10 @@ fn create_clct_img() {
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    let img = ValueGridChartRenderer::create_single_chart(&ccl.value_grid).unwrap();
+    let img = SingleChartRenderer::create(
+        &ccl.value_grid,
+        DwdCloudCoverLayer::color_by_value
+    ).unwrap();
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 
@@ -58,7 +68,10 @@ fn create_clct_img() {
 fn create_precip_img() {
     let doc = Grib2DocumentReader::read_file(PRECIP_TEST_FILE).unwrap();
     let layer = DwdCloudCoverLayer::from_grib2(doc).unwrap();
-    let img = ValueGridChartRenderer::create_single_chart(&layer.value_grid).unwrap();
+    let img = SingleChartRenderer::create(
+        &layer.value_grid,
+        DwdPrecipLayer::color_by_value
+    ).unwrap();
     img.safe_image("PRECIP.png").unwrap();
 }
 
@@ -81,7 +94,12 @@ fn create_map_tile() {
     //let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
     //img.safe_image("CCL_TILE.png").unwrap();
 
-    let _result = ValueGridChartRenderer::create_all_tiles(&ccl.value_grid, (0, 7), "./007/");
+    let _result = MapTileRenderer::create_all_tiles(
+        &ccl.value_grid,
+        (0, 7),
+        "./007/",
+        DwdCloudCoverLayer::color_by_value
+    );
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 

@@ -1,1 +1,2 @@
-pub mod cloud_cover_chart_renderer;
+pub mod map_tile_renderer;
+pub mod single_chart_renderer;
