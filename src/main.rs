@@ -13,9 +13,10 @@ const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_20220
 const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
 
 fn main() {
-    create_clct_img();
+    create_precip_img();
+    /*create_clct_img();
     create_map_tile();
-    create_series();
+    create_series();*/
 }
 
 
@@ -67,7 +68,7 @@ fn create_clct_img() {
 
 fn create_precip_img() {
     let doc = Grib2DocumentReader::read_file(PRECIP_TEST_FILE).unwrap();
-    let layer = DwdCloudCoverLayer::from_grib2(doc).unwrap();
+    let layer = DwdPrecipLayer::from_grib2(doc).unwrap();
     let img = SingleChartRenderer::create(
         &layer.value_grid,
         DwdPrecipLayer::color_by_value
