@@ -1,6 +1,6 @@
-use derive_more::Constructor;
+use derive_new::new;
 
-#[derive(Debug, Constructor)]
+#[derive(Debug, new)]
 pub struct ScanningModeFlags {
     pub scan_direction_first_row_i_is_positive: bool,
     pub scan_direction_first_row_j_is_negative: bool,

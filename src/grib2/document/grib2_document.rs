@@ -1,4 +1,4 @@
-use derive_more::Constructor;
+use derive_new::new;
 
 use crate::grib2::section0::section0::Section0;
 use crate::grib2::section1::section1::Section1;
@@ -10,7 +10,7 @@ use crate::grib2::section6::section6::Section6;
 use crate::grib2::section7::section7::Section7;
 use crate::grib2::section8::section8::Section8;
 
-#[derive(Constructor)]
+#[derive(new)]
 pub struct Grib2Document {
     pub section0: Section0,
     pub section1: Section1,

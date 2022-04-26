@@ -1,9 +1,9 @@
-use derive_more::Constructor;
+use derive_new::new;
 use min_max::{max, min};
 
 use crate::geo::lat_lon::LatLon;
 
-#[derive(Debug, Constructor)]
+#[derive(Debug, new)]
 pub struct LatLonGrid {
     pub start_pos: LatLon,
     pub end_pos: LatLon,

@@ -1,6 +1,6 @@
-use derive_more::Constructor;
+use derive_new::new;
 
-#[derive(Debug, Constructor)]
+#[derive(Debug, new)]
 pub struct ResolutionAndComponentFlags {
     pub i_direction_increments_not_given: bool,
     pub j_direction_increments_not_given: bool,

@@ -1,11 +1,11 @@
-use derive_more::Constructor;
+use derive_new::new;
 
 use crate::grib2::common::scale_factor_value::ScaleFactorValue;
 use crate::grib2::section3::resolution_and_component_flags::ResolutionAndComponentFlags;
 use crate::grib2::section3::scanning_mode_flags::ScanningModeFlags;
 use crate::grib2::section3::shape_of_earth::ShapeOfEarth;
 
-#[derive(Debug, Constructor)]
+#[derive(Debug, new)]
 pub struct GridDefinitionTemplate3_0 {
     pub shape_of_earth: ShapeOfEarth,
     pub spherical_earth_radius: ScaleFactorValue,

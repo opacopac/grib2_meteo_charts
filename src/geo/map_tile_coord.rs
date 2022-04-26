@@ -1,10 +1,10 @@
 use std::f32::consts::PI;
 
-use derive_more::Constructor;
+use derive_new::new;
 
 use crate::geo::lat_lon::LatLon;
 
-#[derive(Debug, Constructor)]
+#[derive(Debug, new)]
 pub struct MapTileCoord {
     pub x: u32,
     pub y: u32,
