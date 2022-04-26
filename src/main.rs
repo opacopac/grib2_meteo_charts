@@ -9,14 +9,14 @@ use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentR
 use meteo_grib2_renderer::meteo_chart::map_tile_renderer::MapTileRenderer;
 use meteo_grib2_renderer::meteo_chart::single_chart_renderer::SingleChartRenderer;
 
-const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042415_007_2d_clct_mod.grib2";
-const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
+const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
+const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_tot_prec.grib2";
 
 fn main() {
     create_precip_img();
-    /*create_clct_img();
-    create_map_tile();
-    create_series();*/
+    create_clct_img();
+    //create_map_tile();
+    //create_series();
 }
 
 

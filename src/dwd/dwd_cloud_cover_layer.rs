@@ -28,6 +28,6 @@ impl DwdCloudCoverLayer {
     pub fn color_by_value(value: f32) -> [u8; 4] {
         let u8_value = (value  * 255.0).floor() as u8;
 
-        return [255, 255, 255, u8_value]; // TODO
+        return [127, 127, 127, u8_value]; // TODO
     }
 }

@@ -30,6 +30,6 @@ impl DwdPrecipLayer {
     pub fn color_by_value(value: f32) -> [u8; 4] {
         let u8_value = (value  * 255.0).floor() as u8;
 
-        return [127, 127, 255, u8_value]; // TODO
+        return [0, 127, 255, u8_value]; // TODO
     }
 }
