@@ -28,6 +28,7 @@ impl Section4Template4_0Reader {
         let cat_nr = reader.read_u8()?;
         let meteo_parameter_category = match cat_nr {
             1 => MeteoParameterCategory::Moisture,
+            2 => MeteoParameterCategory::Momentum,
             6 => MeteoParameterCategory::Cloud,
             255 => MeteoParameterCategory::Missing,
             _ => MeteoParameterCategory::Unknown(cat_nr)

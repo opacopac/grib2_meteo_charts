@@ -19,26 +19,28 @@ impl DisciplineChecker {
             ));
         }
 
+        let parameter_cat_num = Self::get_parameter_category_number(document)?;
+        if parameter_cat_num.0 != expected_parameter_category {
+            return Err(Grib2Error::InvalidData(
+                format!("invalid parameter category '{:?}'", parameter_cat_num.0)
+            ));
+        } else {
+            return Ok(());
+        }
+    }
+
+
+    pub fn get_parameter_category_number(document: &Grib2Document) -> Result<(MeteoParameterCategory, u8), Grib2Error> {
         match &document.section4.product_definition_template {
             ProductDefinitionTemplate::Template4_0(tpl) => {
-                if tpl.parameter_category != expected_parameter_category {
-                    return Err(Grib2Error::InvalidData(
-                        format!("invalid parameter category '{:?}'", tpl.parameter_category)
-                    ));
-                }
+                return Ok((tpl.parameter_category.clone(), tpl.parameter_number));
             },
             ProductDefinitionTemplate::Template4_8(tpl) => {
-                if tpl.parameter_category != expected_parameter_category {
-                    return Err(Grib2Error::InvalidData(
-                        format!("invalid parameter category '{:?}'", tpl.parameter_category)
-                    ));
-                }
+                return Ok((tpl.parameter_category.clone(), tpl.parameter_number));
             },
             _ => return Err(Grib2Error::InvalidData(
                 format!("invalid product definition template '{:?}'", document.section4.product_definition_template)
             ))
         }
-
-        return Ok(());
     }
 }
