@@ -27,12 +27,11 @@ impl ValueGrid {
     }
 
 
-    pub fn get_value_by_index(&self, index: usize) -> f32 {
-        return if index >= self.data_points.len() {
-            ValueGrid::MISSING_VALUE
-        } else {
-            self.data_points[index]
-        }
+    pub fn get_value_by_lat_lon(&self, pos: &LatLon) -> f32 {
+        let idx = self.get_index_by_lat_lon(pos);
+        let value = self.get_value_by_index(idx);
+
+        return value;
     }
 
 
@@ -54,11 +53,12 @@ impl ValueGrid {
     }
 
 
-    pub fn get_value_by_lat_lon(&self, pos: &LatLon) -> f32 {
-        let idx = self.get_index_by_lat_lon(pos);
-        let value = self.get_value_by_index(idx);
-
-        return value;
+    pub fn get_value_by_index(&self, index: usize) -> f32 {
+        return if index >= self.data_points.len() {
+            ValueGrid::MISSING_VALUE
+        } else {
+            self.data_points[index]
+        }
     }
 
 
