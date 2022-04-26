@@ -23,7 +23,7 @@ pub fn read_test_document() -> Grib2Document {
 
 pub fn read_test_cloud_cover_layer() -> DwdCloudCoverLayer {
     let doc = read_test_document();
-    let ccl = DwdCloudCoverLayer::new(doc).unwrap();
+    let ccl = DwdCloudCoverLayer::from_grib2(doc).unwrap();
 
     return ccl;
 }

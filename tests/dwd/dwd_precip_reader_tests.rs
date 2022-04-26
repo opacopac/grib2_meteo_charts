@@ -10,7 +10,7 @@ pub const PREC_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_s
 fn it_successfully_reads_a_precip_test_file() {
     let doc = Grib2DocumentReader::read_file(PREC_TEST_FILE).unwrap();
 
-    let layer = DwdPrecipLayer::new(doc);
+    let layer = DwdPrecipLayer::from_grib2(doc);
 
     assert!(layer.is_ok());
 }
@@ -20,7 +20,7 @@ fn it_successfully_reads_a_precip_test_file() {
 fn it_returns_an_error_for_a_non_precip_test_file() {
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
 
-    let layer = DwdPrecipLayer::new(doc);
+    let layer = DwdPrecipLayer::from_grib2(doc);
 
     assert!(layer.is_err());
 }

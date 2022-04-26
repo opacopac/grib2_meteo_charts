@@ -1,28 +1,29 @@
 use std::fs;
+
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::dwd::dwd_cloud_cover_layer::DwdCloudCoverLayer;
+use crate::dwd::value_grid::ValueGrid;
 use crate::geo::lat_lon::LatLon;
 use crate::geo::map_tile_coord::MapTileCoord;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
-pub struct CloudCoverChartRenderer;
+pub struct ValueGridChartRenderer;
 
-impl CloudCoverChartRenderer {
-    pub fn create_single_chart(layer: &DwdCloudCoverLayer) -> Result<Drawable, Grib2Error> {
-        let mut drawable = Drawable::create_empty(layer.grid.lon_grid_points, layer.grid.lat_grid_points)?;
+impl ValueGridChartRenderer {
+    pub fn create_single_chart(value_grid: &ValueGrid) -> Result<Drawable, Grib2Error> {
+        let mut drawable = Drawable::create_empty(value_grid.grid.lon_grid_points, value_grid.grid.lat_grid_points)?;
 
-        for i in 0..layer.grid.lat_grid_points {
-            for j in 0..layer.grid.lon_grid_points {
-                let idx = i * layer.grid.lon_grid_points + j;
-                let value = layer.get_value_by_index(idx as usize);
+        for i in 0..value_grid.grid.lat_grid_points {
+            for j in 0..value_grid.grid.lon_grid_points {
+                let idx = i * value_grid.grid.lon_grid_points + j;
+                let value = value_grid.get_value_by_index(idx as usize);
 
-                if value != DwdCloudCoverLayer::MISSING_VALUE {
-                    let color = CloudCoverChartRenderer::get_color(value);
+                if value != ValueGrid::MISSING_VALUE {
+                    let color = Self::get_color(value);
 
-                    drawable.draw_point(j, layer.grid.lat_grid_points - i - 1, color);
+                    drawable.draw_point(j, value_grid.grid.lat_grid_points - i - 1, color);
                 }
             }
         }
@@ -31,7 +32,7 @@ impl CloudCoverChartRenderer {
     }
 
 
-    pub fn create_single_tile(layer: &DwdCloudCoverLayer, map_tile_coords: &MapTileCoord) -> Result<Drawable, Grib2Error> {
+    pub fn create_single_tile(value_grid: &ValueGrid, map_tile_coords: &MapTileCoord) -> Result<Drawable, Grib2Error> {
         let mut drawable = Drawable::create_empty(MapTileCoord::TILE_SIZE_PX, MapTileCoord::TILE_SIZE_PX)?;
 
         let start_pos = map_tile_coords.to_position();
@@ -44,10 +45,10 @@ impl CloudCoverChartRenderer {
             let lat = start_pos.lat + i as f32 * lat_inc;
             for j in 0..MapTileCoord::TILE_SIZE_PX {
                 let lon = start_pos.lon + j as f32 * lon_inc;
-                let value = layer.get_value_by_lat_lon(&LatLon::new(lat, lon));
+                let value = value_grid.get_value_by_lat_lon(&LatLon::new(lat, lon));
 
-                if value != DwdCloudCoverLayer::MISSING_VALUE {
-                    let color = CloudCoverChartRenderer::get_color(value);
+                if value != ValueGrid::MISSING_VALUE {
+                    let color = Self::get_color(value);
 
                     drawable.draw_point(j, i, color);
                 }
@@ -59,12 +60,12 @@ impl CloudCoverChartRenderer {
 
 
     pub fn create_all_tiles(
-        layer: &DwdCloudCoverLayer,
+        value_grid: &ValueGrid,
         zoom_range: (u32, u32),
         base_path: &str
     ) -> Result<(), Grib2Error> {
-        let min_pos = layer.grid.get_min_pos();
-        let max_pos = layer.grid.get_max_pos();
+        let min_pos = value_grid.grid.get_min_pos();
+        let max_pos = value_grid.grid.get_max_pos();
         let pos_tl = LatLon::new(min_pos.lat, max_pos.lon);
         let pos_br = LatLon::new(max_pos.lat, min_pos.lon);
 
@@ -78,8 +79,8 @@ impl CloudCoverChartRenderer {
                 (y_range.0..=y_range.1).into_par_iter().for_each(|y| {
                     println!("rendering tile x: {}, y: {}, z: {}", x, y, zoom);
                     let map_tile_coords = &MapTileCoord::new(x, y, zoom);
-                    let tile = CloudCoverChartRenderer::create_single_tile(layer, map_tile_coords).unwrap(); // TODO
-                    CloudCoverChartRenderer::save_tile(&tile, zoom, x, y, base_path);
+                    let tile = Self::create_single_tile(value_grid, map_tile_coords).unwrap(); // TODO
+                    Self::save_tile(&tile, zoom, x, y, base_path);
                 })
             }
         }
