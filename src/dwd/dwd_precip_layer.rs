@@ -22,6 +22,25 @@ impl DwdPrecipLayer {
             MeteoParameterCategory::Moisture
         )?;
 
+        println!("{}", document.section1.length);
+        println!("{}", document.section2.length);
+        println!("{}", document.section3.length);
+        println!("{}", document.section4.length);
+        println!("{}", document.section5.length);
+        println!("{}", document.section6.length);
+
+        println!("{}", document.section3.section_number);
+        println!("{}", document.section3.number_of_datapoints);
+        println!("{}", document.section5.section_number);
+        println!("{}", document.section5.data_points);
+        println!("{}", document.section6.section_number);
+        println!("{}", document.section6.bitmap_indicator);
+        println!("{}", document.section6.length);
+        println!("{}", document.section6.bitmap.len());
+        println!("{}", document.section7.section_number);
+        println!("{}", document.section7.data_points.len());
+        println!("{}", document.section7.length);
+
         let parameter_cat_num = DisciplineChecker::get_parameter_category_number(&document)?;
         let value_grid = ValueGrid::from_grib2(document)?;
         let layer = DwdPrecipLayer {

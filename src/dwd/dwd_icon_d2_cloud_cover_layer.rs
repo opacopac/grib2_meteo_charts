@@ -5,15 +5,15 @@ use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section0::discipline::Discipline;
 use crate::grib2::section4::meteo_parameter_category::MeteoParameterCategory;
 
-pub struct DwdCloudCoverLayer {
+pub struct DwdIconD2CloudCoverLayer {
     pub parameter_category: MeteoParameterCategory,
     pub parameter_number: u8,
     pub value_grid: ValueGrid
 }
 
 
-impl DwdCloudCoverLayer {
-    pub fn from_grib2(document: Grib2Document) -> Result<DwdCloudCoverLayer, Grib2Error> {
+impl DwdIconD2CloudCoverLayer {
+    pub fn from_grib2(document: Grib2Document) -> Result<DwdIconD2CloudCoverLayer, Grib2Error> {
         DisciplineChecker::check(
             &document,
             Discipline::Meteorological,
@@ -22,7 +22,7 @@ impl DwdCloudCoverLayer {
 
         let parameter_cat_num = DisciplineChecker::get_parameter_category_number(&document)?;
         let value_grid = ValueGrid::from_grib2(document)?;
-        let layer = DwdCloudCoverLayer {
+        let layer = DwdIconD2CloudCoverLayer {
             parameter_category: parameter_cat_num.0,
             parameter_number: parameter_cat_num.1,
             value_grid
