@@ -1,11 +1,11 @@
-use meteo_grib2_renderer::dwd::dwd_icon_d2_cloud_cover_layer::DwdIconD2CloudCoverLayer;
+use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD2TotalCloudCoverLayer;
 use meteo_grib2_renderer::grib2::common::grib2_error::Grib2Error;
 use meteo_grib2_renderer::grib2::document::grib2_document::Grib2Document;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 
 mod grib2;
-mod dwd;
-mod meteo_chart;
+mod meteo_dwd;
+mod chart;
 
 pub const DATA_DIR: &str = "./tests/data/";
 pub const CLCT_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
@@ -21,9 +21,9 @@ pub fn read_test_document() -> Grib2Document {
 }
 
 
-pub fn read_test_cloud_cover_layer() -> DwdIconD2CloudCoverLayer {
+pub fn read_test_cloud_cover_layer() -> DwdIconD2TotalCloudCoverLayer {
     let doc = read_test_document();
-    let ccl = DwdIconD2CloudCoverLayer::from_grib2(doc).unwrap();
+    let ccl = DwdIconD2TotalCloudCoverLayer::from_grib2(doc).unwrap();
 
     return ccl;
 }

@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::dwd::value_grid::ValueGrid;
+use meteo_grib2_renderer::meteo_dwd::value_grid::ValueGrid;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 
 use crate::read_test_cloud_cover_layer;

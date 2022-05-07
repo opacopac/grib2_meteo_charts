@@ -11,7 +11,8 @@ impl DisciplineChecker {
     pub fn check(
         document: &Grib2Document,
         expected_discipline: Discipline,
-        expected_parameter_category: MeteoParameterCategory
+        expected_parameter_category: MeteoParameterCategory,
+        expected_parameter_number: u8
     ) -> Result<(), Grib2Error> {
         if document.section0.discipline != expected_discipline {
             return Err(Grib2Error::InvalidData(
@@ -24,9 +25,14 @@ impl DisciplineChecker {
             return Err(Grib2Error::InvalidData(
                 format!("invalid parameter category '{:?}'", parameter_cat_num.0)
             ));
-        } else {
-            return Ok(());
         }
+        if parameter_cat_num.1 != expected_parameter_number {
+            return Err(Grib2Error::InvalidData(
+                format!("invalid parameter number '{:?}'", parameter_cat_num.1)
+            ));
+        }
+
+        return Ok(());
     }
 
 

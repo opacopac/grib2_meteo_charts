@@ -1,5 +1,6 @@
 pub mod grib2;
-pub mod dwd;
-pub mod meteo_chart;
+pub mod meteo_dwd;
+pub mod chart;
 pub mod imaging;
 pub mod geo;
+pub mod meteo;

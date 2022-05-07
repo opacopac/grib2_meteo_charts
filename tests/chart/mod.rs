@@ -1,1 +1,2 @@
 mod meteo_chart_renderer_tests;
+mod wind_chart_renderer_tests;

@@ -1,4 +1,4 @@
-use crate::dwd::value_grid::ValueGrid;
+use crate::meteo_dwd::value_grid::ValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
