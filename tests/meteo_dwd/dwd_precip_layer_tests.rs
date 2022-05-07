@@ -1,6 +1,5 @@
-use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::grib2::section4::meteo_parameter_category::MeteoParameterCategory;
+use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
 
 use crate::CLCT_TEST_FILE;
 
@@ -13,10 +12,6 @@ fn it_successfully_reads_a_precip_test_file() {
 
     let result = DwdPrecipLayer::from_grib2(doc);
     assert!(result.is_ok());
-
-    let layer = result.unwrap();
-    assert_eq!(MeteoParameterCategory::Moisture, layer.parameter_category);
-    assert_eq!(52, layer.parameter_number);
 }
 
 

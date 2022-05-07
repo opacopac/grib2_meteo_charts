@@ -4,6 +4,7 @@
 use std::time::Instant;
 
 use meteo_grib2_renderer::chart::map_tile_renderer::MapTileRenderer;
+use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::single_chart_renderer::SingleChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
@@ -19,10 +20,10 @@ const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_202
 const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
 
 fn main() {
-    //create_icon_d2_precip_img();
+    create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
-    create_icon_d2_wind_img();
+    //create_icon_d2_wind_img();
 
     //create_icon_d2_map_tile();
     //create_icon_d2_map_tile_series();
@@ -89,10 +90,7 @@ fn create_icon_eu_clct_img() {
 fn create_icon_d2_precip_img() {
     let doc = Grib2DocumentReader::read_file(PRECIP_TEST_FILE).unwrap();
     let layer = DwdPrecipLayer::from_grib2(doc).unwrap();
-    let img = SingleChartRenderer::create(
-        &layer.value_grid,
-        DwdPrecipLayer::color_by_value
-    ).unwrap();
+    let img = PrecipChartRenderer::render(&layer).unwrap();
     img.safe_image("PRECIP.png").unwrap();
 }
 
@@ -101,7 +99,7 @@ fn create_icon_d2_wind_img() {
     let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
     let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
     let layer = DwdWindLayer::from_grib2(doc_u, doc_v).unwrap();
-    let img = WindChartRenderer::render(layer).unwrap();
+    let img = WindChartRenderer::render(&layer).unwrap();
     img.safe_image("WIND.png").unwrap();
 }
 

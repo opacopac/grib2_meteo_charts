@@ -11,7 +11,7 @@ pub struct WindChartRenderer;
 impl WindChartRenderer {
     const MAX_VALUE_MPS: f32 = 20.0;
 
-    pub fn render(wind_layer: DwdWindLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render(wind_layer: &DwdWindLayer) -> Result<Drawable, Grib2Error> {
         let grid_points = wind_layer.get_latlon_grid_points();
         let mut drawable = Drawable::create_empty(grid_points.1, grid_points.0)?;
 
