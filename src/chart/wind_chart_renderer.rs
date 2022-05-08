@@ -16,6 +16,16 @@ impl WindChartRenderer {
         let grid_points = wind_layer.get_latlon_grid_points();
         let mut drawable = Drawable::create_empty(grid_points.1, grid_points.0)?;
 
+        Self::draw_color_bg(wind_layer, &mut drawable);
+        Self::draw_wind_arrows(wind_layer, &mut drawable);
+
+        return Ok(drawable);
+    }
+
+
+    fn draw_color_bg(wind_layer: &DwdWindLayer, drawable: &mut Drawable) {
+        let grid_points = wind_layer.get_latlon_grid_points();
+
         for i in 0..grid_points.0 {
             for j in 0..grid_points.1 {
                 let idx = i * grid_points.1 + j;
@@ -27,8 +37,20 @@ impl WindChartRenderer {
 
                     drawable.draw_point(j, grid_points.0 - i - 1, color);
                 }
+            }
+        }
+    }
 
-                if (i > Self::WIND_DIR_DIST_PX) && (j > Self::WIND_DIR_DIST_PX) && (i % Self::WIND_DIR_DIST_PX == 0) && (j % Self::WIND_DIR_DIST_PX == 0) {
+
+    fn draw_wind_arrows(wind_layer: &DwdWindLayer, drawable: &mut Drawable) {
+        let grid_points = wind_layer.get_latlon_grid_points();
+
+        for i in (0..grid_points.0).step_by(Self::WIND_DIR_DIST_PX as usize) {
+            for j in (0..grid_points.1).step_by(Self::WIND_DIR_DIST_PX as usize) {
+                let idx = i * grid_points.1 + j;
+                let value = wind_layer.get_wind_speed_m_per_s_by_index(idx as usize);
+
+                if value.0 != ValueGrid::MISSING_VALUE && value.1 != ValueGrid::MISSING_VALUE && i > 0 && j > 0 {
                     let x0 = j as i64;
                     let y0 = (grid_points.0 - i - 1) as i64;
                     let x1 = x0 + value.0 as i64;
@@ -37,8 +59,6 @@ impl WindChartRenderer {
                 }
             }
         }
-
-        return Ok(drawable);
     }
 
 
