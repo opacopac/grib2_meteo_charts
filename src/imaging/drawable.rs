@@ -68,6 +68,36 @@ impl Drawable {
     }
 
 
+    pub fn draw_line(&mut self, x0: i64, y0: i64, x1: i64, y1: i64, color: [u8; 4]) {
+        let mut x0 = x0;
+        let mut y0 = y0;
+        let dx = if x0 > x1 { x0 - x1 } else { x1 - x0 };
+        let dy = if y0 > y1 { y0 - y1 } else { y1 - y0 };
+        let sx = if x0 < x1 { 1 } else { -1 };
+        let sy = if y0 < y1 { 1 } else { -1 };
+        let mut err = if dx > dy { dx } else { -dy } / 2;
+        let mut err2;
+
+        loop {
+            self.draw_point(x0 as u32, y0 as u32, color);
+
+            if x0 == x1 && y0 == y1 {
+                break
+            };
+
+            err2 = 2 * err;
+            if err2 > -dx {
+                err -= dy;
+                x0 += sx;
+            }
+            if err2 < dy {
+                err += dx;
+                y0 += sy;
+            }
+        }
+    }
+
+
     pub fn safe_image(&self, filename: &str) -> Result<(), Grib2Error> {
         image::save_buffer(
             filename,

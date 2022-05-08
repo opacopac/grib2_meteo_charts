@@ -10,6 +10,7 @@ pub struct WindChartRenderer;
 
 impl WindChartRenderer {
     const MAX_VALUE_MPS: f32 = 20.0;
+    const WIND_DIR_DIST_PX: u32 = 25;
 
     pub fn render(wind_layer: &DwdWindLayer) -> Result<Drawable, Grib2Error> {
         let grid_points = wind_layer.get_latlon_grid_points();
@@ -25,6 +26,14 @@ impl WindChartRenderer {
                     let color = Self::color_fn(abs_value);
 
                     drawable.draw_point(j, grid_points.0 - i - 1, color);
+                }
+
+                if (i > Self::WIND_DIR_DIST_PX) && (j > Self::WIND_DIR_DIST_PX) && (i % Self::WIND_DIR_DIST_PX == 0) && (j % Self::WIND_DIR_DIST_PX == 0) {
+                    let x0 = j as i64;
+                    let y0 = (grid_points.0 - i - 1) as i64;
+                    let x1 = x0 + value.0 as i64;
+                    let y1 = y0 + value.1 as i64;
+                    drawable.draw_line(x0, y0, x1, y1, [255, 255, 255, 255]);
                 }
             }
         }

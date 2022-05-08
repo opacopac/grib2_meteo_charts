@@ -21,9 +21,9 @@ const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_202
 
 fn main() {
     //create_icon_d2_precip_img();
-    create_icon_d2_clct_img();
-    create_icon_eu_clct_img();
-    //create_icon_d2_wind_img();
+    //create_icon_d2_clct_img();
+    //create_icon_eu_clct_img();
+    create_icon_d2_wind_img();
 
     //create_icon_d2_map_tile();
     //create_icon_d2_map_tile_series();
