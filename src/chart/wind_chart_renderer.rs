@@ -33,10 +33,10 @@ impl WindChartRenderer {
         for i in 0..grid_points.0 {
             for j in 0..grid_points.1 {
                 let idx = i * grid_points.1 + j;
-                let value = wind_layer.get_wind_speed_m_per_s_by_index(idx as usize);
+                let value_e_n = wind_layer.get_wind_speed_east_north_m_per_s_by_index(idx as usize);
 
-                if value.0 != ValueGrid::MISSING_VALUE && value.1 != ValueGrid::MISSING_VALUE {
-                    let abs_value = (value.0 * value.0 + value.1 * value.1).sqrt();
+                if value_e_n.0 != ValueGrid::MISSING_VALUE && value_e_n.1 != ValueGrid::MISSING_VALUE {
+                    let abs_value = (value_e_n.0 * value_e_n.0 + value_e_n.1 * value_e_n.1).sqrt();
                     let color = Self::get_color(abs_value);
 
                     drawable.draw_point(j, grid_points.0 - i - 1, color);
@@ -60,18 +60,16 @@ impl WindChartRenderer {
         for i in (0..grid_points.0).step_by(Self::WIND_DIR_DIST_PX as usize) {
             for j in (0..grid_points.1).step_by(Self::WIND_DIR_DIST_PX as usize) {
                 let idx = i * grid_points.1 + j;
-                let value = wind_layer.get_wind_speed_m_per_s_by_index(idx as usize);
+                let (value_e, value_n) = wind_layer.get_wind_speed_east_north_m_per_s_by_index(idx as usize);
 
-                if value.0 != ValueGrid::MISSING_VALUE && value.1 != ValueGrid::MISSING_VALUE && i > 0 && j > 0 {
+                if value_e != ValueGrid::MISSING_VALUE && value_n != ValueGrid::MISSING_VALUE && i > 0 && j > 0 {
                     let x0 = j as u32;
                     let y0 = (grid_points.0 - i - 1) as u32;
-                    /*let x1 = x0 + value.0 as i64;
-                    let y1 = y0 + value.1 as i64;
-                    drawable.draw_line(x0, y0, x1, y1, [255, 255, 255, 255]);*/
-
-                    let value_kts = (value.0 * value.0 + value.1 * value.1).sqrt() * 1.94;
+                    let rot_rad = value_n.atan2(value_e);
+                    let value_kts = (value_e * value_e + value_n * value_n).sqrt() * 1.94;
                     let img = wind_arrow_service.get_arrow(value_kts)?;
-                    Self::draw_single_arrow(drawable, &img, x0, y0, 0.0);
+                    Self::draw_single_arrow(drawable, &img, x0, y0, rot_rad);
+                    //println!("x0: {}, y0: {}, value_e: {}, value_n: {}, rot_rad: {}, value_kts: {}", x0, y0, value_e, value_n, rot_rad, value_kts);
                 }
             }
         }
@@ -80,16 +78,21 @@ impl WindChartRenderer {
     }
 
 
-    fn draw_single_arrow(drawable: &mut Drawable, wind_arrow: &Image, x: u32, y: u32, rot: f32) {
+    fn draw_single_arrow(drawable: &mut Drawable, wind_arrow: &Image, x: u32, y: u32, rot_rad: f32) {
         if x + wind_arrow.width() >= drawable.width() || y + wind_arrow.height() >= drawable.height() {
             return;
         }
+
+        let i_offset = wind_arrow.width() as f32 / 2.0;
+        let j_offset = wind_arrow.height() as f32 / 2.0;
 
         for i in 0..wind_arrow.width() {
             for j in 0..wind_arrow.height() {
                 let px_color = wind_arrow.get_pixel_color(i, j);
                 if px_color[3] != 0 {
-                    drawable.draw_point(x + i, y + j, px_color);
+                    let i_rot = (x as f32 + (i as f32 - i_offset) * rot_rad.cos() + (j as f32 - j_offset) * rot_rad.sin()).round() as u32;
+                    let j_rot = (y as f32 - (i as f32 - i_offset) * rot_rad.sin() + (j as f32 - j_offset) * rot_rad.cos()).round() as u32;
+                    drawable.draw_point(i_rot, j_rot, px_color);
                 }
             }
         }
