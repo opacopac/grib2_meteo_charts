@@ -8,14 +8,14 @@ use crate::grib2::common::scale_factor_value_reader::ScaleFactorValueReader;
 use crate::grib2::section3::grid_definition_template_3_0::GridDefinitionTemplate3_0;
 use crate::grib2::section3::resolution_and_component_flags::ResolutionAndComponentFlags;
 use crate::grib2::section3::scanning_mode_flags::ScanningModeFlags;
-use crate::grib2::section3::shape_of_earth::ShapeOfEarth;
+use crate::grib2::section3::shape_of_earth_reader::ShapeOfEarthReader;
 
 pub struct Section3Template3_0Reader;
 
 
 impl Section3Template3_0Reader {
     pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<GridDefinitionTemplate3_0, Grib2Error> {
-        let shape_of_earth = Section3Template3_0Reader::read_shape_of_earth(reader)?;
+        let shape_of_earth = ShapeOfEarthReader::read(reader)?;
         let spherical_earth_radius = ScaleFactorValueReader::read(reader)?;
         let oblated_spheroid_earth_major_axis = ScaleFactorValueReader::read(reader)?;
         let oblated_spheroid_earth_minor_axis = ScaleFactorValueReader::read(reader)?;
@@ -49,18 +49,6 @@ impl Section3Template3_0Reader {
         );
 
         return Ok(tpl_3_0);
-    }
-
-
-    fn read_shape_of_earth<T: Read>(reader: &mut BufReader<T>) -> Result<ShapeOfEarth, Grib2Error> {
-        let value = reader.read_u8()?;
-        let shape_of_earth = match value {
-            6 => ShapeOfEarth::SphericalRadius6371229,
-            255 => ShapeOfEarth::Missing,
-            _ => ShapeOfEarth::Unknown(value)
-        };
-
-        return Ok(shape_of_earth);
     }
 
 
@@ -141,5 +129,24 @@ mod tests {
         assert_eq!(true, tpl30.scanning_mode_flags.even_rows_offset_in_i_direction);
         assert_eq!(false, tpl30.scanning_mode_flags.points_not_offset_in_j_direction);
         assert_eq!(true, tpl30.scanning_mode_flags.rows_have_ni_points_cols_have_nj_points);
+    }
+
+
+    #[test]
+    fn it_correctly_parses_a_template_3_101() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x00, 0x00, 0x00, 0x23, 0x03, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x06, 0x00,
+            0x00, 0x1A, 0x01, 0xA2, 0x7B, 0x8D, 0xE6, 0x18, 0xC4, 0x11, 0xE4, 0x82, 0x0A, 0xB5, 0xB0, 0x98,
+            0xC6, 0xA5, 0xC0
+        ]));
+
+        let result = Section3Template3_0Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let tpl30 = result.unwrap();
+        assert_eq!(ShapeOfEarth::SphericalRadius6371229, tpl30.shape_of_earth);
+        assert_eq!(255, tpl30.spherical_earth_radius.factor);
+        assert_eq!(4294967295, tpl30.spherical_earth_radius.value);
+        assert_eq!(255, tpl30.oblated_spheroid_earth_major_axis.factor);
     }
 }
