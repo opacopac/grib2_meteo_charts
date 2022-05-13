@@ -85,6 +85,7 @@ impl Section3Template3_0Reader {
 #[cfg(test)]
 mod tests {
     use std::io::{BufReader, Cursor};
+
     use crate::grib2::section3::section3_template_3_0_reader::Section3Template3_0Reader;
     use crate::grib2::section3::shape_of_earth::ShapeOfEarth;
 
@@ -129,24 +130,5 @@ mod tests {
         assert_eq!(true, tpl30.scanning_mode_flags.even_rows_offset_in_i_direction);
         assert_eq!(false, tpl30.scanning_mode_flags.points_not_offset_in_j_direction);
         assert_eq!(true, tpl30.scanning_mode_flags.rows_have_ni_points_cols_have_nj_points);
-    }
-
-
-    #[test]
-    fn it_correctly_parses_a_template_3_101() {
-        let mut reader = BufReader::new(Cursor::new([
-            0x00, 0x00, 0x00, 0x23, 0x03, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x06, 0x00,
-            0x00, 0x1A, 0x01, 0xA2, 0x7B, 0x8D, 0xE6, 0x18, 0xC4, 0x11, 0xE4, 0x82, 0x0A, 0xB5, 0xB0, 0x98,
-            0xC6, 0xA5, 0xC0
-        ]));
-
-        let result = Section3Template3_0Reader::read(&mut reader);
-        assert!(result.is_ok());
-
-        let tpl30 = result.unwrap();
-        assert_eq!(ShapeOfEarth::SphericalRadius6371229, tpl30.shape_of_earth);
-        assert_eq!(255, tpl30.spherical_earth_radius.factor);
-        assert_eq!(4294967295, tpl30.spherical_earth_radius.value);
-        assert_eq!(255, tpl30.oblated_spheroid_earth_major_axis.factor);
     }
 }

@@ -48,6 +48,6 @@ mod tests {
         assert_eq!(ShapeOfEarth::SphericalRadius6371229, tpl3101.shape_of_earth);
         assert_eq!(26, tpl3101.number_of_grid);
         assert_eq!(1, tpl3101.number_of_grid_in_ref);
-        assert_eq!(215976465880652322566868526193613120960, tpl3101.hor_grid_uuid);
+        assert_eq!(0xA27B8DE618C411E4820AB5B098C6A5C0, tpl3101.hor_grid_uuid);
     }
 }
