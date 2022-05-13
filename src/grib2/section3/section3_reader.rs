@@ -71,7 +71,7 @@ impl Section3Reader {
                 GridDefinitionTemplate::LatitudeLongitude(tpl_3_0)
             },
             65535 => GridDefinitionTemplate::Missing,
-            _ => GridDefinitionTemplate::Unknown(tpl_number)
+            _ => return Err(Grib2Error::InvalidData(format!("unsupported grid definition template: {}", tpl_number)))
         };
 
         return Ok(grid_def_tpl_type);
@@ -82,10 +82,13 @@ impl Section3Reader {
 #[cfg(test)]
 mod tests {
     use std::io::{BufReader, Cursor};
+    use crate::grib2::section3::grid_definition_source::GridDefinitionSource;
+    use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
+    use crate::grib2::section3::optional_point_interpretation::OptionalPointInterpretation;
     use crate::grib2::section3::section3_reader::Section3Reader;
 
     #[test]
-    fn it_correctly_parses_a_section0() {
+    fn it_correctly_parses_a_section3() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x48, 0x03, 0x00, 0x00, 0x0D, 0xD4, 0x96, 0x00, 0x00, 0x00, 0x00, 0x06, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00,
@@ -97,8 +100,18 @@ mod tests {
         let result = Section3Reader::read(&mut reader);
         assert!(result.is_ok());
 
-        let section2 = result.unwrap();
-        assert_eq!(72, section2.length);
-        assert_eq!(3, section2.section_number);
+        let section3 = result.unwrap();
+        assert_eq!(72, section3.length);
+        assert_eq!(3, section3.section_number);
+        assert_eq!(GridDefinitionSource::GridDefinitionTemplate, section3.grid_definition_source);
+        assert_eq!(906390, section3.number_of_datapoints);
+        assert_eq!(0, section3.optional_point_length);
+        assert_eq!(OptionalPointInterpretation::None, section3.optional_point_interpretation);
+
+        match section3.grid_definition_template {
+            GridDefinitionTemplate::LatitudeLongitude(_tpl) => {},
+            GridDefinitionTemplate::Missing => panic!("wrong grid definition template: 255"),
+            GridDefinitionTemplate::Unknown(nr) => panic!("wrong grid definition template: {}", nr)
+        };
     }
 }
