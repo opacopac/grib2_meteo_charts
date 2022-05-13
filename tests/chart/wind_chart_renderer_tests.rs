@@ -18,7 +18,7 @@ pub fn read_test_wind_layer() -> DwdWindLayer {
 fn it_creates_an_image_from_a_wind_layer_with_the_correct_dimensions() {
     let layer = read_test_wind_layer();
 
-    let result = WindChartRenderer::render(&layer);
+    let result = WindChartRenderer::render_full_chart(&layer);
     assert!(!result.is_err());
 
     let result = result.unwrap();

@@ -16,14 +16,17 @@ use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
 const CLCT_TEST_FILE2: &str = "icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
 const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042700_048_2d_tot_prec.grib2";
-const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
-const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
+//const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
+//const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
+const WIND_U_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_U_10M.grib2";
+const WIND_V_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_V_10M.grib2";
 
 fn main() {
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
     create_icon_d2_wind_img();
+    create_icon_d2_wind_map_tile();
 
     //create_icon_d2_map_tile();
     //create_icon_d2_map_tile_series();
@@ -93,7 +96,7 @@ fn create_icon_d2_wind_img() {
     let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
     let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
     let layer = DwdWindLayer::from_grib2(doc_u, doc_v).unwrap();
-    let img = WindChartRenderer::render(&layer).unwrap();
+    let img = WindChartRenderer::render_full_chart(&layer).unwrap();
     img.safe_image("WIND.png").unwrap();
 }
 
@@ -127,5 +130,17 @@ fn create_icon_d2_map_tile() {
 
     let elapsed = start.elapsed();
     println!("save img {}", elapsed.as_millis());
+}
+
+
+fn create_icon_d2_wind_map_tile() {
+    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
+    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
+    let layer = DwdWindLayer::from_grib2(doc_u, doc_v).unwrap();
+    let _result = WindChartRenderer::create_all_tiles(
+        &layer,
+        (0, 11),
+        "./007/"
+    );
 }
 
