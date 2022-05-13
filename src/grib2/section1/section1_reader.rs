@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
 
 use byteorder::{BigEndian, ReadBytesExt};
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
@@ -14,7 +13,7 @@ pub struct Section1Reader;
 
 
 impl Section1Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<Section1, Grib2Error> {
+    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section1, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let center = reader.read_u16::<BigEndian>()?;
@@ -44,7 +43,7 @@ impl Section1Reader {
     }
 
 
-    fn read_ref_time_significance(reader: &mut BufReader<File>) -> Result<RefTimeSignificance, Grib2Error> {
+    fn read_ref_time_significance<T: Read>(reader: &mut BufReader<T>) -> Result<RefTimeSignificance, Grib2Error> {
         let value = reader.read_u8()?;
         let ref_time_significance = match value {
             0 => RefTimeSignificance::Analysis,
@@ -59,7 +58,7 @@ impl Section1Reader {
     }
 
 
-    fn read_ref_time(reader: &mut BufReader<File>) -> Result<NaiveDateTime, Grib2Error> {
+    fn read_ref_time<T: Read>(reader: &mut BufReader<T>) -> Result<NaiveDateTime, Grib2Error> {
         let year = i32::try_from(reader.read_u16::<BigEndian>()?)?;
         let month = reader.read_u8()? as u32;
         let day = reader.read_u8()? as u32;
@@ -75,7 +74,7 @@ impl Section1Reader {
     }
 
 
-    fn read_production_status(reader: &mut BufReader<File>) -> Result<ProductionStatus, Grib2Error> {
+    fn read_production_status<T: Read>(reader: &mut BufReader<T>) -> Result<ProductionStatus, Grib2Error> {
         let value = reader.read_u8()?;
         let production_status = match value {
             0 => ProductionStatus::Operational,
@@ -96,7 +95,7 @@ impl Section1Reader {
     }
 
 
-    fn read_processed_data_type(reader: &mut BufReader<File>) -> Result<ProcessedDataType, Grib2Error> {
+    fn read_processed_data_type<T: Read>(reader: &mut BufReader<T>) -> Result<ProcessedDataType, Grib2Error> {
         let value = reader.read_u8()?;
         let ref_time_significance = match value {
             0 => ProcessedDataType::Analysis,
@@ -114,5 +113,38 @@ impl Section1Reader {
         };
 
         return Ok(ref_time_significance);
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::io::{BufReader, Cursor};
+    use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+    use crate::grib2::section1::processed_data_type::ProcessedDataType;
+    use crate::grib2::section1::production_status::ProductionStatus;
+    use crate::grib2::section1::ref_time_significance::RefTimeSignificance;
+
+    use crate::grib2::section1::section1_reader::Section1Reader;
+
+    #[test]
+    fn it_correctly_parses_a_section0() {
+        let cursor = Cursor::new([0x00, 0x00, 0x00, 0x15, 0x01, 0x00, 0x4E, 0x00, 0xFF, 0x13, 0x01, 0x01, 0x07, 0xE6, 0x04, 0x11, 0x00, 0x00, 0x00, 0x00, 0x01]);
+        let mut reader = BufReader::new(cursor);
+
+        let result = Section1Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let section1 = result.unwrap();
+        assert_eq!(21, section1.length);
+        assert_eq!(1, section1.section_number);
+        assert_eq!(78, section1.center);
+        assert_eq!(255, section1.subcenter);
+        assert_eq!(19, section1.master_table_version);
+        assert_eq!(1, section1.local_table_version);
+        assert_eq!(RefTimeSignificance::StartOfForecast, section1.ref_time_significance);
+        assert_eq!(NaiveDateTime::new(NaiveDate::from_ymd(2022, 4, 17), NaiveTime::from_hms(0, 0, 0)), section1.ref_time);
+        assert_eq!(ProductionStatus::Operational, section1.production_status);
+        assert_eq!(ProcessedDataType::Forecast, section1.processed_data_type);
     }
 }

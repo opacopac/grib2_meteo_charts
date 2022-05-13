@@ -1,10 +1,10 @@
 use meteo_grib2_renderer::grib2::section0::discipline::Discipline;
 
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_discipline() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section0.discipline;
 
@@ -14,7 +14,7 @@ fn it_reads_the_correct_discipline() {
 
 #[test]
 fn it_reads_the_correct_edition() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section0.edition;
 
@@ -24,7 +24,7 @@ fn it_reads_the_correct_edition() {
 
 #[test]
 fn it_reads_the_correct_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section0.length;
 

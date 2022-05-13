@@ -1,10 +1,10 @@
 use meteo_grib2_renderer::grib2::section4::product_definition_template::ProductDefinitionTemplate;
 
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section4.length;
 
@@ -14,7 +14,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section4.section_number;
 
@@ -24,7 +24,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_number_of_coordinate_values() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section4.coordinate_values;
 
@@ -34,7 +34,7 @@ fn it_reads_the_correct_number_of_coordinate_values() {
 
 #[test]
 fn it_reads_the_correct_product_definition_template() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section4.product_definition_template;
 

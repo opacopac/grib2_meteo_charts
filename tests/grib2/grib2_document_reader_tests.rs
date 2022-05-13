@@ -1,10 +1,10 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 
-use crate::{DATA_DIR, read_test_document_result};
+use crate::{DATA_DIR, read_icon_d2_test_document_result};
 
 #[test]
 fn it_reads_an_existing_grib2_file() {
-    let result = read_test_document_result();
+    let result = read_icon_d2_test_document_result();
 
     assert_eq!(false, result.is_err());
 }

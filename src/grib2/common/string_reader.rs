@@ -1,4 +1,3 @@
-use std::fs::File;
 use std::io::{BufReader, Read};
 use std::str::from_utf8;
 
@@ -8,7 +7,7 @@ pub struct StringReader;
 
 
 impl StringReader {
-    pub fn read_4_chars(reader: &mut BufReader<File>) -> Result<String, Grib2Error> {
+    pub fn read_4_chars<T: Read>(reader: &mut BufReader<T>) -> Result<String, Grib2Error> {
         let mut buf = [0; 4];
         reader.read_exact(&mut buf)?;
 

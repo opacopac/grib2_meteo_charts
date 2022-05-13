@@ -1,8 +1,8 @@
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section6.length;
 
@@ -12,7 +12,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section6.section_number;
 
@@ -22,7 +22,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_bitmap_indicator() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section6.bitmap_indicator;
 
@@ -32,7 +32,7 @@ fn it_reads_the_correct_bitmap_indicator() {
 
 #[test]
 fn it_reads_the_correct_bitmap() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section6.bitmap;
     let expected = ((1215.0 * 746.0 / 8.0) as f64).ceil() as usize;

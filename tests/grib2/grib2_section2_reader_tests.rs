@@ -1,8 +1,8 @@
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section2.length;
 
@@ -12,7 +12,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section2.section_number;
 

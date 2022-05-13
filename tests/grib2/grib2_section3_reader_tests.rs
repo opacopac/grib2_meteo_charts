@@ -2,11 +2,11 @@ use meteo_grib2_renderer::grib2::section3::grid_definition_source::GridDefinitio
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate;
 use meteo_grib2_renderer::grib2::section3::optional_point_interpretation::OptionalPointInterpretation;
 
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.length;
 
@@ -16,7 +16,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.section_number;
 
@@ -26,7 +26,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_grid_definition_source() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.grid_definition_source;
 
@@ -36,7 +36,7 @@ fn it_reads_the_correct_grid_definition_source() {
 
 #[test]
 fn it_reads_the_correct_number_of_datapoints() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.number_of_datapoints;
 
@@ -46,7 +46,7 @@ fn it_reads_the_correct_number_of_datapoints() {
 
 #[test]
 fn it_reads_the_correct_length_of_opt_points() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.optional_point_length;
 
@@ -56,7 +56,7 @@ fn it_reads_the_correct_length_of_opt_points() {
 
 #[test]
 fn it_reads_the_correct_optional_point_interpretation() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.optional_point_interpretation;
 
@@ -66,7 +66,7 @@ fn it_reads_the_correct_optional_point_interpretation() {
 
 #[test]
 fn it_reads_the_correct_grid_definition_template() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section3.grid_definition_template;
 

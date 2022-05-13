@@ -3,11 +3,11 @@ use meteo_grib2_renderer::grib2::section1::processed_data_type::ProcessedDataTyp
 use meteo_grib2_renderer::grib2::section1::production_status::ProductionStatus;
 use meteo_grib2_renderer::grib2::section1::ref_time_significance::RefTimeSignificance;
 
-use crate::read_test_document;
+use crate::read_icon_d2_test_document;
 
 #[test]
 fn it_reads_the_correct_section_length() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section1.length;
 
@@ -17,7 +17,7 @@ fn it_reads_the_correct_section_length() {
 
 #[test]
 fn it_reads_the_correct_section_number() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section1.section_number;
 
@@ -27,7 +27,7 @@ fn it_reads_the_correct_section_number() {
 
 #[test]
 fn it_reads_the_correct_center_and_subcenter() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result1 = layer.section1.center;
     let result2 = layer.section1.subcenter;
@@ -39,7 +39,7 @@ fn it_reads_the_correct_center_and_subcenter() {
 
 #[test]
 fn it_reads_the_correct_grib_master_and_sub_table_numbers() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result1 = layer.section1.master_table_version;
     let result2 = layer.section1.local_table_version;
@@ -51,7 +51,7 @@ fn it_reads_the_correct_grib_master_and_sub_table_numbers() {
 
 #[test]
 fn it_reads_the_correct_reference_time() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result1 = layer.section1.ref_time_significance;
     let result2 = layer.section1.ref_time;
@@ -67,7 +67,7 @@ fn it_reads_the_correct_reference_time() {
 
 #[test]
 fn it_reads_the_correct_production_status() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section1.production_status;
 
@@ -77,7 +77,7 @@ fn it_reads_the_correct_production_status() {
 
 #[test]
 fn it_reads_the_correct_type_of_data() {
-    let layer = read_test_document();
+    let layer = read_icon_d2_test_document();
 
     let result = layer.section1.processed_data_type;
 
