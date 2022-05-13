@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -14,7 +13,7 @@ pub struct Section3Reader;
 
 
 impl Section3Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<Section3, Grib2Error> {
+    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section3, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let grid_definition_source = Section3Reader::read_grid_definition_source(reader)?;
@@ -36,7 +35,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_source(reader: &mut BufReader<File>) -> Result<GridDefinitionSource, Grib2Error> {
+    fn read_grid_definition_source<T: Read>(reader: &mut BufReader<T>) -> Result<GridDefinitionSource, Grib2Error> {
         let value = reader.read_u8()?;
         let grid_def_source = match value {
             0 => GridDefinitionSource::GridDefinitionTemplate,
@@ -49,7 +48,7 @@ impl Section3Reader {
     }
 
 
-    fn read_optional_point_interpretation(reader: &mut BufReader<File>) -> Result<OptionalPointInterpretation, Grib2Error> {
+    fn read_optional_point_interpretation<T: Read>(reader: &mut BufReader<T>) -> Result<OptionalPointInterpretation, Grib2Error> {
         let value = reader.read_u8()?;
         let opt_point_interpretation = match value {
             0 => OptionalPointInterpretation::None,
@@ -64,7 +63,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_template(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate, Grib2Error> {
+    fn read_grid_definition_template<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<GridDefinitionTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
         let grid_def_tpl_type = match tpl_number {
             0 => {
@@ -76,5 +75,30 @@ impl Section3Reader {
         };
 
         return Ok(grid_def_tpl_type);
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::io::{BufReader, Cursor};
+    use crate::grib2::section3::section3_reader::Section3Reader;
+
+    #[test]
+    fn it_correctly_parses_a_section0() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x00, 0x00, 0x00, 0x48, 0x03, 0x00, 0x00, 0x0D, 0xD4, 0x96, 0x00, 0x00, 0x00, 0x00, 0x06, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00,
+            0x04, 0xBF, 0x00, 0x00, 0x02, 0xEA, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x02, 0x92,
+            0xDF, 0xE0, 0x15, 0x39, 0x0B, 0x60, 0x30, 0x03, 0x76, 0x3B, 0x00, 0x01, 0x36, 0x5D, 0x20, 0x00,
+            0x00, 0x4E, 0x20, 0x00, 0x00, 0x4E, 0x20, 0x40
+        ]));
+
+        let result = Section3Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let section2 = result.unwrap();
+        assert_eq!(72, section2.length);
+        assert_eq!(3, section2.section_number);
     }
 }

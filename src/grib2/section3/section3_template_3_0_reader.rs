@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -15,7 +14,7 @@ pub struct Section3Template3_0Reader;
 
 
 impl Section3Template3_0Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<GridDefinitionTemplate3_0, Grib2Error> {
+    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<GridDefinitionTemplate3_0, Grib2Error> {
         let shape_of_earth = Section3Template3_0Reader::read_shape_of_earth(reader)?;
         let spherical_earth_radius = ScaleFactorValueReader::read(reader)?;
         let oblated_spheroid_earth_major_axis = ScaleFactorValueReader::read(reader)?;
@@ -53,7 +52,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_shape_of_earth(reader: &mut BufReader<File>) -> Result<ShapeOfEarth, Grib2Error> {
+    fn read_shape_of_earth<T: Read>(reader: &mut BufReader<T>) -> Result<ShapeOfEarth, Grib2Error> {
         let value = reader.read_u8()?;
         let shape_of_earth = match value {
             6 => ShapeOfEarth::SphericalRadius6371229,
@@ -65,7 +64,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_resolution_and_component_flags(reader: &mut BufReader<File>) -> Result<ResolutionAndComponentFlags, Grib2Error> {
+    fn read_resolution_and_component_flags<T: Read>(reader: &mut BufReader<T>) -> Result<ResolutionAndComponentFlags, Grib2Error> {
         let value = reader.read_u8()?;
         let flags = ResolutionAndComponentFlags::new(
             (value & 0b00000100) == 0,
@@ -77,7 +76,7 @@ impl Section3Template3_0Reader {
     }
 
 
-    fn read_scanning_mode_flags(reader: &mut BufReader<File>) -> Result<ScanningModeFlags, Grib2Error> {
+    fn read_scanning_mode_flags<T: Read>(reader: &mut BufReader<T>) -> Result<ScanningModeFlags, Grib2Error> {
         let value = reader.read_u8()?;
         let flags = ScanningModeFlags::new(
             (value & 0b00000001) == 0,
