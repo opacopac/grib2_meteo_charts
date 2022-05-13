@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 
 use byteorder::ReadBytesExt;
 
@@ -11,7 +10,7 @@ pub struct Section4Template4_8Reader;
 
 
 impl Section4Template4_8Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
+    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
         let parameter_category = Section4Template4_0Reader::read_parameter_category(reader)?;
         let parameter_number = reader.read_u8()?;
 

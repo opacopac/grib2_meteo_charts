@@ -141,7 +141,7 @@ mod tests {
 
         match section3.grid_definition_template {
             GridDefinitionTemplate::UnstructuredGrid(_tpl) => {},
-            _ => panic!("wrong grid definition template")
+            _ => panic!("wrong grid definition template {:?}", section3.grid_definition_template)
         };
     }
 }
