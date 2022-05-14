@@ -3,21 +3,14 @@ use std::io::{BufReader, Read, Seek};
 use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
-use crate::netcdf::common::string_reader::StringReader;
+use crate::netcdf::common::netcdf_name_reader::NetCdfNameReader;
 use crate::netcdf::header::netcdf_dim::NetCdfDim;
 
 pub struct NetCdfDimReader;
 
 impl NetCdfDimReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfDim, NetCdfError> {
-        let name_len = reader.read_u32::<BigEndian>()?;
-        let name = StringReader::read_n_chars(reader, name_len as usize)?;
-
-        let padding = name_len % 4;
-        if padding > 0 {
-            reader.seek_relative(4 - padding as i64)?;
-        }
-
+        let name = NetCdfNameReader::read_name(reader)?;
         let dim_len = reader.read_u32::<BigEndian>()?;
 
         let dim = NetCdfDim::new(

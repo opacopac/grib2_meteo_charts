@@ -2,8 +2,8 @@ use std::io::{BufReader, Read, Seek};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::netcdf::common::netcdf_name_reader::NetCdfNameReader;
 use crate::netcdf::common::netcdf_error::NetCdfError;
-use crate::netcdf::common::string_reader::StringReader;
 use crate::netcdf::header::netcdf_attr::NetCdfAttr;
 use crate::netcdf::header::netcdf_attr_type::NetCdfAttrType;
 
@@ -11,34 +11,14 @@ pub struct NetCdfAttrReader;
 
 impl NetCdfAttrReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfAttr, NetCdfError> {
-        let name_len = reader.read_u32::<BigEndian>()?;
-        let name = StringReader::read_n_chars(reader, name_len as usize)?;
-
-        let padding = name_len % 4;
-        if padding > 0 {
-            reader.seek_relative(4 - padding as i64)?;
-        }
-
+        let name = NetCdfNameReader::read_name(reader)?;
         let nc_type = Self::read_nc_type(reader)?;
-
-        let value_len = reader.read_u32::<BigEndian>()?;
-        let mut values: Vec<u8> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_u8()?;
-            values.push(value);
-        }
-
-        let padding = value_len % 4;
-        if padding > 0 {
-            reader.seek_relative(4 - padding as i64)?;
-        }
-
-        // TODO: >u16/u32 types
+        let nc_values = Self::read_nc_values(reader)?;
 
         let dim = NetCdfAttr::new(
             name,
             nc_type,
-            values
+            nc_values
         );
 
         return Ok(dim);
@@ -60,6 +40,25 @@ impl NetCdfAttrReader {
         };
 
         return Ok(nc_type);
+    }
+
+
+    fn read_nc_values<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Vec<u8>, NetCdfError> {
+        let value_len = reader.read_u32::<BigEndian>()?;
+        let mut values: Vec<u8> = vec![];
+        for _ in 0..value_len {
+            let value = reader.read_u8()?;
+            values.push(value);
+        }
+
+        let padding = value_len % 4;
+        if padding > 0 {
+            reader.seek_relative(4 - padding as i64)?;
+        }
+
+        // TODO: >u16/u32 types
+
+        return Ok(values);
     }
 }
 
