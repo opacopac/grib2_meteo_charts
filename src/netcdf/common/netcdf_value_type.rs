@@ -1,5 +1,5 @@
 #[derive(PartialEq, Debug)]
-pub enum NetCdfAttrType {
+pub enum NetCdfValueType {
     NcByte,
     NcChar,
     NcShort,

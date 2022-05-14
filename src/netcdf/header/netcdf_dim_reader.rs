@@ -3,7 +3,7 @@ use std::io::{BufReader, Read, Seek};
 use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
-use crate::netcdf::common::netcdf_name_reader::NetCdfNameReader;
+use crate::netcdf::header::netcdf_name_reader::NetCdfNameReader;
 use crate::netcdf::header::netcdf_dim::NetCdfDim;
 
 pub struct NetCdfDimReader;

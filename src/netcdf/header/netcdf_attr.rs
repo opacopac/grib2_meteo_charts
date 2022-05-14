@@ -1,10 +1,11 @@
 use derive_new::new;
 
-use crate::netcdf::header::netcdf_attr_type::NetCdfAttrType;
+use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
+use crate::netcdf::common::netcdf_values::NetCdfValues;
 
 #[derive(new)]
 pub struct NetCdfAttr {
     pub name: String,
-    pub nc_type: NetCdfAttrType,
-    pub values: Vec<u8> // TODO
+    pub nc_type: NetCdfValueType,
+    pub values: NetCdfValues
 }
