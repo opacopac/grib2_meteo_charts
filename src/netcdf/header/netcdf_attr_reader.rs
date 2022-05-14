@@ -13,7 +13,7 @@ pub struct NetCdfAttrReader;
 impl NetCdfAttrReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfAttr, NetCdfError> {
         let name = NetCdfNameReader::read_name(reader)?;
-        let value_type = Self::read_nc_type(reader)?;
+        let value_type = Self::read_value_type(reader)?;
         let value_len = reader.read_u32::<BigEndian>()?;
         let values = NetCdfValuesReader::read(reader, value_len, &value_type)?;
 
@@ -27,7 +27,7 @@ impl NetCdfAttrReader {
     }
 
 
-    fn read_nc_type<T: Read>(reader: &mut BufReader<T>) -> Result<NetCdfValueType, NetCdfError> {
+    fn read_value_type<T: Read>(reader: &mut BufReader<T>) -> Result<NetCdfValueType, NetCdfError> {
         let type_nr = reader.read_u32::<BigEndian>()?;
         let nc_type = match type_nr {
             1 => NetCdfValueType::NcByte,
