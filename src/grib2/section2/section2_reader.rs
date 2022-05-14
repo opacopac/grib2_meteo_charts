@@ -26,7 +26,7 @@ impl Section2Reader {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
+    use std::io::{BufReader, Cursor, Seek};
 
     use crate::grib2::section2::section2_reader::Section2Reader;
 
@@ -43,5 +43,7 @@ mod tests {
         let section2 = result.unwrap();
         assert_eq!(27, section2.length);
         assert_eq!(2, section2.section_number);
+
+        assert_eq!(section2.length as u64, reader.stream_position().unwrap())
     }
 }

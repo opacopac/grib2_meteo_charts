@@ -23,8 +23,6 @@ impl Section5Reader {
             data_representation_template
         )?;
 
-        reader.seek_relative(length as i64 - 21)?; // TODO: temp
-
         return Ok(section5);
     }
 
@@ -48,9 +46,9 @@ impl Section5Reader {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
-    use crate::grib2::section5::data_representation_template::DataRepresentationTemplate;
+    use std::io::{BufReader, Cursor, Seek};
 
+    use crate::grib2::section5::data_representation_template::DataRepresentationTemplate;
     use crate::grib2::section5::section5_reader::Section5Reader;
 
     #[test]
@@ -72,5 +70,7 @@ mod tests {
             DataRepresentationTemplate::GridPointDataSimplePacking(_tpl) => {},
             _ => panic!("wrong data representation template {:?}", section5.data_representation_template)
         };
+
+        assert_eq!(section5.length as u64, reader.stream_position().unwrap())
     }
 }

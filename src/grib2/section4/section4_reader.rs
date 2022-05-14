@@ -103,6 +103,6 @@ mod tests {
             _ => panic!("wrong product definition template {:?}", section4.product_definition_template)
         };
 
-        assert_eq!(58, reader.stream_position().unwrap())
+        assert_eq!(section4.length as u64, reader.stream_position().unwrap())
     }
 }

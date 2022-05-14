@@ -41,3 +41,31 @@ impl DataRepresentationTemplate5_0Reader {
         return Ok(original_field_type);
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use std::io::{BufReader, Cursor, Seek};
+
+    use crate::grib2::section5::data_representation_template_5_0_reader::DataRepresentationTemplate5_0Reader;
+    use crate::grib2::section5::original_field_type::OriginalFieldType;
+
+    #[test]
+    fn it_correctly_parses_a_template_5_0() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x00, 0x00, 0x00, 0x00, 0x80, 0x0F, 0x00, 0x00, 0x10, 0x00
+        ]));
+
+        let result = DataRepresentationTemplate5_0Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let tpl_5_0 = result.unwrap();
+        assert_eq!(0.0, tpl_5_0.reference_value);
+        assert_eq!(-15, tpl_5_0.binary_scale_factor_e);
+        assert_eq!(0, tpl_5_0.decimal_scale_factor_d);
+        assert_eq!(16, tpl_5_0.number_of_bits);
+        assert_eq!(OriginalFieldType::FloatingPoint, tpl_5_0.original_field_type);
+
+        assert_eq!(10, reader.stream_position().unwrap())
+    }
+}

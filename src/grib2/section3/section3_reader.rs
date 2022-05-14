@@ -87,7 +87,7 @@ impl Section3Reader {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
+    use std::io::{BufReader, Cursor, Seek};
     use crate::grib2::section3::grid_definition_source::GridDefinitionSource;
     use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
     use crate::grib2::section3::optional_point_interpretation::OptionalPointInterpretation;
@@ -118,6 +118,8 @@ mod tests {
             GridDefinitionTemplate::LatitudeLongitude(_tpl) => {},
             _ => panic!("wrong grid definition template")
         };
+
+        assert_eq!(72, reader.stream_position().unwrap())
     }
 
 
@@ -144,5 +146,7 @@ mod tests {
             GridDefinitionTemplate::UnstructuredGrid(_tpl) => {},
             _ => panic!("wrong grid definition template {:?}", section3.grid_definition_template)
         };
+
+        assert_eq!(section3.length as u64, reader.stream_position().unwrap())
     }
 }
