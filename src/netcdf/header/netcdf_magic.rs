@@ -34,7 +34,7 @@ impl NetCdfMagic {
 
 #[cfg(test)]
 mod tests {
-    use crate::netcdf::header::netcfd_magic::{NETCDF_MAGIC, NetCdfMagic};
+    use crate::netcdf::header::netcdf_magic::{NETCDF_MAGIC, NetCdfMagic};
 
     #[test]
     fn it_verifies_the_correct_magic() {

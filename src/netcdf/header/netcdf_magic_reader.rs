@@ -4,7 +4,7 @@ use byteorder::ReadBytesExt;
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::common::string_reader::StringReader;
-use crate::netcdf::header::netcfd_magic::NetCdfMagic;
+use crate::netcdf::header::netcdf_magic::NetCdfMagic;
 
 pub struct NetCdfMagicReader;
 
@@ -28,7 +28,7 @@ impl NetCdfMagicReader {
 mod tests {
     use std::io::{BufReader, Cursor, Seek};
 
-    use crate::netcdf::header::netcfd_magic_reader::NetCdfMagicReader;
+    use crate::netcdf::header::netcdf_magic_reader::NetCdfMagicReader;
 
     #[test]
     fn it_correctly_parses_the_magic() {

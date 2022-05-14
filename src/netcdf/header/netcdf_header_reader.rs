@@ -1,15 +1,22 @@
+use std::io::{BufReader, Read, Seek};
+
+use crate::netcdf::common::netcdf_error::NetCdfError;
+use crate::netcdf::header::netcdf_header::NetCdfHeader;
+use crate::netcdf::header::netcdf_magic_reader::NetCdfMagicReader;
+
 pub struct NetCdfHeaderReader;
 
 
 impl NetCdfHeaderReader {
-    /*pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCfdHeader, NetCdfError> {
-        let magic = StringReader::read_4_chars(reader)?;
-        reader.seek_relative(2)?; // 2 reserved bytes
+    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfHeader, NetCdfError> {
+        let magic = NetCdfMagicReader::read(reader)?;
 
-        let header = NetCfdHeader::new()?;
+        let header = NetCdfHeader::new(
+            magic
+        );
 
         return Ok(header);
-    }*/
+    }
 }
 
 
@@ -17,19 +24,20 @@ impl NetCdfHeaderReader {
 mod tests {
     use std::io::{BufReader, Cursor};
 
+    use crate::netcdf::header::netcdf_header_reader::NetCdfHeaderReader;
+
     #[test]
     fn it_correctly_parses_the_header() {
         let mut reader = BufReader::new(Cursor::new([
-            0x47, 0x52, 0x49, 0x42, 0xFF, 0xFF, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0xC4, 0xBD
+            0x43, 0x44, 0x46, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x0E,
+            0x00, 0x00, 0x00, 0x04, 0x63, 0x65, 0x6C, 0x6C, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06
         ]));
 
-        /*let result = NetCfdHeaderReader::read(&mut reader);
-        assert!(result.is_ok());*/
+        let result = NetCdfHeaderReader::read(&mut reader);
+        assert!(result.is_ok());
 
-        /*let section0 = result.unwrap();
-        assert_eq!("GRIB", section0.magic);
-        assert_eq!(Discipline::Meteorological, section0.discipline);
-        assert_eq!(2, section0.edition);
-        assert_eq!(1623229, section0.length);*/
+        let header = result.unwrap();
+        assert_eq!("CDF", header.magic.magic);
+        assert_eq!(2, header.magic.version);
     }
 }
