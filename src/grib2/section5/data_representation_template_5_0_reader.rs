@@ -51,7 +51,7 @@ mod tests {
     use crate::grib2::section5::original_field_type::OriginalFieldType;
 
     #[test]
-    fn it_correctly_parses_a_template_5_0() {
+    fn it_correctly_parses_template_5_0() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x00, 0x80, 0x0F, 0x00, 0x00, 0x10, 0x00
         ]));

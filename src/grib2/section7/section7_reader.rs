@@ -41,7 +41,7 @@ mod tests {
     use crate::grib2::section7::section7_reader::Section7Reader;
 
     #[test]
-    fn it_correctly_parses_a_section7() {
+    fn it_correctly_parses_section7() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x0F, 0x07, 0x79, 0x45, 0x79, 0x84, 0x79, 0x8F, 0x79, 0x51, 0x79, 0x23
         ]));

@@ -42,7 +42,7 @@ mod tests {
     use crate::grib2::section6::section6_reader::Section6Reader;
 
     #[test]
-    fn it_correctly_parses_a_section6_without_a_bitmap() {
+    fn it_correctly_parses_section6_without_a_bitmap() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x06, 0x06, 0xFF
         ]));
@@ -61,7 +61,7 @@ mod tests {
 
 
     #[test]
-    fn it_correctly_parses_a_section6_with_bitmap() {
+    fn it_correctly_parses_section6_with_a_bitmap() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x10, 0x06, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A
         ]));

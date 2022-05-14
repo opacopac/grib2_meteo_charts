@@ -2,7 +2,7 @@ use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::section4::meteo_parameter_category::MeteoParameterCategory;
 
-use crate::meteo_dwd::dwd_precip_layer_tests::PREC_TEST_FILE;
+use crate::meteo_dwd::dwd_icon_d2_precip_layer_tests::PREC_TEST_FILE;
 
 pub const CLCT_TEST_FILE: &str = "./tests/data/icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
 
