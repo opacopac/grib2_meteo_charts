@@ -8,3 +8,6 @@ pub mod netcdf_dim_list;
 pub mod netcdf_dim_list_reader;
 pub mod netcdf_dim;
 pub mod netcdf_dim_reader;
+pub mod netcdf_attr;
+pub mod netcdf_attr_reader;
+pub mod netcdf_attr_type;
