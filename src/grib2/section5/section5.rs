@@ -1,6 +1,7 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate;
 
+#[derive(Debug)]
 pub struct Section5 {
     pub length: u32,
     pub section_number: u8,

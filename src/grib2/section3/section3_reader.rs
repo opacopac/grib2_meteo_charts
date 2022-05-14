@@ -75,8 +75,9 @@ impl Section3Reader {
                 let tpl_3_101 = Section3Template3_101Reader::read(reader)?;
                 GridDefinitionTemplate::UnstructuredGrid(tpl_3_101)
             }
-            65535 => GridDefinitionTemplate::Missing,
-            _ => return Err(Grib2Error::InvalidData(format!("unsupported grid definition template: {}", tpl_number)))
+            _ => return Err(Grib2Error::InvalidData(
+                format!("unsupported grid definition template: {}", tpl_number)
+            ))
         };
 
         return Ok(grid_def_tpl_type);

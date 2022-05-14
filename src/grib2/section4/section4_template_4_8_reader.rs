@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Read, Seek};
 
 use byteorder::ReadBytesExt;
 
@@ -10,9 +10,16 @@ pub struct Section4Template4_8Reader;
 
 
 impl Section4Template4_8Reader {
-    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
+    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
         let parameter_category = MeteoParameterCategoryReader::read(reader)?;
         let parameter_number = reader.read_u8()?;
+
+        reader.seek_relative(30)?; // skip
+
+        let num_of_time_range_specs = reader.read_u8()?;
+        let skip_seek = 4 + 12 * num_of_time_range_specs as i64;
+
+        reader.seek_relative(skip_seek)?; // skip
 
         let tpl_4_8 = ProductDefinitionTemplate4_8::new(
             parameter_category,

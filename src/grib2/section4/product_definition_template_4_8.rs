@@ -7,7 +7,3 @@ pub struct ProductDefinitionTemplate4_8 {
     pub parameter_category: MeteoParameterCategory,
     pub parameter_number: u8,
 }
-
-impl ProductDefinitionTemplate4_8 {
-    pub const TPL_LENGTH_BYTES: u32 = 2;
-}

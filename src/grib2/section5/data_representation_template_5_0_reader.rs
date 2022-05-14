@@ -1,5 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -12,7 +11,7 @@ pub struct DataRepresentationTemplate5_0Reader;
 
 
 impl DataRepresentationTemplate5_0Reader {
-    pub fn read(reader: &mut BufReader<File>) -> Result<DataRepresentationTemplate5_0, Grib2Error> {
+    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<DataRepresentationTemplate5_0, Grib2Error> {
         let reference_value = reader.read_f32::<BigEndian>()?;
         let binary_scale_factor = SignedNumberReader::read(reader)?;
         let decimal_scale_factor = SignedNumberReader::read(reader)?;
@@ -30,7 +29,7 @@ impl DataRepresentationTemplate5_0Reader {
     }
 
 
-    fn read_original_field_type(reader: &mut BufReader<File>) -> Result<OriginalFieldType, Grib2Error> {
+    fn read_original_field_type<T: Read>(reader: &mut BufReader<T>) -> Result<OriginalFieldType, Grib2Error> {
         let value = reader.read_u8()?;
         let original_field_type = match value {
             0 => OriginalFieldType::FloatingPoint,

@@ -4,8 +4,6 @@ use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
-use crate::grib2::section4::product_definition_template_4_0::ProductDefinitionTemplate4_0;
-use crate::grib2::section4::product_definition_template_4_8::ProductDefinitionTemplate4_8;
 use crate::grib2::section4::section4::Section4;
 use crate::grib2::section4::section4_template_4_0_reader::Section4Template4_0Reader;
 use crate::grib2::section4::section4_template_4_8_reader::Section4Template4_8Reader;
@@ -20,13 +18,6 @@ impl Section4Reader {
         let coordinate_values = reader.read_u16::<BigEndian>()?;
         let product_definition_template = Section4Reader::read_product_definition_template(reader)?;
 
-        let seek = match &product_definition_template {
-            ProductDefinitionTemplate::Template4_0(_tpl) => length - 9 - ProductDefinitionTemplate4_0::TPL_LENGTH_BYTES,
-            ProductDefinitionTemplate::Template4_8(_tpl) => length - 9 - ProductDefinitionTemplate4_8::TPL_LENGTH_BYTES,
-            _ => length - 9
-        };
-        reader.seek_relative(seek as i64)?;
-
         let section4 = Section4::new(
             length,
             section_number,
@@ -40,7 +31,7 @@ impl Section4Reader {
 
     fn read_product_definition_template<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
-        let grid_def_tpl_type = match tpl_number {
+        let prod_def_tpl = match tpl_number {
             0 => {
                 let tpl = Section4Template4_0Reader::read(reader)?;
                 ProductDefinitionTemplate::Template4_0(tpl)
@@ -49,18 +40,19 @@ impl Section4Reader {
                 let tpl = Section4Template4_8Reader::read(reader)?;
                 ProductDefinitionTemplate::Template4_8(tpl)
             },
-            65535 => ProductDefinitionTemplate::Missing,
-            _ => ProductDefinitionTemplate::Unknown(tpl_number)
+            _ => return Err(Grib2Error::InvalidData(
+                format!("unsupported product definition template: {}", tpl_number)
+            ))
         };
 
-        return Ok(grid_def_tpl_type);
+        return Ok(prod_def_tpl);
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
+    use std::io::{BufReader, Cursor, Seek};
 
     use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
     use crate::grib2::section4::section4_reader::Section4Reader;
@@ -85,6 +77,8 @@ mod tests {
             ProductDefinitionTemplate::Template4_0(_tpl) => {},
             _ => panic!("wrong product definition template {:?}", section4.product_definition_template)
         };
+
+        assert_eq!(34, reader.stream_position().unwrap())
     }
 
     #[test]
@@ -108,5 +102,7 @@ mod tests {
             ProductDefinitionTemplate::Template4_8(_tpl) => {},
             _ => panic!("wrong product definition template {:?}", section4.product_definition_template)
         };
+
+        assert_eq!(58, reader.stream_position().unwrap())
     }
 }
