@@ -1,4 +1,5 @@
 use std::io::{BufReader, Read, Seek};
+use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_header::NetCdfHeader;
@@ -10,9 +11,11 @@ pub struct NetCdfHeaderReader;
 impl NetCdfHeaderReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfHeader, NetCdfError> {
         let magic = NetCdfMagicReader::read(reader)?;
+        let num_recs = reader.read_u32::<BigEndian>()?;
 
         let header = NetCdfHeader::new(
-            magic
+            magic,
+            num_recs
         );
 
         return Ok(header);
@@ -39,5 +42,6 @@ mod tests {
         let header = result.unwrap();
         assert_eq!("CDF", header.magic.magic);
         assert_eq!(2, header.magic.version);
+        assert_eq!(0, header.num_recs);
     }
 }
