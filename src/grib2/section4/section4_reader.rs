@@ -66,7 +66,7 @@ mod tests {
     use crate::grib2::section4::section4_reader::Section4Reader;
 
     #[test]
-    fn it_correctly_parses_a_section4() {
+    fn it_correctly_parses_a_section4_with_a_tpl40() {
         let mut reader = BufReader::new(Cursor::new([
             0x00, 0x00, 0x00, 0x22, 0x04, 0x00, 0x00, 0x00, 0x00, 0x06, 0xC7, 0x02, 0x00, 0x0B, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -83,6 +83,29 @@ mod tests {
 
         match section4.product_definition_template {
             ProductDefinitionTemplate::Template4_0(_tpl) => {},
+            _ => panic!("wrong product definition template {:?}", section4.product_definition_template)
+        };
+    }
+
+    #[test]
+    fn it_correctly_parses_a_section4_with_a_tpl48() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x00, 0x00, 0x00, 0x3A, 0x04, 0x00, 0x00, 0x00, 0x08, 0x01, 0x34, 0x02, 0x00, 0x0B, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0x07, 0xE6, 0x04, 0x19, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02,
+            0x00, 0x00, 0x00, 0x00, 0x3C, 0xFF, 0x00, 0x00, 0x00, 0x00
+        ]));
+
+        let result = Section4Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let section4 = result.unwrap();
+        assert_eq!(58, section4.length);
+        assert_eq!(4, section4.section_number);
+        assert_eq!(0, section4.coordinate_values);
+
+        match section4.product_definition_template {
+            ProductDefinitionTemplate::Template4_8(_tpl) => {},
             _ => panic!("wrong product definition template {:?}", section4.product_definition_template)
         };
     }
