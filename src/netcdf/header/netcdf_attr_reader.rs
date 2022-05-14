@@ -52,6 +52,7 @@ mod tests {
 
     use crate::netcdf::header::netcdf_attr_reader::NetCdfAttrReader;
     use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
+    use crate::netcdf::common::netcdf_values::NetCdfValues;
 
     #[test]
     fn it_correctly_parses_an_attr_entry() {
@@ -67,7 +68,15 @@ mod tests {
         let attr = result.unwrap();
         assert_eq!("title", attr.name);
         assert_eq!(NetCdfValueType::NcChar, attr.nc_type);
-        //assert_eq!("ICON grid description".len(), attr.values.len());
+
+        match attr.values {
+            NetCdfValues::CharValues(values) => {
+                assert_eq!("ICON grid description".len(), values.len());
+                assert_eq!('I', values[0]);
+                assert_eq!('n', values[values.len() - 1]);
+            },
+            _ => panic!("wrong value type: {:?}", attr.values)
+        }
 
         assert_eq!(44 as u64, reader.stream_position().unwrap())
     }
