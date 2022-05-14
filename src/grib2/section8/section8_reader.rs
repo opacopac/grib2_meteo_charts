@@ -9,7 +9,7 @@ pub struct Section8Reader;
 
 impl Section8Reader {
     pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section8, Grib2Error> {
-        let magic = StringReader::read_4_chars(reader)?;
+        let magic = StringReader::read_n_chars(reader, 4)?;
         let section8 = Section8::new(magic)?;
 
         return Ok(section8);

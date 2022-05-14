@@ -119,7 +119,7 @@ impl Section1Reader {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
+    use std::io::{BufReader, Cursor, Seek};
     use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
     use crate::grib2::section1::processed_data_type::ProcessedDataType;
     use crate::grib2::section1::production_status::ProductionStatus;
@@ -148,5 +148,7 @@ mod tests {
         assert_eq!(NaiveDateTime::new(NaiveDate::from_ymd(2022, 4, 17), NaiveTime::from_hms(0, 0, 0)), section1.ref_time);
         assert_eq!(ProductionStatus::Operational, section1.production_status);
         assert_eq!(ProcessedDataType::Forecast, section1.processed_data_type);
+
+        assert_eq!(section1.length as u64, reader.stream_position().unwrap())
     }
 }

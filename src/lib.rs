@@ -4,3 +4,4 @@ pub mod chart;
 pub mod imaging;
 pub mod geo;
 pub mod meteo;
+pub mod netcdf;

@@ -12,7 +12,7 @@ pub struct Section0Reader;
 
 impl Section0Reader {
     pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section0, Grib2Error> {
-        let magic = StringReader::read_4_chars(reader)?;
+        let magic = StringReader::read_n_chars(reader, 4)?;
         reader.seek_relative(2)?; // 2 reserved bytes
         let discipline = Section0Reader::read_discipline(reader)?;
         let edition = reader.read_u8()?;
@@ -49,7 +49,7 @@ impl Section0Reader {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor};
+    use std::io::{BufReader, Cursor, Seek};
     use crate::grib2::section0::discipline::Discipline;
     use crate::grib2::section0::section0_reader::Section0Reader;
 
@@ -67,5 +67,7 @@ mod tests {
         assert_eq!(Discipline::Meteorological, section0.discipline);
         assert_eq!(2, section0.edition);
         assert_eq!(1623229, section0.length);
+
+        assert_eq!(16 as u64, reader.stream_position().unwrap())
     }
 }
