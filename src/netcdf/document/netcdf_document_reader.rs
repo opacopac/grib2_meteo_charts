@@ -10,15 +10,16 @@ pub struct NetCdfDocumentReader;
 
 
 impl NetCdfDocumentReader {
-    pub fn open_file(filename: &str) -> Result<NetCdfDocument, NetCdfError> {
+    pub fn read_file(filename: &str) -> Result<(NetCdfDocument, BufReader<File>), NetCdfError> {
         let file = File::open(filename)?;
         let mut reader = BufReader::new(file);
+        let doc = Self::read(&mut reader)?;
 
-        return Self::open_reader(&mut reader);
+        return Ok((doc, reader));
     }
 
 
-    pub fn open_reader<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfDocument, NetCdfError> {
+    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfDocument, NetCdfError> {
         let header = NetCdfHeaderReader::read(reader)?;
         let data = NetCdfData::new();
 
