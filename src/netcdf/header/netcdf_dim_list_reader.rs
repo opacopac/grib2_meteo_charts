@@ -4,7 +4,6 @@ use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_dim::NetCdfDim;
-use crate::netcdf::header::netcdf_dim_list::NetCdfDimList;
 use crate::netcdf::header::netcdf_dim_reader::NetCdfDimReader;
 
 pub struct NetCdfDimListReader;
@@ -12,21 +11,18 @@ pub struct NetCdfDimListReader;
 impl NetCdfDimListReader {
     const NC_DIMENSION_TAG: u32 = 0x000A;
 
-    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfDimList, NetCdfError> {
+    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<Vec<NetCdfDim>, NetCdfError> {
         let nc_dimension = reader.read_u32::<BigEndian>()?;
         if nc_dimension != Self::NC_DIMENSION_TAG {
-            let empty_dim_list = NetCdfDimList::new(vec![]);
-            return Ok(empty_dim_list);
+            return Ok(vec![]);
         }
 
-        let mut dims: Vec<NetCdfDim> = vec![];
+        let mut dim_list: Vec<NetCdfDim> = vec![];
         let num_elements = reader.read_u32::<BigEndian>()?;
         for _ in 0..num_elements {
             let dim = NetCdfDimReader::read(reader)?;
-            dims.push(dim);
+            dim_list.push(dim);
         }
-
-        let dim_list = NetCdfDimList::new(dims);
 
         return Ok(dim_list);
     }
@@ -63,35 +59,35 @@ mod tests {
         assert!(result.is_ok());
 
         let dim_list = result.unwrap();
-        assert_eq!(14, dim_list.dims.len());
-        assert_eq!("cell", dim_list.dims[0].name);
-        assert_eq!(2949120, dim_list.dims[0].length);
-        assert_eq!("vertex", dim_list.dims[1].name);
-        assert_eq!(1474562, dim_list.dims[1].length);
-        assert_eq!("edge", dim_list.dims[2].name);
-        assert_eq!(4423680, dim_list.dims[2].length);
-        assert_eq!("nc", dim_list.dims[3].name);
-        assert_eq!(2, dim_list.dims[3].length);
-        assert_eq!("nv", dim_list.dims[4].name);
-        assert_eq!(3, dim_list.dims[4].length);
-        assert_eq!("ne", dim_list.dims[5].name);
-        assert_eq!(6, dim_list.dims[5].length);
-        assert_eq!("no", dim_list.dims[6].name);
-        assert_eq!(4, dim_list.dims[6].length);
-        assert_eq!("two_grf", dim_list.dims[7].name);
-        assert_eq!(2, dim_list.dims[7].length);
-        assert_eq!("max_chdom", dim_list.dims[8].name);
-        assert_eq!(1, dim_list.dims[8].length);
-        assert_eq!("cell_grf", dim_list.dims[9].name);
-        assert_eq!(14, dim_list.dims[9].length);
-        assert_eq!("edge_grf", dim_list.dims[10].name);
-        assert_eq!(24, dim_list.dims[10].length);
-        assert_eq!("vert_grf", dim_list.dims[11].name);
-        assert_eq!(13, dim_list.dims[11].length);
-        assert_eq!("cell_delaunay", dim_list.dims[12].name);
-        assert_eq!(5898236, dim_list.dims[12].length);
-        assert_eq!("vert_delaunay", dim_list.dims[13].name);
-        assert_eq!(3, dim_list.dims[13].length);
+        assert_eq!(14, dim_list.len());
+        assert_eq!("cell", dim_list[0].name);
+        assert_eq!(2949120, dim_list[0].length);
+        assert_eq!("vertex", dim_list[1].name);
+        assert_eq!(1474562, dim_list[1].length);
+        assert_eq!("edge", dim_list[2].name);
+        assert_eq!(4423680, dim_list[2].length);
+        assert_eq!("nc", dim_list[3].name);
+        assert_eq!(2, dim_list[3].length);
+        assert_eq!("nv", dim_list[4].name);
+        assert_eq!(3, dim_list[4].length);
+        assert_eq!("ne", dim_list[5].name);
+        assert_eq!(6, dim_list[5].length);
+        assert_eq!("no", dim_list[6].name);
+        assert_eq!(4, dim_list[6].length);
+        assert_eq!("two_grf", dim_list[7].name);
+        assert_eq!(2, dim_list[7].length);
+        assert_eq!("max_chdom", dim_list[8].name);
+        assert_eq!(1, dim_list[8].length);
+        assert_eq!("cell_grf", dim_list[9].name);
+        assert_eq!(14, dim_list[9].length);
+        assert_eq!("edge_grf", dim_list[10].name);
+        assert_eq!(24, dim_list[10].length);
+        assert_eq!("vert_grf", dim_list[11].name);
+        assert_eq!(13, dim_list[11].length);
+        assert_eq!("cell_delaunay", dim_list[12].name);
+        assert_eq!(5898236, dim_list[12].length);
+        assert_eq!("vert_delaunay", dim_list[13].name);
+        assert_eq!(3, dim_list[13].length);
 
         assert_eq!(228 as u64, reader.stream_position().unwrap())
     }
@@ -107,7 +103,7 @@ mod tests {
         assert!(result.is_ok());
 
         let dim_list = result.unwrap();
-        assert_eq!(0, dim_list.dims.len());
+        assert_eq!(0, dim_list.len());
 
         assert_eq!(4 as u64, reader.stream_position().unwrap())
     }

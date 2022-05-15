@@ -1,4 +1,4 @@
-use std::io::{BufReader, Cursor, Read, Seek};
+use std::io::{BufReader, Read, Seek};
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -33,22 +33,29 @@ impl NetCdfHeaderReader {
 }
 
 
-#[test]
-fn it_correctly_parses_a_header_of_an_file_with_empty_lists() {
-    let mut reader = BufReader::new(Cursor::new([
-        0x43, 0x44, 0x46, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00
-    ]));
+#[cfg(test)]
+mod tests {
+    use std::io::{BufReader, Cursor, Seek};
 
-    let result = NetCdfHeaderReader::read(&mut reader);
-    assert!(result.is_ok());
+    use crate::netcdf::header::netcdf_header_reader::NetCdfHeaderReader;
 
-    let header = result.unwrap();
-    assert_eq!("CDF".to_string(), header.magic.magic);
-    assert_eq!(2, header.magic.version);
-    assert_eq!(0, header.dim_list.dims.len());
-    assert_eq!(0, header.att_list.len());
-    assert_eq!(0, header.var_list.len());
+    #[test]
+    fn it_correctly_parses_a_header_of_an_file_with_empty_lists() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x43, 0x44, 0x46, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00
+        ]));
 
-    assert_eq!(20 as u64, reader.stream_position().unwrap())
+        let result = NetCdfHeaderReader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let header = result.unwrap();
+        assert_eq!("CDF".to_string(), header.magic.magic);
+        assert_eq!(2, header.magic.version);
+        assert_eq!(0, header.dim_list.len());
+        assert_eq!(0, header.att_list.len());
+        assert_eq!(0, header.var_list.len());
+
+        assert_eq!(20 as u64, reader.stream_position().unwrap())
+    }
 }
