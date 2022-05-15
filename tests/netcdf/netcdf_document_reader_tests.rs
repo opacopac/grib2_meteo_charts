@@ -10,10 +10,6 @@ fn it_reads_an_existing_grib2_file() {
     let result = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE);
 
     assert!(result.is_ok());
-
-    let doc = result.unwrap();
-
-    println!("{}", doc.header);
 }
 
 
