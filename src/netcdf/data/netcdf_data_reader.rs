@@ -1,8 +1,8 @@
 use std::io::{BufReader, Read, Seek, SeekFrom};
 
-use byteorder::{BigEndian, ReadBytesExt};
-
 use crate::netcdf::common::netcdf_error::NetCdfError;
+use crate::netcdf::common::netcdf_values::NetCdfValues;
+use crate::netcdf::common::netcdf_values_reader::NetCdfValuesReader;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
 use crate::netcdf::header::netcdf_var::NetCdfVar;
 
@@ -10,7 +10,7 @@ pub struct NetCdfDataReader;
 
 
 impl NetCdfDataReader {
-    pub fn read_data_by_var<T: Read+Seek>(reader: &mut BufReader<T>, doc: &NetCdfDocument, var_name: &str) -> Result<Vec<f64>, NetCdfError> {
+    pub fn read_data_by_var<T: Read+Seek>(reader: &mut BufReader<T>, doc: &NetCdfDocument, var_name: &str) -> Result<NetCdfValues, NetCdfError> {
         let var_idx = Self::get_variable_idx(doc, var_name)?;
         let variable = &doc.header.var_list[var_idx];
         let entry_count = Self::get_entry_count(&variable);
@@ -18,10 +18,9 @@ impl NetCdfDataReader {
         let seek_from = SeekFrom::Start(variable.begin);
         reader.seek(seek_from)?;
 
-        let mut buf = vec![0.0; entry_count];
-        reader.read_f64_into::<BigEndian>(&mut buf)?;
+        let values = NetCdfValuesReader::read(reader, entry_count, &variable.nc_type)?;
 
-        return Ok(buf);
+        return Ok(values);
     }
 
 

@@ -14,7 +14,7 @@ impl NetCdfAttrReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfAttr, NetCdfError> {
         let name = NetCdfNameReader::read_name(reader)?;
         let value_type = NetCdfValueTypeReader::read(reader)?;
-        let value_len = reader.read_u32::<BigEndian>()?;
+        let value_len = reader.read_u32::<BigEndian>()? as usize;
         let values = NetCdfValuesReader::read(reader, value_len, &value_type)?;
 
         let dim = NetCdfAttr::new(

@@ -9,28 +9,25 @@ use crate::netcdf::common::netcdf_values::NetCdfValues;
 pub struct NetCdfValuesReader;
 
 impl NetCdfValuesReader {
-    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32, nc_type: &NetCdfValueType) -> Result<NetCdfValues, NetCdfError> {
+    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize, nc_type: &NetCdfValueType) -> Result<NetCdfValues, NetCdfError> {
         let values = match nc_type {
-            NetCdfValueType::NcByte => Self::read_byte_values(reader, value_len)?,
-            NetCdfValueType::NcChar => Self::read_char_values(reader, value_len)?,
-            NetCdfValueType::NcShort => Self::read_short_values(reader, value_len)?,
-            NetCdfValueType::NcInt => Self::read_int_values(reader, value_len)?,
-            NetCdfValueType::NcFloat => Self::read_float_values(reader, value_len)?,
-            NetCdfValueType::NcDouble => Self::read_double_values(reader, value_len)?,
+            NetCdfValueType::NcByte => Self::read_byte_values(reader, value_count)?,
+            NetCdfValueType::NcChar => Self::read_char_values(reader, value_count)?,
+            NetCdfValueType::NcShort => Self::read_short_values(reader, value_count)?,
+            NetCdfValueType::NcInt => Self::read_int_values(reader, value_count)?,
+            NetCdfValueType::NcFloat => Self::read_float_values(reader, value_count)?,
+            NetCdfValueType::NcDouble => Self::read_double_values(reader, value_count)?,
         };
 
         return Ok(values);
     }
 
 
-    fn read_byte_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
-        let mut byte_values: Vec<u8> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_u8()?;
-            byte_values.push(value);
-        }
+    fn read_byte_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
+        let mut byte_values = vec![0; value_count];
+        reader.read_exact(&mut byte_values)?;
 
-        Self::read_padding(reader, value_len, 1)?;
+        Self::read_padding(reader, value_count, 1)?;
 
         let values = NetCdfValues::ByteValues(byte_values);
 
@@ -38,14 +35,14 @@ impl NetCdfValuesReader {
     }
 
 
-    fn read_char_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
+    fn read_char_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
         let mut char_values: Vec<char> = vec![];
-        for _ in 0..value_len {
+        for _ in 0..value_count {
             let value = reader.read_u8()?;
             char_values.push(value as char);
         }
 
-        Self::read_padding(reader, value_len, 1)?;
+        Self::read_padding(reader, value_count, 1)?;
 
         let values = NetCdfValues::CharValues(char_values);
 
@@ -53,14 +50,11 @@ impl NetCdfValuesReader {
     }
 
 
-    fn read_short_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
-        let mut short_values: Vec<i16> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_i16::<BigEndian>()?;
-            short_values.push(value);
-        }
+    fn read_short_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
+        let mut short_values = vec![0 as i16; value_count];
+        reader.read_i16_into::<BigEndian>(&mut short_values)?;
 
-        Self::read_padding(reader, value_len, 2)?;
+        Self::read_padding(reader, value_count, 2)?;
 
         let values = NetCdfValues::ShortValues(short_values);
 
@@ -68,12 +62,9 @@ impl NetCdfValuesReader {
     }
 
 
-    fn read_int_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
-        let mut int_values: Vec<i32> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_i32::<BigEndian>()?;
-            int_values.push(value);
-        }
+    fn read_int_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
+        let mut int_values = vec![0 as i32; value_count];
+        reader.read_i32_into::<BigEndian>(&mut int_values)?;
 
         let values = NetCdfValues::IntValues(int_values);
 
@@ -81,12 +72,9 @@ impl NetCdfValuesReader {
     }
 
 
-    fn read_float_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
-        let mut float_values: Vec<f32> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_f32::<BigEndian>()?;
-            float_values.push(value);
-        }
+    fn read_float_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
+        let mut float_values = vec![0 as f32; value_count];
+        reader.read_f32_into::<BigEndian>(&mut float_values)?;
 
         let values = NetCdfValues::FloatValues(float_values);
 
@@ -94,21 +82,18 @@ impl NetCdfValuesReader {
     }
 
 
-    fn read_double_values<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32) -> Result<NetCdfValues, NetCdfError> {
-        let mut float_values: Vec<f64> = vec![];
-        for _ in 0..value_len {
-            let value = reader.read_f64::<BigEndian>()?;
-            float_values.push(value);
-        }
+    fn read_double_values<T: Read + Seek>(reader: &mut BufReader<T>, value_count: usize) -> Result<NetCdfValues, NetCdfError> {
+        let mut double_values = vec![0 as f64; value_count];
+        reader.read_f64_into::<BigEndian>(&mut double_values)?;
 
-        let values = NetCdfValues::DoubleValues(float_values);
+        let values = NetCdfValues::DoubleValues(double_values);
 
         return Ok(values);
     }
 
 
-    fn read_padding<T: Read + Seek>(reader: &mut BufReader<T>, value_len: u32, value_size_bytes: u32) -> Result<(), NetCdfError> {
-        let padding = value_len * value_size_bytes % 4;
+    fn read_padding<T: Read + Seek>(reader: &mut BufReader<T>, value_len: usize, value_size_bytes: u32) -> Result<(), NetCdfError> {
+        let padding = value_len * value_size_bytes as usize % 4;
         if padding > 0 {
             reader.seek_relative(4 - padding as i64)?;
         }
@@ -122,9 +107,9 @@ mod tests {
     use std::io::{BufReader, Cursor, Seek};
 
     use byteorder::{BigEndian, ReadBytesExt};
+
     use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
     use crate::netcdf::common::netcdf_values::NetCdfValues;
-
     use crate::netcdf::common::netcdf_values_reader::NetCdfValuesReader;
 
     #[test]
