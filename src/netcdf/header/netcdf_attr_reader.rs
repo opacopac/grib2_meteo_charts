@@ -5,7 +5,7 @@ use byteorder::{BigEndian, ReadBytesExt};
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::common::netcdf_values_reader::NetCdfValuesReader;
 use crate::netcdf::header::netcdf_attr::NetCdfAttr;
-use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
+use crate::netcdf::common::netcdf_value_type_reader::NetCdfValueTypeReader;
 use crate::netcdf::header::netcdf_name_reader::NetCdfNameReader;
 
 pub struct NetCdfAttrReader;
@@ -13,7 +13,7 @@ pub struct NetCdfAttrReader;
 impl NetCdfAttrReader {
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfAttr, NetCdfError> {
         let name = NetCdfNameReader::read_name(reader)?;
-        let value_type = Self::read_value_type(reader)?;
+        let value_type = NetCdfValueTypeReader::read(reader)?;
         let value_len = reader.read_u32::<BigEndian>()?;
         let values = NetCdfValuesReader::read(reader, value_len, &value_type)?;
 
@@ -24,24 +24,6 @@ impl NetCdfAttrReader {
         );
 
         return Ok(dim);
-    }
-
-
-    fn read_value_type<T: Read>(reader: &mut BufReader<T>) -> Result<NetCdfValueType, NetCdfError> {
-        let type_nr = reader.read_u32::<BigEndian>()?;
-        let nc_type = match type_nr {
-            1 => NetCdfValueType::NcByte,
-            2 => NetCdfValueType::NcChar,
-            3 => NetCdfValueType::NcShort,
-            4 => NetCdfValueType::NcInt,
-            5 => NetCdfValueType::NcFloat,
-            6 => NetCdfValueType::NcDouble,
-            _ => return Err(NetCdfError::InvalidData(
-                format!("unknown nc type: {:?}", type_nr)
-            ))
-        };
-
-        return Ok(nc_type);
     }
 }
 
