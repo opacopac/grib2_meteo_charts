@@ -13,18 +13,24 @@ impl NetCdfDimListReader {
 
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<Vec<NetCdfDim>, NetCdfError> {
         let nc_dimension = reader.read_u32::<BigEndian>()?;
-        if nc_dimension != Self::NC_DIMENSION_TAG {
+        let num_elements = reader.read_u32::<BigEndian>()?;
+
+        if nc_dimension == 0 && num_elements == 0 {
             return Ok(vec![]);
         }
 
-        let mut dim_list: Vec<NetCdfDim> = vec![];
-        let num_elements = reader.read_u32::<BigEndian>()?;
-        for _ in 0..num_elements {
-            let dim = NetCdfDimReader::read(reader)?;
-            dim_list.push(dim);
+        if nc_dimension == Self::NC_DIMENSION_TAG && num_elements > 0 {
+            let mut dim_list: Vec<NetCdfDim> = vec![];
+            for _ in 0..num_elements {
+                let dim = NetCdfDimReader::read(reader)?;
+                dim_list.push(dim);
+            }
+            return Ok(dim_list);
         }
 
-        return Ok(dim_list);
+        return Err(NetCdfError::InvalidData(
+            format!("invalid values for nc_dimensions: '{}' & num_elements: '{}' in dim list!", nc_dimension, num_elements)
+        ));
     }
 }
 
@@ -56,7 +62,7 @@ mod tests {
         ]));
 
         let result = NetCdfDimListReader::read(&mut reader);
-        assert!(result.is_ok());
+        //assert!(result.is_ok());
 
         let dim_list = result.unwrap();
         assert_eq!(14, dim_list.len());
@@ -96,7 +102,7 @@ mod tests {
     #[test]
     fn it_correctly_parses_an_absent_dim_list() {
         let mut reader = BufReader::new(Cursor::new([
-            0x00, 0x00, 0x00, 0x00
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         ]));
 
         let result = NetCdfDimListReader::read(&mut reader);
@@ -105,6 +111,6 @@ mod tests {
         let dim_list = result.unwrap();
         assert_eq!(0, dim_list.len());
 
-        assert_eq!(4 as u64, reader.stream_position().unwrap())
+        assert_eq!(8 as u64, reader.stream_position().unwrap())
     }
 }

@@ -13,19 +13,26 @@ impl NetCdfVarListReader {
     const NC_VARIABLE_TAG: u32 = 0x000B;
 
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<Vec<NetCdfVar>, NetCdfError> {
-        let nc_attribute_tag = reader.read_u32::<BigEndian>()?;
-        if nc_attribute_tag != Self::NC_VARIABLE_TAG {
+        let nc_variable = reader.read_u32::<BigEndian>()?;
+        let num_elements = reader.read_u32::<BigEndian>()?;
+
+        if nc_variable == 0 && num_elements == 0 {
             return Ok(vec![]);
         }
 
-        let mut attributes: Vec<NetCdfVar> = vec![];
-        let num_elements = reader.read_u32::<BigEndian>()?;
-        for _ in 0..num_elements {
-            let attr = NetCdfVarReader::read(reader)?;
-            attributes.push(attr);
+        if nc_variable == Self::NC_VARIABLE_TAG && num_elements > 0 {
+            let mut variables: Vec<NetCdfVar> = vec![];
+            for _ in 0..num_elements {
+                let attr = NetCdfVarReader::read(reader)?;
+                variables.push(attr);
+            }
+
+            return Ok(variables);
         }
 
-        return Ok(attributes);
+        return Err(NetCdfError::InvalidData(
+            format!("invalid values for nc_variable: '{}' & num_elements: '{}' in variable list!", nc_variable, num_elements)
+        ));
     }
 }
 
@@ -100,7 +107,7 @@ mod tests {
     #[test]
     fn it_correctly_parses_an_absent_var_list() {
         let mut reader = BufReader::new(Cursor::new([
-            0x00, 0x00, 0x00, 0x00
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         ]));
 
         let result = NetCdfVarListReader::read(&mut reader);
@@ -109,6 +116,6 @@ mod tests {
         let var_list = result.unwrap();
         assert_eq!(0, var_list.len());
 
-        assert_eq!(4 as u64, reader.stream_position().unwrap())
+        assert_eq!(8 as u64, reader.stream_position().unwrap())
     }
 }

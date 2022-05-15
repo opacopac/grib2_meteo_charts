@@ -13,19 +13,26 @@ impl NetCdfAttrListReader {
     const NC_ATTRIBUTE_TAG: u32 = 0x000C;
 
     pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<Vec<NetCdfAttr>, NetCdfError> {
-        let nc_attribute_tag = reader.read_u32::<BigEndian>()?;
-        if nc_attribute_tag != Self::NC_ATTRIBUTE_TAG {
+        let nc_attribute = reader.read_u32::<BigEndian>()?;
+        let num_elements = reader.read_u32::<BigEndian>()?;
+
+        if nc_attribute == 0 && num_elements == 0 {
             return Ok(vec![]);
         }
 
-        let mut attributes: Vec<NetCdfAttr> = vec![];
-        let num_elements = reader.read_u32::<BigEndian>()?;
-        for _ in 0..num_elements {
-            let attr = NetCdfAttrReader::read(reader)?;
-            attributes.push(attr);
+        if nc_attribute == Self::NC_ATTRIBUTE_TAG && num_elements > 0 {
+            let mut attributes: Vec<NetCdfAttr> = vec![];
+            for _ in 0..num_elements {
+                let attr = NetCdfAttrReader::read(reader)?;
+                attributes.push(attr);
+            }
+
+            return Ok(attributes);
         }
 
-        return Ok(attributes);
+        return Err(NetCdfError::InvalidData(
+            format!("invalid values for nc_attribute: '{}' & num_elements: '{}' in attribute list!", nc_attribute, num_elements)
+        ));
     }
 }
 
@@ -169,7 +176,7 @@ mod tests {
     #[test]
     fn it_correctly_parses_an_absent_attr_list() {
         let mut reader = BufReader::new(Cursor::new([
-            0x00, 0x00, 0x00, 0x00
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         ]));
 
         let result = NetCdfAttrListReader::read(&mut reader);
@@ -178,6 +185,6 @@ mod tests {
         let attr_list = result.unwrap();
         assert_eq!(0, attr_list.len());
 
-        assert_eq!(4 as u64, reader.stream_position().unwrap())
+        assert_eq!(8 as u64, reader.stream_position().unwrap())
     }
 }

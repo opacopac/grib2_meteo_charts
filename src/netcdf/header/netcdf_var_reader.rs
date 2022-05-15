@@ -88,4 +88,29 @@ mod tests {
 
         assert_eq!(188 as u64, reader.stream_position().unwrap())
     }
+
+
+    #[test]
+    fn it_correctly_parses_a_var_entry_without_attributes() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x00, 0x00, 0x00, 0x0B, 0x63, 0x63, 0x5F, 0x64, 0x65, 0x6C, 0x61, 0x75, 0x6E, 0x61, 0x79, 0x00,
+            0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x01, 0xDF, 0xD0, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x35, 0xF1, 0x84
+        ]));
+
+        let result = NetCdfVarReader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let var = result.unwrap();
+        assert_eq!("cc_delaunay", var.name);
+        assert_eq!(2, var.dim_ids.len());
+        assert_eq!(13, var.dim_ids[0]);
+        assert_eq!(12, var.dim_ids[1]);
+        assert_eq!(0, var.attributes.len());
+        assert_eq!(122832, var.size);
+        assert_eq!(3535236, var.begin);
+
+        assert_eq!(52 as u64, reader.stream_position().unwrap())
+    }
 }

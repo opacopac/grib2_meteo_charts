@@ -6,6 +6,7 @@ use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD
 mod grib2;
 mod meteo_dwd;
 mod chart;
+mod netcdf;
 
 pub const DATA_DIR: &str = "./tests/data/";
 pub const CLCT_ICON_D2_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";

@@ -43,7 +43,7 @@ mod tests {
     fn it_correctly_parses_a_header_of_an_file_with_empty_lists() {
         let mut reader = BufReader::new(Cursor::new([
             0x43, 0x44, 0x46, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         ]));
 
         let result = NetCdfHeaderReader::read(&mut reader);
@@ -56,6 +56,6 @@ mod tests {
         assert_eq!(0, header.att_list.len());
         assert_eq!(0, header.var_list.len());
 
-        assert_eq!(20 as u64, reader.stream_position().unwrap())
+        assert_eq!(32 as u64, reader.stream_position().unwrap())
     }
 }

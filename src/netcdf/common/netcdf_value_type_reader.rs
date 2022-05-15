@@ -18,9 +18,9 @@ impl NetCdfValueTypeReader {
             4 => NetCdfValueType::NcInt,
             5 => NetCdfValueType::NcFloat,
             6 => NetCdfValueType::NcDouble,
-            _ => return Err(NetCdfError::InvalidData(
+            _ => panic!("unknown nc type: {:?}", type_nr) /*return Err(NetCdfError::InvalidData(
                 format!("unknown nc type: {:?}", type_nr)
-            ))
+            ))*/
         };
 
         return Ok(nc_type);
