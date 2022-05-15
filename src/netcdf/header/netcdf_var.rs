@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use derive_new::new;
 
 use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
@@ -11,4 +13,26 @@ pub struct NetCdfVar {
     pub nc_type: NetCdfValueType,
     pub size: u32,
     pub begin: u64
+}
+
+
+impl Display for NetCdfVar {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "VAR:")?;
+        writeln!(f, "  name: {}", self.name)?;
+
+        write!(f, "  dim_ids:")?;
+        self.dim_ids.iter().for_each(|dim_id| write!(f, "{}", dim_id).unwrap());
+        writeln!(f)?;
+
+        writeln!(f, "  attributes:")?;
+        self.attributes.iter().for_each(|attr| write!(f, "{}", attr).unwrap());
+        writeln!(f)?;
+
+        writeln!(f, "  nc_type: {}", self.nc_type)?;
+        writeln!(f, "  size: {}", self.size)?;
+        writeln!(f, "  begin: {}", self.begin)?;
+
+        return Ok(());
+    }
 }

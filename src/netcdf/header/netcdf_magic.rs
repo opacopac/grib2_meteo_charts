@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use crate::netcdf::common::netcdf_error::NetCdfError;
 
 pub struct NetCdfMagic {
@@ -6,6 +8,7 @@ pub struct NetCdfMagic {
 }
 
 const NETCDF_MAGIC: &str = "CDF";
+
 
 impl NetCdfMagic {
     pub fn new(
@@ -28,6 +31,17 @@ impl NetCdfMagic {
             magic,
             version
         });
+    }
+}
+
+
+impl Display for NetCdfMagic {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "MAGIC")?;
+        writeln!(f, "  magic: {}", self.magic)?;
+        writeln!(f, "  version: {}", self.version)?;
+
+        return Ok(());
     }
 }
 

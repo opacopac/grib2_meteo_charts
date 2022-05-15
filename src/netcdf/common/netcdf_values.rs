@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 #[derive(Debug)]
 pub enum NetCdfValues {
     ByteValues(Vec<u8>),
@@ -12,7 +14,7 @@ pub enum NetCdfValues {
 impl NetCdfValues {
     pub fn get_chars(&self) -> String {
         return match &self {
-            NetCdfValues::CharValues(chars) => chars.into_iter().collect(),
+            NetCdfValues::CharValues(chars) => chars.iter().collect(),
             _ => panic!("invalid value type")
         }
     }
@@ -30,6 +32,20 @@ impl NetCdfValues {
         return match &self {
             NetCdfValues::DoubleValues(doubles) => doubles.to_vec(),
             _ => panic!("invalid value type")
+        }
+    }
+}
+
+
+impl Display for NetCdfValues {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NetCdfValues::ByteValues(values) => write!(f, "{}", values.iter().fold(String::new(), |val, acc| format!("{} {}", acc, val))),
+            NetCdfValues::CharValues(values) => write!(f, "{}", values.iter().collect::<String>()),
+            NetCdfValues::ShortValues(values) => write!(f, "{}", values.iter().fold(String::new(), |val, acc| format!("{} {}", acc, val))),
+            NetCdfValues::IntValues(values) => write!(f, "{}", values.iter().fold(String::new(), |val, acc| format!("{} {}", acc, val))),
+            NetCdfValues::FloatValues(values) => write!(f, "{}", values.iter().fold(String::new(), |val, acc| format!("{} {}", acc, val))),
+            NetCdfValues::DoubleValues(values) => write!(f, "{}", values.iter().fold(String::new(), |val, acc| format!("{} {}", acc, val))),
         }
     }
 }
