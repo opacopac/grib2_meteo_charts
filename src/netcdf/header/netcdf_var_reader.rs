@@ -27,7 +27,7 @@ impl NetCdfVarReader {
         let var = NetCdfVar::new(
             name,
             dim_ids,
-            attributes.attributes,
+            attributes,
             nc_type,
             var_size,
             begin

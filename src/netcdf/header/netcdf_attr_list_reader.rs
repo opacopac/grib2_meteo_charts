@@ -4,7 +4,6 @@ use byteorder::{BigEndian, ReadBytesExt};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_attr::NetCdfAttr;
-use crate::netcdf::header::netcdf_attr_list::NetCdfAttrList;
 use crate::netcdf::header::netcdf_attr_reader::NetCdfAttrReader;
 
 pub struct NetCdfAttrListReader;
@@ -13,11 +12,10 @@ pub struct NetCdfAttrListReader;
 impl NetCdfAttrListReader {
     const NC_ATTRIBUTE_TAG: u32 = 0x000C;
 
-    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<NetCdfAttrList, NetCdfError> {
+    pub fn read<T: Read + Seek>(reader: &mut BufReader<T>) -> Result<Vec<NetCdfAttr>, NetCdfError> {
         let nc_attribute_tag = reader.read_u32::<BigEndian>()?;
         if nc_attribute_tag != Self::NC_ATTRIBUTE_TAG {
-            let empty_attr_list = NetCdfAttrList::new(vec![]);
-            return Ok(empty_attr_list);
+            return Ok(vec![]);
         }
 
         let mut attributes: Vec<NetCdfAttr> = vec![];
@@ -27,9 +25,7 @@ impl NetCdfAttrListReader {
             attributes.push(attr);
         }
 
-        let attr_list = NetCdfAttrList::new(attributes);
-
-        return Ok(attr_list);
+        return Ok(attributes);
     }
 }
 
@@ -39,32 +35,7 @@ mod tests {
     use std::io::{BufReader, Cursor, Seek};
 
     use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
-    use crate::netcdf::common::netcdf_values::NetCdfValues;
     use crate::netcdf::header::netcdf_attr_list_reader::NetCdfAttrListReader;
-
-    fn get_chars(values: &NetCdfValues) -> String {
-        return match values {
-            NetCdfValues::CharValues(chars) => chars.into_iter().collect(),
-            _ => panic!("invalid value type")
-        }
-    }
-
-
-    fn get_ints(values: &NetCdfValues) -> Vec<i32> {
-        return match values {
-            NetCdfValues::IntValues(ints) => ints.to_vec(),
-            _ => panic!("invalid value type")
-        }
-    }
-
-
-    fn get_doubles(values: &NetCdfValues) -> Vec<f64> {
-        return match values {
-            NetCdfValues::DoubleValues(doubles) => doubles.to_vec(),
-            _ => panic!("invalid value type")
-        }
-    }
-
 
     #[test]
     fn it_correctly_parses_the_num_recs() {
@@ -105,91 +76,91 @@ mod tests {
         assert!(result.is_ok());
 
         let attr_list = result.unwrap();
-        assert_eq!(21, attr_list.attributes.len());
+        assert_eq!(21, attr_list.len());
 
-        assert_eq!("title", attr_list.attributes[0].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[0].nc_type);
-        assert_eq!("ICON grid description", get_chars(&attr_list.attributes[0].values));
+        assert_eq!("title", attr_list[0].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[0].nc_type);
+        assert_eq!("ICON grid description", attr_list[0].values.get_chars());
 
-        assert_eq!("history", attr_list.attributes[1].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[1].nc_type);
-        assert_eq!("/panfs/e/vol2/gzaengl/icon-dev/build/x86_64-unknown-linux-gnu/bin/grid_command", get_chars(&attr_list.attributes[1].values));
+        assert_eq!("history", attr_list[1].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[1].nc_type);
+        assert_eq!("/panfs/e/vol2/gzaengl/icon-dev/build/x86_64-unknown-linux-gnu/bin/grid_command", attr_list[1].values.get_chars());
 
-        assert_eq!("institution", attr_list.attributes[2].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[2].nc_type);
-        assert_eq!("Max Planck Institute for Meteorology/Deutscher Wetterdienst", get_chars(&attr_list.attributes[2].values));
+        assert_eq!("institution", attr_list[2].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[2].nc_type);
+        assert_eq!("Max Planck Institute for Meteorology/Deutscher Wetterdienst", attr_list[2].values.get_chars());
 
-        assert_eq!("source", attr_list.attributes[3].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[3].nc_type);
+        assert_eq!("source", attr_list[3].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[3].nc_type);
         // assert_eq!("icon-dev", get_chars(&attr_list.attributes[3].values));
 
-        assert_eq!("uuidOfHGrid", attr_list.attributes[4].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[4].nc_type);
-        assert_eq!("a27b8de6-18c4-11e4-820a-b5b098c6a5c0", get_chars(&attr_list.attributes[4].values));
+        assert_eq!("uuidOfHGrid", attr_list[4].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[4].nc_type);
+        assert_eq!("a27b8de6-18c4-11e4-820a-b5b098c6a5c0", attr_list[4].values.get_chars());
 
-        assert_eq!("number_of_grid_used", attr_list.attributes[5].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[5].nc_type);
-        assert_eq!(vec![26], get_ints(&attr_list.attributes[5].values));
+        assert_eq!("number_of_grid_used", attr_list[5].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[5].nc_type);
+        assert_eq!(vec![26], attr_list[5].values.get_ints());
 
-        assert_eq!("ICON_grid_file_uri", attr_list.attributes[6].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[6].nc_type);
-        assert_eq!("http://icon-downloads.mpimet.mpg.de/grids/public/icon_grid_0026_R03B07_G.nc", get_chars(&attr_list.attributes[6].values));
+        assert_eq!("ICON_grid_file_uri", attr_list[6].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[6].nc_type);
+        assert_eq!("http://icon-downloads.mpimet.mpg.de/grids/public/icon_grid_0026_R03B07_G.nc", attr_list[6].values.get_chars());
 
-        assert_eq!("centre", attr_list.attributes[7].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[7].nc_type);
-        assert_eq!(vec![78], get_ints(&attr_list.attributes[7].values));
+        assert_eq!("centre", attr_list[7].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[7].nc_type);
+        assert_eq!(vec![78], attr_list[7].values.get_ints());
 
-        assert_eq!("subcentre", attr_list.attributes[8].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[8].nc_type);
-        assert_eq!(vec![255], get_ints(&attr_list.attributes[8].values));
+        assert_eq!("subcentre", attr_list[8].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[8].nc_type);
+        assert_eq!(vec![255], attr_list[8].values.get_ints());
 
-        assert_eq!("outname_style", attr_list.attributes[9].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[9].nc_type);
-        assert_eq!(vec![2], get_ints(&attr_list.attributes[9].values));
+        assert_eq!("outname_style", attr_list[9].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[9].nc_type);
+        assert_eq!(vec![2], attr_list[9].values.get_ints());
 
-        assert_eq!("grid_mapping_name", attr_list.attributes[10].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[10].nc_type);
-        assert_eq!("lat_long_on_sphere", get_chars(&attr_list.attributes[10].values));
+        assert_eq!("grid_mapping_name", attr_list[10].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[10].nc_type);
+        assert_eq!("lat_long_on_sphere", attr_list[10].values.get_chars());
 
-        assert_eq!("crs_id", attr_list.attributes[11].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[11].nc_type);
-        assert_eq!("urn:ogc:def:cs:EPSG:6.0:6422", get_chars(&attr_list.attributes[11].values));
+        assert_eq!("crs_id", attr_list[11].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[11].nc_type);
+        assert_eq!("urn:ogc:def:cs:EPSG:6.0:6422", attr_list[11].values.get_chars());
 
-        assert_eq!("crs_name", attr_list.attributes[12].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[12].nc_type);
-        assert_eq!("Spherical 2D Coordinate System", get_chars(&attr_list.attributes[12].values));
+        assert_eq!("crs_name", attr_list[12].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[12].nc_type);
+        assert_eq!("Spherical 2D Coordinate System", attr_list[12].values.get_chars());
 
-        assert_eq!("ellipsoid_name", attr_list.attributes[13].name);
-        assert_eq!(NetCdfValueType::NcChar, attr_list.attributes[13].nc_type);
-        assert_eq!("Sphere", get_chars(&attr_list.attributes[13].values));
+        assert_eq!("ellipsoid_name", attr_list[13].name);
+        assert_eq!(NetCdfValueType::NcChar, attr_list[13].nc_type);
+        assert_eq!("Sphere", attr_list[13].values.get_chars());
 
-        assert_eq!("semi_major_axis", attr_list.attributes[14].name);
-        assert_eq!(NetCdfValueType::NcDouble, attr_list.attributes[14].nc_type);
-        assert_eq!(vec![6371229.0], get_doubles(&attr_list.attributes[14].values));
+        assert_eq!("semi_major_axis", attr_list[14].name);
+        assert_eq!(NetCdfValueType::NcDouble, attr_list[14].nc_type);
+        assert_eq!(vec![6371229.0], attr_list[14].values.get_doubles());
 
-        assert_eq!("inverse_flattening", attr_list.attributes[15].name);
-        assert_eq!(NetCdfValueType::NcDouble, attr_list.attributes[15].nc_type);
-        assert_eq!(vec![0.0], get_doubles(&attr_list.attributes[15].values));
+        assert_eq!("inverse_flattening", attr_list[15].name);
+        assert_eq!(NetCdfValueType::NcDouble, attr_list[15].nc_type);
+        assert_eq!(vec![0.0], attr_list[15].values.get_doubles());
 
-        assert_eq!("grid_level", attr_list.attributes[16].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[16].nc_type);
-        assert_eq!(vec![7], get_ints(&attr_list.attributes[16].values));
+        assert_eq!("grid_level", attr_list[16].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[16].nc_type);
+        assert_eq!(vec![7], attr_list[16].values.get_ints());
 
-        assert_eq!("grid_root", attr_list.attributes[17].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[17].nc_type);
-        assert_eq!(vec![3], get_ints(&attr_list.attributes[17].values));
+        assert_eq!("grid_root", attr_list[17].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[17].nc_type);
+        assert_eq!(vec![3], attr_list[17].values.get_ints());
 
-        assert_eq!("grid_ID", attr_list.attributes[18].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[18].nc_type);
-        assert_eq!(vec![1], get_ints(&attr_list.attributes[18].values));
+        assert_eq!("grid_ID", attr_list[18].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[18].nc_type);
+        assert_eq!(vec![1], attr_list[18].values.get_ints());
 
-        assert_eq!("parent_grid_ID", attr_list.attributes[19].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[19].nc_type);
-        assert_eq!(vec![0], get_ints(&attr_list.attributes[19].values));
+        assert_eq!("parent_grid_ID", attr_list[19].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[19].nc_type);
+        assert_eq!(vec![0], attr_list[19].values.get_ints());
 
-        assert_eq!("max_childdom", attr_list.attributes[20].name);
-        assert_eq!(NetCdfValueType::NcInt, attr_list.attributes[20].nc_type);
-        assert_eq!(vec![1], get_ints(&attr_list.attributes[20].values));
+        assert_eq!("max_childdom", attr_list[20].name);
+        assert_eq!(NetCdfValueType::NcInt, attr_list[20].nc_type);
+        assert_eq!(vec![1], attr_list[20].values.get_ints());
 
         assert_eq!(960 as u64, reader.stream_position().unwrap())
     }
@@ -205,7 +176,7 @@ mod tests {
         assert!(result.is_ok());
 
         let attr_list = result.unwrap();
-        assert_eq!(0, attr_list.attributes.len());
+        assert_eq!(0, attr_list.len());
 
         assert_eq!(4 as u64, reader.stream_position().unwrap())
     }
