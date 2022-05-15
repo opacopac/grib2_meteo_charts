@@ -6,7 +6,7 @@ use crate::{DATA_DIR, read_icon_d2_test_document_result};
 fn it_reads_an_existing_grib2_file() {
     let result = read_icon_d2_test_document_result();
 
-    assert_eq!(false, result.is_err());
+    assert!(result.is_ok());
 }
 
 
@@ -16,7 +16,7 @@ fn it_returns_an_error_if_the_file_doesnt_exist() {
 
     let result = Grib2DocumentReader::read_file(&grib2_file);
 
-    assert_eq!(true, result.is_err());
+    assert!(result.is_err());
 }
 
 
@@ -26,5 +26,5 @@ fn it_returns_an_error_if_the_file_isnt_in_grib2_format() {
 
     let result = Grib2DocumentReader::read_file(&grib2_file);
 
-    assert_eq!(true, result.is_err());
+    assert!(result.is_err());
 }

@@ -37,7 +37,6 @@ impl NetCdfMagic {
 
 impl Display for NetCdfMagic {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "MAGIC")?;
         writeln!(f, "  magic: {}", self.magic)?;
         writeln!(f, "  version: {}", self.version)?;
 
