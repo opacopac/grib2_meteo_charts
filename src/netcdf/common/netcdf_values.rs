@@ -12,10 +12,26 @@ pub enum NetCdfValues {
 
 
 impl NetCdfValues {
+    pub fn get_bytes(&self) -> Vec<u8> {
+        return match &self {
+            NetCdfValues::ByteValues(bytes) => bytes.to_vec(),
+            _ => panic!("invalid value type, expected 'ByteValues")
+        }
+    }
+
+
     pub fn get_chars(&self) -> String {
         return match &self {
             NetCdfValues::CharValues(chars) => chars.iter().collect(),
-            _ => panic!("invalid value type")
+            _ => panic!("invalid value type, expected 'CharValues")
+        }
+    }
+
+
+    pub fn get_shorts(&self) -> Vec<i16> {
+        return match &self {
+            NetCdfValues::ShortValues(shorts) => shorts.to_vec(),
+            _ => panic!("invalid value type, expected 'ShortValues")
         }
     }
 
@@ -23,7 +39,15 @@ impl NetCdfValues {
     pub fn get_ints(&self) -> Vec<i32> {
         return match &self {
             NetCdfValues::IntValues(ints) => ints.to_vec(),
-            _ => panic!("invalid value type")
+            _ => panic!("invalid value type, expected 'IntValues")
+        }
+    }
+
+
+    pub fn get_floats(&self) -> Vec<f32> {
+        return match &self {
+            NetCdfValues::FloatValues(floats) => floats.to_vec(),
+            _ => panic!("invalid value type, expected 'FloatValues")
         }
     }
 
@@ -31,7 +55,7 @@ impl NetCdfValues {
     pub fn get_doubles(&self) -> Vec<f64> {
         return match &self {
             NetCdfValues::DoubleValues(doubles) => doubles.to_vec(),
-            _ => panic!("invalid value type")
+            _ => panic!("invalid value type, expected 'DoubleValues")
         }
     }
 }

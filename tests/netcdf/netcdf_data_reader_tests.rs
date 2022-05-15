@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::BufReader;
-use meteo_grib2_renderer::netcdf::common::netcdf_values::NetCdfValues;
 
 use meteo_grib2_renderer::netcdf::data::netcdf_data_reader::NetCdfDataReader;
 use meteo_grib2_renderer::netcdf::document::netcdf_document::NetCdfDocument;
@@ -24,12 +23,8 @@ fn it_reads_clon_clat_data_from_an_icon_grid_file() {
     assert!(result.is_ok());
 
     let data = result.unwrap();
-    match data {
-        NetCdfValues::DoubleValues(values) => {
-            assert_eq!(5120, values.len())
-        },
-        _ => panic!("unknown value type {:?}", data)
-    }
+    let values = data.get_doubles();
+    assert_eq!(5120, values.len())
 }
 
 
