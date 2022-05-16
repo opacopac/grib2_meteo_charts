@@ -36,6 +36,13 @@ impl LatLon {
 }
 
 
+impl PartialEq for LatLon {
+    fn eq(&self, other: &Self) -> bool {
+        return self.lat == other.lat && self.lon == other.lon;
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use crate::geo::lat_lon::LatLon;

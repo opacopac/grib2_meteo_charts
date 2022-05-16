@@ -5,3 +5,4 @@ pub mod imaging;
 pub mod geo;
 pub mod meteo;
 pub mod netcdf;
+pub mod quad_tree;
