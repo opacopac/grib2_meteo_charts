@@ -26,23 +26,18 @@ impl QuadTreeNode {
 
 #[cfg(test)]
 mod tests {
-    use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
     use crate::quad_tree::quad_tree_node::QuadTreeNode;
 
 
     #[test]
     fn it_creates_an_empty_node() {
-        let extent = LatLonExtent::new(
-            LatLon::new(-90.0, -180.0),
-            LatLon::new(90.0, 180.0)
-        );
-        let extent2 = extent.clone();
+        let extent = LatLonExtent::MAX_EXTENT;
 
         let node = QuadTreeNode::new(extent);
 
         assert_eq!(0, node.items.len());
-        assert_eq!(extent2, node.extent);
+        assert_eq!(LatLonExtent::MAX_EXTENT, node.extent);
     }
 
 
