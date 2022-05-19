@@ -19,22 +19,18 @@ impl <T> QuadTreeNode<T> {
     }
 
 
-    pub fn add_item(
-        &mut self,
-        item: QuadTreeItem<T>,
-        max_capacity: usize
-    ) {
+    pub fn add_item(&mut self, item: QuadTreeItem<T>, max_capacity: usize, max_depth: usize) {
         if self.child_nodes.len() == 0 {
             self.items.push(item);
 
-            if self.items.len() > max_capacity {
+            if self.items.len() > max_capacity && max_depth > 0 {
                 self.child_nodes = self.create_child_nodes();
                 while let Some(item) = self.items.pop() {
-                    self.pass_to_child_node(item, max_capacity);
+                    self.pass_to_child_node(item, max_capacity, max_depth - 1);
                 }
             }
         } else {
-            self.pass_to_child_node(item, max_capacity);
+            self.pass_to_child_node(item, max_capacity, max_depth - 1);
         }
     }
 
@@ -68,10 +64,10 @@ impl <T> QuadTreeNode<T> {
     }
 
 
-    fn pass_to_child_node(&mut self, item: QuadTreeItem<T>, max_capacity: usize) {
+    fn pass_to_child_node(&mut self, item: QuadTreeItem<T>, max_capacity: usize, max_depth: usize) {
         for i in 0..self.child_nodes.len() {
             if self.child_nodes[i].extent.is_inside(&item.coord) {
-                self.child_nodes[i].add_item(item, max_capacity);
+                self.child_nodes[i].add_item(item, max_capacity, max_depth);
                 break;
             }
         }
@@ -101,8 +97,8 @@ mod tests {
         let item1 = QuadTreeItem::new(LatLon::new(1.0, 1.0), 1);
         let item2 = QuadTreeItem::new(LatLon::new(2.0, 2.0), 2);
 
-        node.add_item(item1, 6);
-        node.add_item(item2, 6);
+        node.add_item(item1, 10, 6);
+        node.add_item(item2, 10, 6);
 
         assert_eq!(2, node.items.len());
     }
@@ -116,15 +112,16 @@ mod tests {
         let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
         let item4 = QuadTreeItem::new(LatLon::new(4.0, 4.0), 4);
         let max_capacity = 3;
+        let max_depth = 6;
 
-        node.add_item(item1, max_capacity);
-        node.add_item(item2, max_capacity);
-        node.add_item(item3, max_capacity);
+        node.add_item(item1, max_capacity, max_depth);
+        node.add_item(item2, max_capacity, max_depth);
+        node.add_item(item3, max_capacity, max_depth);
 
         assert_eq!(3, node.items.len());
         assert_eq!(0, node.child_nodes.len());
 
-        node.add_item(item4, max_capacity);
+        node.add_item(item4, max_capacity, max_depth);
 
         assert_eq!(0, node.items.len());
         assert_eq!(4, node.child_nodes.len());
@@ -148,5 +145,44 @@ mod tests {
         assert_eq!(LatLon { lat: 90.0, lon: 180.0 }, node.child_nodes[3].extent.max_coord);
         assert_eq!(1, node.child_nodes[3].items.len());
         assert_eq!(4, node.child_nodes[3].items[0].value);
+    }
+
+
+    #[test]
+    fn it_has_a_max_depth() {
+        let mut node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+        let item1 = QuadTreeItem::new(LatLon::new(-90.0, -180.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(-90.0, -180.0), 2);
+        let max_capacity = 1;
+        let max_depth = 2;
+
+        node.add_item(item1, max_capacity, max_depth);
+
+        assert_eq!(1, node.items.len());
+        assert_eq!(0, node.child_nodes.len());
+
+        node.add_item(item2, max_capacity, max_depth);
+
+        assert_eq!(0, node.items.len());
+        assert_eq!(4, node.child_nodes.len());
+
+        assert_eq!(0, node.child_nodes[0].items.len());
+        assert_eq!(0, node.child_nodes[1].items.len());
+        assert_eq!(0, node.child_nodes[2].items.len());
+        assert_eq!(0, node.child_nodes[3].items.len());
+        assert_eq!(4, node.child_nodes[0].child_nodes.len());
+        assert_eq!(0, node.child_nodes[1].child_nodes.len());
+        assert_eq!(0, node.child_nodes[2].child_nodes.len());
+        assert_eq!(0, node.child_nodes[3].child_nodes.len());
+
+        let child_lv2 = &node.child_nodes[0];
+        assert_eq!(2, child_lv2.child_nodes[0].items.len());
+        assert_eq!(0, child_lv2.child_nodes[1].items.len());
+        assert_eq!(0, child_lv2.child_nodes[2].items.len());
+        assert_eq!(0, child_lv2.child_nodes[3].items.len());
+        assert_eq!(0, child_lv2.child_nodes[0].child_nodes.len());
+        assert_eq!(0, child_lv2.child_nodes[1].child_nodes.len());
+        assert_eq!(0, child_lv2.child_nodes[2].child_nodes.len());
+        assert_eq!(0, child_lv2.child_nodes[3].child_nodes.len());
     }
 }
