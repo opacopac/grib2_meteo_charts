@@ -30,6 +30,22 @@ impl LatLonExtent {
 
         return clone;
     }
+
+
+    pub fn calc_midpoint(&self) -> LatLon {
+        let mid_point = LatLon {
+            lat: (self.min_coord.lat + self.max_coord.lat) / 2.0,
+            lon: (self.min_coord.lon + self.max_coord.lon) / 2.0,
+        };
+
+        return mid_point;
+    }
+
+
+    pub fn is_inside(&self, point: &LatLon) -> bool {
+        return point.lat >= self.min_coord.lat && point.lat < self.max_coord.lat &&
+            point.lon >= self.min_coord.lon && point.lon < self.max_coord.lon;
+    }
 }
 
 
@@ -107,5 +123,32 @@ mod tests {
         let clone = extent.clone();
 
         assert_eq!(extent, clone);
+    }
+
+
+    #[test]
+    fn it_calculates_the_midpoint() {
+        let extent = LatLonExtent::MAX_EXTENT;
+
+        let mid_point = extent.calc_midpoint();
+
+        assert_eq!(LatLon::new(0.0, 0.0), mid_point);
+    }
+
+
+    #[test]
+    fn it_checks_if_a_point_is_inside() {
+        let extent = LatLonExtent::new(
+            LatLon::new(-10.0, -20.0),
+            LatLon::new(30.0, 40.0)
+        );
+        let point1 = LatLon::new(0.0, 0.0);
+        let point2 = LatLon::new(-20.0, 0.0);
+
+        let is_inside1 = extent.is_inside(&point1);
+        let is_inside2 = extent.is_inside(&point2);
+
+        assert!(is_inside1);
+        assert!(!is_inside2);
     }
 }
