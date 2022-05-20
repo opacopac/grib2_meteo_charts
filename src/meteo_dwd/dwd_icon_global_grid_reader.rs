@@ -21,7 +21,7 @@ impl DwdIconGlobalGridReader {
             let lat = clat_data[i].to_degrees() as f32;
             let lon = clon_data[i].to_degrees() as f32;
             let point = LatLon::new(lat, lon);
-            grid.add_point(point);
+            grid.add_point_value(point, i);
         }
 
         return Ok(grid);

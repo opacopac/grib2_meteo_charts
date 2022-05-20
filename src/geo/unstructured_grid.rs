@@ -1,52 +1,46 @@
 use crate::geo::lat_lon::LatLon;
+use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::quad_tree::quad_tree::QuadTree;
+use crate::quad_tree::quad_tree_item::QuadTreeItem;
 
 pub struct UnstructuredGrid {
-    grid_points: Vec<LatLon>
+    quad_tree: QuadTree<usize>,
 }
 
 
 impl UnstructuredGrid {
+    const MAX_NODE_CAPACITY: usize = 50;
+    const MAX_TREE_DEPTH: usize = 10;
+
+
     pub fn new() -> UnstructuredGrid {
-        let grid = UnstructuredGrid { grid_points: vec![] };
+        let quad_tree = QuadTree::new(
+            LatLonExtent::MAX_EXTENT,
+            Self::MAX_NODE_CAPACITY,
+            Self::MAX_TREE_DEPTH
+        );
+        let grid = UnstructuredGrid { quad_tree };
 
         return grid;
     }
 
 
-    pub fn add_point(&mut self, lat_lon: LatLon) {
-        self.grid_points.push(lat_lon);
+    pub fn add_point_value(&mut self, lat_lon: LatLon, value: usize) {
+        let item = QuadTreeItem::new(lat_lon, value);
+        self.quad_tree.add_item(item);
     }
 
 
     pub fn get_point_count(&self) -> usize {
-        return self.grid_points.len();
+        return self.quad_tree.get_item_count();
     }
 
 
-    pub fn get_point_by_idx(&self, index: usize) -> &LatLon {
-        let point = &self.grid_points[index];
+    pub fn get_value_by_lat_lon(&self, lat_lon: &LatLon) -> usize {
+        let result = self.quad_tree.find_closest_item(lat_lon);
+        let item = result.unwrap(); // TODO;
 
-        return point;
-    }
-
-
-    pub fn get_idx_by_lat_lon(&self, lat_lon: &LatLon) -> usize {
-        // TODO: temp => use spacial index
-
-        let mut best_dist = 999999.0;
-        let mut best_idx = 0;
-        for i in 0..self.grid_points.len() {
-            let lat_dist = lat_lon.lat - self.grid_points[i].lat;
-            let lon_dist = lat_lon.lon - self.grid_points[i].lon;
-            let dist = lat_dist * lat_dist + lon_dist * lon_dist;
-
-            if dist < best_dist {
-                best_dist = dist;
-                best_idx = i;
-            }
-        }
-
-        return best_idx;
+        return item.value;
     }
 }
 
@@ -61,17 +55,17 @@ mod tests {
         let mut grid = UnstructuredGrid::new();
         let lat_lon = LatLon::new(47.0, 7.0);
 
-        grid.add_point(lat_lon);
+        grid.add_point_value(lat_lon, 1);
 
-        assert_eq!(1, grid.grid_points.len());
+        assert_eq!(1, grid.quad_tree.get_item_count());
     }
 
 
     #[test]
     fn it_gets_the_number_of_grid_point() {
         let mut grid = UnstructuredGrid::new();
-        grid.add_point(LatLon::new(47.0, 7.0));
-        grid.add_point(LatLon::new(47.6, 7.6));
+        grid.add_point_value(LatLon::new(47.0, 7.0), 1);
+        grid.add_point_value(LatLon::new(47.6, 7.6), 2);
 
         let point_count = grid.get_point_count();
 
@@ -80,27 +74,14 @@ mod tests {
 
 
     #[test]
-    fn it_gets_a_grid_point_by_index() {
+    fn it_gets_the_point_value_by_lat_lon() {
         let mut grid = UnstructuredGrid::new();
-        let point = LatLon::new(47.0, 7.0);
-        grid.add_point(point);
-
-        let point = grid.get_point_by_idx(0);
-
-        assert_eq!(47.0, point.lat);
-        assert_eq!(7.0, point.lon);
-    }
-
-
-    #[test]
-    fn it_gets_the_closest_index_by_lat_lon() {
-        let mut grid = UnstructuredGrid::new();
-        grid.add_point(LatLon::new(47.0, 7.0));
-        grid.add_point(LatLon::new(47.6, 7.6));
+        grid.add_point_value(LatLon::new(47.0, 7.0), 1);
+        grid.add_point_value(LatLon::new(47.6, 7.6), 2);
         let lat_lon = LatLon::new(48.0, 8.0);
 
-        let result = grid.get_idx_by_lat_lon(&lat_lon);
+        let result = grid.get_value_by_lat_lon(&lat_lon);
 
-        assert_eq!(1, result);
+        assert_eq!(2, result);
     }
 }

@@ -35,15 +35,15 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
         println!("point {}: {:?}", i, point);
     }
 
-    let idx = layer.grid.get_idx_by_lat_lon(&LatLon::new(47.0, 7.0));
+    let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(47.0, 7.0));
     let pt = layer.grid.get_point_by_idx(idx);
     println!("CH point: {:?}", pt);
 
-    let idx = layer.grid.get_idx_by_lat_lon(&LatLon::new(48.0, 8.0));
+    let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(48.0, 8.0));
     let pt = layer.grid.get_point_by_idx(idx);
     println!("CH point: {:?}", pt);
 
-    let idx = layer.grid.get_idx_by_lat_lon(&LatLon::new(49.0, 9.0));
+    let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(49.0, 9.0));
     let pt = layer.grid.get_point_by_idx(idx);
     println!("CH point: {:?}", pt);
 }

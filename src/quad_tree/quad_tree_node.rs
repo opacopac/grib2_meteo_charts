@@ -35,6 +35,21 @@ impl <T> QuadTreeNode<T> {
     }
 
 
+    pub fn get_item_count(&self) -> usize {
+        return if self.child_nodes.len() == 0 {
+            self.items.len()
+        } else {
+            let mut count = 0;
+
+            for child_node in &self.child_nodes {
+                count += child_node.get_item_count();
+            }
+
+            count
+        }
+    }
+
+
     pub fn find_closest_item(&self, pos: &LatLon) -> Option<&QuadTreeItem<T>> {
         if self.child_nodes.len() == 0 {
             return self.find_closest_item_of_self(pos);
@@ -224,6 +239,33 @@ mod tests {
         assert_eq!(0, child_lv2.child_nodes[1].child_nodes.len());
         assert_eq!(0, child_lv2.child_nodes[2].child_nodes.len());
         assert_eq!(0, child_lv2.child_nodes[3].child_nodes.len());
+    }
+
+
+    #[test]
+    fn it_gets_the_total_number_of_items() {
+        let mut node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+        let item1 = QuadTreeItem::new(LatLon::new(1.0, 1.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
+        let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
+
+        let count = node.get_item_count();
+        assert_eq!(0, count);
+
+        node.add_item(item1, 2, 6);
+
+        let count = node.get_item_count();
+        assert_eq!(1, count);
+
+        node.add_item(item2, 2, 6);
+
+        let count = node.get_item_count();
+        assert_eq!(2, count);
+
+        node.add_item(item3, 2, 6);
+
+        let count = node.get_item_count();
+        assert_eq!(3, count);
     }
 
 
