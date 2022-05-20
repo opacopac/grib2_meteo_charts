@@ -35,6 +35,46 @@ impl <T> QuadTreeNode<T> {
     }
 
 
+    pub fn find_closest_item(&self, pos: &LatLon) -> Option<&QuadTreeItem<T>> {
+        if self.child_nodes.len() == 0 {
+            return self.find_closest_item_of_self(pos);
+        } else {
+            for child_node in &self.child_nodes {
+                if child_node.extent.is_inside(pos) {
+                    return child_node.find_closest_item(pos);
+                }
+            }
+
+            panic!("no quadrant found for pos: {:?}", pos); // should never happen
+        }
+    }
+
+
+    fn find_closest_item_of_self(&self, pos: &LatLon) -> Option<&QuadTreeItem<T>> {
+        if self.items.len() == 0 {
+            return None;
+        }
+
+        let mut best_dist = -1.0;
+        let mut best_idx = 0;
+        for i in 0..self.items.len() {
+            let item = &self.items[i];
+            let lat_diff = item.coord.lat - pos.lat;
+            let lon_diff = item.coord.lon - pos.lon;
+            let dist = lat_diff * lat_diff + lon_diff * lon_diff;
+
+            if dist < best_dist || best_dist < 0.0 {
+                best_dist = dist;
+                best_idx = i;
+            }
+        }
+
+        let closest_item = &self.items[best_idx];
+
+        return Some(closest_item);
+    }
+
+
     fn create_child_nodes(&self) -> Vec<QuadTreeNode<T>> {
         let mid_point = self.extent.calc_midpoint();
         let extent1 = LatLonExtent::new(
@@ -184,5 +224,39 @@ mod tests {
         assert_eq!(0, child_lv2.child_nodes[1].child_nodes.len());
         assert_eq!(0, child_lv2.child_nodes[2].child_nodes.len());
         assert_eq!(0, child_lv2.child_nodes[3].child_nodes.len());
+    }
+
+
+    #[test]
+    fn it_finds_the_closest_item_from_a_pos() {
+        let mut node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+        let item1 = QuadTreeItem::new(LatLon::new(-1.0, -1.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
+        let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
+        let item4 = QuadTreeItem::new(LatLon::new(4.0, 4.0), 4);
+        let item5 = QuadTreeItem::new(LatLon::new(5.0, 5.0), 5);
+        let max_capacity = 3;
+        let max_depth = 6;
+
+        node.add_item(item1, max_capacity, max_depth);
+        node.add_item(item2, max_capacity, max_depth);
+        node.add_item(item3, max_capacity, max_depth);
+        node.add_item(item4, max_capacity, max_depth);
+        node.add_item(item5, max_capacity, max_depth);
+
+        let result = node.find_closest_item(&LatLon::new(4.9, 4.8));
+        assert!(result.is_some());
+
+        let item = result.unwrap();
+        assert_eq!(5, item.value);
+    }
+
+
+    #[test]
+    fn it_returns_none_when_searching_an_empty_node() {
+        let node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+
+        let result = node.find_closest_item(&LatLon::new(4.9, 4.8));
+        assert!(result.is_none());
     }
 }
