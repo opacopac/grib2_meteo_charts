@@ -43,6 +43,20 @@ impl LatLon {
     pub fn clone(&self) -> LatLon {
         return LatLon { lat: self.lat, lon: self.lon };
     }
+
+
+    pub fn as_array(&self) -> [f32; 2] {
+        return [ self.lat, self.lon ];
+    }
+
+
+    pub fn calc_square_euclidean_dist(&self, other: &LatLon) -> f32 {
+        let lat_diff = self.lat - other.lat;
+        let lon_diff = self.lon - other.lon;
+        let sq_dist = lat_diff * lat_diff + lon_diff * lon_diff;
+
+        return sq_dist;
+    }
 }
 
 

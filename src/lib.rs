@@ -6,4 +6,3 @@ pub mod geo;
 pub mod meteo;
 pub mod netcdf;
 pub mod quad_tree;
-pub mod kd_tree;

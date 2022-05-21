@@ -39,7 +39,6 @@ fn main() {
     perf_icon_global();
 }
 
-
 fn perf_icon_global() {
     let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
     let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
@@ -47,10 +46,9 @@ fn perf_icon_global() {
 
     let mut rng = rand::thread_rng();
     let start = Instant::now();
-    for _ in 0..1000000 {
+    for _ in 0..100000 {
         let pos = &LatLon::new(rng.gen::<f32>() * 180.0 - 90.0, rng.gen::<f32>() * 360.0 - 180.0);
-        let (point, value) = layer.grid.find_closest_point_value(pos);
-        //println!("CH point {}: {:?}", value, point);
+        let value= layer.grid.find_closest_point_value(pos);
     }
     println!("reading from grid: {}", start.elapsed().as_millis());
 }

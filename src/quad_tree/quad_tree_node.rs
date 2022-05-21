@@ -20,7 +20,9 @@ impl <T> QuadTreeNode<T> {
 
 
     pub fn add_item(&mut self, item: QuadTreeItem<T>, max_capacity: usize, max_depth: usize) {
-        if self.child_nodes.len() == 0 {
+        if self.child_nodes.len() > 0 {
+            self.pass_to_child_node(item, max_capacity, max_depth - 1);
+        } else {
             self.items.push(item);
 
             if self.items.len() > max_capacity && max_depth > 0 {
@@ -29,56 +31,139 @@ impl <T> QuadTreeNode<T> {
                     self.pass_to_child_node(item, max_capacity, max_depth - 1);
                 }
             }
-        } else {
-            self.pass_to_child_node(item, max_capacity, max_depth - 1);
         }
     }
 
 
     pub fn cound_items(&self) -> usize {
-        return if self.child_nodes.len() == 0 {
-            self.items.len()
-        } else {
-            let mut count = 0;
-            for child_node in &self.child_nodes {
-                count += child_node.cound_items();
-            }
-
-            count
+        if self.child_nodes.len() == 0 {
+            return self.items.len();
         }
+
+        let mut count = 0;
+        for child_node in &self.child_nodes {
+            count += child_node.cound_items();
+        }
+
+        return count;
     }
 
 
     pub fn count_nodes(&self) -> usize {
-        return if self.child_nodes.len() == 0 {
-            1
-        } else {
-            let mut count = 0;
-            for child_node in &self.child_nodes {
-                count += child_node.count_nodes();
-            }
-
-            count
+        if self.child_nodes.len() == 0 {
+            return 1;
         }
+
+        let mut count = 0;
+        for child_node in &self.child_nodes {
+            count += child_node.count_nodes();
+        }
+
+        return count;
     }
 
 
     pub fn find_closest_item(&self, pos: &LatLon) -> Option<&QuadTreeItem<T>> {
         if self.child_nodes.len() > 0 {
-            let mut closest_node: Option<&QuadTreeItem<T>> = None;
-            for child_node in &self.child_nodes {
-                if child_node.extent.is_inside(pos) {
-                    closest_node = child_node.find_closest_item(pos);
-                    break;
-                }
-            }
+            match self.find_containing_child_index(pos) {
+                Some(idx) => {
+                    let item = self.child_nodes[idx].find_closest_item(pos);
+                    if item.is_some() {
+                        return item;
+                    }
 
-            if closest_node.is_some() {
-                return closest_node;
+                    let item = self.find_closes_item_in_adjacent_children(pos, idx);
+                    if item.is_some() {
+                        return item;
+                    }
+                },
+                None => {}
             }
         }
 
         return self.find_closest_item_of_self(pos);
+    }
+
+
+    fn find_containing_child_index(&self, pos: &LatLon) -> Option<usize> {
+        for i in 0..self.child_nodes.len() {
+            if self.child_nodes[i].extent.is_inside(pos) {
+                return Some(i);
+            }
+        }
+
+        return None;
+    }
+
+
+    fn find_closes_item_in_adjacent_children(&self, pos: &LatLon, child_idx: usize) -> Option<&QuadTreeItem<T>> {
+        let mut child_matches: Vec<Option<&QuadTreeItem<T>>> = vec![];
+
+        match child_idx {
+            // bottom left
+            0 => {
+                let pos1 = LatLon::new(pos.lat, self.child_nodes[1].extent.min_coord.lon);
+                let pos2 = LatLon::new(self.child_nodes[2].extent.min_coord.lon, pos.lon);
+                let pos3 = LatLon::new(self.child_nodes[3].extent.min_coord.lat, self.child_nodes[3].extent.min_coord.lon);
+
+                child_matches.push(self.child_nodes[1].find_closest_item(&pos1));
+                child_matches.push(self.child_nodes[2].find_closest_item(&pos2));
+                child_matches.push(self.child_nodes[3].find_closest_item(&pos3));
+            },
+            // bottom right
+            1 => {
+                let pos0 = LatLon::new(pos.lat, self.child_nodes[0].extent.max_coord.lon);
+                let pos3 = LatLon::new(self.child_nodes[3].extent.min_coord.lon, pos.lon);
+                let pos2 = LatLon::new(self.child_nodes[2].extent.min_coord.lat, self.child_nodes[2].extent.max_coord.lon);
+
+                child_matches.push(self.child_nodes[0].find_closest_item(&pos0));
+                child_matches.push(self.child_nodes[3].find_closest_item(&pos3));
+                child_matches.push(self.child_nodes[2].find_closest_item(&pos2));
+            },
+            // top left
+            2 => {
+                let pos3 = LatLon::new(pos.lat, self.child_nodes[3].extent.min_coord.lon);
+                let pos0 = LatLon::new(self.child_nodes[0].extent.max_coord.lon, pos.lon);
+                let pos1 = LatLon::new(self.child_nodes[1].extent.max_coord.lat, self.child_nodes[1].extent.min_coord.lon);
+
+                child_matches.push(self.child_nodes[3].find_closest_item(&pos3));
+                child_matches.push(self.child_nodes[0].find_closest_item(&pos0));
+                child_matches.push(self.child_nodes[1].find_closest_item(&pos1));
+            }
+            // top right
+            _ => {
+                let pos2 = LatLon::new(pos.lat, self.child_nodes[2].extent.max_coord.lon);
+                let pos1 = LatLon::new(self.child_nodes[1].extent.max_coord.lon, pos.lon);
+                let pos0 = LatLon::new(self.child_nodes[0].extent.max_coord.lat, self.child_nodes[0].extent.max_coord.lon);
+
+                child_matches.push(self.child_nodes[2].find_closest_item(&pos2));
+                child_matches.push(self.child_nodes[1].find_closest_item(&pos1));
+                child_matches.push(self.child_nodes[0].find_closest_item(&pos0));
+            }
+        }
+
+        let item_candidates: Vec<&QuadTreeItem<T>> = child_matches.iter()
+            .filter(|x| x.is_some())
+            .map(|x| x.unwrap())
+            .collect();
+
+        if item_candidates.len() == 0 {
+            return None;
+        }
+
+        let mut best_dist = -1.0;
+        let mut best_idx = 0;
+        for i in 0..item_candidates.len() {
+            let dist = item_candidates[i].coord.calc_square_euclidean_dist(&pos);
+            if dist < best_dist || best_dist < 0.0 {
+                best_dist = dist;
+                best_idx = i;
+            }
+        }
+
+        let closest_item = item_candidates[best_idx];
+
+        return Some(closest_item);
     }
 
 
@@ -90,10 +175,7 @@ impl <T> QuadTreeNode<T> {
         let mut best_dist = -1.0;
         let mut best_idx = 0;
         for i in 0..self.items.len() {
-            let item = &self.items[i];
-            let lat_diff = item.coord.lat - pos.lat;
-            let lon_diff = item.coord.lon - pos.lon;
-            let dist = lat_diff * lat_diff + lon_diff * lon_diff;
+            let dist = self.items[i].coord.calc_square_euclidean_dist(&pos);
 
             if dist < best_dist || best_dist < 0.0 {
                 best_dist = dist;
@@ -109,18 +191,22 @@ impl <T> QuadTreeNode<T> {
 
     fn create_child_nodes(&self) -> Vec<QuadTreeNode<T>> {
         let mid_point = self.extent.calc_midpoint();
+        // bottom left
         let extent1 = LatLonExtent::new(
             LatLon { lat: self.extent.min_coord.lat, lon: self.extent.min_coord.lon },
             LatLon { lat: mid_point.lat, lon: mid_point.lon }
         );
+        // bottom right
         let extent2 = LatLonExtent::new(
             LatLon { lat: self.extent.min_coord.lat, lon: mid_point.lon },
             LatLon { lat: mid_point.lat, lon: self.extent.max_coord.lon }
         );
+        // top left
         let extent3 = LatLonExtent::new(
             LatLon { lat: mid_point.lat, lon: self.extent.min_coord.lon },
             LatLon { lat: self.extent.max_coord.lat, lon: mid_point.lon }
         );
+        // top right
         let extent4 = LatLonExtent::new(
             LatLon { lat: mid_point.lat, lon: mid_point.lon },
             LatLon { lat: self.extent.max_coord.lat, lon: self.extent.max_coord.lon }
