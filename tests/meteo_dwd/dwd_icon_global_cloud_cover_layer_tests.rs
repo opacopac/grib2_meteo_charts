@@ -1,3 +1,4 @@
+use std::time::Instant;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate;
@@ -22,6 +23,8 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     }
 
     let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
+    //assert_eq!(5120, grid.get_point_count());
+    println!("points {}", grid.get_point_count());
 
     let result = DwdIconGlobalTotalCloudCoverLayer::create(grib2_doc, grid);
     assert!(result.is_ok());
@@ -30,20 +33,14 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     assert_eq!(MeteoParameterCategory::Cloud, layer.parameter_category);
     assert_eq!(199, layer.parameter_number);
 
-    for i in 0..layer.grid.get_point_count() {
-        let point = layer.grid.get_point_by_idx(i);
-        println!("point {}: {:?}", i, point);
-    }
+    let (point, value) = layer.grid.find_closest_point_value(&LatLon::new(47.0, 7.0));
+    println!("CH point {}: {:?}", value, point);
 
-    let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(47.0, 7.0));
-    let pt = layer.grid.get_point_by_idx(idx);
-    println!("CH point: {:?}", pt);
-
-    let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(48.0, 8.0));
+    /*let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(48.0, 8.0));
     let pt = layer.grid.get_point_by_idx(idx);
     println!("CH point: {:?}", pt);
 
     let idx = layer.grid.get_value_by_lat_lon(&LatLon::new(49.0, 9.0));
     let pt = layer.grid.get_point_by_idx(idx);
-    println!("CH point: {:?}", pt);
+    println!("CH point: {:?}", pt);*/
 }

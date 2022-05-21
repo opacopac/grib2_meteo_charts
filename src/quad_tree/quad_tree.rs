@@ -32,8 +32,13 @@ impl <T> QuadTree<T> {
     }
 
 
-    pub fn get_item_count(&self) -> usize {
-        return self.root_node.get_item_count();
+    pub fn count_items(&self) -> usize {
+        return self.root_node.cound_items();
+    }
+
+
+    pub fn count_nodes(&self) -> usize {
+        return self.root_node.count_nodes();
     }
 
 
@@ -116,14 +121,33 @@ mod tests {
         let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
         let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
 
-        let count1 = tree.get_item_count();
+        let count1 = tree.count_items();
         assert_eq!(0, count1);
 
         tree.add_item(item1);
         tree.add_item(item2);
         tree.add_item(item3);
 
-        let count2 = tree.get_item_count();
+        let count2 = tree.count_items();
         assert_eq!(3, count2);
+    }
+
+
+    #[test]
+    fn it_returns_the_total_number_of_nodes() {
+        let mut tree: QuadTree<u32> = QuadTree::new(LatLonExtent::MAX_EXTENT, 1, 6);
+        let item1 = QuadTreeItem::new(LatLon::new(1.0, 1.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
+        let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
+
+        let count1 = tree.count_nodes();
+        assert_eq!(1, count1);
+
+        tree.add_item(item1);
+        tree.add_item(item2);
+        tree.add_item(item3);
+
+        let count2 = tree.count_nodes();
+        assert_eq!(4, count2);
     }
 }

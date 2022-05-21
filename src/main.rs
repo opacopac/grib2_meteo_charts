@@ -2,34 +2,57 @@
 #![allow(unused_variables)]
 
 use std::time::Instant;
+use rand::Rng;
 
 use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
 use meteo_grib2_renderer::chart::map_tile_renderer::MapTileRenderer;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
+use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD2TotalCloudCoverLayer;
+use meteo_grib2_renderer::meteo_dwd::dwd_icon_global_grid_reader::DwdIconGlobalGridReader;
+use meteo_grib2_renderer::meteo_dwd::dwd_icon_global_tot_cloud_cover_layer::DwdIconGlobalTotalCloudCoverLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 
-const CLCT_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
-const CLCT_TEST_FILE2: &str = "icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
+const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
+const CLCT_TEST_FILE_EU: &str = "icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
+const CLCT_TEST_FILE_GLOBAL: &str = "icon_global_icosahedral_single-level_2022051300_000_CLCT_MOD.grib2";
 const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042700_048_2d_tot_prec.grib2";
 //const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
 //const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
 const WIND_U_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_U_10M.grib2";
 const WIND_V_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_V_10M.grib2";
+const NETCDF_ICON_GRID_TEST_FILE: &str = "icon_grid_0026_R03B07_G.nc";
 
 fn main() {
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
-    create_icon_d2_wind_img();
-    create_icon_d2_wind_map_tile();
+    //create_icon_d2_wind_img();
+    //create_icon_d2_wind_map_tile();
 
     //create_icon_d2_map_tile();
     //create_icon_d2_map_tile_series();
+    perf_icon_global();
+}
+
+
+fn perf_icon_global() {
+    let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
+    let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
+    let layer = DwdIconGlobalTotalCloudCoverLayer::create(grib2_doc, grid).unwrap();
+
+    let mut rng = rand::thread_rng();
+    let start = Instant::now();
+    for _ in 0..1000000 {
+        let pos = &LatLon::new(rng.gen::<f32>() * 180.0 - 90.0, rng.gen::<f32>() * 360.0 - 180.0);
+        let (point, value) = layer.grid.find_closest_point_value(pos);
+        //println!("CH point {}: {:?}", value, point);
+    }
+    println!("reading from grid: {}", start.elapsed().as_millis());
 }
 
 
@@ -58,7 +81,7 @@ fn create_icon_d2_map_tile_series() {
 fn create_icon_d2_clct_img() {
     let start = Instant::now();
 
-    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
@@ -77,7 +100,7 @@ fn create_icon_d2_clct_img() {
 
 
 fn create_icon_eu_clct_img() {
-    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE2).unwrap();
+    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_EU).unwrap();
     let layer = DwdCloudLayer::from_grib2(doc).unwrap();
     let img = CloudChartRenderer::render(&layer).unwrap();
     img.safe_image("CLCT_EU.png").unwrap();
@@ -104,7 +127,7 @@ fn create_icon_d2_wind_img() {
 fn create_icon_d2_map_tile() {
     let start = Instant::now();
 
-    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 

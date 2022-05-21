@@ -35,14 +35,27 @@ impl <T> QuadTreeNode<T> {
     }
 
 
-    pub fn get_item_count(&self) -> usize {
+    pub fn cound_items(&self) -> usize {
         return if self.child_nodes.len() == 0 {
             self.items.len()
         } else {
             let mut count = 0;
-
             for child_node in &self.child_nodes {
-                count += child_node.get_item_count();
+                count += child_node.cound_items();
+            }
+
+            count
+        }
+    }
+
+
+    pub fn count_nodes(&self) -> usize {
+        return if self.child_nodes.len() == 0 {
+            1
+        } else {
+            let mut count = 0;
+            for child_node in &self.child_nodes {
+                count += child_node.count_nodes();
             }
 
             count
@@ -51,17 +64,21 @@ impl <T> QuadTreeNode<T> {
 
 
     pub fn find_closest_item(&self, pos: &LatLon) -> Option<&QuadTreeItem<T>> {
-        if self.child_nodes.len() == 0 {
-            return self.find_closest_item_of_self(pos);
-        } else {
+        if self.child_nodes.len() > 0 {
+            let mut closest_node: Option<&QuadTreeItem<T>> = None;
             for child_node in &self.child_nodes {
                 if child_node.extent.is_inside(pos) {
-                    return child_node.find_closest_item(pos);
+                    closest_node = child_node.find_closest_item(pos);
+                    break;
                 }
             }
 
-            panic!("no quadrant found for pos: {:?}", pos); // should never happen
+            if closest_node.is_some() {
+                return closest_node;
+            }
         }
+
+        return self.find_closest_item_of_self(pos);
     }
 
 
@@ -249,22 +266,22 @@ mod tests {
         let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
         let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
 
-        let count = node.get_item_count();
+        let count = node.cound_items();
         assert_eq!(0, count);
 
         node.add_item(item1, 2, 6);
 
-        let count = node.get_item_count();
+        let count = node.cound_items();
         assert_eq!(1, count);
 
         node.add_item(item2, 2, 6);
 
-        let count = node.get_item_count();
+        let count = node.cound_items();
         assert_eq!(2, count);
 
         node.add_item(item3, 2, 6);
 
-        let count = node.get_item_count();
+        let count = node.cound_items();
         assert_eq!(3, count);
     }
 
@@ -295,10 +312,65 @@ mod tests {
 
 
     #[test]
+    fn it_finds_the_closest_item_from_a_pos_in_an_adjacent_quadrant() {
+        let mut node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+        let item1 = QuadTreeItem::new(LatLon::new(-1.0, -1.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(1.0, 1.0), 2);
+        let max_capacity = 1;
+        let max_depth = 6;
+
+        node.add_item(item1, max_capacity, max_depth);
+        node.add_item(item2, max_capacity, max_depth);
+
+        let result = node.find_closest_item(&LatLon::new(-1.0, 0.5));
+        assert!(result.is_some());
+
+        let item = result.unwrap();
+        assert_eq!(1, item.value);
+    }
+
+
+    #[test]
     fn it_returns_none_when_searching_an_empty_node() {
         let node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
 
         let result = node.find_closest_item(&LatLon::new(4.9, 4.8));
         assert!(result.is_none());
+    }
+
+
+    #[test]
+    fn it_returns_the_number_of_nodes() {
+        let mut node: QuadTreeNode<u32> = QuadTreeNode::new(LatLonExtent::MAX_EXTENT);
+        let item1 = QuadTreeItem::new(LatLon::new(-1.0, -1.0), 1);
+        let item2 = QuadTreeItem::new(LatLon::new(-2.0, 2.0), 2);
+        let item3 = QuadTreeItem::new(LatLon::new(3.0, -3.0), 3);
+        let item4 = QuadTreeItem::new(LatLon::new(4.0, 4.0), 4);
+        let item5 = QuadTreeItem::new(LatLon::new(55.0, 95.0), 5);
+        let max_capacity = 1;
+        let max_depth = 6;
+
+        let node_count = node.count_nodes();
+        assert_eq!(1, node_count);
+
+        node.add_item(item1, max_capacity, max_depth);
+        let node_count = node.count_nodes();
+        assert_eq!(1, node_count);
+
+        node.add_item(item2, max_capacity, max_depth);
+        let node_count = node.count_nodes();
+        assert_eq!(4, node_count);
+
+        node.add_item(item3, max_capacity, max_depth);
+        let node_count = node.count_nodes();
+        assert_eq!(4, node_count);
+
+        node.add_item(item4, max_capacity, max_depth);
+        let node_count = node.count_nodes();
+        assert_eq!(4, node_count);
+
+        node.add_item(item5, max_capacity, max_depth);
+        let node_count = node.count_nodes();
+        assert_eq!(7, node_count);
     }
 }
