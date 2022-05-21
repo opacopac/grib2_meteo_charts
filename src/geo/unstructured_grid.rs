@@ -9,8 +9,8 @@ pub struct UnstructuredGrid {
 
 
 impl UnstructuredGrid {
-    const MAX_NODE_CAPACITY: usize = 25;
-    const MAX_TREE_DEPTH: usize = 7;
+    const MAX_NODE_CAPACITY: usize = 50;
+    const MAX_TREE_DEPTH: usize = 8;
 
 
     pub fn new() -> UnstructuredGrid {

@@ -46,7 +46,7 @@ fn perf_icon_global() {
 
     let mut rng = rand::thread_rng();
     let start = Instant::now();
-    for _ in 0..100000 {
+    for _ in 0..1000000 {
         let pos = &LatLon::new(rng.gen::<f32>() * 180.0 - 90.0, rng.gen::<f32>() * 360.0 - 180.0);
         let value= layer.grid.find_closest_point_value(pos);
     }
