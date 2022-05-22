@@ -1,4 +1,3 @@
-use std::f32::consts::PI;
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::quad_tree::quad_tree::QuadTree;

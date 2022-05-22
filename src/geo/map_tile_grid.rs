@@ -28,7 +28,6 @@ impl <T: Copy + AddAssign, const CELLS: usize> MapTileGrid<T, CELLS> {
 
     pub fn set_value(&mut self, pos: &LatLon, value: T) {
         let (x, y) = Self::calc_xy_from_latlon(pos);
-
         self.value[x][y] = value;
     }
 

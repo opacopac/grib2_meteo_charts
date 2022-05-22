@@ -23,7 +23,7 @@ impl DwdIconGlobalGridReader {
 
         let start = Instant::now();
         let mut grid = UnstructuredGrid::new();
-        let mut mt_grid: MapTileGrid<u32, 4096> = MapTileGrid::new(0);
+        let mut mt_grid: MapTileGrid<usize, 4096> = MapTileGrid::new(0);
 
         for i in 0..clat_data.len() {
             let lat = clat_data[i].to_degrees() as f32;
@@ -31,7 +31,7 @@ impl DwdIconGlobalGridReader {
             let point = LatLon::new(lat, lon);
 
             if point.lat > -lat_limit && point.lat < lat_limit {
-                mt_grid.add_value(&point, 1);
+                mt_grid.set_value(&point, i);
             }
 
             grid.add_point_value(point, i);
@@ -39,7 +39,9 @@ impl DwdIconGlobalGridReader {
         println!("nodes: {}", grid.get_node_count());
         println!("populating grid: {}", start.elapsed().as_millis());
 
-        println!("{:?}", mt_grid.value);
+        for i in 0..50 {
+            println!("{:?}", mt_grid.value[i]);
+        }
 
         return Ok(grid);
     }
