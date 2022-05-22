@@ -1,5 +1,7 @@
+use std::f32::consts::PI;
 use std::time::Instant;
 use crate::geo::lat_lon::LatLon;
+use crate::geo::map_tile_grid::MapTileGrid;
 use crate::geo::unstructured_grid::UnstructuredGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::netcdf::data::netcdf_data_reader::NetCdfDataReader;
@@ -17,17 +19,27 @@ impl DwdIconGlobalGridReader {
         let clat_data = NetCdfDataReader::read_data_by_var(&mut reader, &doc, CLAT_VAR_NAME).unwrap().get_doubles(); // TODO
         let clon_data = NetCdfDataReader::read_data_by_var(&mut reader, &doc, CLON_VAR_NAME).unwrap().get_doubles(); // TODO
 
+        let lat_limit: f32 = PI.sinh().atan().to_degrees();
 
         let start = Instant::now();
         let mut grid = UnstructuredGrid::new();
+        let mut mt_grid: MapTileGrid<u32, 4096> = MapTileGrid::new(0);
+
         for i in 0..clat_data.len() {
             let lat = clat_data[i].to_degrees() as f32;
             let lon = clon_data[i].to_degrees() as f32;
             let point = LatLon::new(lat, lon);
+
+            if point.lat > -lat_limit && point.lat < lat_limit {
+                mt_grid.add_value(&point, 1);
+            }
+
             grid.add_point_value(point, i);
         }
         println!("nodes: {}", grid.get_node_count());
         println!("populating grid: {}", start.elapsed().as_millis());
+
+        println!("{:?}", mt_grid.value);
 
         return Ok(grid);
     }

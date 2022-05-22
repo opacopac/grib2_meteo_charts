@@ -1,19 +1,22 @@
 use std::f32::consts::PI;
+use std::ops::AddAssign;
+
 use crate::geo::lat_lon::LatLon;
 
+
 pub struct MapTileGrid<T: Copy, const CELLS: usize> {
-    value: [[T; CELLS]; CELLS]
+    pub value: Vec<Vec<T>>
 }
 
 
-impl <T: Copy, const CELLS: usize> MapTileGrid<T, CELLS> {
+impl <T: Copy + AddAssign, const CELLS: usize> MapTileGrid<T, CELLS> {
     pub fn new(default_value: T) -> MapTileGrid<T, CELLS> {
         if !Self::is_power_of_2(CELLS) {
             panic!("grid size must be power of 2!");
         }
 
         return MapTileGrid {
-            value: [[default_value; CELLS]; CELLS]
+            value: vec![vec![default_value; CELLS]; CELLS]
         }
     }
 
@@ -25,7 +28,14 @@ impl <T: Copy, const CELLS: usize> MapTileGrid<T, CELLS> {
 
     pub fn set_value(&mut self, pos: &LatLon, value: T) {
         let (x, y) = Self::calc_xy_from_latlon(pos);
+
         self.value[x][y] = value;
+    }
+
+
+    pub fn add_value(&mut self, pos: &LatLon, value: T) {
+        let (x, y) = Self::calc_xy_from_latlon(pos);
+        self.value[x][y] += value;
     }
 
 
@@ -47,9 +57,9 @@ impl <T: Copy, const CELLS: usize> MapTileGrid<T, CELLS> {
 #[cfg(test)]
 mod tests {
     use std::f32::consts::PI;
+
     use crate::geo::lat_lon::LatLon;
     use crate::geo::map_tile_grid::MapTileGrid;
-
 
     #[test]
     #[should_panic]
