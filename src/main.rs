@@ -105,6 +105,14 @@ fn create_icon_eu_clct_img() {
 }
 
 
+fn create_icon_global_clct_img() {
+    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
+    let layer = DwdCloudLayer::from_grib2(doc).unwrap();
+    let img = CloudChartRenderer::render(&layer).unwrap();
+    img.safe_image("CLCT_EU.png").unwrap();
+}
+
+
 fn create_icon_d2_precip_img() {
     let doc = Grib2DocumentReader::read_file(PRECIP_TEST_FILE).unwrap();
     let layer = DwdPrecipLayer::from_grib2(doc).unwrap();
