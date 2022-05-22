@@ -1,35 +1,40 @@
 use std::f32::consts::PI;
 use crate::geo::lat_lon::LatLon;
 
-const POW2: usize = 8;
-const CELLS: usize = 1 << POW2;
-
-
-pub struct MapTileGrid {
-    value: [[u8; CELLS]; CELLS]
+pub struct MapTileGrid<T: Copy, const CELLS: usize> {
+    value: [[T; CELLS]; CELLS]
 }
 
 
-impl MapTileGrid {
-    pub fn new() -> MapTileGrid {
+impl <T: Copy, const CELLS: usize> MapTileGrid<T, CELLS> {
+    pub fn new(default_value: T) -> MapTileGrid<T, CELLS> {
+        if !Self::is_power_of_2(CELLS) {
+            panic!("grid size must be power of 2!");
+        }
+
         return MapTileGrid {
-            value: [[0; CELLS]; CELLS]
+            value: [[default_value; CELLS]; CELLS]
         }
     }
 
 
-    pub fn get_value(&self, x: usize, y: usize) -> u8 {
+    pub fn get_value(&self, x: usize, y: usize) -> T {
         return self.value[x][y];
     }
 
 
-    pub fn set_value(&mut self, pos: &LatLon, value: u8) {
+    pub fn set_value(&mut self, pos: &LatLon, value: T) {
         let (x, y) = Self::calc_xy_from_latlon(pos);
         self.value[x][y] = value;
     }
 
 
-    pub fn calc_xy_from_latlon(lat_lon: &LatLon) -> (usize, usize) {
+    fn is_power_of_2(num: usize) -> bool {
+        return (num as f32).log2().floor() == (num as f32).log2().ceil();
+    }
+
+
+    fn calc_xy_from_latlon(lat_lon: &LatLon) -> (usize, usize) {
         let pow = CELLS as f32;
         let x = ((lat_lon.lon + 180.0) / 360.0 * pow).floor() as usize;
         let y = ((1.0 - (lat_lon.lat.to_radians().tan() + 1.0 / lat_lon.lat.to_radians().cos()).ln() / PI) / 2.0 * pow).floor() as usize;
@@ -43,19 +48,19 @@ impl MapTileGrid {
 mod tests {
     use std::f32::consts::PI;
     use crate::geo::lat_lon::LatLon;
-    use crate::geo::map_tile_grid::{CELLS, MapTileGrid, POW2};
+    use crate::geo::map_tile_grid::MapTileGrid;
+
 
     #[test]
-    fn it_has_the_correct_number_of_cells() {
-        let expected = 2_u32.pow(POW2 as u32);
-
-        assert_eq!(expected, CELLS as u32);
+    #[should_panic]
+    fn it_panics_if_cells_is_not_a_power_of_two() {
+        let _: MapTileGrid<u8, 127> = MapTileGrid::new(0);
     }
 
 
     #[test]
     fn it_reads_the_default_value_from_a_cell() {
-        let grid = MapTileGrid::new();
+        let grid: MapTileGrid<u8, 256> = MapTileGrid::new(0);
 
         let result = grid.get_value(0, 0);
 
@@ -70,24 +75,24 @@ mod tests {
         let pos2 = LatLon { lat: lat_limit, lon: -180.0 };
         let pos3 = LatLon { lat: -lat_limit, lon: 180.0 };
 
-        let xy1 = MapTileGrid::calc_xy_from_latlon(&pos1);
-        let xy2 = MapTileGrid::calc_xy_from_latlon(&pos2);
-        let xy3 = MapTileGrid::calc_xy_from_latlon(&pos3);
+        let xy1 = MapTileGrid::<u8, 256>::calc_xy_from_latlon(&pos1);
+        let xy2 = MapTileGrid::<u8, 256>::calc_xy_from_latlon(&pos2);
+        let xy3 = MapTileGrid::<u8, 256>::calc_xy_from_latlon(&pos3);
 
-        assert_eq!((CELLS / 2, CELLS / 2), xy1);
+        assert_eq!((128, 128), xy1);
         assert_eq!((0, 0), xy2);
-        assert_eq!((CELLS, CELLS), xy3);
+        assert_eq!((256, 256), xy3);
     }
 
 
     #[test]
     fn it_adds_a_value_to_the_correct_target_cell() {
         let pos1 = LatLon { lat: 0.0, lon: 0.0 };
-        let mut grid = MapTileGrid::new();
+        let mut grid: MapTileGrid<u8, 256> = MapTileGrid::new(0);
 
         grid.set_value(&pos1, 99);
 
-        let x = CELLS / 2;
+        let x = 128;
         let y = x;
         let result = grid.get_value(x, y);
 
