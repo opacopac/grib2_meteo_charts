@@ -9,6 +9,7 @@ use meteo_grib2_renderer::chart::map_tile_renderer::MapTileRenderer;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
+use meteo_grib2_renderer::geo::unstructured_grid::UnstructuredGrid;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD2TotalCloudCoverLayer;
@@ -30,16 +31,17 @@ const NETCDF_ICON_GRID_TEST_FILE: &str = "icon_grid_0026_R03B07_G.nc";
 fn main() {
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
-    //create_icon_eu_clct_img();
+    create_icon_eu_clct_img();
+    create_icon_global_clct_img();
     //create_icon_d2_wind_img();
     //create_icon_d2_wind_map_tile();
 
     //create_icon_d2_map_tile();
     //create_icon_d2_map_tile_series();
-    perf_icon_global();
+    //perf_icon_global();
 }
 
-fn perf_icon_global() {
+/*fn perf_icon_global() {
     let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
     let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
     let layer = DwdIconGlobalTotalCloudCoverLayer::create(grib2_doc, grid).unwrap();
@@ -51,7 +53,7 @@ fn perf_icon_global() {
         let value= layer.grid.find_closest_point_value(pos);
     }
     println!("reading from grid: {}", start.elapsed().as_millis());
-}
+}*/
 
 
 fn create_icon_d2_map_tile_series() {
@@ -107,9 +109,10 @@ fn create_icon_eu_clct_img() {
 
 fn create_icon_global_clct_img() {
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
-    let layer = DwdCloudLayer::from_grib2(doc).unwrap();
+    let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
+    let layer = DwdIconGlobalTotalCloudCoverLayer::create(doc, grid).unwrap();
     let img = CloudChartRenderer::render(&layer).unwrap();
-    img.safe_image("CLCT_EU.png").unwrap();
+    img.safe_image("CLCT_GLOBAL.png").unwrap();
 }
 
 

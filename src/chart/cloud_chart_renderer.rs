@@ -8,7 +8,7 @@ pub struct CloudChartRenderer;
 
 
 impl CloudChartRenderer {
-    pub fn render(cloud_layer: &DwdCloudLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render<T: CloudLayer>(cloud_layer: &T) -> Result<Drawable, Grib2Error> {
         let grid_points = cloud_layer.get_latlon_grid_points();
         let mut drawable = Drawable::create_empty(grid_points.1, grid_points.0)?;
 

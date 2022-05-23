@@ -62,7 +62,7 @@ impl ValueGrid {
     }
 
 
-    fn calculate_data_points(document: &Grib2Document) -> Result<Vec<f32>, Grib2Error> {
+    pub fn calculate_data_points(document: &Grib2Document) -> Result<Vec<f32>, Grib2Error> {
         let (ref_value, c1, c2) = match &document.section5.data_representation_template {
             GridPointDataSimplePacking(tpl) => {
                 let c1 = (2 as f32).powi(tpl.binary_scale_factor_e as i32);
