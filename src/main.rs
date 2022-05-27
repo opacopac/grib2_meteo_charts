@@ -7,13 +7,11 @@ use std::time::Instant;
 use meteo_grib2_renderer::chart::cloud_chart_renderer2::CloudChartRenderer2;
 use meteo_grib2_renderer::chart::precip_chart_renderer2::PrecipChartRenderer2;
 use meteo_grib2_renderer::chart::wind_chart_renderer2::WindChartRenderer2;
-use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
 use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer2::DwdPrecipLayer2;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer2::DwdWindLayer2;
-use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::UnstructuredGridConverter;
 use meteo_grib2_renderer::netcdf::data::netcdf_data_reader::NetCdfDataReader;
@@ -34,8 +32,8 @@ fn main() {
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
     //create_icon_global_clct_img();
-    create_icon_d2_wind_img();
-    //create_icon_d2_wind_map_tile();
+    //create_icon_d2_wind_img();
+    create_icon_d2_wind_map_tile();
 
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
@@ -188,11 +186,13 @@ fn create_icon_global_map_tiles() {
 fn create_icon_d2_wind_map_tile() {
     let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
     let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
-    let layer = DwdWindLayer::from_grib2(doc_u, doc_v).unwrap();
-    let _result = WindChartRenderer::create_all_tiles(
+    let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
+    let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
+    let layer = DwdWindLayer2::new(grid_u, grid_v).unwrap();
+    let _ = WindChartRenderer2::render_map_tiles(
         &layer,
-        (0, 11),
-        "./007/"
+        (0, 5),
+        |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
     );
 }
 
