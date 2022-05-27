@@ -6,3 +6,4 @@ pub mod dwd_wind_layer;
 pub mod dwd_cloud_layer;
 pub mod dwd_icon_global_tot_cloud_cover_layer;
 pub mod dwd_icon_global_grid_reader;
+pub mod lat_lon_value_grid;

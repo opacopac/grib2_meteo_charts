@@ -1,7 +1,6 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 use crate::meteo::cloud_layer::CloudLayer;
-use crate::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 use crate::meteo_dwd::value_grid::ValueGrid;
 
 pub struct CloudChartRenderer;
