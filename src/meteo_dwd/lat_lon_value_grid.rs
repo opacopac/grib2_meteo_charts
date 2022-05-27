@@ -122,7 +122,7 @@ mod tests {
 
 
     #[test]
-    fn it_gets_the_none_if_x_or_y_is_out_of_bounds() {
+    fn it_returns_none_if_x_or_y_are_out_of_bounds() {
         let grid = create_test_grid();
 
         let result1 = grid.get_value_by_xy(2, 0);
@@ -130,5 +130,28 @@ mod tests {
 
         assert!(result1.is_none());
         assert!(result2.is_none());
+    }
+
+
+    #[test]
+    fn it_returns_none_if_lat_or_lon_are_out_of_bounds() {
+        let grid = create_test_grid();
+        let pos1 = LatLon::new(40.0, 6.9);
+        let pos2 = LatLon::new(39.9, 7.0);
+        let pos3 = LatLon::new(43.0, 9.1);
+        let pos4 = LatLon::new(46.1, 8.0);
+        let pos5 = LatLon::new(46.0, 9.0);
+
+        let result1 = grid.get_value_by_lat_lon(&pos1);
+        let result2 = grid.get_value_by_lat_lon(&pos2);
+        let result3 = grid.get_value_by_lat_lon(&pos3);
+        let result4 = grid.get_value_by_lat_lon(&pos4);
+        let result5 = grid.get_value_by_lat_lon(&pos5);
+
+        assert!(result1.is_none());
+        assert!(result2.is_none());
+        assert!(result3.is_none());
+        assert!(result4.is_none());
+        assert!(result5.is_none());
     }
 }
