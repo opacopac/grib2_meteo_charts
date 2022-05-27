@@ -1,3 +1,4 @@
+use crate::chart::map_tile_renderer2::MapTileRenderer2;
 use crate::chart::single_chart_renderer2::SingleChartRenderer2;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
@@ -17,6 +18,25 @@ impl CloudChartRenderer2 {
         )?;
 
         return Ok(drawable);
+    }
+
+
+    pub fn render_map_tiles<S>(
+        cloud_layer: DwdCloudLayer2,
+        zoom_range: (u32, u32),
+        save_fn: S
+    ) -> Result<(), Grib2Error> where
+        S: Fn(&Drawable, u32, u32, u32) -> () + Sync
+    {
+        let extent = cloud_layer.get_lat_lon_extent();
+
+        MapTileRenderer2::create_all_tiles(
+            extent,
+            zoom_range,
+            |pos| cloud_layer.get_cloud_cover_by_lat_lon(pos),
+            |value| Self::color_fn(value),
+            save_fn
+        )
     }
 
 

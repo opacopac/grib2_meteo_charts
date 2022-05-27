@@ -1,17 +1,20 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+use std::fs;
 use std::time::Instant;
 use rand::Rng;
 use meteo_grib2_renderer::chart::cloud_chart_renderer2::CloudChartRenderer2;
 
 use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
+use meteo_grib2_renderer::chart::map_tile_renderer2::MapTileRenderer2;
 use meteo_grib2_renderer::chart::map_tile_renderer::MapTileRenderer;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::geo::unstructured_grid::UnstructuredGrid;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD2TotalCloudCoverLayer;
@@ -37,12 +40,12 @@ const NETCDF_ICON_GRID_TEST_FILE: &str = "icon_grid_0026_R03B07_G.nc";
 fn main() {
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
-    create_icon_eu_clct_img();
-    create_icon_global_clct_img();
+    //create_icon_eu_clct_img();
+    //create_icon_global_clct_img();
     //create_icon_d2_wind_img();
     //create_icon_d2_wind_map_tile();
 
-    //create_icon_d2_map_tile();
+    create_icon_d2_map_tiles();
     //create_icon_d2_map_tile_series();
     //perf_icon_global();
 }
@@ -91,11 +94,14 @@ fn create_icon_d2_clct_img() {
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
-    let layer = DwdCloudLayer::from_grib2(doc).unwrap();
+    //let layer = DwdCloudLayer::from_grib2(doc).unwrap();
+    let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
+    let layer = DwdCloudLayer2::new(grid);
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    let img = CloudChartRenderer::render(&layer).unwrap();
+    //let img = CloudChartRenderer::render(&layer).unwrap();
+    let img = CloudChartRenderer2::render_full_chart(layer).unwrap();
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 
@@ -149,14 +155,16 @@ fn create_icon_d2_wind_img() {
 }
 
 
-fn create_icon_d2_map_tile() {
+fn create_icon_d2_map_tiles() {
     let start = Instant::now();
 
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
-    let ccl = DwdIconD2TotalCloudCoverLayer::from_grib2(doc).unwrap();
+    //let ccl = DwdIconD2TotalCloudCoverLayer::from_grib2(doc).unwrap();
+    let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
+    let ccl = DwdCloudLayer2::new(grid);
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
@@ -167,11 +175,16 @@ fn create_icon_d2_map_tile() {
     //let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
     //img.safe_image("CCL_TILE.png").unwrap();
 
-    let _result = MapTileRenderer::create_all_tiles(
+    /*let _result = MapTileRenderer::create_all_tiles(
         &ccl.value_grid,
         (0, 7),
         "./007/",
         DwdIconD2TotalCloudCoverLayer::color_by_value
+    );*/
+    let _ = CloudChartRenderer2::render_map_tiles(
+        ccl,
+        (0, 2),
+        |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
     );
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
@@ -192,3 +205,17 @@ fn create_icon_d2_wind_map_tile() {
     );
 }
 
+
+fn save_tile(
+    tile: &Drawable,
+    zoom: u32,
+    x: u32,
+    y: u32
+) {
+    let base_path = "./007/";
+    let path = format!("{}/{}/{}", base_path, zoom, x);
+    fs::create_dir_all(&path).unwrap();
+
+    let filename = format!("{}/{}.png", &path, y);
+    let _result = tile.safe_image(&filename);
+}
