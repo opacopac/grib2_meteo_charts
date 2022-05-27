@@ -29,8 +29,8 @@ impl RegularGridConverter {
             GridDefinitionTemplate::LatitudeLongitude(tpl) => {
                 Ok((
                     (
-                        tpl.number_of_points_along_meridian as usize,
-                        tpl.number_of_points_along_parallel as usize
+                        tpl.number_of_points_along_parallel as usize,
+                        tpl.number_of_points_along_meridian as usize
                     ),
                     LatLonExtent::new(
                         LatLon::new(tpl.first_grid_point_lat, tpl.first_grid_point_lon),
