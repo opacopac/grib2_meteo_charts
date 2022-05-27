@@ -15,7 +15,15 @@ impl UnstructuredGridConverter {
 
 
     pub fn create(grib2_doc: &Grib2Document, missing_value: f32, clat_data: Vec<f64>, clon_data: Vec<f64>) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        if clat_data.len() != clon_data.len() {
+            return Err(Grib2Error::InvalidData("number of clat and clon data points don't match".to_string()));
+        }
+
         let unstructured_values = grib2_doc.calculate_data_points(missing_value)?;
+        if clat_data.len() != unstructured_values.len() {
+            return Err(Grib2Error::InvalidData("number of clat/clon and grib2 data points don't match".to_string()));
+        }
+
         let lat_limit: f32 = PI.sinh().atan().to_degrees();
         let values = Self::calculate_structured_values(unstructured_values, missing_value, clat_data, clon_data, lat_limit);
         let extent = LatLonExtent {
