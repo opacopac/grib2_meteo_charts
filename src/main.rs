@@ -3,23 +3,13 @@
 
 use std::fs;
 use std::time::Instant;
-use rand::Rng;
-use meteo_grib2_renderer::chart::cloud_chart_renderer2::CloudChartRenderer2;
 
-use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
-use meteo_grib2_renderer::chart::map_tile_renderer2::MapTileRenderer2;
-use meteo_grib2_renderer::chart::map_tile_renderer::MapTileRenderer;
+use meteo_grib2_renderer::chart::cloud_chart_renderer2::CloudChartRenderer2;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
-use meteo_grib2_renderer::geo::lat_lon::LatLon;
-use meteo_grib2_renderer::geo::unstructured_grid::UnstructuredGrid;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_icon_d2_tot_cloud_cover_layer::DwdIconD2TotalCloudCoverLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_icon_global_grid_reader::DwdIconGlobalGridReader;
-use meteo_grib2_renderer::meteo_dwd::dwd_icon_global_tot_cloud_cover_layer::DwdIconGlobalTotalCloudCoverLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
@@ -76,13 +66,13 @@ fn create_icon_d2_map_tile_series() {
         //println!("{}", file);
 
         let doc = Grib2DocumentReader::read_file(&file).unwrap();
-        let ccl = DwdIconD2TotalCloudCoverLayer::from_grib2(doc).unwrap();
+        let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
+        let ccl = DwdCloudLayer2::new(grid);
         let dir = &format!("./{}/", &nr);
-        let _result = MapTileRenderer::create_all_tiles(
-            &ccl.value_grid,
+        let _ = CloudChartRenderer2::render_map_tiles(
+            ccl,
             (0, 7),
-            dir,
-            DwdIconD2TotalCloudCoverLayer::color_by_value
+            |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
         );
     }
 }
@@ -95,13 +85,11 @@ fn create_icon_d2_clct_img() {
     let elapsed = start.elapsed();
     println!("read doc {}", elapsed.as_millis());
 
-    //let layer = DwdCloudLayer::from_grib2(doc).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let layer = DwdCloudLayer2::new(grid);
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    //let img = CloudChartRenderer::render(&layer).unwrap();
     let img = CloudChartRenderer2::render_full_chart(layer).unwrap();
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
@@ -114,8 +102,6 @@ fn create_icon_d2_clct_img() {
 
 fn create_icon_eu_clct_img() {
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_EU).unwrap();
-    /*let layer = DwdCloudLayer::from_grib2(doc).unwrap();
-    let img = CloudChartRenderer::render(&layer).unwrap();*/
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap(); // TODO
     let layer = DwdCloudLayer2::new(grid);
     let img = CloudChartRenderer2::render_full_chart(layer).unwrap();
@@ -128,9 +114,6 @@ fn create_icon_global_clct_img() {
     let (netcdf_doc, mut reader) = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE).unwrap(); // TODO
     let clat_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clat").unwrap().get_doubles(); // TODO
     let clon_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clon").unwrap().get_doubles(); // TODO
-    /*let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
-    let layer = DwdIconGlobalTotalCloudCoverLayer::create(doc, grid).unwrap();
-    let img = CloudChartRenderer::render(&layer).unwrap();*/
     let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, clat_data, clon_data).unwrap(); // TODO
     let layer = DwdCloudLayer2::new(grid);
     let img = CloudChartRenderer2::render_full_chart(layer).unwrap();
@@ -169,19 +152,6 @@ fn create_icon_d2_map_tiles() {
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    //let map_tile_coord = MapTileCoord::new(1070, 718, 11);
-    //let map_tile_coord = MapTileCoord::new(535, 359, 10);
-    //let map_tile_coord = MapTileCoord::new(33, 22, 6);
-    //let map_tile_coord = MapTileCoord::new(0, 0, 0);
-    //let img = CloudCoverChartRenderer::create_single_tile(&ccl, &map_tile_coord).unwrap();
-    //img.safe_image("CCL_TILE.png").unwrap();
-
-    /*let _result = MapTileRenderer::create_all_tiles(
-        &ccl.value_grid,
-        (0, 7),
-        "./007/",
-        DwdIconD2TotalCloudCoverLayer::color_by_value
-    );*/
     let _ = CloudChartRenderer2::render_map_tiles(
         ccl,
         (0, 7),
