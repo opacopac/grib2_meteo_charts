@@ -22,7 +22,7 @@ impl PrecipChartRenderer2 {
 
 
     pub fn render_map_tiles<S>(
-        precip_layer: DwdPrecipLayer2,
+        precip_layer: &DwdPrecipLayer2,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where

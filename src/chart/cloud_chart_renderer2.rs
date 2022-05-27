@@ -22,7 +22,7 @@ impl CloudChartRenderer2 {
 
 
     pub fn render_map_tiles<S>(
-        cloud_layer: DwdCloudLayer2,
+        cloud_layer: &DwdCloudLayer2,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where
