@@ -18,7 +18,7 @@ pub fn read_test_cloud_layer() -> DwdCloudLayer2 {
 fn it_creates_an_image_from_a_cloud_layer_with_the_correct_dimensions() {
     let layer = read_test_cloud_layer();
 
-    let result = CloudChartRenderer2::render_full_chart(layer);
+    let result = CloudChartRenderer2::render_full_chart(&layer);
     assert!(!result.is_err());
 
     let result = result.unwrap();
