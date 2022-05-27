@@ -8,3 +8,4 @@ pub mod dwd_icon_global_tot_cloud_cover_layer;
 pub mod dwd_icon_global_grid_reader;
 pub mod lat_lon_value_grid;
 pub mod regular_grid_converter;
+pub mod unstructured_grid_converter;
