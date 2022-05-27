@@ -45,7 +45,8 @@ fn main() {
     //create_icon_d2_wind_img();
     //create_icon_d2_wind_map_tile();
 
-    create_icon_d2_map_tiles();
+    //create_icon_d2_map_tiles();
+    create_icon_global_map_tiles();
     //create_icon_d2_map_tile_series();
     //perf_icon_global();
 }
@@ -183,7 +184,7 @@ fn create_icon_d2_map_tiles() {
     );*/
     let _ = CloudChartRenderer2::render_map_tiles(
         ccl,
-        (0, 2),
+        (0, 7),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
     );
     let elapsed = start.elapsed();
@@ -191,6 +192,21 @@ fn create_icon_d2_map_tiles() {
 
     let elapsed = start.elapsed();
     println!("save img {}", elapsed.as_millis());
+}
+
+
+fn create_icon_global_map_tiles() {
+    let grib_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
+    let (netcdf_doc, mut reader) = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE).unwrap();
+    let clat_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clat").unwrap().get_doubles();
+    let clon_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clon").unwrap().get_doubles();
+    let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, clat_data, clon_data).unwrap();
+    let ccl = DwdCloudLayer2::new(grid);
+    let _ = CloudChartRenderer2::render_map_tiles(
+        ccl,
+        (0, 2),
+        |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
+    );
 }
 
 

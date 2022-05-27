@@ -21,8 +21,8 @@ impl MapTileRenderer2 {
         C: Fn(f32) -> [u8; 4] + Sync,
         S: Fn(&Drawable, u32, u32, u32) -> () + Sync
     {
-        let pos_tl = LatLon::new(lat_long_extent.min_coord.lat, lat_long_extent.max_coord.lon);
-        let pos_br = LatLon::new(lat_long_extent.max_coord.lat, lat_long_extent.min_coord.lon);
+        let pos_tl = LatLon { lat: lat_long_extent.min_coord.lat, lon: lat_long_extent.max_coord.lon };
+        let pos_br = LatLon { lat: lat_long_extent.max_coord.lat, lon: lat_long_extent.min_coord.lon };
 
         for zoom in zoom_range.0..=zoom_range.1 {
             let tile_tl = MapTileCoord::from_position(&pos_tl, zoom);
@@ -30,8 +30,8 @@ impl MapTileRenderer2 {
             let x_range = (min(tile_tl.x, tile_br.x), max(tile_tl.x, tile_br.x));
             let y_range = (min(tile_tl.y, tile_br.y), max(tile_tl.y, tile_br.y));
 
-            for x in x_range.0..=x_range.1 {
-                (y_range.0..=y_range.1).into_par_iter().for_each(|y| {
+            for x in x_range.0..x_range.1 {
+                (y_range.0..y_range.1).into_par_iter().for_each(|y| {
                     // println!("rendering tile x: {}, y: {}, z: {}", x, y, zoom);
                     let map_tile_coords = &MapTileCoord::new(x, y, zoom);
                     let tile = Self::create_single_tile(&value_fn, map_tile_coords, &color_fn).unwrap(); // TODO
@@ -71,7 +71,7 @@ impl MapTileRenderer2 {
                         let color = color_fn(v);
                         drawable.draw_point(j, i, color);
                     }
-                    _ => continue
+                    _ => {}
                 }
             }
         }

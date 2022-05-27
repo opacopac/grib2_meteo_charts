@@ -43,6 +43,6 @@ impl CloudChartRenderer2 {
     fn color_fn(value: f32) -> [u8; 4] {
         let u8_value = (value  * 255.0).floor() as u8;
 
-        return [127, 127, 127, u8_value]; // TODO
+        return [255, 127, 127, u8_value]; // TODO
     }
 }
