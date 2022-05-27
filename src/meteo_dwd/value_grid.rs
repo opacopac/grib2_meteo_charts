@@ -3,7 +3,6 @@ use crate::geo::lat_lon_grid::LatLonGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
-use crate::grib2::section5::data_representation_template::DataRepresentationTemplate::GridPointDataSimplePacking;
 
 pub struct ValueGrid {
     pub data_points: Vec<f32>,
@@ -15,7 +14,7 @@ impl ValueGrid {
     pub const MISSING_VALUE: f32 = -1.0; // TODO
 
     pub fn from_grib2(document: Grib2Document) -> Result<ValueGrid, Grib2Error> {
-        let data_points = ValueGrid::calculate_data_points(&document)?;
+        let data_points = document.calculate_data_points(Self::MISSING_VALUE)?;
         let grid= ValueGrid::get_grid(&document)?;
 
         let value_grid = ValueGrid {
@@ -59,40 +58,6 @@ impl ValueGrid {
         } else {
             self.data_points[index]
         }
-    }
-
-
-    pub fn calculate_data_points(document: &Grib2Document) -> Result<Vec<f32>, Grib2Error> {
-        let (ref_value, c1, c2) = match &document.section5.data_representation_template {
-            GridPointDataSimplePacking(tpl) => {
-                let c1 = (2 as f32).powi(tpl.binary_scale_factor_e as i32);
-                let c2 = (10 as f32).powi(tpl.decimal_scale_factor_d as i32);
-                (tpl.reference_value, c1, c2)
-            }
-            _ => return Err(Grib2Error::InvalidData("invalid data representation template".to_string()))
-        };
-
-        let bitmap = &document.section6.bitmap;
-        let raw_data_points = &document.section7.data_points;
-
-        if raw_data_points.is_empty() {
-            return Err(Grib2Error::InvalidData("section 7 contains no data points".to_string()))
-        }
-
-        let mut data_points: Vec<f32> = vec![];
-        let mut j = 0;
-        for i in 0..document.section3.number_of_datapoints {
-            if bitmap.is_empty() || (bitmap[(i / 8) as usize] & (0b10000000 >> (i % 8)) > 0) {
-                let raw_value = raw_data_points[j] as f32;
-                let data_value = (ref_value + raw_value * c1) as f32 / c2;
-                data_points.push(data_value);
-                j += 1;
-            } else {
-                data_points.push(ValueGrid::MISSING_VALUE);
-            }
-        }
-
-        return Ok(data_points);
     }
 
 

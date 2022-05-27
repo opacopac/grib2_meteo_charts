@@ -26,7 +26,7 @@ impl DwdIconGlobalTotalCloudCoverLayer {
         )?;
 
         let parameter_cat_num = DisciplineChecker::get_parameter_category_number(&doc)?;
-        let data_points = ValueGrid::calculate_data_points(&doc)?;
+        let data_points = doc.calculate_data_points(ValueGrid::MISSING_VALUE)?;
         let layer = DwdIconGlobalTotalCloudCoverLayer {
             parameter_category: parameter_cat_num.0,
             parameter_number: parameter_cat_num.1,
