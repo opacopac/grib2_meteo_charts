@@ -3,6 +3,7 @@ use crate::geo::lat_lon_extent::LatLonExtent;
 
 pub struct LatLonValueGrid<T> {
     values: Vec<T>,
+    missing_value: T,
     dimensions: (usize, usize),
     lat_lon_extent: LatLonExtent,
     lat_inc: f32,
@@ -10,21 +11,22 @@ pub struct LatLonValueGrid<T> {
 }
 
 
-impl <T: Copy> LatLonValueGrid<T> {
+impl <T: Copy + PartialEq> LatLonValueGrid<T> {
     pub fn new(
         values: Vec<T>,
+        missing_value: T,
         dimensions: (usize, usize),
         lat_lon_extent: LatLonExtent
     ) -> LatLonValueGrid<T> {
         let lat_inc = (lat_lon_extent.max_coord.lat - lat_lon_extent.min_coord.lat) / dimensions.1 as f32;
         let lon_inc = (lat_lon_extent.max_coord.lon - lat_lon_extent.min_coord.lon) / dimensions.0 as f32;
 
-        return LatLonValueGrid { values, dimensions, lat_lon_extent, lat_inc, lon_inc };
+        return LatLonValueGrid { values, missing_value, dimensions, lat_lon_extent, lat_inc, lon_inc };
     }
 
 
-    pub fn get_grid_dimensions(&self) -> &(usize, usize) {
-        return &self.dimensions;
+    pub fn get_grid_dimensions(&self) -> (usize, usize) {
+        return self.dimensions.clone();
     }
 
 
@@ -39,8 +41,13 @@ impl <T: Copy> LatLonValueGrid<T> {
         }
 
         let idx = x + y * self.dimensions.0;
+        let value = self.values[idx];
 
-        return Some(self.values[idx]);
+        return if value != self.missing_value {
+            Some(value)
+        } else {
+            None
+        }
     }
 
 
@@ -66,14 +73,15 @@ mod tests {
 
 
     fn create_test_grid() -> LatLonValueGrid<i32> {
-        let values = vec![00, 01, 10, 11, 20, 21];
+        let values = vec![00, 01, 10, 11, -1, 21];
+        let missing_value = -1;
         let dimensions = (2, 3);
         let lat_lon_extent = LatLonExtent::new(
             LatLon::new(40.0, 7.0),
             LatLon::new(46.0, 9.0)
         );
 
-        return LatLonValueGrid::new(values, dimensions, lat_lon_extent);
+        return LatLonValueGrid::new(values, missing_value, dimensions, lat_lon_extent);
     }
 
 
@@ -92,7 +100,7 @@ mod tests {
 
         let result = grid.get_grid_dimensions();
 
-        assert_eq!(&(2, 3), result);
+        assert_eq!((2, 3), result);
     }
 
 
@@ -173,5 +181,15 @@ mod tests {
         assert!(result3.is_none());
         assert!(result4.is_none());
         assert!(result5.is_none());
+    }
+
+
+    #[test]
+    fn it_gets_none_for_missing_values() {
+        let grid = create_test_grid();
+
+        let result1 = grid.get_value_by_xy(0, 2);
+
+        assert!(result1.is_none());
     }
 }

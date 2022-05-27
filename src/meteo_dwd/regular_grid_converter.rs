@@ -14,6 +14,7 @@ impl RegularGridConverter {
         let (dimensions, lat_lon_extent) = Self::get_dimensions_and_extent(doc)?;
         let grid = LatLonValueGrid::new(
             values,
+            missing_value,
             dimensions,
             lat_lon_extent
         );

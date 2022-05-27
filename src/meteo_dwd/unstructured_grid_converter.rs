@@ -30,7 +30,7 @@ impl UnstructuredGridConverter {
             min_coord: LatLon { lat: -lat_limit, lon: -180.0 },
             max_coord: LatLon { lat: lat_limit, lon: 180.0 }
         };
-        let grid = LatLonValueGrid::new(values, (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT), extent);
+        let grid = LatLonValueGrid::new(values, missing_value, (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT), extent);
 
         return Ok(grid);
     }
