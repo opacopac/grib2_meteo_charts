@@ -18,8 +18,21 @@ impl JumpFlooder {
         missing_value: f32,
     ) -> JumpFlooder {
         let dim_i32 = (dimensions.0 as i32, dimensions.1 as i32);
+        let (coords, value_ids) = Self::init(dimensions, in_values, missing_value);
+        let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords };
+
+        return jump_flooder;
+    }
+
+
+    fn init(
+        dimensions: (usize, usize),
+        in_values: &Vec<f32>,
+        missing_value: f32,
+    ) -> (HashMap<usize, (usize, usize)>, Vec<Vec<usize>>) {
         let mut coords: HashMap<usize, (usize, usize)> = HashMap::new();
         let mut value_ids = vec![];
+        let mut i = 0;
 
         for y in 0..dimensions.1 {
             let mut x_value_ids = vec![];
@@ -27,8 +40,9 @@ impl JumpFlooder {
                 let idx = y * dimensions.0 + x;
                 let value = in_values[idx];
                 if value != missing_value {
-                    coords.insert(idx + 1, (x, y));
-                    x_value_ids.push(idx + 1);  // TODO
+                    i += 1;
+                    coords.insert(i, (x, y));
+                    x_value_ids.push(i);
                 } else {
                     x_value_ids.push(0);
                 }
@@ -36,9 +50,7 @@ impl JumpFlooder {
             value_ids.push(x_value_ids);
         }
 
-        let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords };
-
-        return jump_flooder;
+        return (coords, value_ids)
     }
 
 
