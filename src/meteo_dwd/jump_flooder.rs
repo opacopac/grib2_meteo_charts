@@ -7,23 +7,28 @@ impl JumpFlooder {
     pub fn jump_flood(
         dimensions: (usize, usize),
         in_values: &Vec<f32>,
-        missing_value: f32
+        missing_value: f32,
+        first_step_size: usize
     ) -> Vec<f32> {
         // TODO: check dimensions (pow of 2 & same)
 
+        println!("init...");
         let value_ids_and_coords = Self::init_value_ids_and_coords(&dimensions, in_values, missing_value);
         let mut value_ids = value_ids_and_coords.0;
         let coords = value_ids_and_coords.1;
 
-        let mut step_size = dimensions.0 / 2;
+        let mut step_size = first_step_size;
         while step_size >= 1 {
+            println!("iteration with step size {}...", step_size);
             value_ids = Self::perform_flood_iteration(&dimensions, &value_ids, &coords, step_size as i32);
             step_size /= 2;
         }
 
         // perform final iteration with step size 1
+        println!("final iteration...");
         value_ids = Self::perform_flood_iteration(&dimensions, &value_ids, &coords, 1);
 
+        println!("output...");
         let out_values = Self::create_output_values(&dimensions, in_values, missing_value, &coords, &value_ids);
 
         return out_values;

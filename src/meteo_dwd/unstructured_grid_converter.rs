@@ -4,6 +4,7 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
+use crate::meteo_dwd::jump_flooder::JumpFlooder;
 use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
 
@@ -17,6 +18,7 @@ pub struct UnstructuredGridConverter;
 impl UnstructuredGridConverter {
     const WIDTH_HEIGHT: usize = 4096;
     const POW: f32 = Self::WIDTH_HEIGHT as f32;
+    const JUMP_FLOOD_1ST_STEP_SIZE: usize = 8;
 
     pub fn create(grib2_doc: &Grib2Document, missing_value: f32, netcdf_doc: &NetCdfDocument) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value)?;
@@ -26,12 +28,14 @@ impl UnstructuredGridConverter {
         }
 
         let lat_limit: f32 = PI.sinh().atan().to_degrees();
-        let values = Self::calculate_structured_values(unstructured_values, missing_value, clon_values, clat_values, lat_limit);
+        let dimensions = (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT);
+        let sparse_values = Self::calculate_structured_values(unstructured_values, missing_value, clon_values, clat_values, lat_limit);
+        let values = JumpFlooder::jump_flood(dimensions, &sparse_values, missing_value, Self::JUMP_FLOOD_1ST_STEP_SIZE);
         let extent = LatLonExtent {
             min_coord: LatLon { lat: -lat_limit, lon: -180.0 },
             max_coord: LatLon { lat: lat_limit, lon: 180.0 }
         };
-        let grid = LatLonValueGrid::new(values, missing_value, (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT), extent);
+        let grid = LatLonValueGrid::new(values, missing_value, dimensions, extent);
 
         return Ok(grid);
     }
