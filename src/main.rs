@@ -14,7 +14,6 @@ use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer2::DwdPrecipLayer2;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer2::DwdWindLayer2;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::UnstructuredGridConverter;
-use meteo_grib2_renderer::netcdf::data::netcdf_data_reader::NetCdfDataReader;
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
 const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
@@ -102,7 +101,7 @@ fn create_icon_d2_clct_img() {
 
 fn create_icon_eu_clct_img() {
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_EU).unwrap();
-    let grid = RegularGridConverter::create(&doc, -1.0).unwrap(); // TODO
+    let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let layer = DwdCloudLayer2::new(grid);
     let img = CloudChartRenderer2::render_full_chart(&layer).unwrap();
     img.safe_image("CLCT_EU2.png").unwrap();
@@ -111,9 +110,9 @@ fn create_icon_eu_clct_img() {
 
 fn create_icon_global_clct_img() {
     let grib_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
-    let (netcdf_doc, mut reader) = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE).unwrap(); // TODO
-    let clat_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clat").unwrap().get_doubles(); // TODO
-    let clon_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clon").unwrap().get_doubles(); // TODO
+    let netcdf_doc = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE, vec!["clat", "clon"]).unwrap();
+    let clat_data = netcdf_doc.data_map.get("clat").unwrap().get_doubles(); // TODO
+    let clon_data = netcdf_doc.data_map.get("clon").unwrap().get_doubles(); // TODO
     let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, clat_data, clon_data).unwrap(); // TODO
     let layer = DwdCloudLayer2::new(grid);
     let img = CloudChartRenderer2::render_full_chart(&layer).unwrap();
@@ -170,9 +169,9 @@ fn create_icon_d2_map_tiles() {
 
 fn create_icon_global_map_tiles() {
     let grib_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
-    let (netcdf_doc, mut reader) = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE).unwrap();
-    let clat_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clat").unwrap().get_doubles();
-    let clon_data = NetCdfDataReader::read_data_by_var(&mut reader, &netcdf_doc, "clon").unwrap().get_doubles();
+    let netcdf_doc = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE, vec!["clat", "clon"]).unwrap();
+    let clat_data = netcdf_doc.data_map.get("clat").unwrap().get_doubles(); // TODO
+    let clon_data = netcdf_doc.data_map.get("clon").unwrap().get_doubles(); // TODO
     let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, clat_data, clon_data).unwrap();
     let ccl = DwdCloudLayer2::new(grid);
     let _ = CloudChartRenderer2::render_map_tiles(
