@@ -64,13 +64,10 @@ impl JumpFlooder {
         let mut new_value_ids: Vec<usize> = vec![];
 
         for y in 0..self.dimensions.1 {
-            let y_i32 = y as i32;
-
             for x in 0..self.dimensions.0 {
-                let x_i32 = x as i32;
                 let own_idx = y * self.dimensions.0 + x;
                 let own_value_id = self.value_ids[own_idx];
-                let new_value_id = self.calc_new_value_id(x, y, x_i32, y_i32, step_size, own_value_id);
+                let new_value_id = self.calc_new_value_id(x, y, step_size, own_value_id);
 
                 new_value_ids.push(new_value_id);
             }
@@ -84,21 +81,19 @@ impl JumpFlooder {
         &self,
         x: usize,
         y: usize,
-        x_i32: i32,
-        y_i32: i32,
         step_size: i32,
         own_value_id: usize,
     ) -> usize {
         let mut new_value_id = own_value_id;
 
         for j in [-step_size, 0, step_size] {
-            let y2 = y_i32 + j;
+            let y2 = y as i32 + j;
             if y2 < 0 || y2 >= self.dim_i32.1 {
                 continue;
             }
 
             for i in [-step_size, 0, step_size] {
-                let x2 = x_i32 + i;
+                let x2 = x as i32 + i;
                 if x2 < 0 || x2 >= self.dim_i32.0 || (i == 0 && j == 0) {
                     continue;
                 }
@@ -170,7 +165,8 @@ mod tests {
             6.00, 2.00,
         ];
 
-        let grid = JumpFlooder::jump_flood((2, 2), &values, 0.00);
+        let mut jump_flooder = JumpFlooder::new((2, 2), &values, 0.00);
+        let grid = jump_flooder.jump_flood(&values, 1);
 
         assert_eq!(1.0, grid[0]);
         assert_eq!(9.0, grid[1]);
@@ -188,7 +184,8 @@ mod tests {
             0.00, 0.00, 0.00, 0.00
         ];
 
-        let grid = JumpFlooder::jump_flood((4, 4), &values, 0.00);
+        let mut jump_flooder = JumpFlooder::new((4, 4), &values, 0.00);
+        let grid = jump_flooder.jump_flood(&values, 2);
 
         for i in 0..16 {
             assert_eq!(2.0, grid[i]);
@@ -205,7 +202,8 @@ mod tests {
             0.00, 0.00, 0.00, 0.00
         ];
 
-        let grid = JumpFlooder::jump_flood((4, 4), &values, 0.00);
+        let mut jump_flooder = JumpFlooder::new((4, 4), &values, 0.00);
+        let grid = jump_flooder.jump_flood(&values, 2);
 
         assert_eq!(1.0, grid[0]);
         assert_eq!(2.0, grid[3]);
