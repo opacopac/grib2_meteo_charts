@@ -69,7 +69,7 @@ impl <'a> JumpFlooder<'a> {
         self.value_ids = self.perform_flood_iteration(1);
 
         println!("output...");
-        let out_values = self.create_output_values(self.in_values);
+        let out_values = self.create_output_values();
 
         return out_values;
     }
@@ -149,13 +149,13 @@ impl <'a> JumpFlooder<'a> {
     }
 
 
-    fn create_output_values(&self, in_values: &Vec<f32>) -> Vec<f32> {
+    fn create_output_values(&self) -> Vec<f32> {
         let mut out_values = vec![];
 
         for y in 0..self.dimensions.1 {
             for x in 0..self.dimensions.0 {
                 let value = match self.coords.get(&self.value_ids[y][x]) {
-                    Some(coord) => in_values[coord.1 * self.dimensions.0 + coord.0],
+                    Some(coord) => self.in_values[coord.1 * self.dimensions.0 + coord.0],
                     None => self.missing_value
                 };
                 out_values.push(value);
