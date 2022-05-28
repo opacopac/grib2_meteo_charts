@@ -30,7 +30,8 @@ impl UnstructuredGridConverter {
         let lat_limit: f32 = PI.sinh().atan().to_degrees();
         let dimensions = (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT);
         let sparse_values = Self::calculate_structured_values(unstructured_values, missing_value, clon_values, clat_values, lat_limit);
-        let values = JumpFlooder::jump_flood(dimensions, &sparse_values, missing_value, Self::JUMP_FLOOD_1ST_STEP_SIZE);
+        let mut jump_flooder = JumpFlooder::new(dimensions, &sparse_values, missing_value);
+        let values = jump_flooder.jump_flood(&sparse_values, Self::JUMP_FLOOD_1ST_STEP_SIZE);
         let extent = LatLonExtent {
             min_coord: LatLon { lat: -lat_limit, lon: -180.0 },
             max_coord: LatLon { lat: lat_limit, lon: 180.0 }

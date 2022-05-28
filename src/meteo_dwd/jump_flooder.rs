@@ -1,45 +1,21 @@
 use std::collections::HashMap;
 
-pub struct JumpFlooder;
+pub struct JumpFlooder {
+    dimensions: (usize, usize),
+    dim_i32: (i32, i32),
+    missing_value: f32,
+    value_ids: Vec<usize>,
+    coords: HashMap<usize, (usize, usize)>
+}
 
 
 impl JumpFlooder {
-    pub fn jump_flood(
+    pub fn new(
         dimensions: (usize, usize),
         in_values: &Vec<f32>,
         missing_value: f32,
-        first_step_size: usize
-    ) -> Vec<f32> {
-        // TODO: check dimensions (pow of 2 & same)
-
-        println!("init...");
-        let value_ids_and_coords = Self::init_value_ids_and_coords(&dimensions, in_values, missing_value);
-        let mut value_ids = value_ids_and_coords.0;
-        let coords = value_ids_and_coords.1;
-
-        let mut step_size = first_step_size;
-        while step_size >= 1 {
-            println!("iteration with step size {}...", step_size);
-            value_ids = Self::perform_flood_iteration(&dimensions, &value_ids, &coords, step_size as i32);
-            step_size /= 2;
-        }
-
-        // perform final iteration with step size 1
-        println!("final iteration...");
-        value_ids = Self::perform_flood_iteration(&dimensions, &value_ids, &coords, 1);
-
-        println!("output...");
-        let out_values = Self::create_output_values(&dimensions, in_values, missing_value, &coords, &value_ids);
-
-        return out_values;
-    }
-
-
-    fn init_value_ids_and_coords(
-        dimensions: &(usize, usize),
-        in_values: &Vec<f32>,
-        missing_value: f32
-    ) -> (Vec<usize>, HashMap<usize, (usize, usize)>) {
+    ) -> JumpFlooder {
+        let dim_i32 = (dimensions.0 as i32, dimensions.1 as i32);
         let mut coords: HashMap<usize, (usize, usize)> = HashMap::new();
         let mut value_ids: Vec<usize> = vec![];
         let mut i = 0;
@@ -58,77 +34,104 @@ impl JumpFlooder {
             }
         }
 
-        return (value_ids, coords);
+        let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords };
+
+        return jump_flooder;
     }
 
 
-    fn perform_flood_iteration(
-        dimensions: &(usize, usize),
-        value_ids: &Vec<usize>,
-        coords: &HashMap<usize, (usize, usize)>,
-        step_size: i32
-    ) -> Vec<usize> {
-        let mut new_value_ids: Vec<usize> = vec![];
-        let dim0_i32 = dimensions.0 as i32;
-        let dim1_i32 = dimensions.1 as i32;
+    pub fn jump_flood(&mut self, in_values: &Vec<f32>, first_step_size: usize) -> Vec<f32> {
+        println!("init...");
+        let mut step_size = first_step_size;
+        while step_size >= 1 {
+            println!("iteration with step size {}...", step_size);
+            self.value_ids = self.perform_flood_iteration(step_size as i32);
+            step_size /= 2;
+        }
 
-        for y in 0..dimensions.1 {
+        // perform final iteration with step size 1
+        println!("final iteration...");
+        self.value_ids = self.perform_flood_iteration(1);
+
+        println!("output...");
+        let out_values = self.create_output_values(in_values);
+
+        return out_values;
+    }
+
+
+    fn perform_flood_iteration(&self, step_size: i32) -> Vec<usize> {
+        let mut new_value_ids: Vec<usize> = vec![];
+
+        for y in 0..self.dimensions.1 {
             let y_i32 = y as i32;
 
-            for x in 0..dimensions.0 {
+            for x in 0..self.dimensions.0 {
                 let x_i32 = x as i32;
-                let own_idx = y * dimensions.0 + x;
-                let own_value_id = value_ids[own_idx];
-                let mut new_value_id = own_value_id;
-
-                for j in [-step_size, 0, step_size] {
-                    let y2 = y_i32 + j;
-                    if y2 < 0 || y2 >= dim1_i32 {
-                        continue;
-                    }
-
-                    for i in [-step_size, 0, step_size] {
-                        let x2 = x_i32 + i;
-                        if x2 < 0 || x2 >= dim0_i32 || (i == 0 && j == 0) {
-                            continue;
-                        }
-
-                        let other_idx = (y2 * dim0_i32 + x2) as usize;
-                        let other_value_id = value_ids[other_idx];
-
-                        if other_value_id == 0 {
-                            continue;
-                        }
-
-                        if own_value_id == 0 {
-                            new_value_id = other_value_id;
-                        } else {
-                            let own_seed_coord = match coords.get(&own_value_id) {
-                                Some(coord) => coord,
-                                None => continue
-                            };
-                            let other_seed_coord = match coords.get(&other_value_id) {
-                                Some(coord) => coord,
-                                None => continue
-                            };
-
-                            let own_dist = Self::calc_sq_dist(own_seed_coord, (x, y));
-                            let other_dist = Self::calc_sq_dist(other_seed_coord, (x, y));
-                            if other_dist < own_dist {
-                                new_value_id = other_value_id;
-                            }
-                        }
-                    }
-                }
-                //print!("{} ", new_value_id);
+                let own_idx = y * self.dimensions.0 + x;
+                let own_value_id = self.value_ids[own_idx];
+                let new_value_id = self.calc_new_value_id(x, y, x_i32, y_i32, step_size, own_value_id);
 
                 new_value_ids.push(new_value_id);
             }
-            //println!();
         }
-        //println!();
 
         return new_value_ids;
+    }
+
+
+    fn calc_new_value_id(
+        &self,
+        x: usize,
+        y: usize,
+        x_i32: i32,
+        y_i32: i32,
+        step_size: i32,
+        own_value_id: usize,
+    ) -> usize {
+        let mut new_value_id = own_value_id;
+
+        for j in [-step_size, 0, step_size] {
+            let y2 = y_i32 + j;
+            if y2 < 0 || y2 >= self.dim_i32.1 {
+                continue;
+            }
+
+            for i in [-step_size, 0, step_size] {
+                let x2 = x_i32 + i;
+                if x2 < 0 || x2 >= self.dim_i32.0 || (i == 0 && j == 0) {
+                    continue;
+                }
+
+                let other_idx = (y2 * self.dim_i32.0 + x2) as usize;
+                let other_value_id = self.value_ids[other_idx];
+
+                if other_value_id == 0 {
+                    continue;
+                }
+
+                if own_value_id == 0 {
+                    new_value_id = other_value_id;
+                } else {
+                    let own_seed_coord = match self.coords.get(&own_value_id) {
+                        Some(coord) => coord,
+                        None => continue
+                    };
+                    let other_seed_coord = match self.coords.get(&other_value_id) {
+                        Some(coord) => coord,
+                        None => continue
+                    };
+
+                    let own_dist = Self::calc_sq_dist(own_seed_coord, (x, y));
+                    let other_dist = Self::calc_sq_dist(other_seed_coord, (x, y));
+                    if other_dist < own_dist {
+                        new_value_id = other_value_id;
+                    }
+                }
+            }
+        }
+
+        return new_value_id;
     }
 
 
@@ -140,19 +143,13 @@ impl JumpFlooder {
     }
 
 
-    fn create_output_values(
-        dimensions: &(usize, usize),
-        in_values: &Vec<f32>,
-        missing_value: f32,
-        coords: &HashMap<usize, (usize, usize)>,
-        value_ids: &Vec<usize>
-    ) -> Vec<f32> {
+    fn create_output_values(&self, in_values: &Vec<f32>) -> Vec<f32> {
         let mut out_values = vec![];
 
-        for i in 0..(dimensions.0 * dimensions.1) {
-            let value = match coords.get(&value_ids[i]) {
-                Some(coord) => in_values[coord.1 * dimensions.0 + coord.0],
-                None => missing_value
+        for i in 0..(self.dimensions.0 * self.dimensions.1) {
+            let value = match self.coords.get(&self.value_ids[i]) {
+                Some(coord) => in_values[coord.1 * self.dimensions.0 + coord.0],
+                None => self.missing_value
             };
             out_values.push(value);
         }
