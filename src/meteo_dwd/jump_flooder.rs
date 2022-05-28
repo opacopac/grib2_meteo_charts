@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+
 pub struct JumpFlooder {
     dimensions: (usize, usize),
     dim_i32: (i32, i32),
     missing_value: f32,
-    value_ids: Vec<usize>,
+    value_ids: Vec<Vec<usize>>,
     coords: HashMap<usize, (usize, usize)>
 }
 
@@ -17,21 +19,21 @@ impl JumpFlooder {
     ) -> JumpFlooder {
         let dim_i32 = (dimensions.0 as i32, dimensions.1 as i32);
         let mut coords: HashMap<usize, (usize, usize)> = HashMap::new();
-        let mut value_ids: Vec<usize> = vec![];
-        let mut i = 0;
+        let mut value_ids = vec![];
 
         for y in 0..dimensions.1 {
+            let mut x_value_ids = vec![];
             for x in 0..dimensions.0 {
                 let idx = y * dimensions.0 + x;
                 let value = in_values[idx];
                 if value != missing_value {
-                    i += 1;
-                    coords.insert(i, (x, y));
-                    value_ids.push(i);
+                    coords.insert(idx + 1, (x, y));
+                    x_value_ids.push(idx + 1);  // TODO
                 } else {
-                    value_ids.push(0);
+                    x_value_ids.push(0);
                 }
             }
+            value_ids.push(x_value_ids);
         }
 
         let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords };
@@ -60,20 +62,18 @@ impl JumpFlooder {
     }
 
 
-    fn perform_flood_iteration(&self, step_size: i32) -> Vec<usize> {
-        let mut new_value_ids: Vec<usize> = vec![];
-
-        for y in 0..self.dimensions.1 {
+    fn perform_flood_iteration(&self, step_size: i32) -> Vec<Vec<usize>> {
+        return (0..self.dimensions.1).into_par_iter().map(|y| {
+            let mut x_value_ids: Vec<usize> = vec![];
             for x in 0..self.dimensions.0 {
-                let own_idx = y * self.dimensions.0 + x;
-                let own_value_id = self.value_ids[own_idx];
+                let own_value_id = self.value_ids[y][x];
                 let new_value_id = self.calc_new_value_id(x, y, step_size, own_value_id);
 
-                new_value_ids.push(new_value_id);
+                x_value_ids.push(new_value_id);
             }
-        }
 
-        return new_value_ids;
+            return x_value_ids;
+        }).collect::<Vec<Vec<usize>>>();
     }
 
 
@@ -98,9 +98,7 @@ impl JumpFlooder {
                     continue;
                 }
 
-                let other_idx = (y2 * self.dim_i32.0 + x2) as usize;
-                let other_value_id = self.value_ids[other_idx];
-
+                let other_value_id = self.value_ids[y2 as usize][x2 as usize];
                 if other_value_id == 0 {
                     continue;
                 }
@@ -141,12 +139,14 @@ impl JumpFlooder {
     fn create_output_values(&self, in_values: &Vec<f32>) -> Vec<f32> {
         let mut out_values = vec![];
 
-        for i in 0..(self.dimensions.0 * self.dimensions.1) {
-            let value = match self.coords.get(&self.value_ids[i]) {
-                Some(coord) => in_values[coord.1 * self.dimensions.0 + coord.0],
-                None => self.missing_value
-            };
-            out_values.push(value);
+        for y in 0..self.dimensions.1 {
+            for x in 0..self.dimensions.0 {
+                let value = match self.coords.get(&self.value_ids[y][x]) {
+                    Some(coord) => in_values[coord.1 * self.dimensions.0 + coord.0],
+                    None => self.missing_value
+                };
+                out_values.push(value);
+            }
         }
 
         return out_values;
