@@ -1,5 +1,5 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
+use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
@@ -11,7 +11,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
     let netcdf_doc = NetCdfDocumentReader::read_file(CLCT_TEST_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME]).unwrap(); // TODO
     let grid = UnstructuredGridConverter::create(&grib2_doc, -1.0, &netcdf_doc).unwrap();
-    let _layer = DwdCloudLayer2::new(grid);
+    let _layer = DwdCloudLayer::new(grid);
 
     // TODO: panics because number of points in grid don't match
 

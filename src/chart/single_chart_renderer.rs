@@ -1,9 +1,9 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
-pub struct SingleChartRenderer2;
+pub struct SingleChartRenderer;
 
-impl SingleChartRenderer2 {
+impl SingleChartRenderer {
     pub fn render(
         width: u32,
         height: u32,

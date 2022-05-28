@@ -1,16 +1,16 @@
-use crate::chart::map_tile_renderer2::MapTileRenderer2;
-use crate::chart::single_chart_renderer2::SingleChartRenderer2;
+use crate::chart::map_tile_renderer::MapTileRenderer;
+use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
+use crate::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
 
-pub struct CloudChartRenderer2;
+pub struct CloudChartRenderer;
 
 
-impl CloudChartRenderer2 {
-    pub fn render_full_chart(cloud_layer: &DwdCloudLayer2) -> Result<Drawable, Grib2Error> {
+impl CloudChartRenderer {
+    pub fn render_full_chart(cloud_layer: &DwdCloudLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = cloud_layer.get_grid_dimensions();
-        let drawable = SingleChartRenderer2::render(
+        let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
             dimensions.1 as u32,
             |x, y| cloud_layer.get_cloud_cover_by_xy(x, y),
@@ -22,7 +22,7 @@ impl CloudChartRenderer2 {
 
 
     pub fn render_map_tiles<S>(
-        cloud_layer: &DwdCloudLayer2,
+        cloud_layer: &DwdCloudLayer,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where
@@ -30,7 +30,7 @@ impl CloudChartRenderer2 {
     {
         let extent = cloud_layer.get_lat_lon_extent();
 
-        MapTileRenderer2::create_all_tiles(
+        MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
             |pos| cloud_layer.get_cloud_cover_by_lat_lon(pos),

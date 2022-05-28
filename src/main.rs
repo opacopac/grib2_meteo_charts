@@ -4,14 +4,14 @@
 use std::fs;
 use std::time::Instant;
 
-use meteo_grib2_renderer::chart::cloud_chart_renderer2::CloudChartRenderer2;
-use meteo_grib2_renderer::chart::precip_chart_renderer2::PrecipChartRenderer2;
-use meteo_grib2_renderer::chart::wind_chart_renderer2::WindChartRenderer2;
+use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
+use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
+use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::imaging::drawable::Drawable;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer2::DwdCloudLayer2;
-use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer2::DwdPrecipLayer2;
-use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer2::DwdWindLayer2;
+use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
+use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
@@ -66,9 +66,9 @@ fn create_icon_d2_map_tile_series() {
 
         let doc = Grib2DocumentReader::read_file(&file).unwrap();
         let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-        let ccl = DwdCloudLayer2::new(grid);
+        let ccl = DwdCloudLayer::new(grid);
         let dir = &format!("./{}/", &nr);
-        let _ = CloudChartRenderer2::render_map_tiles(
+        let _ = CloudChartRenderer::render_map_tiles(
             &ccl,
             (0, 7),
             |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
@@ -85,11 +85,11 @@ fn create_icon_d2_clct_img() {
     println!("read doc {}", elapsed.as_millis());
 
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let layer = DwdCloudLayer2::new(grid);
+    let layer = DwdCloudLayer::new(grid);
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    let img = CloudChartRenderer2::render_full_chart(&layer).unwrap();
+    let img = CloudChartRenderer::render_full_chart(&layer).unwrap();
     let elapsed = start.elapsed();
     println!("create img {}", elapsed.as_millis());
 
@@ -102,8 +102,8 @@ fn create_icon_d2_clct_img() {
 fn create_icon_eu_clct_img() {
     let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_EU).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let layer = DwdCloudLayer2::new(grid);
-    let img = CloudChartRenderer2::render_full_chart(&layer).unwrap();
+    let layer = DwdCloudLayer::new(grid);
+    let img = CloudChartRenderer::render_full_chart(&layer).unwrap();
     img.safe_image("CLCT_EU2.png").unwrap();
 }
 
@@ -112,8 +112,8 @@ fn create_icon_global_clct_img() {
     let grib_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
     let netcdf_doc = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME]).unwrap(); // TODO
     let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, &netcdf_doc).unwrap();
-    let layer = DwdCloudLayer2::new(grid);
-    let img = CloudChartRenderer2::render_full_chart(&layer).unwrap();
+    let layer = DwdCloudLayer::new(grid);
+    let img = CloudChartRenderer::render_full_chart(&layer).unwrap();
 
     img.safe_image("CLCT_GLOBAL2.png").unwrap();
 }
@@ -122,8 +122,8 @@ fn create_icon_global_clct_img() {
 fn create_icon_d2_precip_img() {
     let doc = Grib2DocumentReader::read_file(PRECIP_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let layer = DwdPrecipLayer2::new(grid);
-    let img = PrecipChartRenderer2::render_full_chart(&layer).unwrap();
+    let layer = DwdPrecipLayer::new(grid);
+    let img = PrecipChartRenderer::render_full_chart(&layer).unwrap();
     img.safe_image("PRECIP2.png").unwrap();
 }
 
@@ -133,8 +133,8 @@ fn create_icon_d2_wind_img() {
     let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
-    let layer = DwdWindLayer2::new(grid_u, grid_v).unwrap();
-    let img = WindChartRenderer2::render_full_chart(&layer).unwrap();
+    let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+    let img = WindChartRenderer::render_full_chart(&layer).unwrap();
     img.safe_image("WIND2.png").unwrap();
 }
 
@@ -148,11 +148,11 @@ fn create_icon_d2_map_tiles() {
 
     //let ccl = DwdIconD2TotalCloudCoverLayer::from_grib2(doc).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let ccl = DwdCloudLayer2::new(grid);
+    let ccl = DwdCloudLayer::new(grid);
     let elapsed = start.elapsed();
     println!("create ccl {}", elapsed.as_millis());
 
-    let _ = CloudChartRenderer2::render_map_tiles(
+    let _ = CloudChartRenderer::render_map_tiles(
         &ccl,
         (0, 7),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
@@ -169,8 +169,8 @@ fn create_icon_global_map_tiles() {
     let grib_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_GLOBAL).unwrap();
     let netcdf_doc = NetCdfDocumentReader::read_file(NETCDF_ICON_GRID_TEST_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME]).unwrap(); // TODO
     let grid = UnstructuredGridConverter::create(&grib_doc, -1.0, &netcdf_doc).unwrap();
-    let ccl = DwdCloudLayer2::new(grid);
-    let _ = CloudChartRenderer2::render_map_tiles(
+    let ccl = DwdCloudLayer::new(grid);
+    let _ = CloudChartRenderer::render_map_tiles(
         &ccl,
         (0, 2),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
@@ -183,8 +183,8 @@ fn create_icon_d2_wind_map_tile() {
     let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
-    let layer = DwdWindLayer2::new(grid_u, grid_v).unwrap();
-    let _ = WindChartRenderer2::render_map_tiles(
+    let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+    let _ = WindChartRenderer::render_map_tiles(
         &layer,
         (0, 5),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)

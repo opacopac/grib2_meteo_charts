@@ -7,9 +7,10 @@ use crate::geo::map_tile_coord::MapTileCoord;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
-pub struct MapTileRenderer2;
+pub struct MapTileRenderer;
 
-impl MapTileRenderer2 {
+
+impl MapTileRenderer {
     pub fn create_all_tiles<V, C, S>(
         lat_long_extent: &LatLonExtent,
         zoom_range: (u32, u32),

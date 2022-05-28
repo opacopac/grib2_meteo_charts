@@ -1,25 +1,25 @@
 use min_max::min;
 
-use crate::chart::map_tile_renderer2::MapTileRenderer2;
-use crate::chart::single_chart_renderer2::SingleChartRenderer2;
+use crate::chart::map_tile_renderer::MapTileRenderer;
+use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::chart::wind_arrow_service::WindArrowService;
 use crate::geo::lat_lon::LatLon;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 use crate::imaging::image::Image;
-use crate::meteo_dwd::dwd_wind_layer2::DwdWindLayer2;
+use crate::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 
-pub struct WindChartRenderer2;
+pub struct WindChartRenderer;
 
 
-impl WindChartRenderer2 {
+impl WindChartRenderer {
     const MAX_VALUE_MPS: f32 = 20.0;
     const WIND_DIR_DIST_PX: u32 = 50;
 
 
-    pub fn render_full_chart(wind_layer: &DwdWindLayer2) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(wind_layer: &DwdWindLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = wind_layer.get_grid_dimensions();
-        let mut drawable = SingleChartRenderer2::render(
+        let mut drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
             dimensions.1 as u32,
             |x, y| wind_layer.get_wind_speed_tot_xy(x, y),
@@ -38,7 +38,7 @@ impl WindChartRenderer2 {
 
 
     pub fn render_map_tiles<S>(
-        wind_layer: &DwdWindLayer2,
+        wind_layer: &DwdWindLayer,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where
@@ -46,7 +46,7 @@ impl WindChartRenderer2 {
     {
         let extent = wind_layer.get_lat_lon_extent();
 
-        MapTileRenderer2::create_all_tiles(
+        MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
             |pos| wind_layer.get_wind_speed_tot_by_lat_lon(pos),
@@ -64,7 +64,7 @@ impl WindChartRenderer2 {
 
 
     fn draw_wind_arrows_rectangle(
-        wind_layer: &DwdWindLayer2,
+        wind_layer: &DwdWindLayer,
         drawable: &mut Drawable,
         min_pos: &LatLon,
         max_pos: &LatLon

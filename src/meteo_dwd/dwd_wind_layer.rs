@@ -3,17 +3,17 @@ use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
 
-pub struct DwdWindLayer2 {
+pub struct DwdWindLayer {
     zonal_value_grid: LatLonValueGrid<f32>,
     meridional_value_grid: LatLonValueGrid<f32>
 }
 
 
-impl DwdWindLayer2 {
+impl DwdWindLayer {
     pub fn new(
         zonal_value_grid: LatLonValueGrid<f32>,
         meridional_value_grid: LatLonValueGrid<f32>
-    ) -> Result<DwdWindLayer2, Grib2Error> {
+    ) -> Result<DwdWindLayer, Grib2Error> {
         if zonal_value_grid.get_grid_dimensions() != meridional_value_grid.get_grid_dimensions() {
             return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
         }
@@ -22,7 +22,7 @@ impl DwdWindLayer2 {
             return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
         }
 
-        let layer = DwdWindLayer2 { zonal_value_grid, meridional_value_grid };
+        let layer = DwdWindLayer { zonal_value_grid, meridional_value_grid };
 
         return Ok(layer);
     }

@@ -2,14 +2,14 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
 
-pub struct DwdPrecipLayer2 {
+pub struct DwdCloudLayer {
     value_grid: LatLonValueGrid<f32>
 }
 
 
-impl DwdPrecipLayer2 {
-    pub fn new(value_grid: LatLonValueGrid<f32>) -> DwdPrecipLayer2 {
-        return DwdPrecipLayer2 { value_grid };
+impl DwdCloudLayer {
+    pub fn new(value_grid: LatLonValueGrid<f32>) -> DwdCloudLayer {
+        return DwdCloudLayer { value_grid };
     }
 
 
@@ -23,12 +23,12 @@ impl DwdPrecipLayer2 {
     }
 
 
-    pub fn get_total_precipitation_by_xy(&self, x: usize, y: usize) -> Option<f32> {
+    pub fn get_cloud_cover_by_xy(&self, x: usize, y: usize) -> Option<f32> {
         return self.value_grid.get_value_by_xy(x, y);
     }
 
 
-    pub fn get_total_precipitation_by_lat_lon(&self, pos: &LatLon) -> Option<f32> {
+    pub fn get_cloud_cover_by_lat_lon(&self, pos: &LatLon) -> Option<f32> {
         return self.value_grid.get_value_by_lat_lon(pos);
     }
 }
