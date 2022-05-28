@@ -2,16 +2,17 @@ use std::collections::HashMap;
 
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-pub struct JumpFlooder {
+pub struct JumpFlooder<'a> {
     dimensions: (usize, usize),
     dim_i32: (i32, i32),
     missing_value: f32,
     value_ids: Vec<Vec<usize>>,
-    coords: HashMap<usize, (usize, usize)>
+    coords: HashMap<usize, (usize, usize)>,
+    in_values: &'a Vec<f32>,
 }
 
 
-impl JumpFlooder {
+impl <'a> JumpFlooder<'a> {
     pub fn new(
         dimensions: (usize, usize),
         in_values: &Vec<f32>,
@@ -19,7 +20,7 @@ impl JumpFlooder {
     ) -> JumpFlooder {
         let dim_i32 = (dimensions.0 as i32, dimensions.1 as i32);
         let (coords, value_ids) = Self::init(dimensions, in_values, missing_value);
-        let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords };
+        let jump_flooder = JumpFlooder { dimensions, dim_i32, missing_value, value_ids, coords, in_values };
 
         return jump_flooder;
     }
@@ -54,7 +55,7 @@ impl JumpFlooder {
     }
 
 
-    pub fn jump_flood(&mut self, in_values: &Vec<f32>, first_step_size: usize) -> Vec<f32> {
+    pub fn jump_flood(&mut self, first_step_size: usize) -> Vec<f32> {
         println!("init...");
         let mut step_size = first_step_size;
         while step_size >= 1 {
@@ -68,7 +69,7 @@ impl JumpFlooder {
         self.value_ids = self.perform_flood_iteration(1);
 
         println!("output...");
-        let out_values = self.create_output_values(in_values);
+        let out_values = self.create_output_values(self.in_values);
 
         return out_values;
     }
@@ -178,7 +179,7 @@ mod tests {
         ];
 
         let mut jump_flooder = JumpFlooder::new((2, 2), &values, 0.00);
-        let grid = jump_flooder.jump_flood(&values, 1);
+        let grid = jump_flooder.jump_flood(1);
 
         assert_eq!(1.0, grid[0]);
         assert_eq!(9.0, grid[1]);
@@ -197,7 +198,7 @@ mod tests {
         ];
 
         let mut jump_flooder = JumpFlooder::new((4, 4), &values, 0.00);
-        let grid = jump_flooder.jump_flood(&values, 2);
+        let grid = jump_flooder.jump_flood(2);
 
         for i in 0..16 {
             assert_eq!(2.0, grid[i]);
@@ -215,7 +216,7 @@ mod tests {
         ];
 
         let mut jump_flooder = JumpFlooder::new((4, 4), &values, 0.00);
-        let grid = jump_flooder.jump_flood(&values, 2);
+        let grid = jump_flooder.jump_flood(2);
 
         assert_eq!(1.0, grid[0]);
         assert_eq!(2.0, grid[3]);
