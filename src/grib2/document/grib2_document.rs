@@ -32,6 +32,7 @@ impl Grib2Document {
             GridPointDataSimplePacking(tpl) => {
                 let c1 = (2 as f32).powi(tpl.binary_scale_factor_e as i32);
                 let c2 = (10 as f32).powi(tpl.decimal_scale_factor_d as i32);
+
                 (tpl.reference_value, c1, c2)
             }
             _ => return Err(Grib2Error::InvalidData("invalid data representation template".to_string()))
@@ -52,6 +53,10 @@ impl Grib2Document {
                 let data_value = (ref_value + raw_value * c1) as f32 / c2;
                 data_points.push(data_value);
                 j += 1;
+
+                if j < 10000 {
+                    println!("{}   {}", raw_value, data_value);
+                }
             } else {
                 data_points.push(missing_value);
             }

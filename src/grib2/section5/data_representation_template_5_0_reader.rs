@@ -17,6 +17,9 @@ impl DataRepresentationTemplate5_0Reader {
         let decimal_scale_factor = SignedNumberReader::read(reader)?;
         let number_of_bits = reader.read_u8()?;
         let original_field_type = DataRepresentationTemplate5_0Reader::read_original_field_type(reader)?;
+
+        println!("{:?}, {}, {}, {}, {}", &original_field_type, reference_value, binary_scale_factor, decimal_scale_factor, number_of_bits);
+
         let tpl = DataRepresentationTemplate5_0::new(
             reference_value,
             binary_scale_factor,

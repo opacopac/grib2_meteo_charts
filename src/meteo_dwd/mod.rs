@@ -6,4 +6,6 @@ pub mod dwd_precip_layer;
 pub mod dwd_wind_layer;
 pub mod jump_flooder;
 pub mod dwd_cloud_precip_layer;
+pub mod dwd_ww_layer;
+pub mod weather_interpretation;
 
