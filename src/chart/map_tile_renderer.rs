@@ -11,15 +11,15 @@ pub struct MapTileRenderer;
 
 
 impl MapTileRenderer {
-    pub fn create_all_tiles<V, C, S>(
+    pub fn create_all_tiles<V, C, S, T>(
         lat_long_extent: &LatLonExtent,
         zoom_range: (u32, u32),
         value_fn: V,
         color_fn: C,
         save_fn: S
     ) -> Result<(), Grib2Error> where
-        V: Fn(&LatLon) -> Option<f32> + Sync,
-        C: Fn(f32) -> [u8; 4] + Sync,
+        V: Fn(&LatLon) -> Option<T> + Sync,
+        C: Fn(T) -> [u8; 4] + Sync,
         S: Fn(&Drawable, u32, u32, u32) -> () + Sync
     {
         let pos_tl = LatLon { lat: lat_long_extent.min_coord.lat, lon: lat_long_extent.max_coord.lon };
@@ -45,13 +45,13 @@ impl MapTileRenderer {
     }
 
 
-    pub fn create_single_tile<V, C>(
+    pub fn create_single_tile<V, C, T>(
         value_fn: V,
         map_tile_coords: &MapTileCoord,
         color_fn: C
     ) -> Result<Drawable, Grib2Error> where
-        V: Fn(&LatLon) -> Option<f32> + Sync,
-        C: Fn(f32) -> [u8; 4] + Sync,
+        V: Fn(&LatLon) -> Option<T> + Sync,
+        C: Fn(T) -> [u8; 4] + Sync,
     {
         let mut drawable = Drawable::create_empty(MapTileCoord::TILE_SIZE_PX, MapTileCoord::TILE_SIZE_PX)?;
 

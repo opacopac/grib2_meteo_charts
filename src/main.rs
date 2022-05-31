@@ -5,11 +5,13 @@ use std::fs;
 use std::time::Instant;
 
 use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
+use meteo_grib2_renderer::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::meteo_dwd::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
@@ -20,6 +22,9 @@ const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_20
 const CLCT_TEST_FILE_EU: &str = "icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
 const CLCT_TEST_FILE_GLOBAL: &str = "icon_global_icosahedral_single-level_2022051300_000_CLCT_MOD.grib2";
 const PRECIP_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042700_048_2d_tot_prec.grib2";
+const CP_PRECIP0_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022053118_009_2d_tot_prec.grib2";
+const CP_PRECIP1_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022053118_010_2d_tot_prec.grib2";
+const CP_CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022053118_010_2d_clct_mod.grib2";
 //const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
 //const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
 const WIND_U_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_U_10M.grib2";
@@ -30,9 +35,10 @@ fn main() {
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
-    create_icon_global_clct_img();
+    //create_icon_global_clct_img();
     //create_icon_d2_wind_img();
     //create_icon_d2_wind_map_tile();
+    create_icon_d2_cloud_precip_img();
 
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
@@ -139,6 +145,19 @@ fn create_icon_d2_wind_img() {
 }
 
 
+fn create_icon_d2_cloud_precip_img() {
+    let doc_cl = Grib2DocumentReader::read_file(CP_CLCT_TEST_FILE_D2).unwrap();
+    let doc_p0 = Grib2DocumentReader::read_file(CP_PRECIP0_TEST_FILE).unwrap();
+    let doc_p1 = Grib2DocumentReader::read_file(CP_PRECIP1_TEST_FILE).unwrap();
+    let grid_cl = RegularGridConverter::create(&doc_cl, -1.0).unwrap();
+    let grid_p0 = RegularGridConverter::create(&doc_p0, -1.0).unwrap();
+    let grid_p1 = RegularGridConverter::create(&doc_p1, -1.0).unwrap();
+    let layer = DwdCloudPrecipLayer::new(grid_cl, grid_p0, grid_p1).unwrap();
+    let img = CloudPrecipChartRenderer::render_full_chart(&layer).unwrap();
+    img.safe_image("CLOUD_PRECIP.png").unwrap();
+}
+
+
 fn create_icon_d2_map_tiles() {
     let start = Instant::now();
 
@@ -172,7 +191,7 @@ fn create_icon_global_map_tiles() {
     let ccl = DwdCloudLayer::new(grid);
     let _ = CloudChartRenderer::render_map_tiles(
         &ccl,
-        (0, 2),
+        (0, 5),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
     );
 }

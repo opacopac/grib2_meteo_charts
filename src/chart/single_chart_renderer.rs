@@ -4,11 +4,11 @@ use crate::imaging::drawable::Drawable;
 pub struct SingleChartRenderer;
 
 impl SingleChartRenderer {
-    pub fn render(
+    pub fn render<T>(
         width: u32,
         height: u32,
-        value_fn: impl Fn(usize, usize) -> Option<f32>,
-        color_fn: impl Fn(f32) -> [u8; 4]
+        value_fn: impl Fn(usize, usize) -> Option<T>,
+        color_fn: impl Fn(T) -> [u8; 4]
     ) -> Result<Drawable, Grib2Error> {
         let mut drawable = Drawable::create_empty(width, height)?;
 
