@@ -41,13 +41,9 @@ impl CloudPrecipChartRenderer {
 
 
     fn color_fn(value: (f32, f32)) -> [u8; 4] {
-        if value.1 > 0.0 {
-            let u8_value = (value.1 * 255.0).floor() as u8;
-            return [0, 0, 255, u8_value]; // TODO
-        }
+        let precip_u8_value = (127.0 + value.1 * 128.0).floor() as u8;
+        let cloud_u8_value = (value.0 * 255.0).floor() as u8;
 
-        let u8_value = (value.0 * 255.0).floor() as u8;
-
-        return [127, 127, 127, u8_value]; // TODO
+        return [127, 127, precip_u8_value, cloud_u8_value]; // TODO
     }
 }
