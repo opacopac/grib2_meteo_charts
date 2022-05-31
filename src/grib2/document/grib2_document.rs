@@ -53,10 +53,6 @@ impl Grib2Document {
                 let data_value = (ref_value + raw_value * c1) as f32 / c2;
                 data_points.push(data_value);
                 j += 1;
-
-                if j < 10000 {
-                    println!("{}   {}", raw_value, data_value);
-                }
             } else {
                 data_points.push(missing_value);
             }
