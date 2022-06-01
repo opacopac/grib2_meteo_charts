@@ -3,6 +3,7 @@ use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_dwd::dwd_ww_layer::DwdWwLayer;
+use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
 
 pub struct WwChartRenderer;
 
@@ -40,22 +41,22 @@ impl WwChartRenderer {
     }
 
 
-    fn color_fn(value: f32) -> [u8; 4] {
+    fn color_fn(value: WeatherInterpretation) -> [u8; 4] {
         return match value {
-            0.0 => [0, 0, 0, 0],
-            1.0 => [127, 127, 127, 63],
-            2.0 => [127, 127, 127, 127],
-            3.0 => [127, 127, 127, 190],
-            (45.0 | 48.0) => [127, 127, 127, 255],
-            51.0 => [0, 255, 255, 63],
-            53.0 => [0, 255, 255, 127],
-            55.0 => [0, 255, 255, 255],
-            (61.0 | 80.0) => [0, 0, 255, 63],
-            (63.0 | 81.0) => [0, 0, 255, 127],
-            (65.0 | 82.0) => [0, 0, 255, 255],
-            95.0 => [255, 0, 0, 127],
-            96.0 => [255, 0, 0, 255],
-            _ => { print!("{} ", value); return [0, 255, 0, 127]; }
+            WeatherInterpretation::ClearSky => [0, 0, 0, 0],
+            WeatherInterpretation::MainlyClearSky => [127, 127, 127, 63],
+            WeatherInterpretation::PartlyCloudy => [127, 127, 127, 127],
+            WeatherInterpretation::Overcast => [127, 127, 127, 190],
+            WeatherInterpretation::Fog | WeatherInterpretation::FogDepositingRime => [127, 127, 127, 255],
+            WeatherInterpretation::SlightDrizzle => [0, 255, 255, 63],
+            WeatherInterpretation::ModerateDrizzle => [0, 255, 255, 127],
+            WeatherInterpretation::HeavyDrizzle => [0, 255, 255, 255],
+            WeatherInterpretation::SlightRainNotFreezing | WeatherInterpretation::RainShowerSlight => [0, 0, 255, 63],
+            WeatherInterpretation::ModerateRainNotFreezing | WeatherInterpretation::RainShowerModerateOrHeavy => [0, 0, 255, 127],
+            WeatherInterpretation::HeavyRainNotFreezing | WeatherInterpretation::RainShowerViolent => [0, 0, 255, 255],
+            WeatherInterpretation::ThunderstormSlightOrModerate => [255, 0, 0, 127],
+            WeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm => [255, 0, 0, 255],
+            _ => { print!("{:?} ", value); return [0, 255, 0, 127]; }
         };
     }
 }

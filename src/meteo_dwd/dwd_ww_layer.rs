@@ -1,6 +1,7 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
+use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
 
 pub struct DwdWwLayer {
     value_grid: LatLonValueGrid<f32>
@@ -23,12 +24,16 @@ impl DwdWwLayer {
     }
 
 
-    pub fn get_ww_by_xy(&self, x: usize, y: usize) -> Option<f32> {
-        return self.value_grid.get_value_by_xy(x, y);
+    pub fn get_ww_by_xy(&self, x: usize, y: usize) -> Option<WeatherInterpretation> {
+        return self.value_grid
+            .get_value_by_xy(x, y)
+            .map(|v| WeatherInterpretation::from_value(v as u8));
     }
 
 
-    pub fn get_ww_by_lat_lon(&self, pos: &LatLon) -> Option<f32> {
-        return self.value_grid.get_value_by_lat_lon(pos);
+    pub fn get_ww_by_lat_lon(&self, pos: &LatLon) -> Option<WeatherInterpretation> {
+        return self.value_grid
+            .get_value_by_lat_lon(pos)
+            .map(|v| WeatherInterpretation::from_value(v as u8));
     }
 }
