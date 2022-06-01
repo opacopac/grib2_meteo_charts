@@ -41,9 +41,51 @@ impl CloudPrecipChartRenderer {
 
 
     fn color_fn(value: (f32, f32)) -> [u8; 4] {
-        let precip_u8_value = (127.0 + value.1 * 128.0).floor() as u8;
-        let cloud_u8_value = (value.0 * 255.0).floor() as u8;
+        if value.0 == 0.0 && value.1 == 0.0 {
+            return [0, 0, 0, 0];
+        }
 
-        return [127, 127, precip_u8_value, cloud_u8_value]; // TODO
+        let cloud_color = Self::get_cloud_color(value.0);
+        let rain_color = Self::get_rain_color(value.1);
+        let composite_color = [
+            (rain_color[0] as u32 * rain_color[3] as u32 / 255 + cloud_color[0] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
+            (rain_color[1] as u32 * rain_color[3] as u32 / 255 + cloud_color[1] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
+            (rain_color[2] as u32 * rain_color[3] as u32 / 255 + cloud_color[2] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
+            255,
+        ];
+
+        return composite_color;
+    }
+
+
+    fn get_rain_color(value: f32) -> [u8; 4] {
+        return if value == 0.0 {
+            [0, 0, 0, 0] // transparent
+        } else if value < 1.0 {
+            [0, 192, 255, 127] // light blue
+        } else if value < 2.0 {
+            [0, 0, 255, 127] // blue
+        } else if value < 4.0 {
+            [0, 127, 0, 127] // dark green
+        } else if value < 6.0 {
+            [0, 255, 0, 127] // light green
+        } else if value < 10.0 {
+            [255, 255, 0, 127] // yellow
+        } else if value < 20.0 {
+            [255, 191, 0, 127] // light orange
+        } else if value < 40.0 {
+            [255, 128, 0, 127] // dark orange
+        } else if value < 60.0 {
+            [255, 0, 0, 127] // red
+        } else {
+            [163, 73, 164, 127] // purple
+        }
+    }
+
+
+    fn get_cloud_color(value: f32) -> [u8; 4] {
+        let gloud_gray = (191.0 - value * 128.0).floor() as u8;
+
+        return [gloud_gray, gloud_gray, gloud_gray, 255]
     }
 }
