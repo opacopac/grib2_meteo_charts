@@ -75,7 +75,7 @@ impl UnstructuredGridConverter {
             }
 
             let lon = clon_values[i].to_degrees() as f32;
-            let idx = Self::calc_idx_from_latlon(lat, lon);
+            let idx = Self::calc_idx_from_latlon(lat, lon, lat_limit);
             values[idx] = unstructured_values[i];
         }
 
@@ -83,10 +83,11 @@ impl UnstructuredGridConverter {
     }
 
 
-    fn calc_idx_from_latlon(lat: f32, lon: f32) -> usize {
-        let lat_rad = -lat.to_radians();
+    fn calc_idx_from_latlon(lat: f32, lon: f32, lat_limit: f32) -> usize {
+        //let lat_rad = -lat.to_radians();
         let x = ((lon + 180.0) / 360.0 * Self::POW).floor() as usize;
-        let y = ((1.0 - (lat_rad.tan() + 1.0 / lat_rad.cos()).ln() / PI) / 2.0 * Self::POW).floor() as usize;
+        //let y = ((1.0 - (lat_rad.tan() + 1.0 / lat_rad.cos()).ln() / PI) / 2.0 * Self::POW).floor() as usize;
+        let y = ((lat + lat_limit) / (2.0 * lat_limit) * Self::POW).floor() as usize;
         let idx = x + y * Self::WIDTH_HEIGHT;
 
         return idx;
