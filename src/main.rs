@@ -39,9 +39,9 @@ fn main() {
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
     //create_icon_global_clct_img();
-    //create_icon_d2_wind_img();
-    //create_icon_d2_wind_map_tile();
-    create_icon_d2_cloud_precip_img();
+    create_icon_d2_wind_img();
+    create_icon_d2_wind_map_tile();
+    //create_icon_d2_cloud_precip_img();
     //create_icon_d2_ww_img();
 
     //create_icon_d2_map_tiles();
