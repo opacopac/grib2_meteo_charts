@@ -48,9 +48,9 @@ impl CloudPrecipChartRenderer {
         let cloud_color = Self::get_cloud_color(value.0);
         let rain_color = Self::get_rain_color(value.1);
         let composite_color = [
-            (rain_color[0] as u32 * rain_color[3] as u32 / 255 + cloud_color[0] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
-            (rain_color[1] as u32 * rain_color[3] as u32 / 255 + cloud_color[1] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
-            (rain_color[2] as u32 * rain_color[3] as u32 / 255 + cloud_color[2] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
+            (rain_color[0] as u32 * rain_color[3] as u32 / 255 + cloud_color[0] as u32 * cloud_color[3] as u32 * (255 - rain_color[3] as u32) / 255 / 255) as u8,
+            (rain_color[1] as u32 * rain_color[3] as u32 / 255 + cloud_color[1] as u32 * cloud_color[3] as u32 * (255 - rain_color[3] as u32) / 255 / 255) as u8,
+            (rain_color[2] as u32 * rain_color[3] as u32 / 255 + cloud_color[2] as u32 * cloud_color[3] as u32 * (255 - rain_color[3] as u32) / 255 / 255) as u8,
             255,
         ];
 
@@ -84,8 +84,12 @@ impl CloudPrecipChartRenderer {
 
 
     fn get_cloud_color(value: f32) -> [u8; 4] {
-        let gloud_gray = (191.0 - value * 128.0).floor() as u8;
+        /*let gloud_gray = (255.0 - value * 128.0).floor() as u8;
 
-        return [gloud_gray, gloud_gray, gloud_gray, 255]
+        return [gloud_gray, gloud_gray, gloud_gray, 255]*/
+
+        let alpha = (127.0 + value * 128.0).floor() as u8;
+
+        return [255, 255, 255, alpha];
     }
 }
