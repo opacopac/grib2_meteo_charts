@@ -30,14 +30,18 @@ impl MapTileRenderer {
             let tile_br = MapTileCoord::from_position(&pos_br, zoom);
             let x_range = (min(tile_tl.x, tile_br.x), max(tile_tl.x, tile_br.x));
             let y_range = (min(tile_tl.y, tile_br.y), max(tile_tl.y, tile_br.y));
+            println!("zoom: {}, x-range: {:?}, y-range:{:?}", zoom, x_range, y_range);
 
-            for x in x_range.0..x_range.1 {
-                (y_range.0..y_range.1).into_par_iter().for_each(|y| {
+            for x in x_range.0..=x_range.1 {
+                print!("x: {}, y:", x);
+                (y_range.0..=y_range.1).into_par_iter().for_each(|y| {
+                    print!(" {}", y);
                     // println!("rendering tile x: {}, y: {}, z: {}", x, y, zoom);
                     let map_tile_coords = &MapTileCoord::new(x, y, zoom);
                     let tile = Self::create_single_tile(&value_fn, map_tile_coords, &color_fn).unwrap(); // TODO
                     save_fn(&tile, zoom, x, y);
-                })
+                });
+                println!();
             }
         }
 
