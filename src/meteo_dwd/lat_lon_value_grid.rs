@@ -1,3 +1,4 @@
+use std::ops::{Add, Mul};
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 
@@ -11,7 +12,7 @@ pub struct LatLonValueGrid<T> {
 }
 
 
-impl <T: Copy + PartialEq> LatLonValueGrid<T> {
+impl <T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>> LatLonValueGrid<T> {
     pub fn new(
         values: Vec<T>,
         missing_value: T,
@@ -61,6 +62,52 @@ impl <T: Copy + PartialEq> LatLonValueGrid<T> {
         let value = self.get_value_by_xy(x, y);
 
         return value;
+    }
+
+
+    pub fn interpolate_value_by_lat_lon(&self, pos: &LatLon) -> Option<T> {
+        let x = (pos.lon - &self.lat_lon_extent.min_coord.lon) / &self.lon_inc;
+        let y = (pos.lat - &self.lat_lon_extent.min_coord.lat) / &self.lat_inc;
+        let x_floor_f32 = x.floor();
+        let y_floor_f32 = y.floor();
+        let x_ceil_f32 = x.ceil();
+        let y_ceil_f32 = y.ceil();
+
+        if x_ceil_f32 < 0.0 || y_ceil_f32 < 0.0 || x_floor_f32 >= self.dimensions.0 as f32 || y_floor_f32 >= self.dimensions.1 as f32 {
+            return None;
+        }
+
+        let x_floor = x_floor_f32 as usize;
+        let y_floor = y_floor_f32 as usize;
+        let x_ceil = x_ceil_f32 as usize;
+        let y_ceil = y_ceil_f32 as usize;
+
+        if x_floor == x_ceil || y_floor == y_ceil {
+            return self.get_value_by_xy(x_floor, y_floor);
+        }
+
+        let val_tl = self.get_value_by_xy(x_floor, y_floor);
+        let val_tr = self.get_value_by_xy(x_ceil, y_floor);
+        let val_bl = self.get_value_by_xy(x_floor, y_ceil);
+        let val_br = self.get_value_by_xy(x_ceil, y_ceil);
+        let val_t = Self::interpolate_value(val_tl, x_ceil_f32 - x, val_tr, x - x_floor_f32);
+        let val_b = Self::interpolate_value(val_bl, x_ceil_f32 - x, val_br, x - x_floor_f32);
+        let value = Self::interpolate_value(val_t, y_ceil_f32 - y, val_b, y - y_floor_f32);
+
+        return value;
+    }
+
+
+    fn interpolate_value(value1: Option<T>, weight1: f32, value2: Option<T>, weight2: f32) -> Option<T> {
+        if value1.is_none() || value2.is_none() {
+            return None;
+        }
+
+        let val1 = value1.unwrap(); // TODO
+        let val2 = value2.unwrap(); // TODO
+        let value = val1 * weight1 + val2 * weight2;
+
+        return Some(value);
     }
 }
 

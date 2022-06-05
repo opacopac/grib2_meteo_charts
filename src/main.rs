@@ -49,8 +49,8 @@ fn main() {
 
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
-    //create_icon_d2_map_tile_series();
-    create_icon_global_clct_precip_map_tile_series();
+    create_icon_d2_map_tile_series();
+    // create_icon_global_clct_precip_map_tile_series();
     //perf_icon_global();
 }
 

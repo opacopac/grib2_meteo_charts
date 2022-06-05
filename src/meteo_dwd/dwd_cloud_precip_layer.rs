@@ -55,9 +55,9 @@ impl DwdCloudPrecipLayer {
 
 
     pub fn get_cloud_and_precip_by_lat_lon(&self, pos: &LatLon) -> Option<(f32, f32)> {
-        let cloud_value = self.cloud_value_grid.get_value_by_lat_lon(pos).unwrap_or(0.0);
-        let precip0_value = self.precip0_value_grid.get_value_by_lat_lon(pos).unwrap_or(0.0);
-        let precip1_value = self.precip1_value_grid.get_value_by_lat_lon(pos).unwrap_or(0.0);
+        let cloud_value = self.cloud_value_grid.interpolate_value_by_lat_lon(pos).unwrap_or(0.0);
+        let precip0_value = self.precip0_value_grid.interpolate_value_by_lat_lon(pos).unwrap_or(0.0);
+        let precip1_value = self.precip1_value_grid.interpolate_value_by_lat_lon(pos).unwrap_or(0.0);
         let precip_delta_value = precip1_value - precip0_value;
 
         return Some((cloud_value, precip_delta_value));
