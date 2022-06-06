@@ -42,27 +42,25 @@ impl DwdWindLayer {
         let value_e = self.zonal_value_grid.get_value_by_xy(x, y);
         let value_n = self.meridional_value_grid.get_value_by_xy(x, y);
 
-        if value_e.is_none() || value_n.is_none() {
-            return None;
-        }
-
-        return Some((value_e.unwrap(), value_n.unwrap()));
+        return match (value_e, value_n) {
+            (Some(val_e), Some(val_n)) => Some((val_e, val_n)),
+            _ => None
+        };
     }
 
 
     pub fn get_wind_speed_tot_xy(&self, x: usize, y: usize) -> Option<f32> {
-        let value_e = self.zonal_value_grid.get_value_by_xy(x, y);
-        let value_n = self.meridional_value_grid.get_value_by_xy(x, y);
+        return self.get_wind_speed_e_n_by_xy(x, y)
+            .map(|(value_e, value_n)| (value_e * value_e + value_n * value_n).sqrt());
+    }
 
-        if value_e.is_none() || value_n.is_none() {
-            return None;
-        }
 
-        let value_e = value_e.unwrap();
-        let value_n = value_n.unwrap();
-        let tot_value = (value_n * value_n + value_e * value_e).sqrt();
-
-        return Some(tot_value);
+    pub fn get_wind_speed_dir_by_xy(&self, x: usize, y: usize) -> Option<(f32, f32)> {
+        return self.get_wind_speed_e_n_by_xy(x, y)
+            .map(|(value_e, value_n)| (
+                (value_e * value_e + value_n * value_n).sqrt(),
+                value_n.atan2(value_e).to_degrees()
+            ));
     }
 
 
@@ -70,26 +68,15 @@ impl DwdWindLayer {
         let value_e = self.zonal_value_grid.get_value_by_lat_lon(pos);
         let value_n = self.meridional_value_grid.get_value_by_lat_lon(pos);
 
-        if value_e.is_none() || value_n.is_none() {
-            return None;
+        return match (value_e, value_n) {
+            (Some(val_e), Some(val_n)) => Some((val_e, val_n)),
+            _ => None
         }
-
-        return Some((value_e.unwrap(), value_n.unwrap()));
     }
 
 
     pub fn get_wind_speed_tot_by_lat_lon(&self, pos: &LatLon) -> Option<f32> {
-        let value_e = self.zonal_value_grid.get_value_by_lat_lon(pos);
-        let value_n = self.meridional_value_grid.get_value_by_lat_lon(pos);
-
-        if value_e.is_none() || value_n.is_none() {
-            return None;
-        }
-
-        let value_e = value_e.unwrap();
-        let value_n = value_n.unwrap();
-        let tot_value = (value_n * value_n + value_e * value_e).sqrt();
-
-        return Some(tot_value);
+        return self.get_wind_speed_e_n_by_lat_lon(pos)
+            .map(|(value_e, value_n)| (value_e * value_e + value_n * value_n).sqrt());
     }
 }

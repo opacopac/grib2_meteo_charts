@@ -119,9 +119,9 @@ mod tests {
     use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
 
 
-    fn create_test_grid() -> LatLonValueGrid<i32> {
-        let values = vec![00, 01, 10, 11, -1, 21];
-        let missing_value = -1;
+    fn create_test_grid() -> LatLonValueGrid<f32> {
+        let values = vec![00.0, 01.0, 10.0, 11.0, -1.0, 21.0];
+        let missing_value = -1.0;
         let dimensions = (2, 3);
         let lat_lon_extent = LatLonExtent::new(
             LatLon::new(40.0, 7.0),
@@ -170,9 +170,9 @@ mod tests {
         let result01 = grid.get_value_by_xy(1, 0).unwrap();
         let result21 = grid.get_value_by_xy(1, 2).unwrap();
 
-        assert_eq!(0, result00);
-        assert_eq!(1, result01);
-        assert_eq!(21, result21);
+        assert_eq!(00.0, result00);
+        assert_eq!(01.0, result01);
+        assert_eq!(21.0, result21);
     }
 
 
@@ -201,10 +201,10 @@ mod tests {
         let result3 = grid.get_value_by_lat_lon(&pos3).unwrap();
         let result4 = grid.get_value_by_lat_lon(&pos4).unwrap();
 
-        assert_eq!(0, result1);
-        assert_eq!(10, result2);
-        assert_eq!(21, result3);
-        assert_eq!(21, result4);
+        assert_eq!(00.0, result1);
+        assert_eq!(10.0, result2);
+        assert_eq!(21.0, result3);
+        assert_eq!(21.0, result4);
     }
 
 

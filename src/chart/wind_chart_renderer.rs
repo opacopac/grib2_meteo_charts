@@ -44,9 +44,9 @@ impl WindChartRenderer {
 
 
     fn color_fn(value: f32) -> [u8; 4] {
-        return if value < 2.5 * Self::KNOTS_TO_MPS {
+        return /*if value < 2.5 * Self::KNOTS_TO_MPS {
             [0, 0, 0, 0] // transparent
-        } else if value < 5.0 * Self::KNOTS_TO_MPS {
+        } else*/ if value < 5.0 * Self::KNOTS_TO_MPS {
             [0, 127, 0, 255] // dark green
         } else if value < 10.0 * Self::KNOTS_TO_MPS {
             [0, 255, 0, 255] // light green

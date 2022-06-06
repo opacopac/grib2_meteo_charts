@@ -2,7 +2,10 @@
 #![allow(unused_variables)]
 
 use std::fs;
+use std::fs::File;
+use std::io::BufWriter;
 use std::time::Instant;
+use byteorder::{BigEndian, WriteBytesExt};
 
 use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
 use meteo_grib2_renderer::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
@@ -18,6 +21,7 @@ use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::dwd_ww_layer::DwdWwLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
+use meteo_grib2_renderer::metobin::wind_metobin::WindMeteobin;
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
 const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
@@ -30,10 +34,10 @@ const CP_PRECIP1_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-le
 const CP_PRECIP0_TEST_FILE_GLOBAL: &str = "icon_global_icosahedral_single-level_2022060412_020_TOT_PREC.grib2";
 const CP_PRECIP1_TEST_FILE_GLOBAL: &str = "icon_global_icosahedral_single-level_2022060412_021_TOT_PREC.grib2";
 const CP_CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022053118_010_2d_clct_mod.grib2";
-//const WIND_U_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
-//const WIND_V_TEST_FILE: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
-const WIND_U_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_U_10M.grib2";
-const WIND_V_TEST_FILE: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_V_10M.grib2";
+const WIND_U_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
+const WIND_V_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
+//const WIND_U_TEST_FILE_EU: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_U_10M.grib2";
+//const WIND_V_TEST_FILE_EU: &str = "icon-eu_europe_regular-lat-lon_single-level_2022051015_000_V_10M.grib2";
 const NETCDF_ICON_GRID_TEST_FILE: &str = "icon_grid_0026_R03B07_G.nc";
 
 fn main() {
@@ -49,9 +53,11 @@ fn main() {
 
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
-    create_icon_d2_map_tile_series();
-    // create_icon_global_clct_precip_map_tile_series();
+    // create_icon_d2_map_tile_series();
+    //create_icon_global_clct_precip_map_tile_series();
     //perf_icon_global();
+
+    create_icon_d2_wind_binary();
 }
 
 /*fn perf_icon_global() {
@@ -127,7 +133,7 @@ fn create_icon_global_clct_precip_map_tile_series() {
         let dir = &format!("./{}/", &nr0);
         let _ = CloudPrecipChartRenderer::render_map_tiles(
             &layer,
-            (0, 4),
+            (0, 5),
             |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile_step(tile, zoom, x, y, &nr0)
         );
     }
@@ -200,8 +206,8 @@ fn create_icon_d2_precip_img() {
 
 
 fn create_icon_d2_wind_img() {
-    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
+    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE_D2).unwrap();
+    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE_D2).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
     let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
@@ -272,16 +278,31 @@ fn create_icon_global_map_tiles() {
 
 
 fn create_icon_d2_wind_map_tile() {
-    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
+    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE_D2).unwrap();
+    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE_D2).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
     let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
     let _ = WindChartRenderer::render_map_tiles(
         &layer,
-        (0, 5),
+        (0, 7),
         |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
     );
+}
+
+
+fn create_icon_d2_wind_binary() {
+    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE_D2).unwrap();
+    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE_D2).unwrap();
+    let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
+    let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
+    let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+    let wind_bin = WindMeteobin::new(layer);
+    let data = wind_bin.create_bin_values();
+    let mut file = BufWriter::new(File::create("WIND_D2.meteobin").expect("Unable to create file"));
+    for val in data {
+        let _ = file.write_u16::<BigEndian>(val);
+    }
 }
 
 
