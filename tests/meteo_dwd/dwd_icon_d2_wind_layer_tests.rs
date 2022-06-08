@@ -1,4 +1,5 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate::LatitudeLongitude;
 use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 
@@ -14,7 +15,18 @@ fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
-    let _layer = DwdWindLayer::new(grid_u, grid_v);
+    match doc_u.section3.grid_definition_template {
+        LatitudeLongitude(grid) => {
+            println!("{} {}", grid.first_grid_point_lat, grid.first_grid_point_lon);
+            println!("{} {}", grid.last_grid_point_lat, grid.last_grid_point_lon);
+            println!("{} {}", grid.number_of_points_along_parallel, grid.number_of_points_along_meridian);
+        }
+        _ => {}
+    }
+
+    let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+    println!("{:?}", layer.get_grid_dimensions());
+    println!("{:?}", layer.get_lat_lon_extent());
 
     assert!(true);
 }

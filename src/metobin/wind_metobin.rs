@@ -7,7 +7,7 @@ pub struct WindMeteobin {
 
 impl WindMeteobin {
     const KNOTS_PER_MPS: f32 = 1.94384;
-    const NONE_BIN_VALUE: u16 = 0xFFFF;
+    const NONE_BIN_VALUE: u8 = 0xFF;
 
 
     pub fn new(wind_layer: DwdWindLayer) -> WindMeteobin {
@@ -15,14 +15,21 @@ impl WindMeteobin {
     }
 
 
-    pub fn create_bin_values(&self) -> Vec<u16> {
+    pub fn create_bin_values(&self) -> Vec<u8> {
         let dim = self.wind_layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {
             for x in 0..dim.0 {
-                let val = self.wind_layer.get_wind_speed_dir_by_xy(x, y);
-                let out_val = Self::calc_bin_value(val);
-                out_values.push(out_val);
+                let result = self.wind_layer.get_wind_speed_e_n_by_xy(x, y);
+                let out_val = match result {
+                    Some(val_e_n) => (
+                        Self::calc_speed_kt_value(val_e_n.0),
+                        Self::calc_speed_kt_value(val_e_n.1)
+                    ),
+                    None => (Self::NONE_BIN_VALUE, Self::NONE_BIN_VALUE)
+                };
+                out_values.push(out_val.0);
+                out_values.push(out_val.1);
             }
         }
 
@@ -30,17 +37,8 @@ impl WindMeteobin {
     }
 
 
-    // format: 7bit speed, 9bit dir
-    fn calc_bin_value(value_speed_dir: Option<(f32, f32)>) -> u16 {
-        return match value_speed_dir {
-            Some(speed_dir) => {
-                let speed_kt = (speed_dir.0 * Self::KNOTS_PER_MPS).round().max(0.0).min(127.0) as u16;
-                let dir_deg = speed_dir.1.round().max(0.0).min(359.0) as u16;
-
-                speed_kt << 9 | dir_deg
-            }
-            None => WindMeteobin::NONE_BIN_VALUE
-        }
+    fn calc_speed_kt_value(value_mps: f32) -> u8 {
+        return (value_mps * Self::KNOTS_PER_MPS + 128.0).round().min(254.0).max(0.0) as u8;
     }
 }
 
@@ -50,36 +48,28 @@ mod tests {
     use crate::metobin::wind_metobin::WindMeteobin;
 
     #[test]
-    fn it_calculates_the_bin_value_for_5kt_270deg() {
-        let in_value = (5.0 / WindMeteobin::KNOTS_PER_MPS, 270.0);
-        let result = WindMeteobin::calc_bin_value(Some(in_value));
+    fn it_calculates_the_bin_value_for_3kt() {
+        let in_value = 3.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
-        assert_eq!(0b00001011_00001110, result);
+        assert_eq!(3 + 128, result);
     }
 
 
     #[test]
-    fn it_limits_the_max_bin_value_to_127kt_359deg() {
-        let in_value = (150.0 / WindMeteobin::KNOTS_PER_MPS, 400.0);
-        let result = WindMeteobin::calc_bin_value(Some(in_value));
+    fn it_limits_the_max_bin_value_to_plus127() {
+        let in_value = 150.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
-        assert_eq!(0b11111111_01100111, result);
+        assert_eq!(254, result);
     }
 
 
     #[test]
-    fn it_limits_the_min_bin_value_to_0kt_0deg() {
-        let in_value = (-15.0 / WindMeteobin::KNOTS_PER_MPS, -90.0);
-        let result = WindMeteobin::calc_bin_value(Some(in_value));
+    fn it_limits_the_min_bin_value_to_neg128() {
+        let in_value = -200.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
-        assert_eq!(0b00000000_00000000, result);
-    }
-
-
-    #[test]
-    fn it_calculates_the_bin_value_for_none() {
-        let result = WindMeteobin::calc_bin_value(None);
-
-        assert_eq!(0b11111111_11111111, result);
+        assert_eq!(0 as u8, result);
     }
 }

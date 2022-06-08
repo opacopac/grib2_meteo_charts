@@ -3,7 +3,7 @@
 
 use std::fs;
 use std::fs::File;
-use std::io::BufWriter;
+use std::io::{BufWriter, Write};
 use std::time::Instant;
 use byteorder::{BigEndian, WriteBytesExt};
 
@@ -300,9 +300,7 @@ fn create_icon_d2_wind_binary() {
     let wind_bin = WindMeteobin::new(layer);
     let data = wind_bin.create_bin_values();
     let mut file = BufWriter::new(File::create("WIND_D2.meteobin").expect("Unable to create file"));
-    for val in data {
-        let _ = file.write_u16::<BigEndian>(val);
-    }
+    file.write_all(&data);
 }
 
 
