@@ -92,14 +92,14 @@ fn create_icon_d2_clct_precip_map_tile_series() {
     let precip_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
     let precip_file_suffix: &str = "_2d_tot_prec.grib2";
 
-    for i in 1..8 {
+    for i in 2..=8 {
         println!("time step {}", i);
 
         let nr0 = format!("{:03}", i);
-        let nr1 = format!("{:03}", i + 1);
+        let nr_m1 = format!("{:03}", i - 1);
         let clct_file = format!("{}{}{}{}", base_dir, clct_file_prefix, &nr0, clct_file_suffix);
-        let precip_file0 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr0, precip_file_suffix);
-        let precip_file1 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr1, precip_file_suffix);
+        let precip_file0 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr_m1, precip_file_suffix);
+        let precip_file1 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr0, precip_file_suffix);
         let clct_doc = Grib2DocumentReader::read_file(&clct_file).unwrap();
         let clct_grid = RegularGridConverter::create(&clct_doc, -1.0).unwrap();
         let precip_doc0 = Grib2DocumentReader::read_file(&precip_file0).unwrap();
@@ -181,7 +181,7 @@ fn create_icon_d2_ww_binary_series() {
     let ww_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
     let ww_file_suffix: &str = "_2d_ww.grib2";
 
-    for i in 1..=8 {
+    for i in 2..=8 {
         println!("time step {}", i);
 
         let nr0 = format!("{:03}", i);
