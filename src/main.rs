@@ -5,7 +5,6 @@ use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use byteorder::{BigEndian, WriteBytesExt};
 
 use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
 use meteo_grib2_renderer::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
@@ -22,6 +21,7 @@ use meteo_grib2_renderer::meteo_dwd::dwd_ww_layer::DwdWwLayer;
 use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
 use meteo_grib2_renderer::metobin::wind_metobin::WindMeteobin;
+use meteo_grib2_renderer::metobin::ww_metobin::WwMeteoBin;
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
 const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
@@ -45,50 +45,61 @@ fn main() {
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();
     //create_icon_global_clct_img();
-    // create_icon_global_cloud_precip_img();
+    //create_icon_global_cloud_precip_img();
     //create_icon_d2_wind_img();
     //create_icon_d2_wind_map_tile();
     //create_icon_d2_cloud_precip_img();
     //create_icon_d2_ww_img();
 
+    //create_icon_d2_clct_precip_map_tiles();
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
-    // create_icon_d2_map_tile_series();
+
+    create_icon_d2_clct_precip_map_tile_series();
+    create_icon_d2_wind_map_tile_series();
+    create_icon_d2_wind_binary_series();
+    create_icon_d2_ww_binary_series();
+
     //create_icon_global_clct_precip_map_tile_series();
     //perf_icon_global();
 
-    create_icon_d2_wind_binary();
+    //create_icon_d2_wind_binary();
+    //create_icon_d2_ww_binary();
 }
 
-/*fn perf_icon_global() {
-    let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE_D2).unwrap();
-    let grid = DwdIconGlobalGridReader::create(NETCDF_ICON_GRID_TEST_FILE).unwrap();
-    let layer = DwdIconGlobalTotalCloudCoverLayer::create(grib2_doc, grid).unwrap();
 
-    let mut rng = rand::thread_rng();
-    let start = Instant::now();
-    for _ in 0..1000000 {
-        let pos = &LatLon::new(rng.gen::<f32>() * 180.0 - 90.0, rng.gen::<f32>() * 360.0 - 180.0);
-        let value= layer.grid.find_closest_point_value(pos);
-    }
-    println!("reading from grid: {}", start.elapsed().as_millis());
-}*/
+fn create_icon_d2_clct_precip_map_tiles() {
+    let clct_doc = Grib2DocumentReader::read_file(CP_CLCT_TEST_FILE_D2).unwrap();
+    let clct_grid = RegularGridConverter::create(&clct_doc, -1.0).unwrap();
+    let precip_doc0 = Grib2DocumentReader::read_file(CP_PRECIP0_TEST_FILE_D2).unwrap();
+    let precip_grid0 = RegularGridConverter::create(&precip_doc0, -1.0).unwrap();
+    let precip_doc1 = Grib2DocumentReader::read_file(CP_PRECIP1_TEST_FILE_D2).unwrap();
+    let precip_grid1 = RegularGridConverter::create(&precip_doc1, -1.0).unwrap();
+
+    let layer = DwdCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1).unwrap();
+    let _ = CloudPrecipChartRenderer::render_map_tiles(
+        &layer,
+        (0, 7),
+        |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile(tile, zoom, x, y)
+    );
+}
 
 
-fn create_icon_d2_map_tile_series() {
-    let clct_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022060412_";
+fn create_icon_d2_clct_precip_map_tile_series() {
+    let base_dir: &str = "./set01/";
+    let clct_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
     let clct_file_suffix: &str = "_2d_clct_mod.grib2";
-    let precip_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022060412_";
+    let precip_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
     let precip_file_suffix: &str = "_2d_tot_prec.grib2";
 
-    for i in 21..=27 {
+    for i in 1..8 {
         println!("time step {}", i);
 
         let nr0 = format!("{:03}", i);
         let nr1 = format!("{:03}", i + 1);
-        let clct_file = format!("{}{}{}", clct_file_prefix, &nr0, clct_file_suffix);
-        let precip_file0 = format!("{}{}{}", precip_file_prefix, &nr0, precip_file_suffix);
-        let precip_file1 = format!("{}{}{}", precip_file_prefix, &nr1, precip_file_suffix);
+        let clct_file = format!("{}{}{}{}", base_dir, clct_file_prefix, &nr0, clct_file_suffix);
+        let precip_file0 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr0, precip_file_suffix);
+        let precip_file1 = format!("{}{}{}{}", base_dir, precip_file_prefix, &nr1, precip_file_suffix);
         let clct_doc = Grib2DocumentReader::read_file(&clct_file).unwrap();
         let clct_grid = RegularGridConverter::create(&clct_doc, -1.0).unwrap();
         let precip_doc0 = Grib2DocumentReader::read_file(&precip_file0).unwrap();
@@ -97,12 +108,93 @@ fn create_icon_d2_map_tile_series() {
         let precip_grid1 = RegularGridConverter::create(&precip_doc1, -1.0).unwrap();
 
         let layer = DwdCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1).unwrap();
-        let dir = &format!("./{}/", &nr0);
+        let save_dir = format!("{}clct_precip/{}/", &base_dir, &nr0);
         let _ = CloudPrecipChartRenderer::render_map_tiles(
             &layer,
             (0, 7),
-            |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile_step(tile, zoom, x, y, &nr0)
+            |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile_step(tile, zoom, x, y, &save_dir)
         );
+    }
+}
+
+
+fn create_icon_d2_wind_map_tile_series() {
+    let base_dir: &str = "./set01/";
+    let wind_u_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
+    let wind_u_file_suffix: &str = "_2d_u_10m.grib2";
+    let wind_v_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
+    let wind_v_file_suffix: &str = "_2d_v_10m.grib2";
+
+    for i in 0..=8 {
+        println!("time step {}", i);
+
+        let nr0 = format!("{:03}", i);
+        let wind_u_file = format!("{}{}{}{}", base_dir, wind_u_file_prefix, &nr0, wind_u_file_suffix);
+        let wind_v_file = format!("{}{}{}{}", base_dir, wind_v_file_prefix, &nr0, wind_v_file_suffix);
+        let wind_u_doc = Grib2DocumentReader::read_file(&wind_u_file).unwrap();
+        let wind_u_grid = RegularGridConverter::create(&wind_u_doc, -1.0).unwrap();
+        let wind_v_doc = Grib2DocumentReader::read_file(&wind_v_file).unwrap();
+        let wind_v_grid0 = RegularGridConverter::create(&wind_v_doc, -1.0).unwrap();
+
+        let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid0).unwrap();
+        let save_dir = format!("{}wind/{}/", &base_dir, &nr0);
+        let _ = WindChartRenderer::render_map_tiles(
+            &layer,
+            (0, 7),
+            |tile: &Drawable, zoom: u32, x: u32, y: u32| save_tile_step(tile, zoom, x, y, &save_dir)
+        );
+    }
+}
+
+
+
+fn create_icon_d2_wind_binary_series() {
+    let base_dir: &str = "./set01/";
+    let wind_u_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
+    let wind_u_file_suffix: &str = "_2d_u_10m.grib2";
+    let wind_v_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
+    let wind_v_file_suffix: &str = "_2d_v_10m.grib2";
+
+    for i in 0..=8 {
+        println!("time step {}", i);
+
+        let nr0 = format!("{:03}", i);
+        let wind_u_file = format!("{}{}{}{}", base_dir, wind_u_file_prefix, &nr0, wind_u_file_suffix);
+        let wind_v_file = format!("{}{}{}{}", base_dir, wind_v_file_prefix, &nr0, wind_v_file_suffix);
+        let doc_u = Grib2DocumentReader::read_file(&wind_u_file).unwrap();
+        let doc_v = Grib2DocumentReader::read_file(&wind_v_file).unwrap();
+        let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
+        let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
+        let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+        let wind_bin = WindMeteobin::new(layer);
+        let data = wind_bin.create_bin_values();
+
+        let filename = format!("{}wind/{}/WIND_D2.meteobin", &base_dir, &nr0);
+        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
+        let _ = file.write_all(&data);
+    }
+}
+
+
+fn create_icon_d2_ww_binary_series() {
+    let base_dir: &str = "./set01/";
+    let ww_file_prefix: &str = "icon-d2_germany_regular-lat-lon_single-level_2022061515_";
+    let ww_file_suffix: &str = "_2d_ww.grib2";
+
+    for i in 1..=8 {
+        println!("time step {}", i);
+
+        let nr0 = format!("{:03}", i);
+        let ww_file = format!("{}{}{}{}", base_dir, ww_file_prefix, &nr0, ww_file_suffix);
+        let doc = Grib2DocumentReader::read_file(&ww_file).unwrap();
+        let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
+        let layer = DwdWwLayer::new(grid);
+        let ww_bin = WwMeteoBin::new(layer);
+        let data = ww_bin.create_bin_values();
+
+        let filename = format!("{}clct_precip/{}/WW_D2.meteobin", &base_dir, &nr0);
+        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
+        let _ = file.write_all(&data);
     }
 }
 
@@ -300,7 +392,18 @@ fn create_icon_d2_wind_binary() {
     let wind_bin = WindMeteobin::new(layer);
     let data = wind_bin.create_bin_values();
     let mut file = BufWriter::new(File::create("WIND_D2.meteobin").expect("Unable to create file"));
-    file.write_all(&data);
+    let _ = file.write_all(&data);
+}
+
+
+fn create_icon_d2_ww_binary() {
+    let doc = Grib2DocumentReader::read_file(WW_TEST_FILE_D2).unwrap();
+    let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
+    let layer = DwdWwLayer::new(grid);
+    let ww_bin = WwMeteoBin::new(layer);
+    let data = ww_bin.create_bin_values();
+    let mut file = BufWriter::new(File::create("WW_D2.meteobin").expect("Unable to create file"));
+    let _ = file.write_all(&data);
 }
 
 

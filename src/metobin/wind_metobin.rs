@@ -28,6 +28,11 @@ impl WindMeteobin {
                     ),
                     None => (Self::NONE_BIN_VALUE, Self::NONE_BIN_VALUE)
                 };
+                /*if out_val.0 != Self::NONE_BIN_VALUE {
+                    println!("{:?} {} {}", out_val, x, y);
+                    panic!();
+                }*/
+
                 out_values.push(out_val.0);
                 out_values.push(out_val.1);
             }
