@@ -46,8 +46,8 @@ impl WeatherMeteoBin {
     fn calc_ceiling_100ft_value(value_m: Option<f32>) -> u8 {
         return match value_m {
             None => Self::NONE_BIN_VALUE,
-            Some(val) if (val * Self::FEET_PER_MP / 100.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
-            Some(val) => (val * Self::FEET_PER_MP / 100.0).round().min(254.0).max(0.0) as u8
+            Some(val) if (val * Self::FEET_PER_MP / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
+            Some(val) => (val * Self::FEET_PER_MP / 200.0).round().min(254.0).max(0.0) as u8
         }
     }
 }
