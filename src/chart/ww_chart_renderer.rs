@@ -2,14 +2,14 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_dwd::dwd_ww_layer::DwdWwLayer;
+use crate::meteo_dwd::dwd_weather_layer::DwdWeatherLayer;
 use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
 
 pub struct WwChartRenderer;
 
 
 impl WwChartRenderer {
-    pub fn render_full_chart(ww_layer: &DwdWwLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(ww_layer: &DwdWeatherLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = ww_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -23,7 +23,7 @@ impl WwChartRenderer {
 
 
     pub fn render_map_tiles<S>(
-        cloud_layer: &DwdWwLayer,
+        cloud_layer: &DwdWeatherLayer,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where

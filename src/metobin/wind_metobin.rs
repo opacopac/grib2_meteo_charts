@@ -20,21 +20,20 @@ impl WindMeteobin {
         let mut out_values = vec![];
         for y in 0..dim.1 {
             for x in 0..dim.0 {
-                let result = self.wind_layer.get_wind_speed_e_n_by_xy(x, y);
-                let out_val = match result {
+                let wind_result = self.wind_layer.get_wind_speed_e_n_by_xy(x, y);
+                let gust_result = self.wind_layer.get_gusts_by_xy(x, y);
+                let out_val = match wind_result {
                     Some(val_e_n) => (
                         Self::calc_speed_kt_value(val_e_n.0),
-                        Self::calc_speed_kt_value(val_e_n.1)
+                        Self::calc_speed_kt_value(val_e_n.1),
+                        Self::calc_gust_kt_value(gust_result)
                     ),
-                    None => (Self::NONE_BIN_VALUE, Self::NONE_BIN_VALUE)
+                    None => (Self::NONE_BIN_VALUE, Self::NONE_BIN_VALUE, Self::NONE_BIN_VALUE)
                 };
-                /*if out_val.0 != Self::NONE_BIN_VALUE {
-                    println!("{:?} {} {}", out_val, x, y);
-                    panic!();
-                }*/
 
                 out_values.push(out_val.0);
                 out_values.push(out_val.1);
+                out_values.push(out_val.2);
             }
         }
 
@@ -44,6 +43,14 @@ impl WindMeteobin {
 
     fn calc_speed_kt_value(value_mps: f32) -> u8 {
         return (value_mps * Self::KNOTS_PER_MPS + 128.0).round().min(254.0).max(0.0) as u8;
+    }
+
+
+    fn calc_gust_kt_value(value_mps: Option<f32>) -> u8 {
+        return match value_mps {
+            None => Self::NONE_BIN_VALUE,
+            Some(val_mps) => (val_mps * Self::KNOTS_PER_MPS).round().min(254.0).max(0.0) as u8
+        }
     }
 }
 
