@@ -1,7 +1,7 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
-use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
+use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
+use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
 use crate::meteo_dwd::dwd_icon_d2_precip_layer_tests::PREC_TEST_FILE;
 

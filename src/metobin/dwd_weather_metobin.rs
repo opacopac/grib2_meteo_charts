@@ -1,18 +1,18 @@
-use crate::meteo_dwd::dwd_weather_layer::DwdWeatherLayer;
-use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
+use crate::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
+use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
 
-pub struct WeatherMeteoBin {
+pub struct DwdWeatherMeteoBin {
     layer: DwdWeatherLayer
 }
 
 
-impl WeatherMeteoBin {
+impl DwdWeatherMeteoBin {
     const NONE_BIN_VALUE: u8 = 0xFF;
     const FEET_PER_MP: f32 = 3.28084;
 
 
-    pub fn new(weather_layer: DwdWeatherLayer) -> WeatherMeteoBin {
-        return WeatherMeteoBin { layer: weather_layer };
+    pub fn new(weather_layer: DwdWeatherLayer) -> DwdWeatherMeteoBin {
+        return DwdWeatherMeteoBin { layer: weather_layer };
     }
 
 
@@ -35,7 +35,7 @@ impl WeatherMeteoBin {
     }
 
 
-    fn calc_ww_value(value_ww: Option<WeatherInterpretation>) -> u8 {
+    fn calc_ww_value(value_ww: Option<DwdWeatherInterpretation>) -> u8 {
         return match value_ww {
             Some(val_ww) => val_ww.to_value(),
             None => Self::NONE_BIN_VALUE

@@ -2,7 +2,7 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
+use crate::dwd_layer::dwd_precip_layer::DwdPrecipLayer;
 
 pub struct PrecipChartRenderer;
 

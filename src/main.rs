@@ -10,17 +10,18 @@ use meteo_grib2_renderer::chart::cloud_chart_renderer::CloudChartRenderer;
 use meteo_grib2_renderer::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
+use meteo_grib2_renderer::dwd_chart_builder::icon_d2_chart_builder::IconD2ChartBuilder;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::imaging::drawable::Drawable;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_precip_layer::DwdPrecipLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_weather_layer::DwdWeatherLayer;
-use meteo_grib2_renderer::meteo_dwd::dwd_wind_layer::DwdWindLayer;
-use meteo_grib2_renderer::meteo_dwd::regular_grid_converter::RegularGridConverter;
-use meteo_grib2_renderer::meteo_dwd::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
-use meteo_grib2_renderer::metobin::weather_metobin::WeatherMeteoBin;
-use meteo_grib2_renderer::metobin::wind_metobin::WindMeteobin;
+use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
+use meteo_grib2_renderer::dwd_layer::dwd_precip_layer::DwdPrecipLayer;
+use meteo_grib2_renderer::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
+use meteo_grib2_renderer::dwd_layer::dwd_wind_layer::DwdWindLayer;
+use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
+use meteo_grib2_renderer::grid::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
+use meteo_grib2_renderer::metobin::dwd_weather_metobin::DwdWeatherMeteoBin;
+use meteo_grib2_renderer::metobin::dwd_wind_metobin::DwdWindMeteobin;
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
 const CLCT_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_clct_mod.grib2";
@@ -53,17 +54,19 @@ fn main() {
     //create_icon_d2_map_tiles();
     //create_icon_global_map_tiles();
 
-    create_icon_d2_clct_precip_map_tile_series();
+    /*create_icon_d2_clct_precip_map_tile_series();
     create_icon_d2_wind_map_tile_series();
 
     create_icon_d2_wind_binary_series();
-    create_icon_d2_ww_binary_series();
+    create_icon_d2_ww_binary_series();*/
 
     //create_icon_global_clct_precip_map_tile_series();
     //perf_icon_global();
 
     //create_icon_d2_wind_binary();
     //create_icon_d2_ww_binary();
+
+    IconD2ChartBuilder::create_latest_dwd_forecasts();
 }
 
 
@@ -171,7 +174,7 @@ fn create_icon_d2_wind_binary_series() {
         let wind_vmax_grid0 = RegularGridConverter::create(&wind_vmax_doc, -1.0).unwrap();
 
         let layer = DwdWindLayer::new(grid_u, grid_v, Some(wind_vmax_grid0)).unwrap();
-        let wind_bin = WindMeteobin::new(layer);
+        let wind_bin = DwdWindMeteobin::new(layer);
         let data = wind_bin.create_bin_values();
 
         let filename = format!("{}wind/{}/WIND_D2.meteobin", &base_dir, &nr0);
@@ -199,7 +202,7 @@ fn create_icon_d2_ww_binary_series() {
         let ww_grid = RegularGridConverter::create(&ww_doc, -1.0).unwrap();
         let ceiling_grid = RegularGridConverter::create(&ceiling_doc, -1.0).unwrap();
         let weather_layer = DwdWeatherLayer::new(ww_grid, ceiling_grid).unwrap();
-        let weather_bin = WeatherMeteoBin::new(weather_layer);
+        let weather_bin = DwdWeatherMeteoBin::new(weather_layer);
         let data = weather_bin.create_bin_values();
 
         let filename = format!("{}clct_precip/{}/WW_D2.meteobin", &base_dir, &nr0);
@@ -390,7 +393,7 @@ fn create_icon_d2_wind_binary() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
     let layer = DwdWindLayer::new(grid_u, grid_v, None).unwrap();
-    let wind_bin = WindMeteobin::new(layer);
+    let wind_bin = DwdWindMeteobin::new(layer);
     let data = wind_bin.create_bin_values();
     let mut file = BufWriter::new(File::create("WIND_D2.meteobin").expect("Unable to create file"));
     let _ = file.write_all(&data);

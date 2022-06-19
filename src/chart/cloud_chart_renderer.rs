@@ -2,7 +2,7 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_dwd::dwd_cloud_layer::DwdCloudLayer;
+use crate::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
 
 pub struct CloudChartRenderer;
 

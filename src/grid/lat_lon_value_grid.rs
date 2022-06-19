@@ -116,7 +116,7 @@ impl <T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>> LatLonValueG
 mod tests {
     use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
-    use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
+    use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 
     fn create_test_grid() -> LatLonValueGrid<f32> {

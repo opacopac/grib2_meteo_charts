@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read, Seek};
 
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
@@ -20,15 +20,21 @@ impl Grib2DocumentReader {
     pub fn read_file(filename: &str) -> Result<Grib2Document, Grib2Error> {
         let file = File::open(filename)?;
         let mut reader = BufReader::new(file);
-        let section0 = Section0Reader::read(&mut reader)?;
-        let section1 = Section1Reader::read(&mut reader)?;
-        let section2 = Section2Reader::read(&mut reader)?;
-        let section3 = Section3Reader::read(&mut reader)?;
-        let section4 = Section4Reader::read(&mut reader)?;
-        let section5 = Section5Reader::read(&mut reader)?;
-        let section6 = Section6Reader::read(&mut reader)?;
-        let section7 = Section7Reader::read(&mut reader)?;
-        let section8 = Section8Reader::read(&mut reader)?;
+
+        return Self::read_stream(&mut reader);
+    }
+
+
+    pub fn read_stream<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Grib2Document, Grib2Error> {
+        let section0 = Section0Reader::read(reader)?;
+        let section1 = Section1Reader::read(reader)?;
+        let section2 = Section2Reader::read(reader)?;
+        let section3 = Section3Reader::read(reader)?;
+        let section4 = Section4Reader::read(reader)?;
+        let section5 = Section5Reader::read(reader)?;
+        let section6 = Section6Reader::read(reader)?;
+        let section7 = Section7Reader::read(reader)?;
+        let section8 = Section8Reader::read(reader)?;
         let document = Grib2Document::new(
             section0,
             section1,

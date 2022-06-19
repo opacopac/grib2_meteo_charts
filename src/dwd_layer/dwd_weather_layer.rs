@@ -1,8 +1,8 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
-use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
-use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
 
 pub struct DwdWeatherLayer {
     ww_grid: LatLonValueGrid<f32>,
@@ -39,17 +39,17 @@ impl DwdWeatherLayer {
     }
 
 
-    pub fn get_ww_by_xy(&self, x: usize, y: usize) -> Option<WeatherInterpretation> {
+    pub fn get_ww_by_xy(&self, x: usize, y: usize) -> Option<DwdWeatherInterpretation> {
         return self.ww_grid
             .get_value_by_xy(x, y)
-            .map(|v| WeatherInterpretation::from_value(v as u8));
+            .map(|v| DwdWeatherInterpretation::from_value(v as u8));
     }
 
 
-    pub fn get_ww_by_lat_lon(&self, pos: &LatLon) -> Option<WeatherInterpretation> {
+    pub fn get_ww_by_lat_lon(&self, pos: &LatLon) -> Option<DwdWeatherInterpretation> {
         return self.ww_grid
             .get_value_by_lat_lon(pos)
-            .map(|v| WeatherInterpretation::from_value(v as u8));
+            .map(|v| DwdWeatherInterpretation::from_value(v as u8));
     }
 
 

@@ -1,2 +1,2 @@
-pub mod wind_metobin;
-pub mod weather_metobin;
+pub mod dwd_wind_metobin;
+pub mod dwd_weather_metobin;

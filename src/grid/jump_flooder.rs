@@ -169,7 +169,7 @@ impl <'a> JumpFlooder<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::meteo_dwd::jump_flooder::JumpFlooder;
+    use crate::grid::jump_flooder::JumpFlooder;
 
     #[test]
     fn it_doesnt_change_a_grid_without_missing_values() {

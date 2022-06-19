@@ -2,8 +2,8 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_dwd::dwd_weather_layer::DwdWeatherLayer;
-use crate::meteo_dwd::weather_interpretation::WeatherInterpretation;
+use crate::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
+use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
 
 pub struct WwChartRenderer;
 
@@ -41,21 +41,21 @@ impl WwChartRenderer {
     }
 
 
-    fn color_fn(value: WeatherInterpretation) -> [u8; 4] {
+    fn color_fn(value: DwdWeatherInterpretation) -> [u8; 4] {
         return match value {
-            WeatherInterpretation::ClearSky => [0, 0, 0, 0],
-            WeatherInterpretation::MainlyClearSky => [127, 127, 127, 63],
-            WeatherInterpretation::PartlyCloudy => [127, 127, 127, 127],
-            WeatherInterpretation::Overcast => [127, 127, 127, 190],
-            WeatherInterpretation::Fog | WeatherInterpretation::FogDepositingRime => [127, 127, 127, 255],
-            WeatherInterpretation::SlightDrizzle => [0, 255, 255, 63],
-            WeatherInterpretation::ModerateDrizzle => [0, 255, 255, 127],
-            WeatherInterpretation::HeavyDrizzle => [0, 255, 255, 255],
-            WeatherInterpretation::SlightRainNotFreezing | WeatherInterpretation::RainShowerSlight => [0, 0, 255, 63],
-            WeatherInterpretation::ModerateRainNotFreezing | WeatherInterpretation::RainShowerModerateOrHeavy => [0, 0, 255, 127],
-            WeatherInterpretation::HeavyRainNotFreezing | WeatherInterpretation::RainShowerViolent => [0, 0, 255, 255],
-            WeatherInterpretation::ThunderstormSlightOrModerate => [255, 0, 0, 127],
-            WeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm => [255, 0, 0, 255],
+            DwdWeatherInterpretation::ClearSky => [0, 0, 0, 0],
+            DwdWeatherInterpretation::MainlyClearSky => [127, 127, 127, 63],
+            DwdWeatherInterpretation::PartlyCloudy => [127, 127, 127, 127],
+            DwdWeatherInterpretation::Overcast => [127, 127, 127, 190],
+            DwdWeatherInterpretation::Fog | DwdWeatherInterpretation::FogDepositingRime => [127, 127, 127, 255],
+            DwdWeatherInterpretation::SlightDrizzle => [0, 255, 255, 63],
+            DwdWeatherInterpretation::ModerateDrizzle => [0, 255, 255, 127],
+            DwdWeatherInterpretation::HeavyDrizzle => [0, 255, 255, 255],
+            DwdWeatherInterpretation::SlightRainNotFreezing | DwdWeatherInterpretation::RainShowerSlight => [0, 0, 255, 63],
+            DwdWeatherInterpretation::ModerateRainNotFreezing | DwdWeatherInterpretation::RainShowerModerateOrHeavy => [0, 0, 255, 127],
+            DwdWeatherInterpretation::HeavyRainNotFreezing | DwdWeatherInterpretation::RainShowerViolent => [0, 0, 255, 255],
+            DwdWeatherInterpretation::ThunderstormSlightOrModerate => [255, 0, 0, 127],
+            DwdWeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm => [255, 0, 0, 255],
             _ => { print!("{:?} ", value); return [0, 255, 0, 127]; }
         };
     }

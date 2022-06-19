@@ -4,8 +4,8 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
-use crate::meteo_dwd::jump_flooder::JumpFlooder;
-use crate::meteo_dwd::lat_lon_value_grid::LatLonValueGrid;
+use crate::grid::jump_flooder::JumpFlooder;
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
 
 pub static CLAT_VAR_NAME: &str = "clat";
