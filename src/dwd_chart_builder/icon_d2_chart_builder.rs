@@ -4,6 +4,7 @@ use std::io::{BufWriter, Read, Write};
 
 use bzip2::read::BzDecoder;
 use log::info;
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
 use crate::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::chart::wind_chart_renderer::WindChartRenderer;
@@ -45,7 +46,7 @@ impl IconD2ChartBuilder {
 
 
     fn create_weather_map_tiles(forecast_run: &IconD2ForecastRun) {
-        for step in IconD2ForecastStep::get_step_range() {
+        IconD2ForecastStep::get_step_range().into_par_iter().for_each(|step| {
             info!("creating weather charts, time step {}", step);
 
             let fc_step = IconD2ForecastStep::new_from_run(forecast_run, step);
@@ -101,12 +102,12 @@ impl IconD2ChartBuilder {
             );
             let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
             let _ = file.write_all(&data);
-        }
+        });
     }
 
 
     fn create_wind_charts(forecast_run: &IconD2ForecastRun) {
-        for step in IconD2ForecastStep::get_step_range() {
+        IconD2ForecastStep::get_step_range().into_par_iter().for_each(|step| {
             info!("creating wind charts, time step {}", step);
 
             let fc_step = IconD2ForecastStep::new_from_run(forecast_run, step);
@@ -148,7 +149,7 @@ impl IconD2ChartBuilder {
             );
             let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
             let _ = file.write_all(&data);
-        }
+        });
     }
 
 
