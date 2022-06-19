@@ -23,6 +23,14 @@ impl IconD2ForecastStep {
     }
 
 
+    pub fn new_from_run(
+        run: &IconD2ForecastRun,
+        step: usize
+    ) -> IconD2ForecastStep {
+        return IconD2ForecastStep::new(run.date.clone(), run.run_name.clone(), step);
+    }
+
+
     pub fn get_step_range() -> RangeInclusive<usize> {
         return 0..=48;
     }

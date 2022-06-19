@@ -13,7 +13,7 @@ impl IconD2File {
         forecast_step: &IconD2ForecastStep
     ) -> String {
         let date_str = forecast_step.run.date.format(DWD_DATE_FORMAT).to_string();
-        let forecast_str = format!("{:03}", forecast_step.step);
+        let step_str = format!("{:03}", forecast_step.step);
         let run_str = &forecast_step.run.run_name.get_name();
 
         return format!(
@@ -23,7 +23,7 @@ impl IconD2File {
             file_prefix,
             date_str,
             run_str,
-            forecast_str,
+            step_str,
             file_suffix
         );
     }
