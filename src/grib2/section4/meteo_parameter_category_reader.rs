@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read};
+use std::io::Read;
 
 use byteorder::ReadBytesExt;
 
@@ -9,7 +9,7 @@ pub struct MeteoParameterCategoryReader;
 
 
 impl MeteoParameterCategoryReader {
-    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<MeteoParameterCategory, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<MeteoParameterCategory, Grib2Error> {
         let cat_nr = reader.read_u8()?;
         let meteo_parameter_category = match cat_nr {
             1 => MeteoParameterCategory::Moisture,

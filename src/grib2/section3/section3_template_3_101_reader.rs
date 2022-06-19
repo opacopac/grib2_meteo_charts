@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -10,7 +10,7 @@ pub struct Section3Template3_101Reader;
 
 
 impl Section3Template3_101Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<GridDefinitionTemplate3_101, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<GridDefinitionTemplate3_101, Grib2Error> {
         let shape_of_earth = ShapeOfEarthReader::read(reader)?;
         let number_of_grid = reader.read_u24::<BigEndian>()?;
         let number_of_grid_in_ref = reader.read_u8()?;

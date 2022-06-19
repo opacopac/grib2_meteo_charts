@@ -1,7 +1,8 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section6::section6::Section6;
 
@@ -9,11 +10,11 @@ pub struct Section6Reader;
 
 
 impl Section6Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section6, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section6, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let bitmap_indicator = reader.read_u8()?;
-        let bitmap = Section6Reader::read_bitmap(reader, (length - 6) as usize)?;
+        let bitmap = ByteReader::read_n_bytes(reader, (length - 6) as usize)?;
 
         let section6 = Section6::new(
             length,
@@ -23,14 +24,6 @@ impl Section6Reader {
         )?;
 
         return Ok(section6);
-    }
-
-
-    fn read_bitmap<T: Read>(reader: &mut BufReader<T>, size: usize) -> Result<Vec<u8>, Grib2Error> {
-        let mut buf = vec![0; size];
-        reader.read_exact(&mut buf)?;
-
-        return Ok(buf);
     }
 }
 

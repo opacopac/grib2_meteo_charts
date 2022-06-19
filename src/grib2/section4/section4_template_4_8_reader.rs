@@ -1,7 +1,8 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::ReadBytesExt;
 
+use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section4::meteo_parameter_category_reader::MeteoParameterCategoryReader;
 use crate::grib2::section4::product_definition_template_4_8::ProductDefinitionTemplate4_8;
@@ -10,16 +11,16 @@ pub struct Section4Template4_8Reader;
 
 
 impl Section4Template4_8Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<ProductDefinitionTemplate4_8, Grib2Error> {
         let parameter_category = MeteoParameterCategoryReader::read(reader)?;
         let parameter_number = reader.read_u8()?;
 
-        reader.seek_relative(30)?; // skip
+        let _ = ByteReader::read_n_bytes(reader, 30)?; // skip
 
         let num_of_time_range_specs = reader.read_u8()?;
-        let skip_seek = 4 + 12 * num_of_time_range_specs as i64;
+        let skip_seek = 4 + 12 * num_of_time_range_specs as usize;
 
-        reader.seek_relative(skip_seek)?; // skip
+        let _ = ByteReader::read_n_bytes(reader, skip_seek)?; // skip
 
         let tpl_4_8 = ProductDefinitionTemplate4_8::new(
             parameter_category,

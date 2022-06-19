@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -9,7 +9,7 @@ pub struct ScaleFactorValueReader;
 
 
 impl ScaleFactorValueReader {
-    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<ScaleFactorValue, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<ScaleFactorValue, Grib2Error> {
         let factor = reader.read_u8()?;
         let value = reader.read_u32::<BigEndian>()?;
         let scale_factor_value = ScaleFactorValue::new(factor, value);

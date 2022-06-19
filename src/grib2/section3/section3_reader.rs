@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -14,7 +14,7 @@ pub struct Section3Reader;
 
 
 impl Section3Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section3, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section3, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let grid_definition_source = Section3Reader::read_grid_definition_source(reader)?;
@@ -36,7 +36,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_source<T: Read>(reader: &mut BufReader<T>) -> Result<GridDefinitionSource, Grib2Error> {
+    fn read_grid_definition_source(reader: &mut impl Read) -> Result<GridDefinitionSource, Grib2Error> {
         let value = reader.read_u8()?;
         let grid_def_source = match value {
             0 => GridDefinitionSource::GridDefinitionTemplate,
@@ -49,7 +49,7 @@ impl Section3Reader {
     }
 
 
-    fn read_optional_point_interpretation<T: Read>(reader: &mut BufReader<T>) -> Result<OptionalPointInterpretation, Grib2Error> {
+    fn read_optional_point_interpretation(reader: &mut impl Read) -> Result<OptionalPointInterpretation, Grib2Error> {
         let value = reader.read_u8()?;
         let opt_point_interpretation = match value {
             0 => OptionalPointInterpretation::None,
@@ -64,7 +64,7 @@ impl Section3Reader {
     }
 
 
-    fn read_grid_definition_template<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<GridDefinitionTemplate, Grib2Error> {
+    fn read_grid_definition_template(reader: &mut impl Read) -> Result<GridDefinitionTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
         let grid_def_tpl_type = match tpl_number {
             0 => {
@@ -88,6 +88,7 @@ impl Section3Reader {
 #[cfg(test)]
 mod tests {
     use std::io::{BufReader, Cursor, Seek};
+
     use crate::grib2::section3::grid_definition_source::GridDefinitionSource;
     use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
     use crate::grib2::section3::optional_point_interpretation::OptionalPointInterpretation;

@@ -1,7 +1,8 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section2::section2::Section2;
 
@@ -9,7 +10,7 @@ pub struct Section2Reader;
 
 
 impl Section2Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section2, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section2, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let section2 = Section2::new(
@@ -17,7 +18,7 @@ impl Section2Reader {
             section_number,
         )?;
 
-        reader.seek_relative(length as i64 - 5)?;
+        let _ = ByteReader::read_n_bytes(reader, length as usize - 5)?;
 
         return Ok(section2);
     }

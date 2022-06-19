@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::{BufReader, Read, Seek};
+use std::io::{BufReader, Read};
 
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
@@ -25,7 +25,7 @@ impl Grib2DocumentReader {
     }
 
 
-    pub fn read_stream<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Grib2Document, Grib2Error> {
+    pub fn read_stream(reader: &mut impl Read) -> Result<Grib2Document, Grib2Error> {
         let section0 = Section0Reader::read(reader)?;
         let section1 = Section1Reader::read(reader)?;
         let section2 = Section2Reader::read(reader)?;

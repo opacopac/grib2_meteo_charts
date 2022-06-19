@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::common::string_reader::StringReader;
@@ -8,7 +8,7 @@ pub struct Section8Reader;
 
 
 impl Section8Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section8, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section8, Grib2Error> {
         let magic = StringReader::read_n_chars(reader, 4)?;
         let section8 = Section8::new(magic)?;
 

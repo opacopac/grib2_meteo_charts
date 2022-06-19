@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -12,7 +12,7 @@ pub struct Section4Reader;
 
 
 impl Section4Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section4, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section4, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let coordinate_values = reader.read_u16::<BigEndian>()?;
@@ -29,7 +29,7 @@ impl Section4Reader {
     }
 
 
-    fn read_product_definition_template<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<ProductDefinitionTemplate, Grib2Error> {
+    fn read_product_definition_template(reader: &mut impl Read) -> Result<ProductDefinitionTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
         let prod_def_tpl = match tpl_number {
             0 => {

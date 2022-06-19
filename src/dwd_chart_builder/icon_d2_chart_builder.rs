@@ -1,13 +1,10 @@
 use std::fs;
-use std::io::{BufReader, Read, Seek};
-use std::ops::RangeInclusive;
+use std::io::Read;
+
 use bzip2::read::BzDecoder;
-use image::io::Reader;
-use crate::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 
 use crate::dwd_chart_builder::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
 use crate::dwd_forecast_runs::icon_d2_forecast_run::IconD2ForecastRun;
-use crate::dwd_forecast_runs::icon_d2_forecast_step::IconD2ForecastStep;
 use crate::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
 use crate::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use crate::grid::regular_grid_converter::RegularGridConverter;

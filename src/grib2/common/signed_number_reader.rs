@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -9,7 +9,7 @@ pub struct SignedNumberReader;
 
 
 impl SignedNumberReader {
-    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<i16, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<i16, Grib2Error> {
         let raw_value = reader.read_u16::<BigEndian>()?;
         let signed_number = SignedNumber::from_u16(raw_value);
 

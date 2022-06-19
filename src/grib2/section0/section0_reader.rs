@@ -1,7 +1,8 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
+use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::common::string_reader::StringReader;
 use crate::grib2::section0::discipline::Discipline;
@@ -11,9 +12,9 @@ pub struct Section0Reader;
 
 
 impl Section0Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section0, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section0, Grib2Error> {
         let magic = StringReader::read_n_chars(reader, 4)?;
-        reader.seek_relative(2)?; // 2 reserved bytes
+        let _ = ByteReader::read_n_bytes(reader, 2); // 2 reserved bytes
         let discipline = Section0Reader::read_discipline(reader)?;
         let edition = reader.read_u8()?;
         let length = reader.read_u64::<BigEndian>()?;
@@ -29,7 +30,7 @@ impl Section0Reader {
     }
 
 
-    fn read_discipline<T: Read>(reader: &mut BufReader<T>) -> Result<Discipline, Grib2Error> {
+    fn read_discipline(reader: &mut impl Read) -> Result<Discipline, Grib2Error> {
         let value = reader.read_u8()?;
         let discipline = match value {
             0 => Discipline::Meteorological,
@@ -50,6 +51,7 @@ impl Section0Reader {
 #[cfg(test)]
 mod tests {
     use std::io::{BufReader, Cursor, Seek};
+
     use crate::grib2::section0::discipline::Discipline;
     use crate::grib2::section0::section0_reader::Section0Reader;
 

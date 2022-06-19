@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -11,7 +11,7 @@ pub struct Section5Reader;
 
 
 impl Section5Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section5, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section5, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let data_points = reader.read_u32::<BigEndian>()?;
@@ -27,7 +27,7 @@ impl Section5Reader {
     }
 
 
-    fn read_data_representation_template<T: Read>(reader: &mut BufReader<T>) -> Result<DataRepresentationTemplate, Grib2Error> {
+    fn read_data_representation_template(reader: &mut impl Read) -> Result<DataRepresentationTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
         let data_rep_tpl = match tpl_number {
             0 => {

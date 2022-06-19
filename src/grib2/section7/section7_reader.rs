@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read, Seek};
+use std::io::Read;
 
 use byteorder::{BigEndian, ReadBytesExt};
 
@@ -9,7 +9,7 @@ pub struct Section7Reader;
 
 
 impl Section7Reader {
-    pub fn read<T: Read+Seek>(reader: &mut BufReader<T>) -> Result<Section7, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<Section7, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
         let section_number = reader.read_u8()?;
         let num_data_points = ((length - 5) / 2) as usize; // TODO: dependent on bits in sect 5
@@ -24,7 +24,7 @@ impl Section7Reader {
     }
 
 
-    fn read_data_points<T: Read>(reader: &mut BufReader<T>, num_data_points: usize) -> Result<Vec<u16>, Grib2Error> {
+    fn read_data_points(reader: &mut impl Read, num_data_points: usize) -> Result<Vec<u16>, Grib2Error> {
         let mut buf: Vec<u16> = vec![0; num_data_points];
 
         reader.read_u16_into::<BigEndian>(&mut buf)?;

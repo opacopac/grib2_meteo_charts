@@ -1,4 +1,4 @@
-use std::io::{BufReader, Read};
+use std::io::Read;
 
 use byteorder::ReadBytesExt;
 
@@ -9,7 +9,7 @@ pub struct ShapeOfEarthReader;
 
 
 impl ShapeOfEarthReader {
-    pub fn read<T: Read>(reader: &mut BufReader<T>) -> Result<ShapeOfEarth, Grib2Error> {
+    pub fn read(reader: &mut impl Read) -> Result<ShapeOfEarth, Grib2Error> {
         let value = reader.read_u8()?;
         let shape_of_earth = match value {
             6 => ShapeOfEarth::SphericalRadius6371229,
