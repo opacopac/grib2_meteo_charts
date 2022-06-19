@@ -1,6 +1,8 @@
 use chrono::NaiveDate;
+
 use crate::dwd_forecast_runs::icon_d2_forecast_run_name::IconD2ForecastRunName;
 
+#[derive(Debug)]
 pub struct IconD2ForecastRun {
     pub date: NaiveDate,
     pub run_name: IconD2ForecastRunName,

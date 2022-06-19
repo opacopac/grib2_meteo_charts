@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use log::debug;
 
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
@@ -56,19 +57,19 @@ impl <'a> JumpFlooder<'a> {
 
 
     pub fn jump_flood(&mut self, first_step_size: usize) -> Vec<f32> {
-        println!("init...");
+        debug!("init jump flooding...");
         let mut step_size = first_step_size;
         while step_size >= 1 {
-            println!("iteration with step size {}...", step_size);
+            debug!("iteration with step size {}...", step_size);
             self.value_ids = self.perform_flood_iteration(step_size as i32);
             step_size /= 2;
         }
 
         // perform final iteration with step size 1
-        println!("final iteration...");
+        debug!("final iteration...");
         self.value_ids = self.perform_flood_iteration(1);
 
-        println!("output...");
+        debug!("output...");
         let out_values = self.create_output_values();
 
         return out_values;

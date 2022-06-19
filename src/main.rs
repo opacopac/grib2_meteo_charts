@@ -11,15 +11,15 @@ use meteo_grib2_renderer::chart::cloud_precip_chart_renderer::CloudPrecipChartRe
 use meteo_grib2_renderer::chart::precip_chart_renderer::PrecipChartRenderer;
 use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
 use meteo_grib2_renderer::dwd_chart_builder::icon_d2_chart_builder::IconD2ChartBuilder;
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
 use meteo_grib2_renderer::dwd_layer::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
 use meteo_grib2_renderer::dwd_layer::dwd_wind_layer::DwdWindLayer;
+use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::grid::unstructured_grid_converter::{CLAT_VAR_NAME, CLON_VAR_NAME, UnstructuredGridConverter};
+use meteo_grib2_renderer::imaging::drawable::Drawable;
 use meteo_grib2_renderer::metobin::dwd_weather_metobin::DwdWeatherMeteoBin;
 use meteo_grib2_renderer::metobin::dwd_wind_metobin::DwdWindMeteobin;
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
@@ -40,6 +40,8 @@ const WIND_V_TEST_FILE_D2: &str = "icon-d2_germany_regular-lat-lon_single-level_
 const NETCDF_ICON_GRID_TEST_FILE: &str = "icon_grid_0026_R03B07_G.nc";
 
 fn main() {
+    env_logger::init();
+
     //create_icon_d2_precip_img();
     //create_icon_d2_clct_img();
     //create_icon_eu_clct_img();

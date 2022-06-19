@@ -32,6 +32,6 @@ impl IconD2ForecastStep {
 
 
     pub fn get_step_range() -> RangeInclusive<usize> {
-        return 0..=48;
+        return 2..=48; // TODO
     }
 }
