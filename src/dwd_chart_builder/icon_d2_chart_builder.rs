@@ -154,6 +154,7 @@ impl IconD2ChartBuilder {
 
 
     fn get_file_reader(filename: &str) -> impl Read {
+        info!("reading file {}", filename);
         let response_result = ureq::get(filename).call().unwrap(); // TODO
         let reader = response_result.into_reader();
         let bz_decoder = BzDecoder::new(reader);
