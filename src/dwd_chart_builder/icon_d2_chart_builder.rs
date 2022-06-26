@@ -31,8 +31,9 @@ use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
 pub struct IconD2ChartBuilder;
 
 
-const WEATHER_SUB_DIR: &str = "clct_precip";
-const WIND_SUB_DIR: &str = "wind";
+const FORECAST_BASE_DIR: &str = "./output/icon-d2/";
+const WEATHER_LAYER: &str = "clct_precip";
+const WIND_LAYER: &str = "wind";
 
 
 impl IconD2ChartBuilder {
@@ -73,7 +74,7 @@ impl IconD2ChartBuilder {
             let _ = CloudPrecipChartRenderer::render_map_tiles(
                 &layer,
                 (0, 7),
-                |tile: &Drawable, zoom: u32, x: u32, y: u32| Self::save_tile_step(tile, zoom, x, y, WEATHER_SUB_DIR, &fc_step)
+                |tile: &Drawable, zoom: u32, x: u32, y: u32| Self::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step)
             );
 
 
@@ -93,12 +94,8 @@ impl IconD2ChartBuilder {
             let weather_bin = DwdWeatherMeteoBin::new(weather_layer);
             let data = weather_bin.create_bin_values();
             let filename = format!(
-                "{}/{}{}/{:03}/{}/WW_D2.meteobin",
-                "./output", // TODO
-                fc_step.run.date.format(DWD_DATE_FORMAT),
-                fc_step.run.run_name.get_name(),
-                fc_step.step,
-                WEATHER_SUB_DIR,
+                "{}WW_D2.meteobin",
+                Self::get_output_path(&fc_step, WEATHER_LAYER),
             );
             let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
             let _ = file.write_all(&data);
@@ -133,19 +130,15 @@ impl IconD2ChartBuilder {
             let _ = WindChartRenderer::render_map_tiles(
                 &layer,
                 (0, 7),
-                |tile: &Drawable, zoom: u32, x: u32, y: u32| Self::save_tile_step(tile, zoom, x, y, WIND_SUB_DIR, &fc_step)
+                |tile: &Drawable, zoom: u32, x: u32, y: u32| Self::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
             );
 
             // meteobin
             let wind_bin = DwdWindMeteobin::new(layer);
             let data = wind_bin.create_bin_values();
             let filename = format!(
-                "{}/{}{}/{:03}/{}/WIND_D2.meteobin",
-                "./output", // TODO
-                fc_step.run.date.format(DWD_DATE_FORMAT),
-                fc_step.run.run_name.get_name(),
-                fc_step.step,
-                WIND_SUB_DIR,
+                "{}WIND_D2.meteobin",
+                Self::get_output_path(&fc_step, WIND_LAYER),
             );
             let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
             let _ = file.write_all(&data);
@@ -168,16 +161,12 @@ impl IconD2ChartBuilder {
         zoom: u32,
         x: u32,
         y: u32,
-        sub_dir: &str,
+        layer: &str,
         fc_step: &IconD2ForecastStep
     ) {
         let path = format!(
-            "{}/{}{}/{:03}/{}/{}/{}",
-            "./output", // TODO
-            fc_step.run.date.format(DWD_DATE_FORMAT),
-            fc_step.run.run_name.get_name(),
-            fc_step.step,
-            sub_dir,
+            "{}{}/{}",
+            Self::get_output_path(fc_step, layer),
             zoom,
             x
         );
@@ -185,5 +174,20 @@ impl IconD2ChartBuilder {
 
         let filename = format!("{}/{}.png", &path, y);
         let _result = tile.safe_image(&filename);
+    }
+
+
+    fn get_output_path(
+        fc_step: &IconD2ForecastStep,
+        layer: &str
+    ) -> String {
+        return format!(
+            "{}{}{}/{:03}/{}/",
+            FORECAST_BASE_DIR,
+            fc_step.run.date.format(DWD_DATE_FORMAT),
+            fc_step.run.run_name.get_name(),
+            fc_step.step,
+            layer,
+        );
     }
 }
