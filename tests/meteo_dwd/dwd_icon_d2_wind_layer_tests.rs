@@ -24,7 +24,7 @@ fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
         _ => {}
     }
 
-    let layer = DwdWindLayer::new(grid_u, grid_v).unwrap();
+    let layer = DwdWindLayer::new(grid_u, grid_v, None).unwrap();
     println!("{:?}", layer.get_grid_dimensions());
     println!("{:?}", layer.get_lat_lon_extent());
 
@@ -40,7 +40,7 @@ fn it_returns_an_error_for_a_non_wind_file() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
-    let _layer = DwdWindLayer::new(grid_u, grid_v);
+    let _layer = DwdWindLayer::new(grid_u, grid_v, None);
 }
 
 
@@ -51,7 +51,7 @@ fn it_returns_an_error_when_u_and_v_are_mixed_up() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
-    let result = DwdWindLayer::new(grid_u, grid_v);
+    let result = DwdWindLayer::new(grid_u, grid_v, None);
 
     assert!(result.is_err());
 }
@@ -64,7 +64,7 @@ fn it_returns_an_error_when_the_grid_sizes_dont_match() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
-    let result = DwdWindLayer::new(grid_u, grid_v);
+    let result = DwdWindLayer::new(grid_u, grid_v, None);
 
     assert!(result.is_err());
 }

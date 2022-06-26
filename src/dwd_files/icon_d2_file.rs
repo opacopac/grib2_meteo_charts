@@ -1,4 +1,4 @@
-use crate::dwd_forecast_runs::icon_d2_forecast_step::IconD2ForecastStep;
+use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
 
 pub struct IconD2File;
 
@@ -10,9 +10,9 @@ impl IconD2File {
     pub fn get_file_url(
         file_prefix: &str,
         file_suffix: &str,
-        forecast_step: &IconD2ForecastStep
+        forecast_step: &DwdForecastStep
     ) -> String {
-        let date_str = forecast_step.run.date.format(DWD_DATE_FORMAT).to_string();
+        let date_str = forecast_step.run.start_date.format(DWD_DATE_FORMAT).to_string();
         let step_str = format!("{:03}", forecast_step.step);
         let run_str = &forecast_step.run.run_name.get_name();
 

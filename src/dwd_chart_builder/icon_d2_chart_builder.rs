@@ -17,8 +17,8 @@ use crate::dwd_files::icon_d2_file_u_10m::IconD2FileU10m;
 use crate::dwd_files::icon_d2_file_v_10m::IconD2FileV10m;
 use crate::dwd_files::icon_d2_file_vmax_10m::IconD2FileVmax10m;
 use crate::dwd_files::icon_d2_file_ww::IconD2FileWw;
-use crate::dwd_forecast_runs::icon_d2_forecast_run::IconD2ForecastRun;
-use crate::dwd_forecast_runs::icon_d2_forecast_step::IconD2ForecastStep;
+use crate::dwd_forecast_runs::dwd_forecast_run::DwdForecastRun;
+use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
 use crate::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
 use crate::dwd_layer::dwd_wind_layer::DwdWindLayer;
@@ -46,12 +46,12 @@ impl IconD2ChartBuilder {
     }
 
 
-    fn create_weather_map_tiles(forecast_run: &IconD2ForecastRun) {
-        IconD2ForecastStep::get_step_range().into_par_iter().for_each(|step| {
+    fn create_weather_map_tiles(forecast_run: &DwdForecastRun) {
+        DwdForecastStep::get_step_range().into_par_iter().for_each(|step| {
             info!("creating weather charts, time step {}", step);
 
-            let fc_step = IconD2ForecastStep::new_from_run(forecast_run, step);
-            let fc_previous_step = IconD2ForecastStep::new_from_run(forecast_run, step - 1);
+            let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
+            let fc_previous_step = DwdForecastStep::new_from_run(forecast_run, step - 1);
 
             // map tiles
             let clct_file = IconD2FileClctMod::get_file_url(&fc_step);
@@ -103,11 +103,11 @@ impl IconD2ChartBuilder {
     }
 
 
-    fn create_wind_charts(forecast_run: &IconD2ForecastRun) {
-        IconD2ForecastStep::get_step_range().into_par_iter().for_each(|step| {
+    fn create_wind_charts(forecast_run: &DwdForecastRun) {
+        DwdForecastStep::get_step_range().into_par_iter().for_each(|step| {
             info!("creating wind charts, time step {}", step);
 
-            let fc_step = IconD2ForecastStep::new_from_run(forecast_run, step);
+            let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
 
             let wind_u_file = IconD2FileU10m::get_file_url(&fc_step);
             let mut wind_u_reader = Self::get_file_reader(&wind_u_file);
@@ -162,7 +162,7 @@ impl IconD2ChartBuilder {
         x: u32,
         y: u32,
         layer: &str,
-        fc_step: &IconD2ForecastStep
+        fc_step: &DwdForecastStep
     ) {
         let path = format!(
             "{}{}/{}",
@@ -178,13 +178,13 @@ impl IconD2ChartBuilder {
 
 
     fn get_output_path(
-        fc_step: &IconD2ForecastStep,
+        fc_step: &DwdForecastStep,
         layer: &str
     ) -> String {
         return format!(
             "{}{}{}/{:03}/{}/",
             FORECAST_BASE_DIR,
-            fc_step.run.date.format(DWD_DATE_FORMAT),
+            fc_step.run.start_date.format(DWD_DATE_FORMAT),
             fc_step.run.run_name.get_name(),
             fc_step.step,
             layer,
