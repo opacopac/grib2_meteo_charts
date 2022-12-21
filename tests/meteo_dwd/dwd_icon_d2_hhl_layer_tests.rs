@@ -18,7 +18,7 @@ fn it_successfully_reads_a_hhl_test_file() {
     let height1 = layer.get_height_by_lat_lon(&pos1).unwrap();
     assert_approx_eq!(429.28, height1, 5.0);
 
-    let pos2 = LatLon { lat: 56.84, lon: 19.18 }; // nordsee
+    let pos2 = LatLon { lat: 56.84, lon: 19.18 }; // ostsee
     let height2 = layer.get_height_by_lat_lon(&pos2).unwrap();
     assert_approx_eq!(0.0, height2, 5.0);
 }
