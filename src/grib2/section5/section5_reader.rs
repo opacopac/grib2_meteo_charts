@@ -13,11 +13,8 @@ pub struct Section5Reader;
 impl Section5Reader {
     pub fn read(reader: &mut impl Read) -> Result<Section5, Grib2Error> {
         let length = reader.read_u32::<BigEndian>()?;
-        println!("len {}", length);
         let section_number = reader.read_u8()?;
-        println!("sect {}", section_number);
         let data_points = reader.read_u32::<BigEndian>()?;
-        println!("data points {}", section_number);
         let data_representation_template = Section5Reader::read_data_representation_template(reader)?;
         let section5 = Section5::new(
             length,
@@ -32,7 +29,6 @@ impl Section5Reader {
 
     fn read_data_representation_template(reader: &mut impl Read) -> Result<DataRepresentationTemplate, Grib2Error> {
         let tpl_number = reader.read_u16::<BigEndian>()?;
-        println!("tpl nr {}", tpl_number);
         let data_rep_tpl = match tpl_number {
             0 => {
                 let tpl = DataRepresentationTemplate5_0Reader::read(reader)?;
