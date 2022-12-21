@@ -1,4 +1,7 @@
-use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
+use assert_approx_eq::assert_approx_eq;
+
+use meteo_grib2_renderer::dwd_layer::dwd_hhl_layer::HhlLayer;
+use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
@@ -9,7 +12,13 @@ pub const HHL_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-l
 fn it_successfully_reads_a_hhl_test_file() {
     let doc = Grib2DocumentReader::read_file(HHL_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let _layer = DwdCloudLayer::new(grid);
+    let layer = HhlLayer::new(grid);
 
-    assert!(true);
+    let pos1 = LatLon { lat: 47.0, lon: 7.0 }; // lac de neuchatel
+    let height1 = layer.get_height_by_lat_lon(&pos1).unwrap();
+    assert_approx_eq!(429.28, height1, 5.0);
+
+    let pos2 = LatLon { lat: 56.84, lon: 19.18 }; // nordsee
+    let height2 = layer.get_height_by_lat_lon(&pos2).unwrap();
+    assert_approx_eq!(0.0, height2, 5.0);
 }
