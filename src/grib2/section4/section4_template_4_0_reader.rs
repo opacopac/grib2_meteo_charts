@@ -48,4 +48,20 @@ mod tests {
         assert_eq!(MeteoParameterCategory::Cloud, tpl40.parameter_category);
         assert_eq!(199, tpl40.parameter_number);
     }
+
+
+    #[test]
+    fn it_correctly_parses_template_4_0_of_a_hhl_layer() {
+        let mut reader = BufReader::new(Cursor::new([
+            0x03, 0x06, 0x02, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x96, 0x00, 0x00,
+            0x00, 0x00, 0x01, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00
+        ]));
+
+        let result = Section4Template4_0Reader::read(&mut reader);
+        assert!(result.is_ok());
+
+        let tpl40 = result.unwrap();
+        assert_eq!(MeteoParameterCategory::Mass, tpl40.parameter_category);
+        assert_eq!(6, tpl40.parameter_number);
+    }
 }

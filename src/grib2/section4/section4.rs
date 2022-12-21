@@ -4,7 +4,7 @@ use crate::grib2::section4::product_definition_template::ProductDefinitionTempla
 pub struct Section4 {
     pub length: u32,
     pub section_number: u8,
-    pub coordinate_values: u16,
+    pub coordinate_values: Vec<f32>,
     pub product_definition_template: ProductDefinitionTemplate
 }
 
@@ -15,7 +15,7 @@ impl Section4 {
     pub fn new(
         length: u32,
         section_number: u8,
-        coordinate_values: u16,
+        coordinate_values: Vec<f32>,
         product_definition_template: ProductDefinitionTemplate
     ) -> Result<Section4, Grib2Error> {
         if section_number != SECTION_NUMBER {
@@ -44,7 +44,7 @@ mod tests {
         let result = Section4::new(
             0,
             0,
-            0,
+            vec![],
             ProductDefinitionTemplate::Missing
         );
 

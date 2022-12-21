@@ -14,6 +14,7 @@ impl MeteoParameterCategoryReader {
         let meteo_parameter_category = match cat_nr {
             1 => MeteoParameterCategory::Moisture,
             2 => MeteoParameterCategory::Momentum,
+            3 => MeteoParameterCategory::Mass,
             6 => MeteoParameterCategory::Cloud,
             255 => MeteoParameterCategory::Missing,
             _ => MeteoParameterCategory::Unknown(cat_nr)
