@@ -5,7 +5,7 @@ use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
 use crate::meteo_dwd::dwd_icon_d2_precip_layer_tests::PREC_TEST_FILE;
 
-pub const CLCT_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
+pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
 
 
 #[test]

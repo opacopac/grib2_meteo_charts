@@ -3,10 +3,10 @@ use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinit
 use meteo_grib2_renderer::dwd_layer::dwd_wind_layer::DwdWindLayer;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
-pub const WIND_U_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
-pub const WIND_V_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
-pub const CLCT_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
-pub const WIND_V_EU_TEST_FILE: &str = "./tests/data/icon-eu_europe_regular-lat-lon_single-level_2022050700_000_V_10M.grib2";
+pub const WIND_U_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
+pub const WIND_V_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
+pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
+pub const WIND_V_EU_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-lat-lon_single-level_2022050700_000_V_10M.grib2";
 
 #[test]
 fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {

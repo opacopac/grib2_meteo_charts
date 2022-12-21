@@ -3,7 +3,7 @@ use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentR
 use meteo_grib2_renderer::dwd_layer::dwd_precip_layer::DwdPrecipLayer;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
-pub const PRECIP_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
+pub const PRECIP_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
 
 
 pub fn read_test_precip_layer() -> DwdPrecipLayer {

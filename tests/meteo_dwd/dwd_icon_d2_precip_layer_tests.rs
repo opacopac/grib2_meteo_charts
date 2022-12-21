@@ -4,7 +4,7 @@ use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
 use crate::CLCT_ICON_D2_TEST_FILE;
 
-pub const PREC_TEST_FILE: &str = "./tests/data/icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
+pub const PREC_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
 
 
 #[test]

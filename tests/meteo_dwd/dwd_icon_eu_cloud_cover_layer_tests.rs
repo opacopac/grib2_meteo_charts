@@ -3,7 +3,7 @@ use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinit
 use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
 
-pub const CLCT_TEST_FILE: &str = "./tests/data/icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
+pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
 
 
 #[test]

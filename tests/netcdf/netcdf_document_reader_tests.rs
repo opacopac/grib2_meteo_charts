@@ -1,8 +1,8 @@
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
 
-pub const NETCDF_ICON_GRID_TEST_FILE: &str = "./tests/data/icon_grid_0009_R02B03_R.nc";
-pub const NOT_FOUND_TEST_FILE: &str = "./tests/data/notfound.nc";
-pub const NON_NETCDF_TEST_FILE: &str = "./tests/data/not_a_grib2_file.grib2";
+pub const NETCDF_ICON_GRID_TEST_FILE: &str = "./tests/resources/icon_grid_0009_R02B03_R.nc";
+pub const NOT_FOUND_TEST_FILE: &str = "./tests/resources/notfound.nc";
+pub const NON_NETCDF_TEST_FILE: &str = "./tests/resources/not_a_grib2_file.grib2";
 
 
 #[test]
