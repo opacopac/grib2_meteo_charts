@@ -1,7 +1,7 @@
-use meteo_grib2_renderer::dwd_chart_builder::icon_d2_chart_builder::IconD2ChartBuilder;
+use meteo_grib2_renderer::dwd_chart_builder::icon_d2_forecast_builder::IconD2ForecastBuilder;
 
 fn main() {
     env_logger::init();
 
-    IconD2ChartBuilder::create_latest_dwd_forecasts();
+    IconD2ForecastBuilder::create_latest_dwd_forecasts();
 }
