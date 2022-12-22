@@ -6,3 +6,5 @@ pub mod icon_d2_file_u_10m;
 pub mod icon_d2_file_v_10m;
 pub mod icon_d2_file_vmax_10m;
 pub mod icon_d2_file_ceiling;
+pub mod icon_d2_file_clc;
+pub mod icon_d2_file_hhl;

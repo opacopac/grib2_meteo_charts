@@ -9,7 +9,7 @@ const DWD_ICON_D2_CLCT_MOD_FILE_SUFFIX: &str = "_2d_clct_mod.grib2.bz2";
 
 impl IconD2FileClctMod {
     pub fn get_file_url(forecast_step: &DwdForecastStep) -> String {
-        return IconD2File::get_file_url(
+        return IconD2File::get_single_level_file_url(
             DWD_ICON_D2_CLCT_MOD_FILE_PREFIX,
             DWD_ICON_D2_CLCT_MOD_FILE_SUFFIX,
             forecast_step

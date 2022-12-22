@@ -9,7 +9,7 @@ pub const DWD_ICON_D2_TOT_PREC_FILE_SUFFIX: &str = "_2d_tot_prec.grib2.bz2";
 
 impl IconD2FileTotPrec {
     pub fn get_file_url(forecast_step: &DwdForecastStep) -> String {
-        return IconD2File::get_file_url(
+        return IconD2File::get_single_level_file_url(
             DWD_ICON_D2_TOT_PREC_FILE_PREFIX,
             DWD_ICON_D2_TOT_PREC_FILE_SUFFIX,
             forecast_step
