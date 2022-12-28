@@ -27,7 +27,11 @@ pub struct Grib2Document {
 
 
 impl Grib2Document {
-    pub fn calculate_data_points(&self, missing_value: f32) -> Result<Vec<f32>, Grib2Error> {
+    pub fn calculate_data_points<T: Copy>(
+        &self,
+        missing_value: T,
+        transform_fn: fn(f32) -> T
+    ) -> Result<Vec<T>, Grib2Error> {
         let (ref_value, c1, c2) = match &self.section5.data_representation_template {
             GridPointDataSimplePacking(tpl) => {
                 let c1 = (2 as f32).powi(tpl.binary_scale_factor_e as i32);
@@ -45,13 +49,14 @@ impl Grib2Document {
             return Err(Grib2Error::InvalidData("section 7 contains no data points".to_string()))
         }
 
-        let mut data_points: Vec<f32> = vec![];
+        let mut data_points: Vec<T> = vec![];
         let mut j = 0;
         for i in 0..self.section3.number_of_datapoints {
             if bitmap.is_empty() || (bitmap[(i / 8) as usize] & (0b10000000 >> (i % 8)) > 0) {
                 let raw_value = raw_data_points[j] as f32;
                 let data_value = (ref_value + raw_value * c1) as f32 / c2;
-                data_points.push(data_value);
+                let data_value_transformed = transform_fn(data_value);
+                data_points.push(data_value_transformed);
                 j += 1;
             } else {
                 data_points.push(missing_value);

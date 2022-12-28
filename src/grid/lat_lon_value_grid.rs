@@ -1,47 +1,49 @@
-use std::ops::{Add, Mul};
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::grid::lat_lon_grid::LatLonGrid;
 
 pub struct LatLonValueGrid<T> {
+    grid: LatLonGrid,
     values: Vec<T>,
-    missing_value: T,
-    dimensions: (usize, usize),
-    lat_lon_extent: LatLonExtent,
-    lat_inc: f32,
-    lon_inc: f32,
+    missing_value: T
 }
 
 
-impl <T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>> LatLonValueGrid<T> {
+impl <T: Copy + PartialEq> LatLonValueGrid<T> {
     pub fn new(
         values: Vec<T>,
         missing_value: T,
         dimensions: (usize, usize),
         lat_lon_extent: LatLonExtent
     ) -> LatLonValueGrid<T> {
-        let lat_inc = (lat_lon_extent.max_coord.lat - lat_lon_extent.min_coord.lat) / dimensions.1 as f32;
-        let lon_inc = (lat_lon_extent.max_coord.lon - lat_lon_extent.min_coord.lon) / dimensions.0 as f32;
+        let grid = LatLonGrid::new(dimensions, lat_lon_extent);
 
-        return LatLonValueGrid { values, missing_value, dimensions, lat_lon_extent, lat_inc, lon_inc };
+        return LatLonValueGrid { grid, values, missing_value };
+    }
+
+
+    pub fn get_grid(&self) -> &LatLonGrid {
+        return &self.grid;
     }
 
 
     pub fn get_grid_dimensions(&self) -> (usize, usize) {
-        return self.dimensions.clone();
+        return self.grid.get_dimensions();
     }
 
 
     pub fn get_grid_lat_lon_extent(&self) -> &LatLonExtent {
-        return &self.lat_lon_extent;
+        return self.grid.get_lat_lon_extent();
+    }
+
+
+    pub fn get_missing_value(&self) -> T {
+        return self.missing_value;
     }
 
 
     pub fn get_value_by_xy(&self, x: usize, y: usize) -> Option<T> {
-        if x >= self.dimensions.0 || y >= self.dimensions.1 {
-            return None
-        }
-
-        let idx = x + y * self.dimensions.0;
+        let idx = self.grid.get_index_by_x_y(x, y)?;
         let value = self.values[idx];
 
         return if value != self.missing_value {
@@ -53,61 +55,12 @@ impl <T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>> LatLonValueG
 
 
     pub fn get_value_by_lat_lon(&self, pos: &LatLon) -> Option<T> {
-        if !self.lat_lon_extent.is_inside(pos) {
-            return None;
-        }
+        let (x0, y0) = self.grid.get_x_y_by_lat_lon(pos)?;
 
-        let x = ((pos.lon - &self.lat_lon_extent.min_coord.lon) / &self.lon_inc).round() as usize;
-        let y = ((pos.lat - &self.lat_lon_extent.min_coord.lat) / &self.lat_inc).round() as usize;
-        let value = self.get_value_by_xy(x, y);
+        let x = x0.round() as usize;
+        let y = y0.round() as usize;
 
-        return value;
-    }
-
-
-    pub fn interpolate_value_by_lat_lon(&self, pos: &LatLon) -> Option<T> {
-        let x = (pos.lon - &self.lat_lon_extent.min_coord.lon) / &self.lon_inc;
-        let y = (pos.lat - &self.lat_lon_extent.min_coord.lat) / &self.lat_inc;
-        let x_floor_f32 = x.floor();
-        let y_floor_f32 = y.floor();
-        let x_ceil_f32 = x.ceil();
-        let y_ceil_f32 = y.ceil();
-
-        if x_ceil_f32 < 0.0 || y_ceil_f32 < 0.0 || x_floor_f32 >= self.dimensions.0 as f32 || y_floor_f32 >= self.dimensions.1 as f32 {
-            return None;
-        }
-
-        let x_floor = x_floor_f32 as usize;
-        let y_floor = y_floor_f32 as usize;
-        let x_ceil = x_ceil_f32 as usize;
-        let y_ceil = y_ceil_f32 as usize;
-
-        if x_floor == x_ceil || y_floor == y_ceil {
-            return self.get_value_by_xy(x_floor, y_floor);
-        }
-
-        let val_tl = self.get_value_by_xy(x_floor, y_floor);
-        let val_tr = self.get_value_by_xy(x_ceil, y_floor);
-        let val_bl = self.get_value_by_xy(x_floor, y_ceil);
-        let val_br = self.get_value_by_xy(x_ceil, y_ceil);
-        let val_t = Self::interpolate_value(val_tl, x_ceil_f32 - x, val_tr, x - x_floor_f32);
-        let val_b = Self::interpolate_value(val_bl, x_ceil_f32 - x, val_br, x - x_floor_f32);
-        let value = Self::interpolate_value(val_t, y_ceil_f32 - y, val_b, y - y_floor_f32);
-
-        return value;
-    }
-
-
-    fn interpolate_value(value1: Option<T>, weight1: f32, value2: Option<T>, weight2: f32) -> Option<T> {
-        if value1.is_none() || value2.is_none() {
-            return None;
-        }
-
-        let val1 = value1.unwrap(); // TODO
-        let val2 = value2.unwrap(); // TODO
-        let value = val1 * weight1 + val2 * weight2;
-
-        return Some(value);
+        return self.get_value_by_xy(x, y);
     }
 }
 
@@ -117,7 +70,6 @@ mod tests {
     use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
     use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-
 
     fn create_test_grid() -> LatLonValueGrid<f32> {
         let values = vec![00.0, 01.0, 10.0, 11.0, -1.0, 21.0];
@@ -129,36 +81,6 @@ mod tests {
         );
 
         return LatLonValueGrid::new(values, missing_value, dimensions, lat_lon_extent);
-    }
-
-
-    #[test]
-    fn it_creates_a_new_instance_with_the_correct_lat_lon_incs() {
-        let grid = create_test_grid();
-
-        assert_eq!(2.0, grid.lat_inc);
-        assert_eq!(1.0, grid.lon_inc);
-    }
-
-
-    #[test]
-    fn it_gets_the_correct_dimensions() {
-        let grid = create_test_grid();
-
-        let result = grid.get_grid_dimensions();
-
-        assert_eq!((2, 3), result);
-    }
-
-
-    #[test]
-    fn it_gets_the_correct_lat_lon_extent() {
-        let grid = create_test_grid();
-
-        let result = grid.get_grid_lat_lon_extent();
-
-        assert_eq!([40.0, 7.0], result.min_coord.as_array());
-        assert_eq!([46.0, 9.0], result.max_coord.as_array());
     }
 
 

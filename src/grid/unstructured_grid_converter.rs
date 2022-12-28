@@ -21,7 +21,7 @@ impl UnstructuredGridConverter {
     const JUMP_FLOOD_1ST_STEP_SIZE: usize = 8;
 
     pub fn create(grib2_doc: &Grib2Document, missing_value: f32, netcdf_doc: &NetCdfDocument) -> Result<LatLonValueGrid<f32>, Grib2Error> {
-        let unstructured_values = grib2_doc.calculate_data_points(missing_value)?;
+        let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
         let (clon_values, clat_values) = Self::get_clat_clon_values(netcdf_doc)?;
         if clon_values.len() != unstructured_values.len() {
             return Err(Grib2Error::InvalidData("number of clat/clon and grib2 data points don't match".to_string()));

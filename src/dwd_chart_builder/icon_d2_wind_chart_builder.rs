@@ -12,8 +12,6 @@ use crate::dwd_files::icon_d2_file_vmax_10m::IconD2FileVmax10m;
 use crate::dwd_forecast_runs::dwd_forecast_run::DwdForecastRun;
 use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_layer::dwd_wind_layer::DwdWindLayer;
-use crate::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use crate::grid::regular_grid_converter::RegularGridConverter;
 use crate::imaging::drawable::Drawable;
 use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
 
@@ -29,20 +27,9 @@ impl IconD2WindChartBuilder {
 
             let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
 
-            let wind_u_file = IconD2FileU10m::get_file_url(&fc_step);
-            let mut wind_u_reader = IconD2ChartBuilderHelper::get_file_reader(&wind_u_file);
-            let wind_u_doc = Grib2DocumentReader::read_stream(&mut wind_u_reader).unwrap();
-            let wind_u_grid = RegularGridConverter::create(&wind_u_doc, -1.0).unwrap();
-
-            let wind_v_file = IconD2FileV10m::get_file_url(&fc_step);
-            let mut wind_v_reader = IconD2ChartBuilderHelper::get_file_reader(&wind_v_file);
-            let wind_v_doc = Grib2DocumentReader::read_stream(&mut wind_v_reader).unwrap();
-            let wind_v_grid = RegularGridConverter::create(&wind_v_doc, -1.0).unwrap();
-
-            let wind_v_max_file = IconD2FileVmax10m::get_file_url(&fc_step);
-            let mut wind_v_max_reader = IconD2ChartBuilderHelper::get_file_reader(&wind_v_max_file);
-            let wind_v_max_doc = Grib2DocumentReader::read_stream(&mut wind_v_max_reader).unwrap();
-            let wind_v_max_grid = RegularGridConverter::create(&wind_v_max_doc, -1.0).unwrap();
+            let wind_u_grid = IconD2FileU10m::read_grid_from_file(&fc_step).unwrap(); // TODO
+            let wind_v_grid = IconD2FileV10m::read_grid_from_file(&fc_step).unwrap();
+            let wind_v_max_grid = IconD2FileVmax10m::read_grid_from_file(&fc_step).unwrap();
 
             let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid)).unwrap();
 

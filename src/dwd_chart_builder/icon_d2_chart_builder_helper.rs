@@ -1,8 +1,4 @@
 use std::fs;
-use std::io::Read;
-
-use bzip2::read::BzDecoder;
-use log::info;
 
 use crate::dwd_files::icon_d2_file::DWD_DATE_FORMAT;
 use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
@@ -15,16 +11,6 @@ const FORECAST_BASE_DIR: &str = "./output/icon-d2/";
 
 
 impl IconD2ChartBuilderHelper {
-    pub fn get_file_reader(filename: &str) -> impl Read {
-        info!("reading file {}", filename);
-        let response_result = ureq::get(filename).call().unwrap(); // TODO
-        let reader = response_result.into_reader();
-        let bz_decoder = BzDecoder::new(reader);
-
-        return bz_decoder;
-    }
-
-
     pub fn save_tile_step(
         tile: &Drawable,
         zoom: u32,

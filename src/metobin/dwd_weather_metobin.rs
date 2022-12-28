@@ -8,7 +8,7 @@ pub struct DwdWeatherMeteoBin {
 
 impl DwdWeatherMeteoBin {
     const NONE_BIN_VALUE: u8 = 0xFF;
-    const FEET_PER_MP: f32 = 3.28084;
+    const FEET_PER_M: f32 = 3.28084;
 
 
     pub fn new(weather_layer: DwdWeatherLayer) -> DwdWeatherMeteoBin {
@@ -46,8 +46,8 @@ impl DwdWeatherMeteoBin {
     fn calc_ceiling_100ft_value(value_m: Option<f32>) -> u8 {
         return match value_m {
             None => Self::NONE_BIN_VALUE,
-            Some(val) if (val * Self::FEET_PER_MP / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
-            Some(val) => (val * Self::FEET_PER_MP / 200.0).round().min(254.0).max(0.0) as u8
+            Some(val) if (val * Self::FEET_PER_M / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
+            Some(val) => (val * Self::FEET_PER_M / 200.0).round().min(254.0).max(0.0) as u8
         }
     }
 }

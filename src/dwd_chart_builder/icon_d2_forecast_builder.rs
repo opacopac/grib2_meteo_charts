@@ -1,6 +1,7 @@
 use log::info;
 
 use crate::dwd_chart_builder::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
+use crate::dwd_chart_builder::icon_d2_vertical_cloud_chart_builder::IconD2VerticalCloudChartBuilder;
 use crate::dwd_chart_builder::icon_d2_weather_chart_builder::IconD2WeatherChartBuilder;
 use crate::dwd_chart_builder::icon_d2_wind_chart_builder::IconD2WindChartBuilder;
 
@@ -14,5 +15,6 @@ impl IconD2ForecastBuilder {
 
         IconD2WeatherChartBuilder::create_weather_map_tiles(&latest_run);
         IconD2WindChartBuilder::create_wind_charts(&latest_run);
+        IconD2VerticalCloudChartBuilder::create_wind_charts(&latest_run);
     }
 }

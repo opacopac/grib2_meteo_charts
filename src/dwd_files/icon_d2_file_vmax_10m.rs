@@ -1,5 +1,8 @@
 use crate::dwd_files::icon_d2_file::IconD2File;
+use crate::dwd_files::icon_d2_file_to_grid_converter::IconD2FileToGridConverter;
 use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
+use crate::grib2::common::grib2_error::Grib2Error;
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconD2FileVmax10m;
 
@@ -8,6 +11,13 @@ pub const DWD_ICON_D2_VMAX_10M_FILE_SUFFIX: &str = "_2d_vmax_10m.grib2.bz2";
 
 
 impl IconD2FileVmax10m {
+    pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        let url = Self::get_file_url(&fc_step);
+
+        return IconD2FileToGridConverter::read_grid_from_file(&url);
+    }
+
+
     pub fn get_file_url(forecast_step: &DwdForecastStep) -> String {
         return IconD2File::get_single_level_file_url(
             DWD_ICON_D2_VMAX_10M_FILE_PREFIX,

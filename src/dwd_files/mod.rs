@@ -8,3 +8,4 @@ pub mod icon_d2_file_vmax_10m;
 pub mod icon_d2_file_ceiling;
 pub mod icon_d2_file_clc;
 pub mod icon_d2_file_hhl;
+pub mod icon_d2_file_to_grid_converter;

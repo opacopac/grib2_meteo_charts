@@ -10,7 +10,16 @@ pub struct RegularGridConverter;
 
 impl RegularGridConverter {
     pub fn create(doc: &Grib2Document, missing_value: f32) -> Result<LatLonValueGrid<f32>, Grib2Error> {
-        let values = doc.calculate_data_points(missing_value)?;
+        return Self::create_and_transform(doc, missing_value, |x| x as f32);
+    }
+
+
+    pub fn create_and_transform<T: Copy + PartialEq>(
+        doc: &Grib2Document,
+        missing_value: T,
+        transform_fn: fn(f32) -> T
+    ) -> Result<LatLonValueGrid<T>, Grib2Error> {
+        let values = doc.calculate_data_points(missing_value, transform_fn)?;
         let (dimensions, lat_lon_extent) = Self::get_dimensions_and_extent(doc)?;
         let grid = LatLonValueGrid::new(
             values,
@@ -21,6 +30,7 @@ impl RegularGridConverter {
 
         return Ok(grid);
     }
+
 
 
     // TODO: re-project if 1st point lat/lon > last point lat/lon
