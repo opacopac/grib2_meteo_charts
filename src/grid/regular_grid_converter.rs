@@ -14,7 +14,7 @@ impl RegularGridConverter {
     }
 
 
-    pub fn create_and_transform<T: Copy + PartialEq>(
+    pub fn create_and_transform<T: Copy + PartialEq + Send + Sync>(
         doc: &Grib2Document,
         missing_value: T,
         transform_fn: fn(f32) -> T

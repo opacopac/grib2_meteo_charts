@@ -21,7 +21,7 @@ impl IconD2FileToGridConverter {
     }
 
 
-    pub fn read_grid_from_file_and_convert<T: Copy + PartialEq>(
+    pub fn read_grid_from_file_and_convert<T: Copy + PartialEq + Send + Sync>(
         file_url: &str,
         missing_value: T,
         transform_fn: fn(f32) -> T

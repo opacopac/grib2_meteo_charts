@@ -13,8 +13,8 @@ impl IconD2ForecastBuilder {
         let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run().unwrap(); // TODO
         info!("latest run found: {:?}", &latest_run);
 
-        IconD2WeatherChartBuilder::create_weather_map_tiles(&latest_run);
-        IconD2WindChartBuilder::create_wind_charts(&latest_run);
-        IconD2VerticalCloudChartBuilder::create_wind_charts(&latest_run);
+        IconD2WeatherChartBuilder::create(&latest_run);
+        IconD2WindChartBuilder::create(&latest_run);
+        IconD2VerticalCloudChartBuilder::create(&latest_run);
     }
 }

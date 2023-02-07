@@ -24,40 +24,42 @@ const WEATHER_LAYER: &str = "clct_precip";
 
 
 impl IconD2WeatherChartBuilder {
-    pub fn create_weather_map_tiles(forecast_run: &DwdForecastRun) {
-        DwdForecastStep::get_step_range().into_par_iter().for_each(|step| {
-            info!("creating weather charts, time step {}", step);
+    pub fn create(forecast_run: &DwdForecastRun) {
+        DwdForecastStep::get_step_range()
+            .into_par_iter()
+            .for_each(|step| {
+                info!("creating weather charts, time step {}", step);
 
-            let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
-            let fc_previous_step = DwdForecastStep::new_from_run(forecast_run, step - 1);
+                let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
+                let fc_previous_step = DwdForecastStep::new_from_run(forecast_run, step - 1);
 
-            // map tiles
-            let clct_grid = IconD2FileClctMod::read_grid_from_file(&fc_step).unwrap(); // TODO
-            let precip_grid0 = IconD2FileTotPrec::read_grid_from_file(&fc_previous_step).unwrap();
-            let precip_grid1 = IconD2FileTotPrec::read_grid_from_file(&fc_step).unwrap();
+                // map tiles
+                let clct_grid = IconD2FileClctMod::read_grid_from_file(&fc_step).unwrap(); // TODO
+                let precip_grid0 = IconD2FileTotPrec::read_grid_from_file(&fc_previous_step).unwrap();
+                let precip_grid1 = IconD2FileTotPrec::read_grid_from_file(&fc_step).unwrap();
 
-            let layer = DwdCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1).unwrap();
+                let layer = DwdCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1).unwrap();
 
-            let _ = CloudPrecipChartRenderer::render_map_tiles(
-                &layer,
-                (0, 7),
-                |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ChartBuilderHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step)
-            );
+                let _ = CloudPrecipChartRenderer::render_map_tiles(
+                    &layer,
+                    (0, 7),
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ChartBuilderHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step)
+                );
 
 
-            // meteobin
-            let ww_grid = IconD2FileWw::read_grid_from_file(&fc_step).unwrap();
-            let ceiling_grid = IconD2FileCeiling::read_grid_from_file(&fc_step).unwrap();
+                // meteobin
+                let ww_grid = IconD2FileWw::read_grid_from_file(&fc_step).unwrap();
+                let ceiling_grid = IconD2FileCeiling::read_grid_from_file(&fc_step).unwrap();
 
-            let weather_layer = DwdWeatherLayer::new(ww_grid, ceiling_grid).unwrap();
-            let weather_bin = DwdWeatherMeteoBin::new(weather_layer);
-            let data = weather_bin.create_bin_values();
-            let filename = format!(
-                "{}WW_D2.meteobin",
-                IconD2ChartBuilderHelper::get_output_path(&fc_step, WEATHER_LAYER),
-            );
-            let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
-            let _ = file.write_all(&data);
-        });
+                let weather_layer = DwdWeatherLayer::new(ww_grid, ceiling_grid).unwrap();
+                let weather_bin = DwdWeatherMeteoBin::new(weather_layer);
+                let data = weather_bin.create_bin_values();
+                let filename = format!(
+                    "{}WW_D2.meteobin",
+                    IconD2ChartBuilderHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                );
+                let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
+                let _ = file.write_all(&data);
+            });
     }
 }

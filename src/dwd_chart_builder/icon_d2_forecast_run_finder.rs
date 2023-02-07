@@ -3,6 +3,7 @@ use std::ops::Add;
 use chrono;
 use chrono::{Duration, Utc};
 use crate::dwd_files::icon_d2_file_ceiling::IconD2FileCeiling;
+use crate::dwd_files::icon_d2_file_clc::IconD2FileClc;
 
 use crate::dwd_files::icon_d2_file_clct_mod::IconD2FileClctMod;
 use crate::dwd_files::icon_d2_file_tot_prec::IconD2FileTotPrec;
@@ -71,7 +72,8 @@ impl IconD2ForecastRunFinder {
             IconD2FileWw::get_file_url(step),
             IconD2FileU10m::get_file_url(step),
             IconD2FileV10m::get_file_url(step),
-            IconD2FileVmax10m::get_file_url(step)
+            IconD2FileVmax10m::get_file_url(step),
+            IconD2FileClc::get_file_url(step, 65)
         ];
     }
 }

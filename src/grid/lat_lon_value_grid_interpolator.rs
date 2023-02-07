@@ -7,7 +7,7 @@ pub struct LatLonValueGridInterpolator;
 
 
 impl LatLonValueGridInterpolator {
-    pub fn interpolate<T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>>(
+    pub fn interpolate<T: Copy + PartialEq + Send + Sync + Mul<f32, Output = T> + Add<Output = T>>(
         value_grid: &LatLonValueGrid<T>,
         pos: &LatLon
     ) -> Option<T> {

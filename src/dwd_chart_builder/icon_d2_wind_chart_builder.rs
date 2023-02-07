@@ -21,34 +21,36 @@ const WIND_LAYER: &str = "wind";
 
 
 impl IconD2WindChartBuilder {
-    pub fn create_wind_charts(forecast_run: &DwdForecastRun) {
-        DwdForecastStep::get_step_range().into_par_iter().for_each(|step| {
-            info!("creating wind charts, time step {}", step);
+    pub fn create(forecast_run: &DwdForecastRun) {
+        DwdForecastStep::get_step_range()
+            .into_par_iter()
+            .for_each(|step| {
+                info!("creating wind charts, time step {}", step);
 
-            let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
+                let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
 
-            let wind_u_grid = IconD2FileU10m::read_grid_from_file(&fc_step).unwrap(); // TODO
-            let wind_v_grid = IconD2FileV10m::read_grid_from_file(&fc_step).unwrap();
-            let wind_v_max_grid = IconD2FileVmax10m::read_grid_from_file(&fc_step).unwrap();
+                let wind_u_grid = IconD2FileU10m::read_grid_from_file(&fc_step).unwrap(); // TODO
+                let wind_v_grid = IconD2FileV10m::read_grid_from_file(&fc_step).unwrap();
+                let wind_v_max_grid = IconD2FileVmax10m::read_grid_from_file(&fc_step).unwrap();
 
-            let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid)).unwrap();
+                let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid)).unwrap();
 
-            // map tiles
-            let _ = WindChartRenderer::render_map_tiles(
-                &layer,
-                (0, 7),
-                |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ChartBuilderHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
-            );
+                // map tiles
+                let _ = WindChartRenderer::render_map_tiles(
+                    &layer,
+                    (0, 7),
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ChartBuilderHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
+                );
 
-            // meteobin
-            let wind_bin = DwdWindMeteobin::new(layer);
-            let data = wind_bin.create_bin_values();
-            let filename = format!(
-                "{}WIND_D2.meteobin",
-                IconD2ChartBuilderHelper::get_output_path(&fc_step, WIND_LAYER),
-            );
-            let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
-            let _ = file.write_all(&data);
-        });
+                // meteobin
+                let wind_bin = DwdWindMeteobin::new(layer);
+                let data = wind_bin.create_bin_values();
+                let filename = format!(
+                    "{}WIND_D2.meteobin",
+                    IconD2ChartBuilderHelper::get_output_path(&fc_step, WIND_LAYER),
+                );
+                let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
+                let _ = file.write_all(&data);
+            });
     }
 }

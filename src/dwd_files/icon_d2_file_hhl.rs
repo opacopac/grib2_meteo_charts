@@ -18,7 +18,7 @@ impl IconD2FileHhl {
     }
 
 
-    pub fn read_grid_from_file_and_convert<T: Copy + PartialEq>(
+    pub fn read_grid_from_file_and_convert<T: Copy + PartialEq + Send + Sync>(
         forecast_run: &DwdForecastRun,
         level: usize,
         missing_value: T,
