@@ -29,7 +29,6 @@ impl IconD2VerticalCloudChartBuilder {
         info!("{} hhl grids found", hhl_grids.len());
 
         DwdForecastStep::get_step_range()
-            .into_par_iter()
             .for_each(|step| {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
@@ -44,6 +43,7 @@ impl IconD2VerticalCloudChartBuilder {
                 let path = IconD2ChartBuilderHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
                 let filename = format!("{}VERTICAL_CLOUDS_D2.meteobin", path);
 
+                info!("writing vertical clouds meteobin file {}", &filename);
                 fs::create_dir_all(&path).unwrap();
                 let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical clouds meteobin file {}", &filename)));
                 let _ = file.write_all(&data);
@@ -69,18 +69,17 @@ impl IconD2VerticalCloudChartBuilder {
 
 
     fn read_clc_grids(fc_step: &DwdForecastStep) -> Vec<LatLonValueGrid<u8>> {
-        let mut clc_grids = vec![];
-        for level in VERTICAL_LEVEL_RANGE {
-            info!("reading clc layers for level {}", level);
-            let clc_grid = IconD2FileClc::read_grid_from_file_and_convert(
-                &fc_step,
-                level as usize,
-                0,
-                |x| x as u8
-            ).unwrap();
-
-            clc_grids.push(clc_grid);
-        };
+        let clc_grids = VERTICAL_LEVEL_RANGE
+            .into_par_iter()
+            .map(|level| {
+                info!("reading clc layers for level {}", level);
+                return IconD2FileClc::read_grid_from_file_and_convert(
+                    &fc_step,
+                    level as usize,
+                    0,
+                    |x| x as u8
+                ).unwrap();
+            }).collect();
 
         return clc_grids;
     }
