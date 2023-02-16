@@ -1,14 +1,15 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_grid::LatLonGrid;
 
-pub struct LatLonValueGrid<T: Copy + PartialEq + Send + Sync> {
+pub struct LatLonValueGrid<T: GridValueType> {
     grid: LatLonGrid,
     values: Vec<T>,
     missing_value: T
 }
 
-impl <T: Copy + PartialEq + Send + Sync> LatLonValueGrid<T> {
+impl <T: GridValueType> LatLonValueGrid<T> {
     pub fn new(
         values: Vec<T>,
         missing_value: T,

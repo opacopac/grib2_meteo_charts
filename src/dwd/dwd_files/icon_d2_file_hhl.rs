@@ -2,6 +2,7 @@ use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_files::icon_d2_file::IconD2File;
 use crate::dwd::dwd_files::icon_d2_file_to_grid_converter::IconD2FileToGridConverter;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconD2FileHhl;
@@ -18,7 +19,7 @@ impl IconD2FileHhl {
     }
 
 
-    pub fn read_grid_from_file_and_convert<T: Copy + PartialEq + Send + Sync>(
+    pub fn read_grid_from_file_and_convert<T: GridValueType>(
         forecast_run: &DwdForecastRun,
         level: usize,
         missing_value: T,

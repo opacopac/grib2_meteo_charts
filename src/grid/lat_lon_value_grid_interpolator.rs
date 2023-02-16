@@ -1,13 +1,14 @@
 use std::ops::{Add, Mul};
 
 use crate::geo::lat_lon::LatLon;
+use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct LatLonValueGridInterpolator;
 
 
 impl LatLonValueGridInterpolator {
-    pub fn interpolate<T: Copy + PartialEq + Send + Sync + Mul<f32, Output = T> + Add<Output = T>>(
+    pub fn interpolate<T: GridValueType + Mul<f32, Output = T> + Add<Output = T>>(
         value_grid: &LatLonValueGrid<T>,
         pos: &LatLon
     ) -> Option<T> {
