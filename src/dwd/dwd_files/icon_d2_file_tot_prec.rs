@@ -1,7 +1,7 @@
-use crate::dwd_files::icon_d2_file::IconD2File;
-use crate::dwd_files::icon_d2_file_to_grid_converter::IconD2FileToGridConverter;
-use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
-use crate::grib2::common::grib2_error::Grib2Error;
+use crate::dwd::common::dwd_error::DwdError;
+use crate::dwd::dwd_files::icon_d2_file::IconD2File;
+use crate::dwd::dwd_files::icon_d2_file_to_grid_converter::IconD2FileToGridConverter;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconD2FileTotPrec;
@@ -11,7 +11,7 @@ pub const DWD_ICON_D2_TOT_PREC_FILE_SUFFIX: &str = "_2d_tot_prec.grib2.bz2";
 
 
 impl IconD2FileTotPrec {
-    pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, DwdError> {
         let url = Self::get_file_url(&fc_step);
 
         return IconD2FileToGridConverter::read_grid_from_file(&url);
@@ -32,10 +32,10 @@ impl IconD2FileTotPrec {
 mod tests {
     use chrono::NaiveDate;
 
-    use crate::dwd_files::icon_d2_file_tot_prec::IconD2FileTotPrec;
-    use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
-    use crate::dwd_forecast_runs::dwd_model_type::DwdModelType;
-    use crate::dwd_forecast_runs::icon_d2_forecast_run_name::IconD2ForecastRunName;
+    use crate::dwd::dwd_files::icon_d2_file_tot_prec::IconD2FileTotPrec;
+    use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+    use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
+    use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 
     #[test]
     fn it_creates_the_correct_file_url() {

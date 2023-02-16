@@ -6,6 +6,5 @@ pub mod geo;
 pub mod grid;
 pub mod netcdf;
 pub mod metobin;
-pub mod dwd_files;
-pub mod dwd_chart_builder;
-pub mod dwd_forecast_runs;
+pub mod dwd_forecast_renderer;
+pub mod dwd;

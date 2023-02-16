@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
-use crate::dwd_forecast_runs::dwd_model_type::DwdModelType;
 
-use crate::dwd_forecast_runs::icon_d2_forecast_run_name::IconD2ForecastRunName;
+use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
+use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 
 #[derive(Debug)]
 pub struct DwdForecastRun {

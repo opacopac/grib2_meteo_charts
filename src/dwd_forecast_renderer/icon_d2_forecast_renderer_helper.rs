@@ -1,16 +1,16 @@
 use std::fs;
 
-use crate::dwd_files::icon_d2_file::DWD_DATE_FORMAT;
-use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
+use crate::dwd::dwd_files::icon_d2_file::DWD_DATE_FORMAT;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
 
-pub struct IconD2ChartBuilderHelper;
+pub struct IconD2ForecastRendererHelper;
 
 
 const FORECAST_BASE_DIR: &str = "./output/icon-d2/";
 
 
-impl IconD2ChartBuilderHelper {
+impl IconD2ForecastRendererHelper {
     pub fn save_tile_step(
         tile: &Drawable,
         zoom: u32,

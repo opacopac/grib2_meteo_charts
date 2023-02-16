@@ -5,22 +5,22 @@ use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
 use crate::chart::wind_chart_renderer::WindChartRenderer;
-use crate::dwd_chart_builder::icon_d2_chart_builder_helper::IconD2ChartBuilderHelper;
-use crate::dwd_files::icon_d2_file_u_10m::IconD2FileU10m;
-use crate::dwd_files::icon_d2_file_v_10m::IconD2FileV10m;
-use crate::dwd_files::icon_d2_file_vmax_10m::IconD2FileVmax10m;
-use crate::dwd_forecast_runs::dwd_forecast_run::DwdForecastRun;
-use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
+use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
+use crate::dwd::dwd_files::icon_d2_file_u_10m::IconD2FileU10m;
+use crate::dwd::dwd_files::icon_d2_file_v_10m::IconD2FileV10m;
+use crate::dwd::dwd_files::icon_d2_file_vmax_10m::IconD2FileVmax10m;
+use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_layer::dwd_wind_layer::DwdWindLayer;
 use crate::imaging::drawable::Drawable;
 use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
 
-pub struct IconD2WindChartBuilder;
+pub struct IconD2WindForecastRenderer;
 
 const WIND_LAYER: &str = "wind";
 
 
-impl IconD2WindChartBuilder {
+impl IconD2WindForecastRenderer {
     pub fn create(forecast_run: &DwdForecastRun) {
         DwdForecastStep::get_step_range()
             .into_par_iter()
@@ -39,7 +39,7 @@ impl IconD2WindChartBuilder {
                 let _ = WindChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
-                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ChartBuilderHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
                 );
 
                 // meteobin
@@ -47,7 +47,7 @@ impl IconD2WindChartBuilder {
                 let data = wind_bin.create_bin_values();
                 let filename = format!(
                     "{}WIND_D2.meteobin",
-                    IconD2ChartBuilderHelper::get_output_path(&fc_step, WIND_LAYER),
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WIND_LAYER),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
                 let _ = file.write_all(&data);

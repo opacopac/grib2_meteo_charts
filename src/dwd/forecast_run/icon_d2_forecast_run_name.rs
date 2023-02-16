@@ -51,7 +51,7 @@ impl IconD2ForecastRunName {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd_forecast_runs::icon_d2_forecast_run_name::IconD2ForecastRunName;
+    use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 
     #[test]
     fn it_gets_the_correct_name() {

@@ -1,4 +1,4 @@
-use crate::dwd_forecast_runs::dwd_model_type::DwdModelType;
+use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
 
 pub struct DwdModelConfig {
     pub model: DwdModelType,

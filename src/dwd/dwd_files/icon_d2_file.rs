@@ -1,5 +1,5 @@
-use crate::dwd_forecast_runs::dwd_forecast_run::DwdForecastRun;
-use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
+use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 
 pub struct IconD2File;
 
@@ -82,12 +82,12 @@ impl IconD2File {
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDate;
-    use crate::dwd_files::icon_d2_file::IconD2File;
-    use crate::dwd_forecast_runs::dwd_forecast_run::DwdForecastRun;
-    use crate::dwd_forecast_runs::dwd_model_type::DwdModelType;
-    use crate::dwd_forecast_runs::icon_d2_forecast_run_name::IconD2ForecastRunName;
-    use crate::dwd_forecast_runs::dwd_forecast_step::DwdForecastStep;
 
+    use crate::dwd::dwd_files::icon_d2_file::IconD2File;
+    use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+    use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+    use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
+    use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 
     #[test]
     fn it_creates_the_correct_single_level_file_url() {
