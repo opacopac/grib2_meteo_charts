@@ -5,12 +5,14 @@ use std::ops::RangeInclusive;
 
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+use crate::dwd::common::dwd_error::DwdError;
 
 use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
 use crate::dwd::dwd_files::icon_d2_file_clc::IconD2FileClc;
 use crate::dwd::dwd_files::icon_d2_file_hhl::IconD2FileHhl;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd_layer::dwd_vertical_cloud_layer::DwdVerticalCloudLayer;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::metobin::dwd_vertical_cloud_metobin::DwdVerticalCloudMeteobin;
@@ -23,17 +25,17 @@ const FEET_PER_M: f32 = 3.28084;
 
 
 impl IconD2VerticalCloudForecastRenderer {
-    pub fn create(forecast_run: &DwdForecastRun) {
+    pub fn create(forecast_run: &DwdForecastRun) -> Result<(), ForecastRendererError> {
         info!("reading hhl grids...");
-        let hhl_grids = Self::read_hhl_grids(forecast_run);
+        let hhl_grids = Self::read_hhl_grids(forecast_run)?;
         info!("{} hhl grids found", hhl_grids.len());
 
         DwdForecastStep::get_step_range()
-            .for_each(|step| {
+            .try_for_each(|step| {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 info!("reading clc grids...");
-                let clc_grids = Self::read_clc_grids(&fc_step);
+                let clc_grids = Self::read_clc_grids(&fc_step)?;
                 info!("{} clc grids found", clc_grids.len());
                 let vertical_cloud_layer = DwdVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
@@ -44,14 +46,16 @@ impl IconD2VerticalCloudForecastRenderer {
                 let filename = format!("{}VERTICAL_CLOUDS_D2.meteobin", path);
 
                 info!("writing vertical clouds meteobin file {}", &filename);
-                fs::create_dir_all(&path).unwrap();
+                fs::create_dir_all(&path)?;
                 let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical clouds meteobin file {}", &filename)));
                 let _ = file.write_all(&data);
-            });
+
+                Ok(())
+            })
     }
 
 
-    fn read_hhl_grids(forecast_run: &DwdForecastRun) -> Vec<LatLonValueGrid<u8>> {
+    fn read_hhl_grids(forecast_run: &DwdForecastRun) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
         let hhl_grids = VERTICAL_LEVEL_RANGE
             .into_par_iter()
             .map(|level| {
@@ -61,14 +65,14 @@ impl IconD2VerticalCloudForecastRenderer {
                     level as usize,
                     0,
                     |x| (x * FEET_PER_M / 100.0) as u8
-                ).unwrap();
+                );
             }).collect();
 
         return hhl_grids;
     }
 
 
-    fn read_clc_grids(fc_step: &DwdForecastStep) -> Vec<LatLonValueGrid<u8>> {
+    fn read_clc_grids(fc_step: &DwdForecastStep) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
         let clc_grids = VERTICAL_LEVEL_RANGE
             .into_par_iter()
             .map(|level| {
@@ -78,7 +82,7 @@ impl IconD2VerticalCloudForecastRenderer {
                     level as usize,
                     0,
                     |x| x as u8
-                ).unwrap();
+                );
             }).collect();
 
         return clc_grids;
