@@ -46,11 +46,12 @@ impl Grib2Document {
         let raw_data_points = &self.section7.data_points;
 
         if raw_data_points.is_empty() {
-            return Err(Grib2Error::InvalidData("section 7 contains no data points".to_string()))
+            return Ok(vec![missing_value; self.section3.number_of_datapoints as usize]);
         }
 
         let mut data_points: Vec<T> = vec![];
         let mut j = 0;
+
         for i in 0..self.section3.number_of_datapoints {
             if bitmap.is_empty() || (bitmap[(i / 8) as usize] & (0b10000000 >> (i % 8)) > 0) {
                 let raw_value = raw_data_points[j] as f32;
