@@ -1,9 +1,5 @@
-use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_files::icon_d2_file::IconD2File;
-use crate::dwd::dwd_files::icon_d2_file_to_grid_converter::IconD2FileToGridConverter;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-use crate::grid::grid_value_type::GridValueType;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconD2FileClc;
 
@@ -12,25 +8,6 @@ const DWD_ICON_D2_CLC_FILE_SUFFIX: &str = "_clc.grib2.bz2";
 
 
 impl IconD2FileClc {
-    pub fn read_grid_from_file(fc_step: &DwdForecastStep, level: usize) -> Result<LatLonValueGrid<f32>, DwdError> {
-        let url = Self::get_file_url(&fc_step, level);
-
-        return IconD2FileToGridConverter::read_grid_from_file(&url);
-    }
-
-
-    pub fn read_grid_from_file_and_convert<T: GridValueType>(
-        fc_step: &DwdForecastStep,
-        level: usize,
-        missing_value: T,
-        transform_fn: fn(f32) -> T
-    ) -> Result<LatLonValueGrid<T>, DwdError> {
-        let url = Self::get_file_url(&fc_step, level);
-
-        return IconD2FileToGridConverter::read_grid_from_file_and_convert(&url, missing_value, transform_fn);
-    }
-
-
     pub fn get_file_url(forecast_step: &DwdForecastStep, level: usize) -> String {
         return IconD2File::get_multi_level_file_url(
             DWD_ICON_D2_CLC_FILE_PREFIX,

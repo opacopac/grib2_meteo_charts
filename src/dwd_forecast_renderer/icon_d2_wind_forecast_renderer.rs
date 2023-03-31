@@ -5,9 +5,9 @@ use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
 use crate::chart::wind_chart_renderer::WindChartRenderer;
-use crate::dwd::dwd_files::icon_d2_file_u_10m::IconD2FileU10m;
-use crate::dwd::dwd_files::icon_d2_file_v_10m::IconD2FileV10m;
-use crate::dwd::dwd_files::icon_d2_file_vmax_10m::IconD2FileVmax10m;
+use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
@@ -30,9 +30,9 @@ impl IconD2WindForecastRenderer {
 
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
 
-                let wind_u_grid = IconD2FileU10m::read_grid_from_file(&fc_step)?;
-                let wind_v_grid = IconD2FileV10m::read_grid_from_file(&fc_step)?;
-                let wind_v_max_grid = IconD2FileVmax10m::read_grid_from_file(&fc_step)?;
+                let wind_u_grid = IconD2U10mReader::read_grid_from_file(&fc_step)?;
+                let wind_v_grid = IconD2V10mReader::read_grid_from_file(&fc_step)?;
+                let wind_v_max_grid = IconD2Vmax10mReader::read_grid_from_file(&fc_step)?;
 
                 let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid))?;
 

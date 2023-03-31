@@ -14,13 +14,14 @@ use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2Foreca
 use crate::dwd_layer::dwd_vertical_cloud_layer::DwdVerticalCloudLayer;
 use crate::metobin::dwd_vertical_cloud_metobin::DwdVerticalCloudMeteobin;
 
-pub struct IconD2VerticalCloudForecastRenderer;
+pub struct IconD2VerticalWindForecastRenderer;
 
-const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
+const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_wind";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
-impl IconD2VerticalCloudForecastRenderer {
+impl IconD2VerticalWindForecastRenderer {
+    // TODO: unfinished
     pub fn create(forecast_run: &DwdForecastRun) -> Result<(), ForecastRendererError> {
         let hhl_grids = IconD2HhlReader::read_hhl_grids(forecast_run, VERTICAL_LEVEL_RANGE)?;
 
@@ -28,18 +29,20 @@ impl IconD2VerticalCloudForecastRenderer {
             .try_for_each(|step| {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
+                /*let u_grids = IconD2UReader::read_grid_from_file_and_convert(&fc_step, VERTICAL_LEVEL_RANGE)?;
+                let v_grids = IconD2VReader::read_grid_from_file_and_convert(&fc_step, VERTICAL_LEVEL_RANGE)?;*/
                 let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
                 let vertical_cloud_layer = DwdVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let vert_cloud_bin = DwdVerticalCloudMeteobin::new(vertical_cloud_layer);
-                let data = vert_cloud_bin.create_bin_values();
+                let vert_wind_bin = DwdVerticalCloudMeteobin::new(vertical_cloud_layer);
+                let data = vert_wind_bin.create_bin_values();
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
-                let filename = format!("{}VERTICAL_CLOUDS_D2.meteobin", path);
+                let filename = format!("{}VERTICAL_WIND_D2.meteobin", path);
 
-                info!("writing vertical clouds meteobin file {}", &filename);
+                info!("writing vertical wind meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;
-                let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical clouds meteobin file {}", &filename)));
+                let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical wind meteobin file {}", &filename)));
                 let _ = file.write_all(&data);
 
                 Ok(())

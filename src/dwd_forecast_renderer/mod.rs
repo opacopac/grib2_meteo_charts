@@ -1,7 +1,8 @@
+pub mod forecast_renderer_error;
 pub mod icon_d2_forecast_run_finder;
 pub mod icon_d2_forecast_renderer;
 pub mod icon_d2_cloud_precip_forecast_renderer;
 pub mod icon_d2_wind_forecast_renderer;
 pub mod icon_d2_forecast_renderer_helper;
 pub mod icon_d2_vertical_cloud_forecast_renderer;
-pub mod forecast_renderer_error;
+pub mod icon_d2_vertical_wind_forecast_renderer;
