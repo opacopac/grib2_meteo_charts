@@ -7,6 +7,7 @@ use log::info;
 
 use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
 use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
+use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
@@ -29,8 +30,8 @@ impl IconD2VerticalWindForecastRenderer {
             .try_for_each(|step| {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
-                /*let u_grids = IconD2UReader::read_grid_from_file_and_convert(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let v_grids = IconD2VReader::read_grid_from_file_and_convert(&fc_step, VERTICAL_LEVEL_RANGE)?;*/
+                let u_grids = IconD2UReader::read_u_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
+                let v_grids = IconD2UReader::read_u_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
                 let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
                 let vertical_cloud_layer = DwdVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
