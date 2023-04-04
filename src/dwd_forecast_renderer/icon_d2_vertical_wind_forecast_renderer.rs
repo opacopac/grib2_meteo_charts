@@ -5,24 +5,22 @@ use std::ops::RangeInclusive;
 
 use log::info;
 
-use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
 use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::dwd_layer::dwd_vertical_cloud_layer::DwdVerticalCloudLayer;
-use crate::metobin::dwd_vertical_cloud_metobin::DwdVerticalCloudMeteobin;
+use crate::dwd_layer::dwd_vertical_wind_layer::DwdVerticalWindLayer;
+use crate::metobin::dwd_vertical_wind_metobin::DwdVerticalWindMeteobin;
 
 pub struct IconD2VerticalWindForecastRenderer;
 
-const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_wind";
+const VERTICAL_WIND_SUB_DIR: &str = "vertical_wind";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
 impl IconD2VerticalWindForecastRenderer {
-    // TODO: unfinished
     pub fn create(forecast_run: &DwdForecastRun) -> Result<(), ForecastRendererError> {
         let hhl_grids = IconD2HhlReader::read_hhl_grids(forecast_run, VERTICAL_LEVEL_RANGE)?;
 
@@ -32,13 +30,12 @@ impl IconD2VerticalWindForecastRenderer {
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let u_grids = IconD2UReader::read_u_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
                 let v_grids = IconD2UReader::read_u_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let vertical_cloud_layer = DwdVerticalCloudLayer::new(&hhl_grids, clc_grids);
+                let vertical_wind_layer = DwdVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
 
                 // meteobin
-                let vert_wind_bin = DwdVerticalCloudMeteobin::new(vertical_cloud_layer);
+                let vert_wind_bin = DwdVerticalWindMeteobin::new(vertical_wind_layer);
                 let data = vert_wind_bin.create_bin_values();
-                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
+                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_WIND_SUB_DIR);
                 let filename = format!("{}VERTICAL_WIND_D2.meteobin", path);
 
                 info!("writing vertical wind meteobin file {}", &filename);

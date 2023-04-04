@@ -45,7 +45,7 @@ impl <'a> DwdVerticalWindLayer<'a> {
     }
 
 
-    pub fn get_clc_value(&self, x: usize, y: usize, level: usize) -> Option<(u8, u8)> {
+    pub fn get_u_v_values(&self, x: usize, y: usize, level: usize) -> Option<(u8, u8)> {
         let u_opt = self.u_grids[level].get_value_by_xy(x, y);
         let v_opt = self.v_grids[level].get_value_by_xy(x, y);
         return if u_opt.is_none() || v_opt.is_none() {
