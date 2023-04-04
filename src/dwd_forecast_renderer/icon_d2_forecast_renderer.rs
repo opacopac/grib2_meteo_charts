@@ -15,9 +15,9 @@ impl IconD2ForecastRenderer {
         let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
         info!("latest run found: {:?}", &latest_run);
 
-        /*IconD2CloudPrecipRenderer::create(&latest_run)?;
+        IconD2CloudPrecipRenderer::create(&latest_run)?;
         IconD2WindForecastRenderer::create(&latest_run)?;
-        IconD2VerticalCloudForecastRenderer::create(&latest_run)?;*/
+        IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
         IconD2VerticalWindForecastRenderer::create(&latest_run)?;
 
         Ok(())
