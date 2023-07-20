@@ -16,6 +16,7 @@ use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2Foreca
 use crate::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
 use crate::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
 use crate::imaging::drawable::Drawable;
+use crate::metobin::dwd_precip_metobin::DwdPrecipMeteoBin;
 use crate::metobin::dwd_weather_metobin::DwdWeatherMeteoBin;
 
 pub struct IconD2CloudPrecipRenderer;
@@ -50,8 +51,18 @@ impl IconD2CloudPrecipRenderer {
                     |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step)
                 );
 
+                // precip meteobin
+                let precip_bin = DwdPrecipMeteoBin::new(layer);
+                let data = precip_bin.create_bin_values();
+                let filename = format!(
+                    "{}PRECIP_D2.meteobin",
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                );
+                let mut file = BufWriter::new(File::create(&filename).expect("Unable to create file"));
+                let _ = file.write_all(&data);
 
-                // meteobin
+
+                // ww meteobin
                 let ww_grid = IconD2WwReader::read_grid_from_file(&fc_step)?;
                 let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
 
