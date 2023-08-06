@@ -6,6 +6,7 @@ use chrono::{Duration, Utc};
 use crate::dwd::dwd_files::icon_d2_file_ceiling::IconD2FileCeiling;
 use crate::dwd::dwd_files::icon_d2_file_clc::IconD2FileClc;
 use crate::dwd::dwd_files::icon_d2_file_clct_mod::IconD2FileClctMod;
+use crate::dwd::dwd_files::icon_d2_file_t_2m::IconD2FileT2m;
 use crate::dwd::dwd_files::icon_d2_file_tot_prec::IconD2FileTotPrec;
 use crate::dwd::dwd_files::icon_d2_file_u::IconD2FileU;
 use crate::dwd::dwd_files::icon_d2_file_u_10m::IconD2FileU10m;
@@ -74,6 +75,7 @@ impl IconD2ForecastRunFinder {
             IconD2FileU10m::get_file_url(step),
             IconD2FileV10m::get_file_url(step),
             IconD2FileVmax10m::get_file_url(step),
+            IconD2FileT2m::get_file_url(step),
             IconD2FileClc::get_file_url(step, 65),
             IconD2FileU::get_file_url(step, 65)
         ];
