@@ -19,25 +19,25 @@ impl IconD2ForecastRenderer {
         let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
         info!("latest run found: {:?}", &latest_run);
 
-        /*info!("rendering cloud & precipitation forecast...");
+        info!("rendering cloud & precipitation forecast...");
         IconD2CloudPrecipRenderer::create(&latest_run)?;
         info!("finished rendering cloud & precipitation forecast");
 
         info!("rendering wind forecast...");
-        //IconD2WindForecastRenderer::create(&latest_run)?;
-        info!("finished rendering wind forecast");*/
+        IconD2WindForecastRenderer::create(&latest_run)?;
+        info!("finished rendering wind forecast");
 
         info!("rendering temperature forecast...");
         IconD2TempForecastRenderer::create(&latest_run)?;
         info!("finished rendering temperature forecast");
 
-        /*info!("rendering vertical cloud forecast...");
+        info!("rendering vertical cloud forecast...");
         IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
         info!("finished rendering vertical cloud forecast");
 
         info!("rendering vertical wind forecast...");
         IconD2VerticalWindForecastRenderer::create(&latest_run)?;
-        info!("finished rendering vertical cloud forecast");*/
+        info!("finished rendering vertical cloud forecast");
 
         Ok(())
     }
