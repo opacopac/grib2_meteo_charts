@@ -11,3 +11,4 @@ pub mod icon_d2_file_clc;
 pub mod icon_d2_file_hhl;
 pub mod icon_d2_file_u;
 pub mod icon_d2_file_v;
+pub mod icon_d2_file_t_2m;
