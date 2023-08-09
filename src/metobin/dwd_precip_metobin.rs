@@ -32,8 +32,31 @@ impl DwdPrecipMeteoBin {
 
     fn calc_precip_value(value_cloud_precip: Option<(f32, f32)>) -> u8 {
         return match value_cloud_precip {
-            Some(val) => val.1.ceil() as u8,
+            Some(val) => {
+                if val.1 >= 0.2 && val.1 < 0.5 {
+                    return 1; // 0.5 * 2
+                } else {
+                    return (val.1 * 2.0).round() as u8
+                }
+            }
             None => Self::NONE_BIN_VALUE
         };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::metobin::dwd_precip_metobin::DwdPrecipMeteoBin;
+
+    #[test]
+    fn it_calculates_the_correct_precip_meteobin_values() {
+        assert_eq!(0, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.0))));
+        assert_eq!(2, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 1.0))));
+        assert_eq!(1, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.2))));
+        assert_eq!(1, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.5))));
+        assert_eq!(1, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.74))));
+        assert_eq!(2, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.75))));
+        assert_eq!(72, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 35.8))));
+        assert_eq!(0xFF, DwdPrecipMeteoBin::calc_precip_value(None));
     }
 }
