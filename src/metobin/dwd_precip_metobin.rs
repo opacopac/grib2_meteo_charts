@@ -57,6 +57,7 @@ mod tests {
         assert_eq!(1, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.74))));
         assert_eq!(2, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 0.75))));
         assert_eq!(72, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 35.8))));
+        assert_eq!(254, DwdPrecipMeteoBin::calc_precip_value(Some((0.0, 127.0))));
         assert_eq!(0xFF, DwdPrecipMeteoBin::calc_precip_value(None));
     }
 }
