@@ -6,6 +6,7 @@ use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section4::product_definition_template::ProductDefinitionTemplate;
 use crate::grib2::section4::section4::Section4;
 use crate::grib2::section4::section4_template_4_0_reader::Section4Template4_0Reader;
+use crate::grib2::section4::section4_template_4_1_reader::Section4Template4_1Reader;
 use crate::grib2::section4::section4_template_4_8_reader::Section4Template4_8Reader;
 
 pub struct Section4Reader;
@@ -37,6 +38,10 @@ impl Section4Reader {
             0 => {
                 let tpl = Section4Template4_0Reader::read(reader)?;
                 ProductDefinitionTemplate::Template4_0(tpl)
+            },
+            1 => {
+                let tpl = Section4Template4_1Reader::read(reader)?;
+                ProductDefinitionTemplate::Template4_1(tpl)
             },
             8 => {
                 let tpl = Section4Template4_8Reader::read(reader)?;
