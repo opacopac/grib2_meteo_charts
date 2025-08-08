@@ -16,6 +16,7 @@ impl MeteoParameterCategoryReader {
             2 => MeteoParameterCategory::Momentum,
             3 => MeteoParameterCategory::Mass,
             6 => MeteoParameterCategory::Cloud,
+            191 => MeteoParameterCategory::Miscellaneous,
             255 => MeteoParameterCategory::Missing,
             _ => MeteoParameterCategory::Unknown(cat_nr)
         };

@@ -15,7 +15,7 @@ pub struct IconD2FileToGridConverter;
 impl IconD2FileToGridConverter {
     pub fn read_grid_from_file(file_url: &str) -> Result<LatLonValueGrid<f32>, DwdError> {
         let mut reader = Self::get_file_reader(&file_url);
-        let doc = Grib2DocumentReader::read_stream(&mut reader)?;
+        let doc = Grib2DocumentReader::read_single_doc_from_stream(&mut reader)?;
         let grid = RegularGridConverter::create(&doc, -1.0)?;
 
         return Ok(grid);
@@ -28,7 +28,7 @@ impl IconD2FileToGridConverter {
         transform_fn: fn(f32) -> T
     ) -> Result<LatLonValueGrid<T>, DwdError> {
         let mut reader = Self::get_file_reader(&file_url);
-        let doc = Grib2DocumentReader::read_stream(&mut reader)?;
+        let doc = Grib2DocumentReader::read_single_doc_from_stream(&mut reader)?;
         let grid = RegularGridConverter::create_and_transform(&doc, missing_value, transform_fn)?;
 
         return Ok(grid);

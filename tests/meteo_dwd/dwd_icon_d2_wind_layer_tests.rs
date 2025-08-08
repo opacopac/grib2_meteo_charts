@@ -9,8 +9,8 @@ pub const WIND_V_EU_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-
 
 #[test]
 fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
-    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
+    let doc_u = Grib2DocumentReader::read_single_doc_from_file(WIND_U_TEST_FILE).unwrap();
+    let doc_v = Grib2DocumentReader::read_single_doc_from_file(WIND_V_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
@@ -33,8 +33,8 @@ fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
 
 #[test]
 fn it_returns_an_error_when_the_grid_sizes_dont_match() {
-    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_file(WIND_V_EU_TEST_FILE).unwrap();
+    let doc_u = Grib2DocumentReader::read_single_doc_from_file(WIND_U_TEST_FILE).unwrap();
+    let doc_v = Grib2DocumentReader::read_single_doc_from_file(WIND_V_EU_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 

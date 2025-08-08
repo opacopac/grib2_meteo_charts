@@ -8,8 +8,8 @@ pub const WIND_V_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-la
 
 
 pub fn read_test_wind_layer() -> DwdWindLayer {
-    let doc_u = Grib2DocumentReader::read_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_file(WIND_V_TEST_FILE).unwrap();
+    let doc_u = Grib2DocumentReader::read_single_doc_from_file(WIND_U_TEST_FILE).unwrap();
+    let doc_v = Grib2DocumentReader::read_single_doc_from_file(WIND_V_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
     let layer = DwdWindLayer::new(grid_u, grid_v, None).unwrap();

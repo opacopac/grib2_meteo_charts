@@ -18,6 +18,6 @@ impl Section4Template4_1Reader {
 
         let tpl_4_0 = ProductDefinitionTemplate4_1::new(parameter_category, parameter_number);
 
-        return Ok(tpl_4_0);
+        Ok(tpl_4_0)
     }
 }

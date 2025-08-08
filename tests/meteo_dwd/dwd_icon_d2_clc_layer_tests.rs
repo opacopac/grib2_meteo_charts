@@ -9,7 +9,7 @@ pub const CLC_TEST_FILE_NO_DATAPOINTS: &str = "./tests/resources/icon-d2_germany
 
 #[test]
 fn it_successfully_reads_a_d2_clc_test_file() {
-    let doc = Grib2DocumentReader::read_file(CLC_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_single_doc_from_file(CLC_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let layer = DwdCloudLayer::new(grid);
 
@@ -25,7 +25,7 @@ fn it_successfully_reads_a_d2_clc_test_file() {
 
 #[test]
 fn it_successfully_reads_a_d2_clc_test_file_without_datapoints() {
-    let doc = Grib2DocumentReader::read_file(CLC_TEST_FILE_NO_DATAPOINTS).unwrap();
+    let doc = Grib2DocumentReader::read_single_doc_from_file(CLC_TEST_FILE_NO_DATAPOINTS).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let layer = DwdCloudLayer::new(grid);
 

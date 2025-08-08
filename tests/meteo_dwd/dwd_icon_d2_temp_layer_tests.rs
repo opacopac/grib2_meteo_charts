@@ -7,7 +7,7 @@ pub const TEMP_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-
 
 #[test]
 fn it_successfully_reads_a_temperature_test_file() {
-    let doc = Grib2DocumentReader::read_file(TEMP_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_single_doc_from_file(TEMP_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let _layer = DwdPrecipLayer::new(grid);
 

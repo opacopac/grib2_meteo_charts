@@ -4,6 +4,7 @@ pub enum MeteoParameterCategory {
     Momentum,
     Mass,
     Cloud,
+    Miscellaneous,
     Missing,
     Unknown(u8),
 }

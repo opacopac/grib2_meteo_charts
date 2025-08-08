@@ -8,7 +8,7 @@ pub const CLCT_TEST_FILE: &str = "./tests/resources/icon_global_icosahedral_sing
 
 #[test]
 fn it_successfully_reads_an_icon_global_clct_test_file() {
-    let grib2_doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
+    let grib2_doc = Grib2DocumentReader::read_single_doc_from_file(CLCT_TEST_FILE).unwrap();
     let netcdf_doc = NetCdfDocumentReader::read_file(CLCT_TEST_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME]).unwrap(); // TODO
     let grid = UnstructuredGridConverter::create(&grib2_doc, -1.0, &netcdf_doc).unwrap();
     let _layer = DwdCloudLayer::new(grid);

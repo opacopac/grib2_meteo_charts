@@ -10,7 +10,7 @@ pub const HHL_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-l
 
 #[test]
 fn it_successfully_reads_a_hhl_test_file() {
-    let doc = Grib2DocumentReader::read_file(HHL_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_single_doc_from_file(HHL_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
     let layer = HhlLayer::new(grid);
 

@@ -22,7 +22,7 @@ impl Section4Template4_0Reader {
             parameter_number,
         );
 
-        return Ok(tpl_4_0);
+        Ok(tpl_4_0)
     }
 }
 

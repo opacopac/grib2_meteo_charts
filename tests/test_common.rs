@@ -14,5 +14,5 @@ pub const CLCT_ICON_GLOBAL_TEST_FILE: &str = "./tests/resources/icon_global_icos
 
 
 pub fn read_icon_d2_test_document_result() -> Result<Grib2Document, Grib2Error> {
-    return Grib2DocumentReader::read_file(CLCT_ICON_D2_TEST_FILE);
+    return Grib2DocumentReader::read_single_doc_from_file(CLCT_ICON_D2_TEST_FILE);
 }

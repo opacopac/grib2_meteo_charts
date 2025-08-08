@@ -8,7 +8,7 @@ pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-lat-l
 
 #[test]
 fn it_successfully_reads_an_icon_eu_clct_test_file() {
-    let doc = Grib2DocumentReader::read_file(CLCT_TEST_FILE).unwrap();
+    let doc = Grib2DocumentReader::read_single_doc_from_file(CLCT_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
 
     match doc.section3.grid_definition_template {
