@@ -39,7 +39,7 @@ impl Grib2DocumentReader {
             // Check if we have reached the end of the file
             let mut buf = [0; 1];
             let peeked_bytes = reader.peek(&mut buf).unwrap_or(0);
-            if (peeked_bytes == 0) {
+            if peeked_bytes == 0 {
                 break;
             }
         }
@@ -70,6 +70,6 @@ impl Grib2DocumentReader {
             section8,
         );
 
-        return Ok(document);
+        Ok(document)
     }
 }
