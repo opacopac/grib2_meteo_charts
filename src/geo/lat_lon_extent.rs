@@ -46,6 +46,31 @@ impl LatLonExtent {
         return point.lat >= self.min_coord.lat && point.lat < self.max_coord.lat &&
             point.lon >= self.min_coord.lon && point.lon < self.max_coord.lon;
     }
+
+
+    pub fn calc_min_bounding_extent(coordinates: &Vec<LatLon>) -> LatLonExtent {
+        let mut min_lat = LatLon::MAX_LAT;
+        let mut max_lat = LatLon::MIN_LAT;
+        let mut min_lon = LatLon::MAX_LON;
+        let mut max_lon = LatLon::MIN_LON;
+
+        for coord in coordinates {
+            if coord.lat < min_lat {
+                min_lat = coord.lat;
+            }
+            if coord.lat > max_lat {
+                max_lat = coord.lat;
+            }
+            if coord.lon < min_lon {
+                min_lon = coord.lon;
+            }
+            if coord.lon > max_lon {
+                max_lon = coord.lon;
+            }
+        }
+
+        LatLonExtent::new(LatLon::new(min_lat, min_lon), LatLon::new(max_lat, max_lon))
+    }
 }
 
 
@@ -150,5 +175,23 @@ mod tests {
 
         assert!(is_inside1);
         assert!(!is_inside2);
+    }
+
+
+    #[test]
+    fn it_calculates_min_bounding_extent() {
+        // given
+        let coordinates = vec![
+            LatLon::new(40.0, 7.0),
+            LatLon::new(50.0, 6.0),
+            LatLon::new(45.0, 9.0),
+        ];
+
+        // when
+        let extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
+
+        // then
+        assert_eq!(LatLon::new(40.0, 6.0), extent.min_coord);
+        assert_eq!(LatLon::new(50.0, 9.0), extent.max_coord);
     }
 }
