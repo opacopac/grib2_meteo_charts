@@ -11,60 +11,136 @@ use crate::netcdf::document::netcdf_document::NetCdfDocument;
 pub static CLAT_VAR_NAME: &str = "clat";
 pub static CLON_VAR_NAME: &str = "clon";
 
-
 pub struct UnstructuredGridConverter;
-
 
 impl UnstructuredGridConverter {
     const WIDTH_HEIGHT: usize = 4096;
     const POW: f32 = Self::WIDTH_HEIGHT as f32;
     const JUMP_FLOOD_1ST_STEP_SIZE: usize = 8;
 
-    pub fn create(grib2_doc: &Grib2Document, missing_value: f32, netcdf_doc: &NetCdfDocument) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    pub fn create(
+        grib2_doc: &Grib2Document,
+        missing_value: f32,
+        netcdf_doc: &NetCdfDocument,
+    ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
-        let (clon_values, clat_values) = Self::get_clat_clon_values(netcdf_doc)?;
+        let (clon_values, clat_values) = Self::get_clat_clon_values_from_netcdf(netcdf_doc)?;
         if clon_values.len() != unstructured_values.len() {
-            return Err(Grib2Error::InvalidData("number of clat/clon and grib2 data points don't match".to_string()));
+            return Err(Grib2Error::InvalidData(
+                "number of clat/clon and grib2 data points don't match".to_string(),
+            ));
         }
 
         let lat_limit: f32 = PI.sinh().atan().to_degrees();
         let dimensions = (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT);
-        let sparse_values = Self::calculate_structured_values(unstructured_values, missing_value, clon_values, clat_values, lat_limit);
+        let sparse_values = Self::calculate_structured_values(
+            unstructured_values,
+            missing_value,
+            clon_values,
+            clat_values,
+            lat_limit,
+        );
         let mut jump_flooder = JumpFlooder::new(dimensions, &sparse_values, missing_value);
         let values = jump_flooder.jump_flood(Self::JUMP_FLOOD_1ST_STEP_SIZE);
         let extent = LatLonExtent {
-            min_coord: LatLon { lat: -lat_limit, lon: -180.0 },
-            max_coord: LatLon { lat: lat_limit, lon: 180.0 }
+            min_coord: LatLon {
+                lat: -lat_limit,
+                lon: -180.0,
+            },
+            max_coord: LatLon {
+                lat: lat_limit,
+                lon: 180.0,
+            },
         };
         let grid = LatLonValueGrid::new(values, missing_value, dimensions, extent);
 
         return Ok(grid);
     }
 
+    pub fn create2(
+        grib2_doc: &Grib2Document,
+        missing_value: f32,
+        lat_doc: &Grib2Document,
+        lon_doc: &Grib2Document
+    ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
+        let (clon_values, clat_values) = Self::get_lat_lon_values_from_grib_docs(lat_doc, lon_doc)?;
 
+        if clon_values.len() != unstructured_values.len() || clat_values.len() != unstructured_values.len() {
+            return Err(Grib2Error::InvalidData(
+                "number of clat/clon and grib2 data points don't match".to_string(),
+            ));
+        }
 
-    fn get_clat_clon_values(doc: &NetCdfDocument) -> Result<(Vec<f64>, Vec<f64>), Grib2Error> {
+        let lat_limit: f32 = PI.sinh().atan().to_degrees();
+        let dimensions = (Self::WIDTH_HEIGHT, Self::WIDTH_HEIGHT);
+        let sparse_values = Self::calculate_structured_values(
+            unstructured_values,
+            missing_value,
+            clon_values,
+            clat_values,
+            lat_limit,
+        );
+        let mut jump_flooder = JumpFlooder::new(dimensions, &sparse_values, missing_value);
+        let values = jump_flooder.jump_flood(Self::JUMP_FLOOD_1ST_STEP_SIZE);
+        let extent = LatLonExtent {
+            min_coord: LatLon {
+                lat: -lat_limit,
+                lon: -180.0,
+            },
+            max_coord: LatLon {
+                lat: lat_limit,
+                lon: 180.0,
+            },
+        };
+        let grid = LatLonValueGrid::new(values, missing_value, dimensions, extent);
+
+        return Ok(grid);
+    }
+
+    fn get_clat_clon_values_from_netcdf(
+        doc: &NetCdfDocument,
+    ) -> Result<(Vec<f64>, Vec<f64>), Grib2Error> {
         if !doc.data_map.contains_key(CLAT_VAR_NAME) || !doc.data_map.contains_key(CLON_VAR_NAME) {
-            return Err(Grib2Error::InvalidData("values clat / clon not found".to_string()));
+            return Err(Grib2Error::InvalidData(
+                "values clat / clon not found".to_string(),
+            ));
         }
 
         let clat_values = doc.data_map.get(CLAT_VAR_NAME).unwrap().get_doubles();
         let clon_values = doc.data_map.get(CLON_VAR_NAME).unwrap().get_doubles();
 
         if clat_values.len() != clon_values.len() {
-            return Err(Grib2Error::InvalidData("number of clat and clon data points don't match".to_string()));
+            return Err(Grib2Error::InvalidData(
+                "number of clat and clon data points don't match".to_string(),
+            ));
         }
 
-        return Ok((clat_values, clon_values));
+        Ok((clat_values, clon_values))
     }
 
+    fn get_lat_lon_values_from_grib_docs(
+        lat_doc: &Grib2Document,
+        lon_doc: &Grib2Document,
+    ) -> Result<(Vec<f64>, Vec<f64>), Grib2Error> {
+        let lat_values = lat_doc.calculate_data_points(255.0, |x| x as f64)?;
+        let lon_values = lon_doc.calculate_data_points(255.0, |x| x as f64)?;
+
+        if lat_values.len() != lon_values.len() {
+            return Err(Grib2Error::InvalidData(
+                "number of lat and lon data points don't match".to_string(),
+            ));
+        }
+
+        Ok((lat_values, lon_values))
+    }
 
     fn calculate_structured_values(
         unstructured_values: Vec<f32>,
         missing_value: f32,
         clat_values: Vec<f64>,
         clon_values: Vec<f64>,
-        lat_limit: f32
+        lat_limit: f32,
     ) -> Vec<f32> {
         let mut values = vec![missing_value; Self::WIDTH_HEIGHT * Self::WIDTH_HEIGHT];
 
@@ -79,15 +155,14 @@ impl UnstructuredGridConverter {
             values[idx] = unstructured_values[i];
         }
 
-        return values;
+        values
     }
-
 
     fn calc_idx_from_latlon(lat: f32, lon: f32, lat_limit: f32) -> usize {
         let x = ((lon + 180.0) / 360.0 * Self::POW).floor() as usize;
         let y = ((lat + lat_limit) / (2.0 * lat_limit) * Self::POW).floor() as usize;
         let idx = x + y * Self::WIDTH_HEIGHT;
 
-        return idx;
+        idx
     }
 }
