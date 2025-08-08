@@ -8,39 +8,38 @@ pub struct LatLonGrid {
     lon_inc: f32,
 }
 
-
 impl LatLonGrid {
-    pub fn new(
-        dimensions: (usize, usize),
-        lat_lon_extent: LatLonExtent
-    ) -> LatLonGrid {
-        let lat_inc = (lat_lon_extent.max_coord.lat - lat_lon_extent.min_coord.lat) / dimensions.1 as f32;
-        let lon_inc = (lat_lon_extent.max_coord.lon - lat_lon_extent.min_coord.lon) / dimensions.0 as f32;
+    pub fn new(dimensions: (usize, usize), lat_lon_extent: LatLonExtent) -> LatLonGrid {
+        let lat_inc =
+            (lat_lon_extent.max_coord.lat - lat_lon_extent.min_coord.lat) / dimensions.1 as f32;
+        let lon_inc =
+            (lat_lon_extent.max_coord.lon - lat_lon_extent.min_coord.lon) / dimensions.0 as f32;
 
-        return LatLonGrid { dimensions, lat_lon_extent, lat_inc, lon_inc };
+        LatLonGrid {
+            dimensions,
+            lat_lon_extent,
+            lat_inc,
+            lon_inc,
+        }
     }
-
 
     pub fn get_dimensions(&self) -> (usize, usize) {
-        return self.dimensions.clone();
+        self.dimensions.clone()
     }
-
 
     pub fn get_lat_lon_extent(&self) -> &LatLonExtent {
-        return &self.lat_lon_extent;
+        &self.lat_lon_extent
     }
-
 
     pub fn get_index_by_x_y(&self, x: usize, y: usize) -> Option<usize> {
         if x >= self.dimensions.0 || y >= self.dimensions.1 {
-            return None
+            return None;
         }
 
         let idx = x + y * self.dimensions.0;
 
-        return Some(idx);
+        Some(idx)
     }
-
 
     pub fn get_x_y_by_lat_lon(&self, pos: &LatLon) -> Option<(f32, f32)> {
         if !self.lat_lon_extent.is_inside(pos) {
@@ -50,28 +49,33 @@ impl LatLonGrid {
         let x = (pos.lon - &self.lat_lon_extent.min_coord.lon) / &self.lon_inc;
         let y = (pos.lat - &self.lat_lon_extent.min_coord.lat) / &self.lat_inc;
 
-        return Some((x, y));
+        Some((x, y))
+    }
+
+    pub fn get_lat_lon_by_x_y(&self, x: usize, y: usize) -> Option<LatLon> {
+        if let Some(_) = self.get_index_by_x_y(x, y) {
+            let lat = self.lat_lon_extent.min_coord.lat + (y as f32 * self.lat_inc);
+            let lon = self.lat_lon_extent.min_coord.lon + (x as f32 * self.lon_inc);
+            return Some(LatLon::new(lat, lon));
+        }
+
+        None
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use assert_approx_eq::assert_approx_eq;
     use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
     use crate::grid::lat_lon_grid::LatLonGrid;
+    use assert_approx_eq::assert_approx_eq;
 
     fn create_test_grid() -> LatLonGrid {
         let dimensions = (2, 3);
-        let lat_lon_extent = LatLonExtent::new(
-            LatLon::new(40.0, 7.0),
-            LatLon::new(46.0, 9.0)
-        );
+        let lat_lon_extent = LatLonExtent::new(LatLon::new(40.0, 7.0), LatLon::new(46.0, 9.0));
 
         return LatLonGrid::new(dimensions, lat_lon_extent);
     }
-
 
     #[test]
     fn it_creates_a_new_instance_with_the_correct_lat_lon_incs() {
@@ -80,7 +84,6 @@ mod tests {
         assert_eq!(2.0, grid.lat_inc);
         assert_eq!(1.0, grid.lon_inc);
     }
-
 
     #[test]
     fn it_gets_the_correct_dimensions() {
@@ -91,7 +94,6 @@ mod tests {
         assert_eq!((2, 3), result);
     }
 
-
     #[test]
     fn it_gets_the_correct_lat_lon_extent() {
         let grid = create_test_grid();
@@ -101,7 +103,6 @@ mod tests {
         assert_eq!([40.0, 7.0], result.min_coord.as_array());
         assert_eq!([46.0, 9.0], result.max_coord.as_array());
     }
-
 
     #[test]
     fn it_gets_the_correct_index_by_x_y() {
@@ -123,7 +124,6 @@ mod tests {
         assert_eq!(5, result4.unwrap());
     }
 
-
     #[test]
     fn it_gets_none_index_if_x_y_are_out_of_bounds() {
         let grid = create_test_grid();
@@ -134,7 +134,6 @@ mod tests {
         assert!(result1.is_none());
         assert!(result2.is_none());
     }
-
 
     #[test]
     fn it_gets_the_correct_x_y_by_lat_lon() {
@@ -165,7 +164,6 @@ mod tests {
         assert_approx_eq!(2.95, result4b.unwrap().1, 0.01);
     }
 
-
     #[test]
     fn it_gets_none_if_lat_or_lon_are_out_of_bounds() {
         let grid = create_test_grid();
@@ -186,5 +184,41 @@ mod tests {
         assert!(result3.is_none());
         assert!(result4.is_none());
         assert!(result5.is_none());
+    }
+
+    #[test]
+    fn it_gets_the_correct_lat_lon_by_x_y() {
+        // given
+        let grid = create_test_grid();
+
+        // when
+        let result1 = grid.get_lat_lon_by_x_y(0, 0);
+        let result2 = grid.get_lat_lon_by_x_y(1, 0);
+        let result3 = grid.get_lat_lon_by_x_y(0, 1);
+        let result4 = grid.get_lat_lon_by_x_y(1, 2);
+
+        // then
+        assert!(result1.is_some());
+        assert!(result2.is_some());
+        assert!(result3.is_some());
+        assert!(result4.is_some());
+        assert_eq!(LatLon::new(40.0, 7.0), result1.unwrap());
+        assert_eq!(LatLon::new(40.0, 8.0), result2.unwrap());
+        assert_eq!(LatLon::new(42.0, 7.0), result3.unwrap());
+        assert_eq!(LatLon::new(44.0, 8.0), result4.unwrap());
+    }
+
+    #[test]
+    fn it_gets_none_if_x_y_are_out_of_bounds() {
+        // given
+        let grid = create_test_grid();
+
+        // when
+        let result1 = grid.get_lat_lon_by_x_y(2, 0);
+        let result2 = grid.get_lat_lon_by_x_y(0, 3);
+
+        // then
+        assert!(result1.is_none());
+        assert!(result2.is_none());
     }
 }

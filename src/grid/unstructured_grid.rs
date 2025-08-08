@@ -1,10 +1,10 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::grid::lat_lon_grid::LatLonGrid;
 
 pub struct UnstructuredGrid {
-    dimensions: (usize, usize),
+    lat_lon_grid: LatLonGrid,
     coordinates: Vec<LatLon>,
-    lat_lon_extent: LatLonExtent,
 }
 
 impl UnstructuredGrid {
@@ -14,18 +14,17 @@ impl UnstructuredGrid {
         lat_lon_extent: LatLonExtent,
     ) -> UnstructuredGrid {
         UnstructuredGrid {
-            dimensions,
+            lat_lon_grid: LatLonGrid::new(dimensions, lat_lon_extent),
             coordinates,
-            lat_lon_extent,
         }
     }
 
     pub fn get_dimensions(&self) -> (usize, usize) {
-        self.dimensions.clone()
+        self.lat_lon_grid.get_dimensions()
     }
 
     pub fn get_lat_lon_extent(&self) -> &LatLonExtent {
-        &self.lat_lon_extent
+        &self.lat_lon_grid.get_lat_lon_extent()
     }
 }
 
