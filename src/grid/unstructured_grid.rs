@@ -19,6 +19,14 @@ impl UnstructuredGrid {
             lat_lon_extent,
         }
     }
+
+    pub fn get_dimensions(&self) -> (usize, usize) {
+        self.dimensions.clone()
+    }
+
+    pub fn get_lat_lon_extent(&self) -> &LatLonExtent {
+        &self.lat_lon_extent
+    }
 }
 
 #[cfg(test)]
@@ -41,8 +49,8 @@ mod tests {
         let grid = super::UnstructuredGrid::new(dimensions, coordinates, lat_lon_extent);
 
         // then
-        assert_eq!((2, 3), grid.dimensions);
+        assert_eq!((2, 3), grid.get_dimensions());
         assert_eq!(3, grid.coordinates.len());
-        assert_eq!(LatLonExtent::MAX_EXTENT, grid.lat_lon_extent);
+        assert_eq!(&LatLonExtent::MAX_EXTENT, grid.get_lat_lon_extent());
     }
 }
