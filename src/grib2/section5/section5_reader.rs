@@ -1,11 +1,11 @@
 use std::io::Read;
 
-use byteorder::{BigEndian, ReadBytesExt};
 use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section5::data_representation_template::DataRepresentationTemplate;
 use crate::grib2::section5::data_representation_template_5_0_reader::DataRepresentationTemplate5_0Reader;
 use crate::grib2::section5::section5::Section5;
+use byteorder::{BigEndian, ReadBytesExt};
 
 pub struct Section5Reader;
 
@@ -30,7 +30,7 @@ impl Section5Reader {
     fn read_data_representation_template(
         reader: &mut impl Read,
         tpl_number: u16,
-        length: u32,
+        tpl_length: u32,
     ) -> Result<DataRepresentationTemplate, Grib2Error> {
         let data_rep_tpl = match tpl_number {
             0 => {
@@ -38,9 +38,9 @@ impl Section5Reader {
                 DataRepresentationTemplate::GridPointDataSimplePacking(tpl)
             }
             _ => {
-                let _ = ByteReader::read_n_bytes(reader, length as usize)?; // skip
+                let _ = ByteReader::read_n_bytes(reader, tpl_length as usize)?; // skip
                 DataRepresentationTemplate::Unknown(tpl_number)
-            },
+            }
         };
 
         return Ok(data_rep_tpl);

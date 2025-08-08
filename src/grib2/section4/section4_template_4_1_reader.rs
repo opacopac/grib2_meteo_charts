@@ -14,7 +14,7 @@ impl Section4Template4_1Reader {
         let parameter_category = MeteoParameterCategoryReader::read(reader)?;
         let parameter_number = reader.read_u8()?;
 
-        let _ = ByteReader::read_n_bytes(reader, 23)?; // skip
+        let _ = ByteReader::read_n_bytes(reader, 26)?; // skip
 
         let tpl_4_0 = ProductDefinitionTemplate4_1::new(parameter_category, parameter_number);
 
