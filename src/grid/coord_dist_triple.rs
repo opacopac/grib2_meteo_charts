@@ -1,18 +1,21 @@
 use crate::grid::coord_dist::CoordDist;
 
+#[derive(Clone)]
 pub struct CoordDistTriple {
-    coord_dists: [Option<CoordDist>; 3],
+    coord_dists: [Option<CoordDist>; CoordDistTriple::SIZE],
 }
 
 impl CoordDistTriple {
+    pub const SIZE: usize = 3;
+
     pub fn new() -> CoordDistTriple {
         CoordDistTriple {
-            coord_dists: [None, None, None],
+            coord_dists: [None; Self::SIZE],
         }
     }
 
     pub fn get_coord_dist(&self, index: usize) -> Option<&CoordDist> {
-        if index < 3 {
+        if index < Self::SIZE {
             self.coord_dists[index].as_ref()
         } else {
             None
@@ -24,7 +27,7 @@ impl CoordDistTriple {
         let mut highest_dist = coord_dist.get_coord_dist();
         let mut highest_dist_idx = 0;
 
-        for i in 0..3 {
+        for i in 0..Self::SIZE {
             if let Some(cd) = &self.coord_dists[i] {
                 if cd.get_coord_dist() > highest_dist {
                     highest_dist = cd.get_coord_dist();
@@ -89,10 +92,28 @@ mod tests {
 
         // then
         assert!(coord_dist_triple.get_coord_dist(0).is_some());
-        assert_eq!(coord_dist_triple.get_coord_dist(0).unwrap().get_coord_index(), 0);
+        assert_eq!(
+            0,
+            coord_dist_triple
+                .get_coord_dist(0)
+                .unwrap()
+                .get_coord_index()
+        );
         assert!(coord_dist_triple.get_coord_dist(1).is_some());
-        assert_eq!(coord_dist_triple.get_coord_dist(1).unwrap().get_coord_index(), 1);
+        assert_eq!(
+            1,
+            coord_dist_triple
+                .get_coord_dist(1)
+                .unwrap()
+                .get_coord_index()
+        );
         assert!(coord_dist_triple.get_coord_dist(2).is_some());
-        assert_eq!(coord_dist_triple.get_coord_dist(2).unwrap().get_coord_index(), 3);
+        assert_eq!(
+            3,
+            coord_dist_triple
+                .get_coord_dist(2)
+                .unwrap()
+                .get_coord_index()
+        );
     }
 }

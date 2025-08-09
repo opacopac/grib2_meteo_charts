@@ -1,4 +1,6 @@
 #[derive(Debug)]
+#[derive(Copy)]
+#[derive(Clone)]
 pub struct CoordDist {
     coord_index: usize,
     coord_dist: f32,

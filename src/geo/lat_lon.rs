@@ -55,7 +55,14 @@ impl LatLon {
         let lon_diff = self.lon - other.lon;
         let sq_dist = lat_diff * lat_diff + lon_diff * lon_diff;
 
-        return sq_dist;
+        sq_dist
+    }
+    
+    
+    pub fn calc_euclidean_dist(&self, other: &LatLon) -> f32 {
+        let sq_dist = self.calc_square_euclidean_dist(other);
+        
+        sq_dist.sqrt()
     }
 }
 
