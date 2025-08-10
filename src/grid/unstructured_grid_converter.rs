@@ -7,10 +7,8 @@ use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grid::jump_flooder::JumpFlooder;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::netcdf::converter::netcdf_to_grid_converter::NetCdftoGridConverter;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
-
-pub static CLAT_VAR_NAME: &str = "clat";
-pub static CLON_VAR_NAME: &str = "clon";
 
 pub struct UnstructuredGridConverter;
 
@@ -25,7 +23,8 @@ impl UnstructuredGridConverter {
         netcdf_doc: &NetCdfDocument,
     ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
-        let (clon_values, clat_values) = Self::get_clat_clon_values_from_netcdf(netcdf_doc)?;
+        let (clon_values, clat_values) =
+            NetCdftoGridConverter::get_clat_clon_values_from_netcdf(netcdf_doc)?;
         if clon_values.len() != unstructured_values.len() {
             return Err(Grib2Error::InvalidData(
                 "number of clat/clon and grib2 data points don't match".to_string(),
@@ -61,26 +60,16 @@ impl UnstructuredGridConverter {
     pub fn create2(
         grib2_doc: &Grib2Document,
         missing_value: f32,
-        lat_doc: &Grib2Document,
-        lon_doc: &Grib2Document,
+        coordinates: Vec<LatLon>,
     ) -> Result<UnstructuredGrid, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
-        let (clon_values, clat_values) = Self::get_lat_lon_values_from_grib_docs(lat_doc, lon_doc)?;
 
-        if clon_values.len() != unstructured_values.len()
-            || clat_values.len() != unstructured_values.len()
-        {
+        if coordinates.len() != unstructured_values.len() {
             return Err(Grib2Error::InvalidData(
-                "number of clat/clon and grib2 data points don't match".to_string(),
+                "number of lat/lon and grib2 data points don't match".to_string(),
             ));
         }
-
-        let coordinates: Vec<LatLon> = clat_values
-            .iter()
-            .zip(clon_values.iter())
-            .map(|(&lat, &lon)| LatLon::new(lat as f32, lon as f32))
-            .collect();
-
+        
         let mut grid = UnstructuredGrid::new(
             (1024, 1024), // TODO
             LatLonExtent::calc_min_bounding_extent(&coordinates),
@@ -90,43 +79,6 @@ impl UnstructuredGridConverter {
         grid.calc_coord_dist_lookup_map(0.01);
 
         Ok(grid)
-    }
-
-    fn get_clat_clon_values_from_netcdf(
-        doc: &NetCdfDocument,
-    ) -> Result<(Vec<f64>, Vec<f64>), Grib2Error> {
-        if !doc.data_map.contains_key(CLAT_VAR_NAME) || !doc.data_map.contains_key(CLON_VAR_NAME) {
-            return Err(Grib2Error::InvalidData(
-                "values clat / clon not found".to_string(),
-            ));
-        }
-
-        let clat_values = doc.data_map.get(CLAT_VAR_NAME).unwrap().get_doubles();
-        let clon_values = doc.data_map.get(CLON_VAR_NAME).unwrap().get_doubles();
-
-        if clat_values.len() != clon_values.len() {
-            return Err(Grib2Error::InvalidData(
-                "number of clat and clon data points don't match".to_string(),
-            ));
-        }
-
-        Ok((clat_values, clon_values))
-    }
-
-    fn get_lat_lon_values_from_grib_docs(
-        lat_doc: &Grib2Document,
-        lon_doc: &Grib2Document,
-    ) -> Result<(Vec<f64>, Vec<f64>), Grib2Error> {
-        let lat_values = lat_doc.calculate_data_points(255.0, |x| x as f64)?;
-        let lon_values = lon_doc.calculate_data_points(255.0, |x| x as f64)?;
-
-        if lat_values.len() != lon_values.len() {
-            return Err(Grib2Error::InvalidData(
-                "number of lat and lon data points don't match".to_string(),
-            ));
-        }
-
-        Ok((lat_values, lon_values))
     }
 
     fn calculate_structured_values(
