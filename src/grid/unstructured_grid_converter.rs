@@ -7,6 +7,7 @@ use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grid::jump_flooder::JumpFlooder;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::grid::unstructured_value_grid::UnstructuredValueGrid;
 use crate::netcdf::converter::netcdf_to_grid_converter::NetCdftoGridConverter;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
 
@@ -61,7 +62,7 @@ impl UnstructuredGridConverter {
         grib2_doc: &Grib2Document,
         missing_value: f32,
         coordinates: Vec<LatLon>,
-    ) -> Result<UnstructuredGrid, Grib2Error> {
+    ) -> Result<UnstructuredValueGrid<f32>, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
 
         if coordinates.len() != unstructured_values.len() {
@@ -75,10 +76,15 @@ impl UnstructuredGridConverter {
             LatLonExtent::calc_min_bounding_extent(&coordinates),
             coordinates,
         );
-
         grid.calc_coord_dist_lookup_map(0.01);
+        
+        let value_grid = UnstructuredValueGrid::new(
+            unstructured_values,
+            missing_value,
+            grid
+        );
 
-        Ok(grid)
+        Ok(value_grid)
     }
 
     fn calculate_structured_values(

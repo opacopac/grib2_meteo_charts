@@ -13,6 +13,7 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     let clon_doc = &docs[4];
     let coordinates = Grib2ToGridConverter::get_lat_lon_values_from_grib_doc(clat_doc, clon_doc).unwrap();
     let grid = UnstructuredGridConverter::create2(temp_doc, 255.0, coordinates).unwrap();
+    let value = grid.get_value_by_xy(512, 512).unwrap();
     let a = 1;
 
     assert_eq!(0.0, 0.0);
