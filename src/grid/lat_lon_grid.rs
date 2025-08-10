@@ -52,14 +52,15 @@ impl LatLonGrid {
         Some((x, y))
     }
 
-    pub fn get_lat_lon_by_x_y(&self, x: usize, y: usize) -> Option<LatLon> {
-        if let Some(_) = self.get_index_by_x_y(x, y) {
-            let lat = self.lat_lon_extent.min_coord.lat + (y as f32 * self.lat_inc);
-            let lon = self.lat_lon_extent.min_coord.lon + (x as f32 * self.lon_inc);
-            return Some(LatLon::new(lat, lon));
+    pub fn get_lat_lon_by_x_y(&self, x: f32, y: f32) -> Option<LatLon> {
+        if x < 0.0 || x >= self.dimensions.0 as f32 || y < 0.0 || y >= self.dimensions.1 as f32 {
+            return None;
         }
 
-        None
+        let lat = self.lat_lon_extent.min_coord.lat + y * self.lat_inc;
+        let lon = self.lat_lon_extent.min_coord.lon + x * self.lon_inc;
+
+        Some(LatLon::new(lat, lon))
     }
 }
 
@@ -192,20 +193,25 @@ mod tests {
         let grid = create_test_grid();
 
         // when
-        let result1 = grid.get_lat_lon_by_x_y(0, 0);
-        let result2 = grid.get_lat_lon_by_x_y(1, 0);
-        let result3 = grid.get_lat_lon_by_x_y(0, 1);
-        let result4 = grid.get_lat_lon_by_x_y(1, 2);
+        let result1 = grid.get_lat_lon_by_x_y(0.0, 0.0);
+        let result2 = grid.get_lat_lon_by_x_y(1.0, 0.0);
+        let result3 = grid.get_lat_lon_by_x_y(0.0, 1.0);
+        let result4 = grid.get_lat_lon_by_x_y(1.0, 2.0);
+        let result4b = grid.get_lat_lon_by_x_y(0.5, 0.5);
 
         // then
         assert!(result1.is_some());
         assert!(result2.is_some());
         assert!(result3.is_some());
         assert!(result4.is_some());
+        assert!(result4b.is_some());
         assert_eq!(LatLon::new(40.0, 7.0), result1.unwrap());
         assert_eq!(LatLon::new(40.0, 8.0), result2.unwrap());
         assert_eq!(LatLon::new(42.0, 7.0), result3.unwrap());
         assert_eq!(LatLon::new(44.0, 8.0), result4.unwrap());
+        let result4b = result4b.unwrap();
+        assert_approx_eq!(41.0, result4b.lat, 0.01);
+        assert_approx_eq!(7.5, result4b.lon, 0.01);
     }
 
     #[test]
@@ -214,8 +220,8 @@ mod tests {
         let grid = create_test_grid();
 
         // when
-        let result1 = grid.get_lat_lon_by_x_y(2, 0);
-        let result2 = grid.get_lat_lon_by_x_y(0, 3);
+        let result1 = grid.get_lat_lon_by_x_y(2.0, 0.0);
+        let result2 = grid.get_lat_lon_by_x_y(0.0, 3.0);
 
         // then
         assert!(result1.is_none());
