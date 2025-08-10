@@ -33,6 +33,10 @@ impl UnstructuredGrid {
     pub fn get_index_by_x_y(&self, x: usize, y: usize) -> Option<usize> {
         self.lat_lon_grid.get_index_by_x_y(x, y)
     }
+    
+    pub fn get_x_y_by_lat_lon(&self, pos: &LatLon) -> Option<(f32, f32)> {
+        self.lat_lon_grid.get_x_y_by_lat_lon(pos)
+    }
 
     pub fn get_lat_lon_extent(&self) -> &LatLonExtent {
         &self.lat_lon_grid.get_lat_lon_extent()

@@ -42,6 +42,13 @@ impl CoordDistTriple {
         // replace the coord_dist at the index with the highest distance
         self.coord_dists[highest_dist_idx] = Some(coord_dist);
     }
+    
+    pub fn get_coord_dists(&self) -> Vec<&CoordDist> {
+        self.coord_dists
+            .iter()
+            .filter_map(|cd| cd.as_ref())
+            .collect()
+    }
 }
 
 #[cfg(test)]
@@ -73,6 +80,8 @@ mod tests {
         assert!(coord_dist_triple.get_coord_dist(0).is_some());
         assert!(coord_dist_triple.get_coord_dist(1).is_none());
         assert!(coord_dist_triple.get_coord_dist(2).is_none());
+
+        assert_eq!(1, coord_dist_triple.get_coord_dists().len());
     }
 
     #[test]
