@@ -8,3 +8,4 @@ pub mod netcdf;
 pub mod metobin;
 pub mod dwd_forecast_renderer;
 pub mod dwd;
+pub mod meteo_swiss;

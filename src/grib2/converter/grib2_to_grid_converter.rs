@@ -8,7 +8,7 @@ impl Grib2ToGridConverter {
     pub fn get_lat_lon_values_from_grib_doc(
         lat_doc: &Grib2Document,
         lon_doc: &Grib2Document,
-    ) -> Result<(Vec<LatLon>), Grib2Error> {
+    ) -> Result<Vec<LatLon>, Grib2Error> {
         let lat_values = lat_doc.calculate_data_points(255.0, |x| x)?;
         let lon_values = lon_doc.calculate_data_points(255.0, |x| x)?;
 

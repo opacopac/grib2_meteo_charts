@@ -3,6 +3,7 @@ use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use std::ops::{Add, Mul};
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct UnstructuredValueGrid<T> {
     grid: UnstructuredGrid,
@@ -77,6 +78,20 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
         let y = y0.round() as usize;
 
         self.get_value_by_xy(x, y)
+    }
+
+    pub fn create_regular_grid(&self) -> LatLonValueGrid<T> {
+        let lat_lon_extent = self.grid.get_lat_lon_extent().clone();
+        let dimensions = self.grid.get_dimensions();
+        let values: Vec<T> = (0..dimensions.0 * dimensions.1)
+            .map(|i| {
+                let x = i % dimensions.0;
+                let y = i / dimensions.0;
+                self.get_value_by_xy(x, y).unwrap_or(self.missing_value)
+            })
+            .collect();
+
+        LatLonValueGrid::new(values, self.missing_value, dimensions, lat_lon_extent)
     }
 }
 

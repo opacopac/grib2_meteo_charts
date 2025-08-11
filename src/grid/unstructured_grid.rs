@@ -61,7 +61,7 @@ impl UnstructuredGrid {
                             None => continue, // skip if lat_lon is not found
                         };
 
-                        if (dist > max_coord_dist_deg) {
+                        if dist > max_coord_dist_deg {
                             continue; // skip if distance exceeds max distance
                         }
 

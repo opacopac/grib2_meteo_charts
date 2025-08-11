@@ -4,16 +4,19 @@ use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridCon
 
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
+pub const T2M_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202508100900-0-t_2m-ctrl.grib2";
 
 #[test]
 fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
-    let docs = Grib2DocumentReader::read_multi_doc_from_file(HOR_CONST_TEST_FILE).unwrap();
-    let temp_doc = &docs[0];
-    let clat_doc = &docs[3];
-    let clon_doc = &docs[4];
+    let hor_docs = Grib2DocumentReader::read_multi_doc_from_file(HOR_CONST_TEST_FILE).unwrap();
+    let clat_doc = &hor_docs[3];
+    let clon_doc = &hor_docs[4];
     let coordinates = Grib2ToGridConverter::get_lat_lon_values_from_grib_doc(clat_doc, clon_doc).unwrap();
-    let grid = UnstructuredGridConverter::create2(temp_doc, 255.0, coordinates).unwrap();
-    let value = grid.get_value_by_xy(512, 512).unwrap();
+    let dimensions = (1024, 1024);
+
+    let t2m_doc = Grib2DocumentReader::read_single_doc_from_file(T2M_TEST_FILE).unwrap();
+    let grid = UnstructuredGridConverter::create(&t2m_doc, 255.0, coordinates, dimensions).unwrap();
+    let regrid = grid.create_regular_grid();
     let a = 1;
 
     assert_eq!(0.0, 0.0);
