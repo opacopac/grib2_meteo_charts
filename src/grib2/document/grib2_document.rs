@@ -34,8 +34,8 @@ impl Grib2Document {
     ) -> Result<Vec<T>, Grib2Error> {
         let (ref_value, c1, c2) = match &self.section5.data_representation_template {
             GridPointDataSimplePacking(tpl) => {
-                let c1 = (2 as f32).powi(tpl.binary_scale_factor_e as i32);
-                let c2 = (10 as f32).powi(tpl.decimal_scale_factor_d as i32);
+                let c1 = 2f32.powi(tpl.binary_scale_factor_e as i32);
+                let c2 = 10f32.powi(tpl.decimal_scale_factor_d as i32);
 
                 (tpl.reference_value, c1, c2)
             }
@@ -64,6 +64,6 @@ impl Grib2Document {
             }
         }
 
-        return Ok(data_points);
+        Ok(data_points)
     }
 }

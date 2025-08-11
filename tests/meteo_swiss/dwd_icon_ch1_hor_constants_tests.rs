@@ -15,7 +15,13 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     let dimensions = (1024, 1024);
 
     let t2m_doc = Grib2DocumentReader::read_single_doc_from_file(T2M_TEST_FILE).unwrap();
-    let grid = UnstructuredGridConverter::create(&t2m_doc, 255.0, coordinates, dimensions).unwrap();
+    let grid = UnstructuredGridConverter::create(
+        &t2m_doc,
+        255.0, // TODO
+        coordinates,
+        dimensions,
+        0.01 // TODO
+    ).unwrap();
     let regrid = grid.create_regular_grid();
     let a = 1;
 

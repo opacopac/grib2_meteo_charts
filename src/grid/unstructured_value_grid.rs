@@ -1,9 +1,9 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::grid_value_type::GridValueType;
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use std::ops::{Add, Mul};
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct UnstructuredValueGrid<T> {
     grid: UnstructuredGrid,
@@ -11,7 +11,9 @@ pub struct UnstructuredValueGrid<T> {
     missing_value: T,
 }
 
-impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum> UnstructuredValueGrid<T> {
+impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
+    UnstructuredValueGrid<T>
+{
     pub fn new(
         values: Vec<T>,
         missing_value: T,
@@ -48,10 +50,7 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
             return None;
         }
 
-        let coord_dist_sum: f32 = coord_dists
-            .iter()
-            .map(|cd| cd.get_coord_dist())
-            .sum();
+        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist()).sum();
 
         let value: T = coord_dists
             .iter()
