@@ -28,6 +28,7 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
+        |x| x - 273.15, // convert Kelvin to Celsius
         255.0, // TODO
         coordinates,
         dimensions,

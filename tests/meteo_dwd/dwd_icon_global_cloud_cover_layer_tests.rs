@@ -31,6 +31,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     );
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,
+        |x| x,
         -1.0,
         coordinates,
         dimensions,
