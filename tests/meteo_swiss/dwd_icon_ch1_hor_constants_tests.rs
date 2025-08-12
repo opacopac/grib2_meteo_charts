@@ -12,8 +12,8 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     TStamp::print_us("Grib2DocumentReader::read_multi_doc_from_file...");
     let hor_docs = Grib2DocumentReader::read_multi_doc_from_file(HOR_CONST_TEST_FILE).unwrap();
 
-    let clat_doc = &hor_docs[3];
-    let clon_doc = &hor_docs[4];
+    let clat_doc = &hor_docs[4];
+    let clon_doc = &hor_docs[3];
 
     TStamp::print_us("Grib2ToGridConverter::get_lat_lon_values_from_grib_doc...");
     let coordinates = Grib2ToGridConverter::get_lat_lon_values_from_grib_doc(clat_doc, clon_doc).unwrap();
