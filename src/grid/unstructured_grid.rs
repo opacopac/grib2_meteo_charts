@@ -47,10 +47,11 @@ impl UnstructuredGrid {
         Some(&self.coord_dist_lookup_map[idx])
     }
 
-    pub fn calc_coord_dist_lookup_map(&mut self, max_deg_coord_dist_squared: f32) {
+    pub fn calc_coord_dist_lookup_map(&mut self, max_deg_coord_dist: f32) {
+        let max_deg_coord_dist_squared = max_deg_coord_dist * max_deg_coord_dist;
         for i in 0..self.coordinates.len() {
             let coord = &self.coordinates[i];
-            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist_squared);
+            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
 
             for x in min_xy.0..=max_xy.0 {
                 for y in min_xy.1..=max_xy.1 {
@@ -146,10 +147,10 @@ mod tests {
         let coordinates = vec![LatLon::new(25.0, 25.0)];
         let lat_lon_extent = LatLonExtent::new(LatLon::new(0.0, 0.0), LatLon::new(50.0, 50.0));
         let mut grid = super::UnstructuredGrid::new(dimensions, lat_lon_extent, coordinates);
-        let max_dist_squared = 15.0 * 15.0;
+        let max_dist = 15.0;
 
         // when
-        grid.calc_coord_dist_lookup_map(max_dist_squared);
+        grid.calc_coord_dist_lookup_map(max_dist);
 
         // then
         // expect no entries in the "outer" ring
@@ -170,7 +171,7 @@ mod tests {
             let dist = cdt.get_coord_dist(0).unwrap();
 
             assert_eq!(0, dist.get_coord_index());
-            assert!(dist.get_coord_dist_squared() <= max_dist_squared);
+            assert!(dist.get_coord_dist_squared() <= max_dist);
         }
     }
 }
