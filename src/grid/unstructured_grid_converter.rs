@@ -13,6 +13,7 @@ impl UnstructuredGridConverter {
         missing_value: f32,
         coordinates: Vec<LatLon>,
         dimensions: (usize, usize),
+        lat_lon_extent: LatLonExtent,
         max_coord_dist_deg: f32,
     ) -> Result<UnstructuredValueGrid<f32>, Grib2Error> {
         let unstructured_values = grib2_doc.calculate_data_points(missing_value, |x| x as f32)?;
@@ -25,7 +26,7 @@ impl UnstructuredGridConverter {
 
         let mut grid = UnstructuredGrid::new(
             dimensions,
-            LatLonExtent::calc_min_bounding_extent(&coordinates),
+            lat_lon_extent,
             coordinates,
         );
         grid.calc_coord_dist_lookup_map(max_coord_dist_deg);

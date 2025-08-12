@@ -1,4 +1,5 @@
 use meteo_grib2_renderer::common::tstamp::TStamp;
+use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;
@@ -24,11 +25,13 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     let t2m_doc = Grib2DocumentReader::read_single_doc_from_file(T2M_TEST_FILE).unwrap();
 
     TStamp::print_us("UnstructuredGridConverter::create...");
+    let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
         255.0, // TODO
         coordinates,
         dimensions,
+        lat_lon_extent,
         0.01 // TODO
     ).unwrap();
 

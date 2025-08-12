@@ -51,6 +51,9 @@ impl UnstructuredGrid {
         let max_deg_coord_dist_squared = max_deg_coord_dist * max_deg_coord_dist;
         for i in 0..self.coordinates.len() {
             let coord = &self.coordinates[i];
+            if !self.lat_lon_grid.get_lat_lon_extent().is_inside(coord) {
+                continue; // skip coordinates outside the extent
+            }
             let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
 
             for x in min_xy.0..=max_xy.0 {
