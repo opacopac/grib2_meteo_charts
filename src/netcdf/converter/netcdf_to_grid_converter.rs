@@ -38,19 +38,19 @@ impl NetCdftoGridConverter {
             ));
         }
 
-        let clat_values = doc.data_map.get(CLAT_VAR_NAME).unwrap().get_doubles();
-        let clon_values = doc.data_map.get(CLON_VAR_NAME).unwrap().get_doubles();
+        let clat_rad_values = doc.data_map.get(CLAT_VAR_NAME).unwrap().get_doubles();
+        let clon_rad_values = doc.data_map.get(CLON_VAR_NAME).unwrap().get_doubles();
 
-        if clat_values.len() != clon_values.len() {
+        if clat_rad_values.len() != clon_rad_values.len() {
             return Err(Grib2Error::InvalidData(
                 "number of clat and clon data points don't match".to_string(),
             ));
         }
 
-        let coordinates: Vec<LatLon> = clat_values
+        let coordinates: Vec<LatLon> = clat_rad_values
             .iter()
-            .zip(clon_values.iter())
-            .map(|(&lat, &lon)| LatLon::new(lat as f32, lon as f32))
+            .zip(clon_rad_values.iter())
+            .map(|(&lat, &lon)| LatLon::new(lat.to_degrees() as f32, lon.to_degrees() as f32))
             .collect();
 
         Ok(coordinates)
