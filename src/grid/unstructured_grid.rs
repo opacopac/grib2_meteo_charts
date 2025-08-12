@@ -47,25 +47,25 @@ impl UnstructuredGrid {
         Some(&self.coord_dist_lookup_map[idx])
     }
 
-    pub fn calc_coord_dist_lookup_map(&mut self, max_coord_dist_deg: f32) {
+    pub fn calc_coord_dist_lookup_map(&mut self, max_deg_coord_dist_squared: f32) {
         for i in 0..self.coordinates.len() {
             let coord = &self.coordinates[i];
-            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_coord_dist_deg);
+            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist_squared);
 
             for x in min_xy.0..=max_xy.0 {
                 for y in min_xy.1..=max_xy.1 {
                     if let Some(idx) = self.get_index_by_x_y(x, y) {
                         let lat_lon = self.lat_lon_grid.get_lat_lon_by_x_y(x as f32 + 0.5, y as f32 + 0.5);
-                        let dist = match lat_lon {
-                            Some(lat_lon) => coord.calc_euclidean_dist(&lat_lon),
+                        let dist_squared = match lat_lon {
+                            Some(lat_lon) => coord.calc_euclidean_dist_squared(&lat_lon),
                             None => continue, // skip if lat_lon is not found
                         };
 
-                        if dist > max_coord_dist_deg {
+                        if dist_squared > max_deg_coord_dist_squared {
                             continue; // skip if distance exceeds max distance
                         }
 
-                        let coord_dist = CoordDist::new(i, dist);
+                        let coord_dist = CoordDist::new(i, dist_squared);
                         let coord_triple = &mut self.coord_dist_lookup_map[idx];
                         coord_triple.add_coord_dist(coord_dist);
                     }
@@ -146,10 +146,10 @@ mod tests {
         let coordinates = vec![LatLon::new(25.0, 25.0)];
         let lat_lon_extent = LatLonExtent::new(LatLon::new(0.0, 0.0), LatLon::new(50.0, 50.0));
         let mut grid = super::UnstructuredGrid::new(dimensions, lat_lon_extent, coordinates);
-        let max_dist = 15.0;
+        let max_dist_squared = 15.0 * 15.0;
 
         // when
-        grid.calc_coord_dist_lookup_map(max_dist);
+        grid.calc_coord_dist_lookup_map(max_dist_squared);
 
         // then
         // expect no entries in the "outer" ring
@@ -170,7 +170,7 @@ mod tests {
             let dist = cdt.get_coord_dist(0).unwrap();
 
             assert_eq!(0, dist.get_coord_index());
-            assert!(dist.get_coord_dist() <= max_dist);
+            assert!(dist.get_coord_dist_squared() <= max_dist_squared);
         }
     }
 }

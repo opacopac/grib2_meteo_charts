@@ -24,13 +24,13 @@ impl CoordDistTriple {
 
     pub fn add_coord_dist(&mut self, coord_dist: CoordDist) {
         // find coord_dist larger than the provided coord_dist (or empty slot)
-        let mut highest_dist = coord_dist.get_coord_dist();
+        let mut highest_dist_squared = coord_dist.get_coord_dist_squared();
         let mut highest_dist_idx = 0;
 
         for i in 0..Self::SIZE {
             if let Some(cd) = &self.coord_dists[i] {
-                if cd.get_coord_dist() > highest_dist {
-                    highest_dist = cd.get_coord_dist();
+                if cd.get_coord_dist_squared() > highest_dist_squared {
+                    highest_dist_squared = cd.get_coord_dist_squared();
                     highest_dist_idx = i;
                 }
             } else {
@@ -71,7 +71,7 @@ mod tests {
     fn it_adds_a_single_coord_dist() {
         // given
         let mut coord_dist_triple = super::CoordDistTriple::new();
-        let coord_dist = crate::grid::coord_dist::CoordDist::new(0, 10.0);
+        let coord_dist = crate::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
 
         // when
         coord_dist_triple.add_coord_dist(coord_dist);
@@ -88,10 +88,10 @@ mod tests {
     fn it_adds_coord_dist_and_replaces_highest_distance() {
         // given
         let mut coord_dist_triple = super::CoordDistTriple::new();
-        let coord_dist1 = crate::grid::coord_dist::CoordDist::new(0, 10.0);
-        let coord_dist2 = crate::grid::coord_dist::CoordDist::new(1, 5.0);
-        let coord_dist3 = crate::grid::coord_dist::CoordDist::new(2, 15.0);
-        let coord_dist4 = crate::grid::coord_dist::CoordDist::new(3, 8.0);
+        let coord_dist1 = crate::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
+        let coord_dist2 = crate::grid::coord_dist::CoordDist::new(1, 5.0 * 5.0);
+        let coord_dist3 = crate::grid::coord_dist::CoordDist::new(2, 15.0 * 15.0);
+        let coord_dist4 = crate::grid::coord_dist::CoordDist::new(3, 8.0 * 8.0);
 
         // when
         coord_dist_triple.add_coord_dist(coord_dist1);

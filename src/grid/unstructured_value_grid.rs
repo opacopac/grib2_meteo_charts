@@ -50,7 +50,7 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
             return None;
         }
 
-        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist()).sum();
+        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
 
         let value: T = coord_dists
             .iter()
@@ -60,7 +60,7 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
                     if *value == self.missing_value {
                         return None;
                     }
-                    return Some(*value * (cd.get_coord_dist() / coord_dist_sum));
+                    return Some(*value * (cd.get_coord_dist_squared().sqrt() / coord_dist_sum));
                 } else {
                     return None;
                 }

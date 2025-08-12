@@ -1,3 +1,4 @@
+use meteo_grib2_renderer::common::tstamp::TStamp;
 use meteo_grib2_renderer::dwd_layer::dwd_cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;
@@ -12,12 +13,16 @@ pub const NETCDF_FILE: &str = "./tests/resources/icon_grid_0026_R03B07_G.nc";
 
 #[test]
 fn it_successfully_reads_an_icon_global_clct_test_file() {
+    TStamp::print("Grib2DocumentReader::read_single_doc_from_file...");
     let grib2_doc = Grib2DocumentReader::read_single_doc_from_file(CLCT_TEST_FILE).unwrap();
-    let dimensions = (4096, 4096);
+    let dimensions = (512, 512);
+    TStamp::print("NetCdfDocumentReader::read_file...");
     let netcdf_doc =
         NetCdfDocumentReader::read_file(NETCDF_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME])
             .unwrap();
+    TStamp::print("NetCdftoGridConverter::get_lat_lon_values_from_netcdf2...");
     let coordinates = NetCdftoGridConverter::get_lat_lon_values_from_netcdf2(&netcdf_doc).unwrap();
+    TStamp::print("UnstructuredGridConverter::create...");
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,
         -1.0,
@@ -25,7 +30,9 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
         dimensions,
         0.117 // TODO
     ).unwrap();
+    TStamp::print("grid.create_regular_grid...");
     let regular_grid = grid.create_regular_grid();
+    TStamp::print("done.");
     let _layer = DwdCloudLayer::new(regular_grid);
 
     // TODO: panics because number of points in grid don't match
