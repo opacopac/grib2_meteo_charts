@@ -1,4 +1,6 @@
+use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::common::tstamp::TStamp;
+use meteo_grib2_renderer::dwd_layer::dwd_temp_layer::DwdTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
@@ -7,6 +9,7 @@ use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridCon
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
 pub const T2M_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202508100900-0-t_2m-ctrl.grib2";
+pub const CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-chart.png";
 
 #[test]
 fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
@@ -38,7 +41,15 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
 
     TStamp::print_us("grid.create_regular_grid...");
     let regrid = grid.create_regular_grid();
-    let a = 1;
+
+    TStamp::print_us("DwdTempLayer::new...");
+    let dwd_temp_layer = DwdTempLayer::new(regrid).unwrap();
+
+    TStamp::print_us("TempChartRenderer::render_full_chart...");
+    let drawable = TempChartRenderer::render_full_chart(&dwd_temp_layer).unwrap();
+
+    TStamp::print_us("Drawable::safe_image...");
+    drawable.safe_image(CHART_OUTPUT_FILE).unwrap();
 
     TStamp::print_us("done.");
 
