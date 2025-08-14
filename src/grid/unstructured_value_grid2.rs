@@ -2,31 +2,31 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::grid::unstructured_grid2::UnstructuredGrid2;
 use std::ops::{Add, Mul};
 
-pub struct UnstructuredValueGrid<T> {
-    grid: UnstructuredGrid,
+pub struct UnstructuredValueGrid2<T> {
+    grid: UnstructuredGrid2,
     values: Vec<T>,
     missing_value: T,
 }
 
 impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
-    UnstructuredValueGrid<T>
+    UnstructuredValueGrid2<T>
 {
     pub fn new(
         values: Vec<T>,
         missing_value: T,
-        grid: UnstructuredGrid,
-    ) -> UnstructuredValueGrid<T> {
-        UnstructuredValueGrid {
+        grid: UnstructuredGrid2,
+    ) -> UnstructuredValueGrid2<T> {
+        UnstructuredValueGrid2 {
             grid,
             values,
             missing_value,
         }
     }
 
-    pub fn get_grid(&self) -> &UnstructuredGrid {
+    pub fn get_grid(&self) -> &UnstructuredGrid2 {
         &self.grid
     }
 
@@ -43,38 +43,19 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
     }
 
     pub fn get_value_by_xy(&self, x: usize, y: usize) -> Option<T> {
-        let coord_dist_triple = self.grid.get_coord_dist_triple(x, y)?;
-        let coord_dists = coord_dist_triple.get_coord_dists();
+        let coord_dist = match self.grid.get_coord_dist(x, y) {
+            Some(coord_dist) => coord_dist,
+            None => return None,
+        };
 
-        if coord_dists.is_empty() {
-            return None;
-        }
-
-        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
-
-        // TODO: 512, 971
-        if x == 512 && y == 971 {
-            println!("coord_dist_sum: {}", coord_dist_sum);
-        }
-
-        let value: T = coord_dists
-            .iter()
-            .filter_map(|cd| {
-                let value_index = cd.get_coord_index();
-                if let Some(value) = self.values.get(value_index) {
-                    if *value == self.missing_value {
-                        return None;
-                    }
-                    return Some(*value * (cd.get_coord_dist_squared().sqrt() / coord_dist_sum));
-                } else {
-                    return None;
-                }
-            })
-            .sum();
+        let value_index = coord_dist.get_coord_index();
+        let value = match self.values.get(value_index) {
+            Some(val) => *val,
+            None => return None,
+        };
 
         Some(value)
     }
-
 
     pub fn get_value_by_lat_lon(&self, pos: &LatLon) -> Option<T> {
         let (x0, y0) = self.grid.get_x_y_by_lat_lon(pos)?;
