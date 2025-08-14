@@ -24,35 +24,31 @@ impl LatLonExtent {
             );
         }
 
-        return LatLonExtent {
+        LatLonExtent {
             min_coord,
             max_coord,
-        };
+        }
     }
 
     pub fn clone(&self) -> LatLonExtent {
-        let clone = LatLonExtent {
+        LatLonExtent {
             min_coord: self.min_coord.clone(),
             max_coord: self.max_coord.clone(),
-        };
-
-        return clone;
+        }
     }
 
     pub fn calc_midpoint(&self) -> LatLon {
-        let mid_point = LatLon {
+        LatLon {
             lat: (self.min_coord.lat + self.max_coord.lat) / 2.0,
             lon: (self.min_coord.lon + self.max_coord.lon) / 2.0,
-        };
-
-        return mid_point;
+        }
     }
 
     pub fn is_inside(&self, point: &LatLon) -> bool {
-        return point.lat >= self.min_coord.lat
+        point.lat >= self.min_coord.lat
             && point.lat < self.max_coord.lat
             && point.lon >= self.min_coord.lon
-            && point.lon < self.max_coord.lon;
+            && point.lon < self.max_coord.lon
     }
 
     pub fn calc_min_bounding_extent(coordinates: &Vec<LatLon>) -> LatLonExtent {
@@ -82,7 +78,7 @@ impl LatLonExtent {
 
 impl PartialEq for LatLonExtent {
     fn eq(&self, other: &Self) -> bool {
-        return self.min_coord == other.min_coord && self.max_coord == other.max_coord;
+        self.min_coord == other.min_coord && self.max_coord == other.max_coord
     }
 }
 

@@ -30,11 +30,6 @@ impl LatLon {
     };
 
     pub fn new(lat: f32, lon: f32) -> LatLon {
-        if lat < Self::MIN_LAT || lat > Self::MAX_LAT || lon < Self::MIN_LON || lon > Self::MAX_LON
-        {
-            panic!("lat/lon values out of bounds: lat: {}, lon: {}", lat, lon);
-        }
-
         LatLon { lat, lon }
     }
 
@@ -73,18 +68,6 @@ mod tests {
         let result1 = LatLon::new(60.5, -40.1);
         assert_eq!(result1.lat, 60.5);
         assert_eq!(result1.lon, -40.1);
-    }
-
-    #[test]
-    #[should_panic]
-    fn it_panics_on_invalid_lat() {
-        LatLon::new(-91.0, 0.0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn it_panics_on_invalid_lon() {
-        LatLon::new(0.0, 180.5);
     }
 
     #[test]
