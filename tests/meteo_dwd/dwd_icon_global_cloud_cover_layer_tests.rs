@@ -26,14 +26,13 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     TStamp::print_us("NetCdftoGridConverter::get_lat_lon_values_from_netcdf2...");
     let coordinates = NetCdftoGridConverter::get_lat_lon_values_from_netcdf2(&netcdf_doc).unwrap();
     TStamp::print_us("UnstructuredGridConverter::create...");
-    let lat_lon_extent = LatLonExtent::new(LatLon::new(-85.0, -180.0), LatLon::new(85.0, 179.999));
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,
         |x| x - 273.15, // convert Kelvin to Celsius,
         255.0,
         coordinates,
         dimensions,
-        lat_lon_extent,
+        LatLonExtent::MERCATOR_EXTENT,
         0.117, // TODO
     )
     .unwrap();

@@ -7,12 +7,22 @@ pub struct LatLon {
 
 impl LatLon {
     pub const MIN_LAT: f32 = -90.0;
-    pub const MAX_LAT: f32 = 90.0;
+    pub const MAX_LAT: f32 = 89.999; // TODO: 90.0;
     pub const MIN_LON: f32 = -180.0;
-    pub const MAX_LON: f32 = 180.0;
+    pub const MAX_LON: f32 = 179.999; // TODO: 180.0;
+    pub const MERCATOR_MIN_LAT: f32 = -85.051129;
+    pub const MERCATOR_MAX_LAT: f32 = 85.051129;
 
     pub const MIN_COORD: LatLon = LatLon { lat: Self::MIN_LAT, lon: Self::MIN_LON };
     pub const MAX_COORD: LatLon = LatLon { lat: Self::MAX_LAT, lon: Self::MAX_LON };
+    pub const MIN_MERCATOR_COORD: LatLon = LatLon {
+        lat: Self::MERCATOR_MIN_LAT,
+        lon: Self::MIN_LON,
+    };
+    pub const MAX_MERCATOR_COORD: LatLon = LatLon {
+        lat: Self::MERCATOR_MAX_LAT,
+        lon: Self::MAX_LON,
+    };
 
 
     // TODO
