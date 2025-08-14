@@ -48,16 +48,23 @@ impl UnstructuredGrid {
     }
 
     pub fn calc_coord_dist_lookup_map(&mut self, max_deg_coord_dist: f32) {
+        let min_lat = self.get_lat_lon_extent().min_coord.lat - max_deg_coord_dist;
+        let max_lat = self.get_lat_lon_extent().max_coord.lat + max_deg_coord_dist;
+        let min_lon = self.get_lat_lon_extent().min_coord.lon - max_deg_coord_dist;
+        let max_lon = self.get_lat_lon_extent().max_coord.lon + max_deg_coord_dist;
         let max_deg_coord_dist_squared = max_deg_coord_dist * max_deg_coord_dist;
+
         for i in 0..self.coordinates.len() {
             let coord = &self.coordinates[i];
-            if coord.lat < LatLon::MERCATOR_MIN_LAT - max_deg_coord_dist
-                || coord.lat > LatLon::MERCATOR_MAX_LAT + max_deg_coord_dist
+            if coord.lat < min_lat
+                || coord.lat > max_lat
+                || coord.lon < min_lon
+                || coord.lon > max_lon
             {
                 continue; // skip coordinates outside the extent + max distance
             }
-            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
 
+            let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
             for x in min_xy.0..=max_xy.0 {
                 for y in min_xy.1..=max_xy.1 {
                     if let Some(idx) = self.get_index_by_x_y(x, y) {

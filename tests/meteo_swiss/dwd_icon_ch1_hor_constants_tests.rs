@@ -40,10 +40,10 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     ).unwrap();
 
     TStamp::print_us("grid.create_regular_grid...");
-    let regrid = grid.create_regular_grid();
+    let regular_grid = grid.create_regular_grid();
 
     TStamp::print_us("DwdTempLayer::new...");
-    let dwd_temp_layer = DwdTempLayer::new(regrid).unwrap();
+    let dwd_temp_layer = DwdTempLayer::new(regular_grid).unwrap();
 
     TStamp::print_us("TempChartRenderer::render_full_chart...");
     let drawable = TempChartRenderer::render_full_chart(&dwd_temp_layer).unwrap();
