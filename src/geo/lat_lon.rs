@@ -9,15 +9,20 @@ impl LatLon {
     pub const MAX_LAT: f32 = 90.0;
     pub const MIN_LON: f32 = -180.0;
     pub const MAX_LON: f32 = 180.0;
+    pub const MERCATOR_MIN_LAT: f32 = -85.051129;
+    pub const MERCATOR_MAX_LAT: f32 = 85.051129;
 
-    pub const MIN_COORD: LatLon = LatLon {
-        lat: Self::MIN_LAT,
+    pub const MIN_COORD: LatLon = LatLon { lat: Self::MIN_LAT, lon: Self::MIN_LON };
+    pub const MAX_COORD: LatLon = LatLon { lat: Self::MAX_LAT, lon: Self::MAX_LON };
+    pub const MIN_MERCATOR_COORD: LatLon = LatLon {
+        lat: Self::MERCATOR_MIN_LAT,
         lon: Self::MIN_LON,
     };
-    pub const MAX_COORD: LatLon = LatLon {
-        lat: Self::MAX_LAT,
+    pub const MAX_MERCATOR_COORD: LatLon = LatLon {
+        lat: Self::MERCATOR_MAX_LAT,
         lon: Self::MAX_LON,
     };
+
 
     pub fn new(lat: f32, lon: f32) -> LatLon {
         if lat < Self::MIN_LAT
@@ -88,6 +93,7 @@ mod tests {
 
         assert_eq!(pos, clone);
     }
+
 
     #[test]
     fn it_clones_the_min_max_coords() {

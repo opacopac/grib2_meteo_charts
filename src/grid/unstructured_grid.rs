@@ -33,7 +33,7 @@ impl UnstructuredGrid {
     pub fn get_index_by_x_y(&self, x: usize, y: usize) -> Option<usize> {
         self.lat_lon_grid.get_index_by_x_y(x, y)
     }
-    
+
     pub fn get_x_y_by_lat_lon(&self, pos: &LatLon) -> Option<(f32, f32)> {
         self.lat_lon_grid.get_x_y_by_lat_lon(pos)
     }
@@ -51,15 +51,19 @@ impl UnstructuredGrid {
         let max_deg_coord_dist_squared = max_deg_coord_dist * max_deg_coord_dist;
         for i in 0..self.coordinates.len() {
             let coord = &self.coordinates[i];
-            if !self.lat_lon_grid.get_lat_lon_extent().is_inside(coord) {
-                continue; // skip coordinates outside the extent
+            if coord.lat < LatLon::MERCATOR_MIN_LAT - max_deg_coord_dist
+                || coord.lat > LatLon::MERCATOR_MAX_LAT + max_deg_coord_dist
+            {
+                continue; // skip coordinates outside the extent + max distance
             }
             let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
 
             for x in min_xy.0..=max_xy.0 {
                 for y in min_xy.1..=max_xy.1 {
                     if let Some(idx) = self.get_index_by_x_y(x, y) {
-                        let lat_lon = self.lat_lon_grid.get_lat_lon_by_x_y(x as f32 + 0.5, y as f32 + 0.5);
+                        let lat_lon = self
+                            .lat_lon_grid
+                            .get_lat_lon_by_x_y(x as f32 + 0.5, y as f32 + 0.5);
                         let dist_squared = match lat_lon {
                             Some(lat_lon) => coord.calc_euclidean_dist_squared(&lat_lon),
                             None => continue, // skip if lat_lon is not found

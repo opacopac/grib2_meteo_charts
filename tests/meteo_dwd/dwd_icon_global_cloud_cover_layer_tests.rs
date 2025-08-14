@@ -1,7 +1,6 @@
 use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::common::tstamp::TStamp;
 use meteo_grib2_renderer::dwd_layer::dwd_temp_layer::DwdTempLayer;
-use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;
@@ -26,14 +25,13 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     TStamp::print_us("NetCdftoGridConverter::get_lat_lon_values_from_netcdf2...");
     let coordinates = NetCdftoGridConverter::get_lat_lon_values_from_netcdf2(&netcdf_doc).unwrap();
     TStamp::print_us("UnstructuredGridConverter::create...");
-    let lat_lon_extent = LatLonExtent::new(LatLon::new(-85.0, -180.0), LatLon::new(85.0, 179.999));
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,
         |x| x - 273.15, // convert Kelvin to Celsius,
         255.0,
         coordinates,
         dimensions,
-        lat_lon_extent,
+        LatLonExtent::MERCATOR_EXTENT,
         0.117, // TODO
     )
     .unwrap();
