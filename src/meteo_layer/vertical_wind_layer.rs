@@ -13,7 +13,7 @@ impl <'a> DwdVerticalWindLayer<'a> {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         u_grids: Vec<LatLonValueGrid<u8>>,
         v_grids: Vec<LatLonValueGrid<u8>>
-    ) -> DwdVerticalWindLayer {
+    ) -> DwdVerticalWindLayer<'_> {
         if hhl_grids.len() == 0 || u_grids.len() == 0 || v_grids.len() == 0 {
             panic!("number of hhl, v or u grids must not be null"); // TODO: return error
         }

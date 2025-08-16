@@ -11,7 +11,7 @@ impl <'a> DwdVerticalCloudLayer<'a> {
     pub fn new(
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         clc_grids: Vec<LatLonValueGrid<u8>>
-    ) -> DwdVerticalCloudLayer {
+    ) -> DwdVerticalCloudLayer<'_> {
         if hhl_grids.len() == 0 || clc_grids.len() == 0 {
             panic!("number of hhl grids or clc grids must not be null"); // TODO: return error
         }
