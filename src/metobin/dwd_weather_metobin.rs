@@ -1,5 +1,5 @@
-use crate::dwd_layer::dwd_weather_layer::DwdWeatherLayer;
-use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
+use crate::meteo_layer::weather_layer::DwdWeatherLayer;
+use crate::meteo_layer::weather_interpretation::DwdWeatherInterpretation;
 
 pub struct DwdWeatherMeteoBin {
     layer: DwdWeatherLayer

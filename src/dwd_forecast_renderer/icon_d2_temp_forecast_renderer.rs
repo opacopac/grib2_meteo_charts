@@ -10,7 +10,7 @@ use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::dwd_layer::dwd_temp_layer::DwdTempLayer;
+use crate::meteo_layer::temp_layer::DwdTempLayer;
 use crate::metobin::dwd_temp_metobin::DwdTempMeteoBin;
 
 pub struct IconD2TempForecastRenderer;

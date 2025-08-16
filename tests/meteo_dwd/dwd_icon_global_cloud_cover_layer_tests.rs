@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
-use meteo_grib2_renderer::common::tstamp::TStamp;
-use meteo_grib2_renderer::dwd_layer::dwd_temp_layer::DwdTempLayer;
+use meteo_grib2_renderer::logging::tstamp::TStamp;
+use meteo_grib2_renderer::meteo_layer::temp_layer::DwdTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;

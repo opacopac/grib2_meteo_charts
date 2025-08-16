@@ -105,7 +105,7 @@ impl DwdWeatherInterpretation {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
+    use crate::meteo_layer::weather_interpretation::DwdWeatherInterpretation;
 
     #[test]
     fn it_converts_from_a_byte_value() {

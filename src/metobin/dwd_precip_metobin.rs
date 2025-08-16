@@ -1,4 +1,4 @@
-use crate::dwd_layer::dwd_cloud_precip_layer::DwdCloudPrecipLayer;
+use crate::meteo_layer::cloud_precip_layer::DwdCloudPrecipLayer;
 
 pub struct DwdPrecipMeteoBin {
     layer: DwdCloudPrecipLayer

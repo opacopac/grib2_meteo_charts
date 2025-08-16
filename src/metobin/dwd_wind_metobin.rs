@@ -1,4 +1,4 @@
-use crate::dwd_layer::dwd_wind_layer::DwdWindLayer;
+use crate::meteo_layer::wind_layer::DwdWindLayer;
 
 pub struct DwdWindMeteobin {
     wind_layer: DwdWindLayer

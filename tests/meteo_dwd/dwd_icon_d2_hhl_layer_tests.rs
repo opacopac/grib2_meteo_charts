@@ -1,6 +1,6 @@
 use assert_approx_eq::assert_approx_eq;
 
-use meteo_grib2_renderer::dwd_layer::dwd_hhl_layer::HhlLayer;
+use meteo_grib2_renderer::meteo_layer::hhl_layer::HhlLayer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;

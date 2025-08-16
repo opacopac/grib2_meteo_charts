@@ -12,7 +12,7 @@ use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::dwd_layer::dwd_wind_layer::DwdWindLayer;
+use crate::meteo_layer::wind_layer::DwdWindLayer;
 use crate::imaging::drawable::Drawable;
 use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
 

@@ -2,7 +2,7 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::dwd_layer::dwd_weather_interpretation::DwdWeatherInterpretation;
+use crate::meteo_layer::weather_interpretation::DwdWeatherInterpretation;
 
 pub struct DwdWeatherLayer {
     ww_grid: LatLonValueGrid<f32>,

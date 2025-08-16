@@ -1,4 +1,4 @@
-use crate::dwd_layer::dwd_vertical_cloud_layer::DwdVerticalCloudLayer;
+use crate::meteo_layer::vertical_cloud_layer::DwdVerticalCloudLayer;
 
 pub struct DwdVerticalCloudMeteobin<'a> {
     layer: DwdVerticalCloudLayer<'a>

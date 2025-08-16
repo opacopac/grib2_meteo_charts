@@ -1,6 +1,6 @@
 use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
-use crate::dwd_layer::dwd_temp_layer::DwdTempLayer;
+use crate::meteo_layer::temp_layer::DwdTempLayer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 

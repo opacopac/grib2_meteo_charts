@@ -1,4 +1,4 @@
-use crate::dwd_layer::dwd_temp_layer::DwdTempLayer;
+use crate::meteo_layer::temp_layer::DwdTempLayer;
 
 pub struct DwdTempMeteoBin {
     layer: DwdTempLayer
