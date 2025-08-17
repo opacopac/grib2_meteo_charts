@@ -3,7 +3,7 @@ use meteo_grib2_renderer::grib2::document::grib2_document::Grib2Document;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 
 mod grib2;
-mod meteo_dwd;
+mod dwd;
 mod meteo_swiss;
 mod chart;
 mod netcdf;
