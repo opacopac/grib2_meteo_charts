@@ -3,7 +3,7 @@ use assert_approx_eq::assert_approx_eq;
 use meteo_grib2_renderer::meteo_layer::hhl_layer::HhlLayer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
+use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const HHL_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_time-invariant_2022122100_000_66_hhl.grib2";
 

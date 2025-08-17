@@ -4,7 +4,7 @@ use meteo_grib2_renderer::meteo_layer::temp_layer::DwdTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;
+use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
 
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";

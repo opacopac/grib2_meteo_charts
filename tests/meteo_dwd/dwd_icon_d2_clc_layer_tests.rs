@@ -1,7 +1,7 @@
 use meteo_grib2_renderer::meteo_layer::cloud_layer::DwdCloudLayer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::grid::regular_grid_converter::RegularGridConverter;
+use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const CLC_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_model-level_2022122115_000_25_clc.grib2";
 pub const CLC_TEST_FILE_NO_DATAPOINTS: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_model-level_2023021318_002_30_clc.grib2";

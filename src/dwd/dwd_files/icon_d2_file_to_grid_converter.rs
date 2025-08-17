@@ -7,7 +7,7 @@ use crate::dwd::common::dwd_error::DwdError;
 use crate::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::regular_grid_converter::RegularGridConverter;
+use crate::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub struct IconD2FileToGridConverter;
 

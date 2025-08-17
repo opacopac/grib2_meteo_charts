@@ -3,7 +3,7 @@ use meteo_grib2_renderer::logging::tstamp::TStamp;
 use meteo_grib2_renderer::meteo_layer::temp_layer::DwdTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::grid::unstructured_grid_converter::UnstructuredGridConverter;
+use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
 use meteo_grib2_renderer::netcdf::converter::netcdf_to_grid_converter::{
     NetCdftoGridConverter, CLAT_VAR_NAME, CLON_VAR_NAME,
 };
