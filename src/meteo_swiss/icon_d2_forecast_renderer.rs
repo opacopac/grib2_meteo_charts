@@ -1,4 +1,4 @@
-use crate::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
+use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 
 pub struct IconCh1ForecastRenderer;
 
