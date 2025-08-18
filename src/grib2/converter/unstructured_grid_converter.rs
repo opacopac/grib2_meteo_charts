@@ -10,7 +10,7 @@ use std::ops::{Add, Mul};
 pub struct UnstructuredGridConverter;
 
 impl UnstructuredGridConverter {
-    pub fn create<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>(
+    pub fn create<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum + std::fmt::Display>(
         grib2_doc: &Grib2Document,
         transform_fn: fn(f32) -> T,
         missing_value: T,

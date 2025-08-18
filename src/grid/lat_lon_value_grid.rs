@@ -18,27 +18,27 @@ impl <T: GridValueType> LatLonValueGrid<T> {
     ) -> LatLonValueGrid<T> {
         let grid = LatLonGrid::new(dimensions, lat_lon_extent);
 
-        return LatLonValueGrid { grid, values, missing_value };
+        LatLonValueGrid { grid, values, missing_value }
     }
 
 
     pub fn get_grid(&self) -> &LatLonGrid {
-        return &self.grid;
+        &self.grid
     }
 
 
     pub fn get_grid_dimensions(&self) -> (usize, usize) {
-        return self.grid.get_dimensions();
+        self.grid.get_dimensions()
     }
 
 
     pub fn get_grid_lat_lon_extent(&self) -> &LatLonExtent {
-        return self.grid.get_lat_lon_extent();
+        self.grid.get_lat_lon_extent()
     }
 
 
     pub fn get_missing_value(&self) -> T {
-        return self.missing_value;
+        self.missing_value
     }
 
 
@@ -46,7 +46,7 @@ impl <T: GridValueType> LatLonValueGrid<T> {
         let idx = self.grid.get_index_by_x_y(x, y)?;
         let value = self.values[idx];
 
-        return if value != self.missing_value {
+        if value != self.missing_value {
             Some(value)
         } else {
             None

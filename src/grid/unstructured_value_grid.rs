@@ -11,7 +11,7 @@ pub struct UnstructuredValueGrid<T> {
     missing_value: T,
 }
 
-impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
+impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum + std::fmt::Display>
     UnstructuredValueGrid<T>
 {
     pub fn new(
@@ -63,7 +63,12 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
                     if *value == self.missing_value {
                         return None;
                     }
-                    Some(*value * (cd.get_coord_dist_squared().sqrt() / coord_dist_sum))
+                    let coord_dist = cd.get_coord_dist_squared().sqrt();
+                    if coord_dist_sum == 0.0 {
+                        return Some(*value);
+                    } else {
+                        return Some(*value * (coord_dist / coord_dist_sum));
+                    }
                 } else {
                     None
                 }
@@ -141,14 +146,25 @@ mod tests {
         // when
         let grid = uv_grid.create_regular_grid();
 
-        let result00 = grid.get_value_by_xy(0, 0).unwrap();
-        let result11 = grid.get_value_by_xy(1, 1).unwrap();
-        let result22 = grid.get_value_by_xy(2, 2).unwrap();
-        let result21 = grid.get_value_by_xy(2, 1).unwrap();
+        // then
+        for i in 0..8 {
+            let x = i % 3;
+            let y = i / 3;
+            let result = grid.get_value_by_xy(x, y);
+            let expected = match i {
+                0 => Some(15.0),
+                1 => Some(20.0),
+                2 => Some(25.0),
+                3 => Some(10.0),
+                4 => Some(20.0),
+                5 => Some(30.0),
+                6 => Some(10.0),
+                7 => None,
+                8 => Some(30.0),
+                _ => None,
+            };
 
-        assert_eq!(15.0, result00);
-        assert_eq!(20.0, result11);
-        assert_eq!(30.0, result22);
-        assert_eq!(255.0, result21);
+            assert_eq!(result, expected);
+        }
     }
 }

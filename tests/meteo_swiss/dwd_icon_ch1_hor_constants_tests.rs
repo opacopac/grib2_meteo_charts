@@ -44,7 +44,7 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
         coordinates,
         dimensions,
         lat_lon_extent,
-        0.1 // TODO
+        0.05 // TODO
     ).unwrap();
 
     TStamp::print_us("grid.create_regular_grid...");
