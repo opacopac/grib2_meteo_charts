@@ -78,11 +78,19 @@ impl UnstructuredGrid2 {
                         Some(lat_lon) => lat_lon,
                         None => continue,
                     };
-                    let dist_squared = coord.calc_euclidean_dist_squared(&lat_lon);
-                    if dist_squared > max_deg_coord_dist_squared {
+                    let new_dist_squared = coord.calc_euclidean_dist_squared(&lat_lon);
+                    if new_dist_squared > max_deg_coord_dist_squared {
                         continue;
                     }
-                    self.coord_dist_map[idx] = Some(CoordDist::new(i, dist_squared));
+                    let current_dist_squared = match self.coord_dist_map[idx] {
+                        Some(coord_dist) => coord_dist.get_coord_dist_squared(),
+                        None => max_deg_coord_dist_squared
+                    };
+                    if new_dist_squared > current_dist_squared {
+                        continue;
+                    } else {
+                        self.coord_dist_map[idx] = Some(CoordDist::new(i, new_dist_squared));
+                    }
                 }
             }
         }

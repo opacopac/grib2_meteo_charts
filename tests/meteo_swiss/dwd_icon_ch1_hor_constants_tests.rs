@@ -1,4 +1,6 @@
+use log::info;
 use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::logging::tstamp::TStamp;
 use meteo_grib2_renderer::meteo_layer::temp_layer::DwdTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
@@ -13,6 +15,7 @@ pub const CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-chart.png";
 
 #[test]
 fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
+    info!("MEEP");
     TStamp::print_us("Grib2DocumentReader::read_multi_doc_from_file...");
     let hor_docs = Grib2DocumentReader::read_multi_doc_from_file(HOR_CONST_TEST_FILE).unwrap();
 
@@ -28,7 +31,12 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
     let t2m_doc = Grib2DocumentReader::read_single_doc_from_file(T2M_TEST_FILE).unwrap();
 
     TStamp::print_us("UnstructuredGridConverter::create...");
-    let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
+    //let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
+    let lat_lon_extent = LatLonExtent::new(
+        LatLon::new(45.0, 6.0),
+        LatLon::new(46.0, 7.0)
+    );
+
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
         |x| x - 273.15, // convert Kelvin to Celsius
@@ -36,7 +44,7 @@ fn it_successfully_reads_an_icon_ch1_hor_contants_test_file() {
         coordinates,
         dimensions,
         lat_lon_extent,
-        0.01 // TODO
+        0.1 // TODO
     ).unwrap();
 
     TStamp::print_us("grid.create_regular_grid...");

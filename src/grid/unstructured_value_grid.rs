@@ -50,24 +50,22 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
             return None;
         }
 
-        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
-
-        // TODO: 512, 971
-        if x == 512 && y == 971 {
-            println!("coord_dist_sum: {}", coord_dist_sum);
-        }
+        let coord_dist_sum: f32 = coord_dists
+            .iter()
+            .map(|cd| cd.get_coord_dist_squared().sqrt())
+            .sum();
 
         let value: T = coord_dists
             .iter()
             .filter_map(|cd| {
                 let value_index = cd.get_coord_index();
-                if let Some(value) = self.values.get(value_index) {
+                return if let Some(value) = self.values.get(value_index) {
                     if *value == self.missing_value {
                         return None;
                     }
-                    return Some(*value * (cd.get_coord_dist_squared().sqrt() / coord_dist_sum));
+                    Some(*value * (cd.get_coord_dist_squared().sqrt() / coord_dist_sum))
                 } else {
-                    return None;
+                    None
                 }
             })
             .sum();
@@ -102,90 +100,55 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
 
 #[cfg(test)]
 mod tests {
-    /*use crate::geo::lat_lon::LatLon;
+    use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
-    use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+    use crate::grid::unstructured_grid::UnstructuredGrid;
+    use crate::grid::unstructured_value_grid::UnstructuredValueGrid;
 
-    fn create_test_grid() -> LatLonValueGrid<f32> {
-        let values = vec![00.0, 01.0, 10.0, 11.0, -1.0, 21.0];
-        let missing_value = -1.0;
-        let dimensions = (2, 3);
-        let lat_lon_extent = LatLonExtent::new(LatLon::new(40.0, 7.0), LatLon::new(46.0, 9.0));
+    /*
+     * ----------------
+     * |    | 30 |    |
+     * ----------------
+     * | 20 |    |    |
+     * ----------------
+     * |    | 10 |    |
+     * ----------------
+     */
+    fn create_test_value_grid() -> UnstructuredValueGrid<f32> {
+        let dimensions = (3, 3);
+        let lat_lon_extent = LatLonExtent::new(
+            LatLon::new(0.0, 0.0),
+            LatLon::new(3.0, 3.0)
+        );
+        let values = vec![10.0, 20.0, 30.0];
+        let missing_value = 255.0;
+        let coordinates = vec![
+            LatLon::new(1.5, 0.5),
+            LatLon::new(0.5, 1.5),
+            LatLon::new(1.5, 2.5),
+        ];
+        let mut grid = UnstructuredGrid::new(dimensions, lat_lon_extent, coordinates);
+        grid.calc_coord_dist_lookup_map(1.1);
 
-        LatLonValueGrid::new(values, missing_value, dimensions, lat_lon_extent)
+        UnstructuredValueGrid::new(values, missing_value, grid)
     }
 
     #[test]
     fn it_gets_the_correct_x_y_value() {
-        let grid = create_test_grid();
+        // given
+        let uv_grid = create_test_value_grid();
+
+        // when
+        let grid = uv_grid.create_regular_grid();
 
         let result00 = grid.get_value_by_xy(0, 0).unwrap();
-        let result01 = grid.get_value_by_xy(1, 0).unwrap();
-        let result21 = grid.get_value_by_xy(1, 2).unwrap();
+        let result11 = grid.get_value_by_xy(1, 1).unwrap();
+        let result22 = grid.get_value_by_xy(2, 2).unwrap();
+        let result21 = grid.get_value_by_xy(2, 1).unwrap();
 
-        assert_eq!(00.0, result00);
-        assert_eq!(01.0, result01);
-        assert_eq!(21.0, result21);
+        assert_eq!(15.0, result00);
+        assert_eq!(20.0, result11);
+        assert_eq!(30.0, result22);
+        assert_eq!(255.0, result21);
     }
-
-    #[test]
-    fn it_gets_none_if_x_or_y_are_out_of_bounds() {
-        let grid = create_test_grid();
-
-        let result1 = grid.get_value_by_xy(2, 0);
-        let result2 = grid.get_value_by_xy(0, 3);
-
-        assert!(result1.is_none());
-        assert!(result2.is_none());
-    }
-
-    #[test]
-    fn it_gets_the_correct_lat_lon_value() {
-        let grid = create_test_grid();
-        let pos1 = LatLon::new(40.0, 7.0);
-        let pos2 = LatLon::new(42.0, 7.0);
-        let pos3 = LatLon::new(44.0, 8.0);
-        let pos4 = LatLon::new(44.9, 8.4);
-
-        let result1 = grid.get_value_by_lat_lon(&pos1).unwrap();
-        let result2 = grid.get_value_by_lat_lon(&pos2).unwrap();
-        let result3 = grid.get_value_by_lat_lon(&pos3).unwrap();
-        let result4 = grid.get_value_by_lat_lon(&pos4).unwrap();
-
-        assert_eq!(00.0, result1);
-        assert_eq!(10.0, result2);
-        assert_eq!(21.0, result3);
-        assert_eq!(21.0, result4);
-    }
-
-    #[test]
-    fn it_gets_none_if_lat_or_lon_are_out_of_bounds() {
-        let grid = create_test_grid();
-        let pos1 = LatLon::new(40.0, 6.9);
-        let pos2 = LatLon::new(39.9, 7.0);
-        let pos3 = LatLon::new(43.0, 9.1);
-        let pos4 = LatLon::new(46.1, 8.0);
-        let pos5 = LatLon::new(45.5, 8.5);
-
-        let result1 = grid.get_value_by_lat_lon(&pos1);
-        let result2 = grid.get_value_by_lat_lon(&pos2);
-        let result3 = grid.get_value_by_lat_lon(&pos3);
-        let result4 = grid.get_value_by_lat_lon(&pos4);
-        let result5 = grid.get_value_by_lat_lon(&pos5);
-
-        assert!(result1.is_none());
-        assert!(result2.is_none());
-        assert!(result3.is_none());
-        assert!(result4.is_none());
-        assert!(result5.is_none());
-    }
-
-    #[test]
-    fn it_gets_none_for_missing_values() {
-        let grid = create_test_grid();
-
-        let result1 = grid.get_value_by_xy(0, 2);
-
-        assert!(result1.is_none());
-    }*/
 }

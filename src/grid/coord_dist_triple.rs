@@ -25,22 +25,25 @@ impl CoordDistTriple {
     pub fn add_coord_dist(&mut self, coord_dist: CoordDist) {
         // find coord_dist larger than the provided coord_dist (or empty slot)
         let mut highest_dist_squared = coord_dist.get_coord_dist_squared();
-        let mut highest_dist_idx = 0;
+        let mut highest_dist_idx = None;
 
         for i in 0..Self::SIZE {
             if let Some(cd) = &self.coord_dists[i] {
                 if cd.get_coord_dist_squared() > highest_dist_squared {
                     highest_dist_squared = cd.get_coord_dist_squared();
-                    highest_dist_idx = i;
+                    highest_dist_idx = Some(i);
                 }
             } else {
-                highest_dist_idx = i;
+                highest_dist_idx = Some(i);
                 break;
             }
         }
 
         // replace the coord_dist at the index with the highest distance
-        self.coord_dists[highest_dist_idx] = Some(coord_dist);
+        if let Some(idx) = highest_dist_idx {
+            self.coord_dists[idx] = Some(coord_dist);
+            return;
+        }
     }
     
     pub fn get_coord_dists(&self) -> Vec<&CoordDist> {
