@@ -37,8 +37,10 @@ impl IconD2FileToGridConverter {
 
     fn get_file_reader(filename: &str) -> impl Read {
         info!("reading file {}", filename);
-        let response_result = ureq::get(filename).call().unwrap(); // TODO
-        let reader = response_result.into_reader();
+        let response_result = ureq::get(filename)
+            .call()
+            .expect("Failed to get file from URL");
+        let reader = response_result.into_body().into_reader();
         let bz_decoder = BzDecoder::new(reader);
 
         return bz_decoder;

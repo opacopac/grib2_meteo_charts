@@ -52,11 +52,6 @@ impl<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum>
 
         let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
 
-        // TODO: 512, 971
-        if x == 512 && y == 971 {
-            println!("coord_dist_sum: {}", coord_dist_sum);
-        }
-
         let value: T = coord_dists
             .iter()
             .filter_map(|cd| {
