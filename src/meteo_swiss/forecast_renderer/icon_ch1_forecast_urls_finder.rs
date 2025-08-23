@@ -1,4 +1,5 @@
-use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_request::ForecastResponse;
+use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_request::{ForecastResponse, ForecastResponseAssets};
+use crate::meteo_swiss::forecast_run::icon_ch1_forecast_step::IconCh1ForecastStep;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 pub const ICON_CH1_POST_URL: &str = "https://data.geo.admin.ch/api/stac/v1/search";
@@ -12,10 +13,11 @@ pub struct IconCh1ForecastUrlsFinder;
 
 
 impl IconCh1ForecastUrlsFinder {
-    pub fn find_latest_forecast_run() -> Result<Vec<String>, MeteoSwissError> {
+    pub fn find_latest_forecast_run() -> Result<Vec<IconCh1ForecastStep>, MeteoSwissError> {
         let body = serde_json::json!({
             "collections": [ICON_CH1_WEATHER_MODEL_NAME],
-            "forecast:variable": "T_2M",
+            "forecast:reference_datetime": "2025-08-23T18:00:00Z", // TODO
+            "forecast:variable": "T_2M", // TODO
             "forecast:perturbed": false
         });
         let response = ureq::post(ICON_CH1_POST_URL)
@@ -25,12 +27,30 @@ impl IconCh1ForecastUrlsFinder {
 
         println!("Latest forecast run timestamp: {}", response.timestamp);
 
-        let prop_tile_list = response.features.iter()
-            //.filter(|f| f.properties.forecast_variable == VARIABLES[0])
-            .map(|f| f.properties.title.clone())
+        let steps: Vec<IconCh1ForecastStep> = response.features.iter()
+            .map(|f| IconCh1ForecastStep::new(
+                f.properties.title.clone(),
+                f.properties.forecast_horizon.clone(),
+                Self::extract_href_from_assets(&f.assets)
+            ))
             .collect();
 
-        Ok(prop_tile_list)
+        let sorted_steps = {
+            let mut s = steps;
+            s.sort_by(|a, b| a.step.cmp(&b.step));
+            s
+        };
+
+        Ok(sorted_steps)
+    }
+
+
+    fn extract_href_from_assets(assets: &ForecastResponseAssets) -> String {
+        for (_key, asset) in &assets.data {
+            return asset.href.clone();
+        }
+
+        panic!("Could not extract the href from assets");
     }
 }
 
