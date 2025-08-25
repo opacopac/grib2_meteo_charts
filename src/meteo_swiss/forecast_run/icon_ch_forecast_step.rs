@@ -11,7 +11,6 @@ impl IconCh1ForecastStep {
     }
 }
 
-// impl from iterator trait for IconCh1ForecastStep
 
 impl Iterator for IconCh1ForecastStep {
     type Item = IconCh1ForecastStep;

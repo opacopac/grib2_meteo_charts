@@ -5,6 +5,7 @@ use crate::grib2::common::grib2_error::Grib2Error;
 #[derive(Debug)]
 pub enum MeteoSwissError {
     NoForecastRunsFound(),
+    SerdeError(serde_json::Error),
     Grib2Error(Grib2Error),
     IoError(std::io::Error),
     Error(String),
@@ -15,6 +16,7 @@ impl fmt::Display for MeteoSwissError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             MeteoSwissError::NoForecastRunsFound() => write!(f, "No forecast runs found"),
+            MeteoSwissError::SerdeError(err) => write!(f, "Serde Error: {}", err.to_string()),
             MeteoSwissError::Grib2Error(err) => write!(f, "Grib2 Error: {}", err.to_string()),
             MeteoSwissError::IoError(err) => write!(f, "I/O Error: {}", err.to_string()),
             MeteoSwissError::Error(err) => write!(f, "Ureq Error: {}", err),
@@ -40,5 +42,12 @@ impl From<Grib2Error> for MeteoSwissError {
 impl From<ureq::Error> for MeteoSwissError {
     fn from(err: ureq::Error) -> Self {
         MeteoSwissError::Error(err.to_string())
+    }
+}
+
+
+impl From<serde_json::Error> for MeteoSwissError {
+    fn from(err: serde_json::Error) -> Self {
+        MeteoSwissError::SerdeError(err)
     }
 }

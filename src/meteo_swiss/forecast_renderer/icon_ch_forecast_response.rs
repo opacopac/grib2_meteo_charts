@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 
 #[derive(Debug, Deserialize)]
-pub struct ForecastResponse {
+pub struct IconChForecastResponse {
     #[serde(rename = "timeStamp")]
     pub timestamp: String,
     pub features: Vec<ForecastResponseFeature>,

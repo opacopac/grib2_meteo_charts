@@ -1,5 +1,4 @@
 use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
-use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;

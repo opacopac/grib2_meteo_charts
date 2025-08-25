@@ -13,7 +13,7 @@ pub enum IconD2ForecastRunName {
 
 impl IconD2ForecastRunName {
     pub fn get_all() -> Vec<IconD2ForecastRunName> {
-        return vec![
+        vec![
             IconD2ForecastRunName::Run00,
             IconD2ForecastRunName::Run03,
             IconD2ForecastRunName::Run06,
@@ -22,20 +22,20 @@ impl IconD2ForecastRunName {
             IconD2ForecastRunName::Run15,
             IconD2ForecastRunName::Run18,
             IconD2ForecastRunName::Run21
-        ];
+        ]
     }
 
 
     pub fn get_all_reversed() -> Vec<IconD2ForecastRunName> {
-        let mut all = IconD2ForecastRunName::get_all();
-        all.reverse();
-
-        return all;
+        IconD2ForecastRunName::get_all()
+            .into_iter()
+            .rev()
+            .collect()
     }
 
 
     pub fn get_name(&self) -> String {
-        return match self {
+        match self {
             IconD2ForecastRunName::Run00 => "00".to_string(),
             IconD2ForecastRunName::Run03 => "03".to_string(),
             IconD2ForecastRunName::Run06 => "06".to_string(),
