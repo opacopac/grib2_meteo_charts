@@ -1,5 +1,5 @@
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_endpoint::IconChForecastEndpoint;
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequest;
+use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::{
     ForecastResponseAssets, IconChForecastResponse,
 };
@@ -14,13 +14,12 @@ pub struct IconCh1ForecastUrlsFinder;
 
 impl IconCh1ForecastUrlsFinder {
     pub fn find_forecast_file_urls() -> Result<Vec<IconCh1ForecastStep>, MeteoSwissError> {
-        let request = IconChForecastRequest::new(
-            vec![IconChForecastModel::IconCh1],
-            Some("2025-08-25T12:00:00Z".to_string()), // TODO
-            None,
-            Some(IconChForecastVariable::T2m), // TODO
-            false,
-        );
+        let request = IconChForecastRequestBuilder::new()
+            .with_model(IconChForecastModel::IconCh1)
+            .with_forecast_reference_datetime("2025-08-25T12:00:00Z".to_string()) // TODO
+            .with_forecast_variable(IconChForecastVariable::T2m) // TODO
+            .with_forecast_perturbed(false)
+            .build()?;
         let body = serde_json::json!(request);
         let response = ureq::post(IconChForecastEndpoint::get_endpoint_url())
             .send_json(body)?

@@ -2,8 +2,10 @@ use std::fmt;
 
 use crate::grib2::common::grib2_error::Grib2Error;
 
+
 #[derive(Debug)]
 pub enum MeteoSwissError {
+    InvalidRequestParameters(String),
     NoForecastRunsFound(),
     SerdeError(serde_json::Error),
     Grib2Error(Grib2Error),
@@ -15,6 +17,7 @@ pub enum MeteoSwissError {
 impl fmt::Display for MeteoSwissError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            MeteoSwissError::InvalidRequestParameters(err) => write!(f, "Invalid request parameters: {}", err),
             MeteoSwissError::NoForecastRunsFound() => write!(f, "No forecast runs found"),
             MeteoSwissError::SerdeError(err) => write!(f, "Serde Error: {}", err.to_string()),
             MeteoSwissError::Grib2Error(err) => write!(f, "Grib2 Error: {}", err.to_string()),

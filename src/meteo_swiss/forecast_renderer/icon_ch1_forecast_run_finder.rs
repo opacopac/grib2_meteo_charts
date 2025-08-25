@@ -1,6 +1,6 @@
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequest;
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::IconChForecastResponse;
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_endpoint::IconChForecastEndpoint;
+use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
+use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::IconChForecastResponse;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
@@ -13,13 +13,12 @@ pub struct IconCh1ForecastRunFinder;
 
 impl IconCh1ForecastRunFinder {
     pub fn find_latest_forecast_run() -> Result<IconChForecastRun, MeteoSwissError> {
-        let request = IconChForecastRequest::new(
-            vec![IconChForecastModel::IconCh1],
-            None,
-            Some("P0DT00H00M00S".to_string()), // TODO
-            Some(IconChForecastVariable::T2m), // TODO
-            false,
-        );
+        let request = IconChForecastRequestBuilder::new()
+            .with_model(IconChForecastModel::IconCh1)
+            .with_forecast_horizon("P0DT00H00M00S".to_string()) // TODO
+            .with_forecast_variable(IconChForecastVariable::T2m) // TODO
+            .with_forecast_perturbed(false)
+            .build()?;
         let body = serde_json::json!(request);
         let response = ureq::post(IconChForecastEndpoint::get_endpoint_url())
             .send_json(body)?
