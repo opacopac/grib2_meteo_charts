@@ -1,15 +1,16 @@
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
+use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_run_finder::IconCh1ForecastRunFinder;
 
 pub struct IconCh1ForecastRenderer;
 
 impl IconCh1ForecastRenderer {
     pub fn create_latest_dwd_forecasts() -> Result<(), MeteoSwissError> {
-        info!("creating latest dwd forecasts...");
+        info!("rendering latest icon ch1 forecasts...");
 
         info!("search available forecasts...");
-        // let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
-        // info!("latest run found: {:?}", &latest_run);
+        let latest_ref_datetime = IconCh1ForecastRunFinder::find_latest_ref_datetime()?;
+        info!("latest ref datetime found: {:?}", latest_ref_datetime);
 
         info!("rendering cloud & precipitation forecast...");
         // IconD2CloudPrecipRenderer::create(&latest_run)?;
