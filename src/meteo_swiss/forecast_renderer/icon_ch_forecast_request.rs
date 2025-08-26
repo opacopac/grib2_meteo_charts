@@ -1,6 +1,7 @@
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use serde::Serialize;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 #[derive(Debug, Serialize)]
@@ -77,8 +78,8 @@ impl IconChForecastRequestBuilder {
     }
 
 
-    pub fn with_forecast_horizon(mut self, horizon: String) -> Self {
-        self.forecast_horizon = Some(horizon);
+    pub fn with_forecast_horizon(mut self, horizon: IconChForecastHorizon) -> Self {
+        self.forecast_horizon = Some(horizon.get_name());
         self
     }
 
@@ -107,5 +108,58 @@ impl IconChForecastRequestBuilder {
             forecast_variable: self.forecast_variable,
             forecast_perturbed: self.forecast_perturbed,
         })
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
+    use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
+    use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
+    use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
+
+    
+    #[test]
+    fn it_builds_a_forecast_request() {
+        // given
+        let model = IconChForecastModel::IconCh1;
+        let horizon = IconChForecastHorizon::new(1, 6);
+        let variable = IconChForecastVariable::T2m;
+        let builder = IconChForecastRequestBuilder::new()
+            .with_model(model.clone())
+            .with_forecast_horizon(horizon.clone())
+            .with_forecast_variable(variable.clone())
+            .with_forecast_perturbed(false);
+
+        // when
+        let request = builder.build();
+
+        // then
+        assert!(request.is_ok());
+
+        let request = request.unwrap();
+        assert_eq!(request.collections, vec![model.get_name()]);
+        assert_eq!(request.forecast_horizon, Some(horizon.get_name()));
+        assert_eq!(request.forecast_variable, Some(variable.get_name()));
+        assert_eq!(request.forecast_perturbed, false);
+    }
+
+
+    #[test]
+    fn it_fails_to_build_a_forecast_request_without_model() {
+        // given
+        let horizon = IconChForecastHorizon::create_zero();
+        let variable = IconChForecastVariable::T2m;
+        let builder = IconChForecastRequestBuilder::new()
+            .with_forecast_horizon(horizon)
+            .with_forecast_variable(variable)
+            .with_forecast_perturbed(false);
+
+        // when
+        let request = builder.build();
+
+        // then
+        assert!(request.is_err());
     }
 }
