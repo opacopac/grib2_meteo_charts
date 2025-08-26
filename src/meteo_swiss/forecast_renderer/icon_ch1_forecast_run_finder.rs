@@ -15,12 +15,12 @@ pub struct IconCh1ForecastRunFinder;
 impl IconCh1ForecastRunFinder {
     pub fn find_latest_forecast_run() -> Result<IconChForecastRun, MeteoSwissError> {
         let model = IconChForecastModel::IconCh1;
-        let horizon = IconChForecastHorizon::create_zero();
         let variable = IconChForecastVariable::T2m;
+        let horizon = IconChForecastHorizon::create_zero();
         let request = IconChForecastRequestBuilder::new()
             .with_model(model)
-            .with_forecast_horizon(horizon)
             .with_forecast_variable(variable)
+            .with_forecast_horizon(horizon)
             .with_forecast_perturbed(false)
             .build()?;
 

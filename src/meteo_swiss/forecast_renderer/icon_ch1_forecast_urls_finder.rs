@@ -4,6 +4,7 @@ use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::{
     ForecastResponseAssets, IconChForecastResponse,
 };
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_step::IconCh1ForecastStep;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
@@ -14,12 +15,16 @@ pub struct IconCh1ForecastUrlsFinder;
 
 impl IconCh1ForecastUrlsFinder {
     pub fn find_forecast_file_urls() -> Result<Vec<IconCh1ForecastStep>, MeteoSwissError> {
+        let model = IconChForecastModel::IconCh1;
+        let variable = IconChForecastVariable::T2m; // TODO make dynamic
+        let reference_datetime = IconChForecastReferenceDateTime::get_latest(chrono::Utc::now());
         let request = IconChForecastRequestBuilder::new()
-            .with_model(IconChForecastModel::IconCh1)
-            .with_forecast_reference_datetime("2025-08-25T12:00:00Z".to_string()) // TODO
-            .with_forecast_variable(IconChForecastVariable::T2m) // TODO
+            .with_model(model)
+            .with_forecast_variable(variable)
+            .with_forecast_reference_datetime(reference_datetime)
             .with_forecast_perturbed(false)
             .build()?;
+
         let body = serde_json::json!(request);
         let response = ureq::post(IconChForecastEndpoint::get_endpoint_url())
             .send_json(body)?

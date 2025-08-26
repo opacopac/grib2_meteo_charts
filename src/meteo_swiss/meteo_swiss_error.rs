@@ -7,6 +7,7 @@ use crate::grib2::common::grib2_error::Grib2Error;
 pub enum MeteoSwissError {
     InvalidRequestParameters(String),
     NoForecastRunsFound(),
+    ChronoError(chrono::ParseError),
     SerdeError(serde_json::Error),
     Grib2Error(Grib2Error),
     IoError(std::io::Error),
@@ -19,6 +20,7 @@ impl fmt::Display for MeteoSwissError {
         match self {
             MeteoSwissError::InvalidRequestParameters(err) => write!(f, "Invalid request parameters: {}", err),
             MeteoSwissError::NoForecastRunsFound() => write!(f, "No forecast runs found"),
+            MeteoSwissError::ChronoError(err) => write!(f, "Chrono Error: {}", err.to_string()),
             MeteoSwissError::SerdeError(err) => write!(f, "Serde Error: {}", err.to_string()),
             MeteoSwissError::Grib2Error(err) => write!(f, "Grib2 Error: {}", err.to_string()),
             MeteoSwissError::IoError(err) => write!(f, "I/O Error: {}", err.to_string()),
@@ -52,5 +54,12 @@ impl From<ureq::Error> for MeteoSwissError {
 impl From<serde_json::Error> for MeteoSwissError {
     fn from(err: serde_json::Error) -> Self {
         MeteoSwissError::SerdeError(err)
+    }
+}
+
+
+impl From<chrono::ParseError> for MeteoSwissError {
+    fn from(err: chrono::ParseError) -> Self {
+        MeteoSwissError::ChronoError(err)
     }
 }

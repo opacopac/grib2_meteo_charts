@@ -2,6 +2,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastMode
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use serde::Serialize;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 #[derive(Debug, Serialize)]
@@ -72,8 +73,8 @@ impl IconChForecastRequestBuilder {
     }
 
 
-    pub fn with_forecast_reference_datetime(mut self, datetime: String) -> Self {
-        self.forecast_reference_datetime = Some(datetime);
+    pub fn with_forecast_reference_datetime(mut self, datetime: IconChForecastReferenceDateTime) -> Self {
+        self.forecast_reference_datetime = Some(datetime.get_name());
         self
     }
 
@@ -117,19 +118,23 @@ mod tests {
     use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
+    use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 
-    
+
     #[test]
     fn it_builds_a_forecast_request() {
         // given
         let model = IconChForecastModel::IconCh1;
-        let horizon = IconChForecastHorizon::new(1, 6);
         let variable = IconChForecastVariable::T2m;
+        let datetime_str = "2025-08-25T12:00:00Z";
+        let datetime_reference = IconChForecastReferenceDateTime::from_str(datetime_str).unwrap();
+        let horizon = IconChForecastHorizon::new(1, 6);
         let builder = IconChForecastRequestBuilder::new()
             .with_model(model.clone())
-            .with_forecast_horizon(horizon.clone())
             .with_forecast_variable(variable.clone())
+            .with_forecast_reference_datetime(datetime_reference)
+            .with_forecast_horizon(horizon.clone())
             .with_forecast_perturbed(false);
 
         // when
@@ -140,8 +145,9 @@ mod tests {
 
         let request = request.unwrap();
         assert_eq!(request.collections, vec![model.get_name()]);
-        assert_eq!(request.forecast_horizon, Some(horizon.get_name()));
         assert_eq!(request.forecast_variable, Some(variable.get_name()));
+        assert_eq!(request.forecast_reference_datetime, Some(datetime_str.to_string()));
+        assert_eq!(request.forecast_horizon, Some(horizon.get_name()));
         assert_eq!(request.forecast_perturbed, false);
     }
 
