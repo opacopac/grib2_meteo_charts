@@ -31,7 +31,7 @@ impl IconChForecastReferenceDateTime {
         // only allow datetimes that are on a 3-hour step
         if datetime.minute() != 0 || datetime.second() != 0 || datetime.hour() % 3 != 0 {
             let err_msg = "Only datetimes on a 3-hour step are allowed (e.g., 00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00)".to_string();
-            return Err(MeteoSwissError::InvalidRequestParameters(err_msg));
+            return Err(MeteoSwissError::InvalidParameters(err_msg));
         }
 
         Ok(Self { datetime: datetime.with_timezone(&chrono::Utc) })

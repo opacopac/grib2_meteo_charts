@@ -28,7 +28,7 @@ impl IconChForecastRunName {
             15 => Ok(IconChForecastRunName::Run15),
             18 => Ok(IconChForecastRunName::Run18),
             21 => Ok(IconChForecastRunName::Run21),
-            _ => Err(MeteoSwissError::Error(format!("Invalid hour for forecast run: {}", hour)))
+            _ => Err(MeteoSwissError::InvalidParameters(format!("Invalid hour for forecast run: {}", hour)))
         }
     }
 

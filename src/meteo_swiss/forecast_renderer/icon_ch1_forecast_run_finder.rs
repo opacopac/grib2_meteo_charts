@@ -1,10 +1,11 @@
+use log::debug;
+use serde_json::to_string;
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_endpoint::IconChForecastEndpoint;
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
 use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::IconChForecastResponse;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
@@ -13,7 +14,7 @@ pub struct IconCh1ForecastRunFinder;
 
 
 impl IconCh1ForecastRunFinder {
-    pub fn find_latest_forecast_run() -> Result<IconChForecastRun, MeteoSwissError> {
+    pub fn find_latest_ref_datetime() -> Result<IconChForecastReferenceDateTime, MeteoSwissError> {
         let model = IconChForecastModel::IconCh1;
         let variable = IconChForecastVariable::T2m;
         let horizon = IconChForecastHorizon::create_zero();
@@ -24,8 +25,12 @@ impl IconCh1ForecastRunFinder {
             .with_forecast_perturbed(false)
             .build()?;
 
+        let url = IconChForecastEndpoint::get_endpoint_url();
+        debug!("Request URL: {}", url);
         let body = serde_json::json!(request);
-        let response = ureq::post(IconChForecastEndpoint::get_endpoint_url())
+        debug!("Request Body: {}", to_string(&body).expect("Failed to convert to JSON string"));
+
+        let response = ureq::post(url)
             .send_json(body)?
             .body_mut()
             .read_json::<IconChForecastResponse>()?;
@@ -36,17 +41,25 @@ impl IconCh1ForecastRunFinder {
 
         let latest_feature = &response.features[&response.features.len() - 1];
         let datetime_string = &latest_feature.properties.forecast_reference_datetime;
-        let datetime = chrono::DateTime::parse_from_rfc3339(datetime_string)
-            .map_err(|e| MeteoSwissError::Error(format!("Failed to parse datetime: {}", e)))?;
+        let reference_datetime = IconChForecastReferenceDateTime::from_str(datetime_string)?;
 
-        let latest_run = IconChForecastRunName::create_from_datetime(&datetime)?;
-        let latest_run_naivedate = chrono::DateTime::parse_from_rfc3339(datetime_string)
-            .map_err(|e| MeteoSwissError::Error(format!("Failed to parse datetime: {}", e)))?
-            .naive_utc()
-            .date();
+        Ok(reference_datetime)
+    }
+}
 
-        let latest_run = IconChForecastRun::new(latest_run_naivedate, latest_run);
 
-        Ok(latest_run)
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_gets_the_latest_reference_datetime() {
+        // given
+
+        // when
+        let result = super::IconCh1ForecastRunFinder::find_latest_ref_datetime();
+
+        // then
+        assert!(result.is_ok());
+        let ref_datetime = result.unwrap();
+        println!("Latest reference datetime: {}", ref_datetime.datetime);
     }
 }

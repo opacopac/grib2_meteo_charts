@@ -1,20 +1,23 @@
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-use serde::Serialize;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct IconChForecastRequest {
     pub collections: Vec<String>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "forecast:reference_datetime")]
     pub forecast_reference_datetime: Option<String>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "forecast:horizon")]
     pub forecast_horizon: Option<String>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "forecast:variable")]
     pub forecast_variable: Option<String>,
 
@@ -99,7 +102,7 @@ impl IconChForecastRequestBuilder {
 
     pub fn build(self) -> Result<IconChForecastRequest, MeteoSwissError> {
         if self.model.is_none() {
-            return Err(MeteoSwissError::InvalidRequestParameters("model is missing".to_string()));
+            return Err(MeteoSwissError::InvalidParameters("model is missing".to_string()));
         }
 
         Ok(IconChForecastRequest {
