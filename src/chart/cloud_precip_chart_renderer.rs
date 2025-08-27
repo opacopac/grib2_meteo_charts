@@ -2,13 +2,13 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_layer::cloud_precip_layer::DwdCloudPrecipLayer;
+use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 
 pub struct CloudPrecipChartRenderer;
 
 
 impl CloudPrecipChartRenderer {
-    pub fn render_full_chart(cloud_precip_layer: &DwdCloudPrecipLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(cloud_precip_layer: &MeteoCloudPrecipLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = cloud_precip_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -22,7 +22,7 @@ impl CloudPrecipChartRenderer {
 
 
     pub fn render_map_tiles<S>(
-        cloud_layer: &DwdCloudPrecipLayer,
+        cloud_layer: &MeteoCloudPrecipLayer,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where

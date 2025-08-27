@@ -13,11 +13,11 @@ use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::meteo_layer::cloud_precip_layer::DwdCloudPrecipLayer;
-use crate::meteo_layer::weather_layer::DwdWeatherLayer;
+use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_layer::weather_layer::WeatherLayer;
 use crate::imaging::drawable::Drawable;
-use crate::metobin::dwd_precip_metobin::DwdPrecipMeteoBin;
-use crate::metobin::dwd_weather_metobin::DwdWeatherMeteoBin;
+use crate::metobin::precip_metobin::PrecipMeteoBin;
+use crate::metobin::weather_metobin::WeatherMeteoBin;
 
 pub struct IconD2CloudPrecipRenderer;
 
@@ -43,7 +43,7 @@ impl IconD2CloudPrecipRenderer {
                 let precip_grid1 = IconD2TotPrecReader::read_grid_from_file(&fc_step)
                     .map_err(|err| ForecastRendererError::ReadGridFromPrecipFileError(err))?;
 
-                let layer = DwdCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
+                let layer = MeteoCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
 
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
                     &layer,
@@ -52,7 +52,7 @@ impl IconD2CloudPrecipRenderer {
                 );
 
                 // precip meteobin
-                let precip_bin = DwdPrecipMeteoBin::new(layer);
+                let precip_bin = PrecipMeteoBin::new(layer);
                 let precip_data = precip_bin.create_bin_values();
                 let precip_filename = format!(
                     "{}PRECIP_D2.meteobin",
@@ -66,8 +66,8 @@ impl IconD2CloudPrecipRenderer {
                 let ww_grid = IconD2WwReader::read_grid_from_file(&fc_step)?;
                 let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
 
-                let weather_layer = DwdWeatherLayer::new(ww_grid, ceiling_grid)?;
-                let weather_bin = DwdWeatherMeteoBin::new(weather_layer);
+                let weather_layer = WeatherLayer::new(ww_grid, ceiling_grid)?;
+                let weather_bin = WeatherMeteoBin::new(weather_layer);
                 let ww_data = weather_bin.create_bin_values();
                 let ww_filename = format!(
                     "{}WW_D2.meteobin",

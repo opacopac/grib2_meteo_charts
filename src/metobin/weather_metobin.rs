@@ -1,18 +1,19 @@
-use crate::meteo_layer::weather_layer::DwdWeatherLayer;
-use crate::meteo_layer::weather_interpretation::DwdWeatherInterpretation;
+use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
+use crate::meteo_layer::weather_layer::WeatherLayer;
 
-pub struct DwdWeatherMeteoBin {
-    layer: DwdWeatherLayer
+
+pub struct WeatherMeteoBin {
+    layer: WeatherLayer,
 }
 
 
-impl DwdWeatherMeteoBin {
+impl WeatherMeteoBin {
     const NONE_BIN_VALUE: u8 = 0xFF;
     const FEET_PER_M: f32 = 3.28084;
 
 
-    pub fn new(weather_layer: DwdWeatherLayer) -> DwdWeatherMeteoBin {
-        return DwdWeatherMeteoBin { layer: weather_layer };
+    pub fn new(weather_layer: WeatherLayer) -> WeatherMeteoBin {
+        WeatherMeteoBin { layer: weather_layer }
     }
 
 
@@ -31,20 +32,20 @@ impl DwdWeatherMeteoBin {
             }
         }
 
-        return out_values;
+        out_values
     }
 
 
-    fn calc_ww_value(value_ww: Option<DwdWeatherInterpretation>) -> u8 {
-        return match value_ww {
+    fn calc_ww_value(value_ww: Option<WeatherInterpretation>) -> u8 {
+        match value_ww {
             Some(val_ww) => val_ww.to_value(),
             None => Self::NONE_BIN_VALUE
-        };
+        }
     }
 
 
     fn calc_ceiling_100ft_value(value_m: Option<f32>) -> u8 {
-        return match value_m {
+        match value_m {
             None => Self::NONE_BIN_VALUE,
             Some(val) if (val * Self::FEET_PER_M / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
             Some(val) => (val * Self::FEET_PER_M / 200.0).round().min(254.0).max(0.0) as u8

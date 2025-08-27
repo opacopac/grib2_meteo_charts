@@ -12,9 +12,9 @@ use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::meteo_layer::wind_layer::DwdWindLayer;
+use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use crate::imaging::drawable::Drawable;
-use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
+use crate::metobin::wind_metobin::WindMeteobin;
 
 pub struct IconD2WindForecastRenderer;
 
@@ -34,7 +34,7 @@ impl IconD2WindForecastRenderer {
                 let wind_v_grid = IconD2V10mReader::read_grid_from_file(&fc_step)?;
                 let wind_v_max_grid = IconD2Vmax10mReader::read_grid_from_file(&fc_step)?;
 
-                let layer = DwdWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid))?;
+                let layer = MeteoWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid))?;
 
                 // map tiles
                 let _ = WindChartRenderer::render_map_tiles(
@@ -44,7 +44,7 @@ impl IconD2WindForecastRenderer {
                 );
 
                 // meteobin
-                let wind_bin = DwdWindMeteobin::new(layer);
+                let wind_bin = WindMeteobin::new(layer);
                 let data = wind_bin.create_bin_values();
                 let filename = format!(
                     "{}WIND_D2.meteobin",

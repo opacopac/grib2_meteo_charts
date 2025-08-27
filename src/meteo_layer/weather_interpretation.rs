@@ -1,5 +1,5 @@
 #[derive(Debug, PartialEq)]
-pub enum DwdWeatherInterpretation {
+pub enum WeatherInterpretation {
     ClearSky,
     MainlyClearSky,
     PartlyCloudy,
@@ -27,99 +27,98 @@ pub enum DwdWeatherInterpretation {
     SnowShowerModerateOrHeavy,
     ThunderstormSlightOrModerate,
     ThunderstormWithHailOrHeavyThunderstorm,
-    ThunderstormWithHeavyRain
+    ThunderstormWithHeavyRain,
 }
 
 
-impl DwdWeatherInterpretation {
-    pub fn from_value(value: u8) -> DwdWeatherInterpretation {
+impl WeatherInterpretation {
+    pub fn from_value(value: u8) -> WeatherInterpretation {
         return match value {
-            0 => DwdWeatherInterpretation::ClearSky,
-            1 => DwdWeatherInterpretation::MainlyClearSky,
-            2 => DwdWeatherInterpretation::PartlyCloudy,
-            3 => DwdWeatherInterpretation::Overcast,
-            45 => DwdWeatherInterpretation::Fog,
-            48 => DwdWeatherInterpretation::FogDepositingRime,
-            51 => DwdWeatherInterpretation::SlightDrizzle,
-            53 => DwdWeatherInterpretation::ModerateDrizzle,
-            55 => DwdWeatherInterpretation::HeavyDrizzle,
-            56 => DwdWeatherInterpretation::DrizzleFreezingSlight,
-            57 => DwdWeatherInterpretation::DrizzleFreezingModerateOrHeavy,
-            61 => DwdWeatherInterpretation::SlightRainNotFreezing,
-            63 => DwdWeatherInterpretation::ModerateRainNotFreezing,
-            65 => DwdWeatherInterpretation::HeavyRainNotFreezing,
-            66 => DwdWeatherInterpretation::RainFreezingSlight,
-            67 => DwdWeatherInterpretation::RainFreezingModerateOrHeavy,
-            71 => DwdWeatherInterpretation::SlightFallOfSnowflakes,
-            73 => DwdWeatherInterpretation::ModerateFallOfSnowflakes,
-            75 => DwdWeatherInterpretation::HeavyFallOfSnowflakes,
-            77 => DwdWeatherInterpretation::SnowGrains,
-            80 => DwdWeatherInterpretation::RainShowerSlight,
-            81 => DwdWeatherInterpretation::RainShowerModerateOrHeavy,
-            82 => DwdWeatherInterpretation::RainShowerViolent,
-            85 => DwdWeatherInterpretation::SnowShowerSlight,
-            86 => DwdWeatherInterpretation::SnowShowerModerateOrHeavy,
-            95 => DwdWeatherInterpretation::ThunderstormSlightOrModerate,
-            96 => DwdWeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm,
-            99 => DwdWeatherInterpretation::ThunderstormWithHeavyRain,
+            0 => WeatherInterpretation::ClearSky,
+            1 => WeatherInterpretation::MainlyClearSky,
+            2 => WeatherInterpretation::PartlyCloudy,
+            3 => WeatherInterpretation::Overcast,
+            45 => WeatherInterpretation::Fog,
+            48 => WeatherInterpretation::FogDepositingRime,
+            51 => WeatherInterpretation::SlightDrizzle,
+            53 => WeatherInterpretation::ModerateDrizzle,
+            55 => WeatherInterpretation::HeavyDrizzle,
+            56 => WeatherInterpretation::DrizzleFreezingSlight,
+            57 => WeatherInterpretation::DrizzleFreezingModerateOrHeavy,
+            61 => WeatherInterpretation::SlightRainNotFreezing,
+            63 => WeatherInterpretation::ModerateRainNotFreezing,
+            65 => WeatherInterpretation::HeavyRainNotFreezing,
+            66 => WeatherInterpretation::RainFreezingSlight,
+            67 => WeatherInterpretation::RainFreezingModerateOrHeavy,
+            71 => WeatherInterpretation::SlightFallOfSnowflakes,
+            73 => WeatherInterpretation::ModerateFallOfSnowflakes,
+            75 => WeatherInterpretation::HeavyFallOfSnowflakes,
+            77 => WeatherInterpretation::SnowGrains,
+            80 => WeatherInterpretation::RainShowerSlight,
+            81 => WeatherInterpretation::RainShowerModerateOrHeavy,
+            82 => WeatherInterpretation::RainShowerViolent,
+            85 => WeatherInterpretation::SnowShowerSlight,
+            86 => WeatherInterpretation::SnowShowerModerateOrHeavy,
+            95 => WeatherInterpretation::ThunderstormSlightOrModerate,
+            96 => WeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm,
+            99 => WeatherInterpretation::ThunderstormWithHeavyRain,
             _ => panic!("unknown value {} for weather interpretation", value)
-        }
+        };
     }
 
 
     pub fn to_value(&self) -> u8 {
-        return match self {
-            DwdWeatherInterpretation::ClearSky => 0,
-            DwdWeatherInterpretation::MainlyClearSky => 1,
-            DwdWeatherInterpretation::PartlyCloudy => 2,
-            DwdWeatherInterpretation::Overcast => 3,
-            DwdWeatherInterpretation::Fog => 45,
-            DwdWeatherInterpretation::FogDepositingRime => 48,
-            DwdWeatherInterpretation::SlightDrizzle => 51,
-            DwdWeatherInterpretation::ModerateDrizzle => 53,
-            DwdWeatherInterpretation::HeavyDrizzle => 55,
-            DwdWeatherInterpretation::DrizzleFreezingSlight => 56,
-            DwdWeatherInterpretation::DrizzleFreezingModerateOrHeavy => 57,
-            DwdWeatherInterpretation::SlightRainNotFreezing => 61,
-            DwdWeatherInterpretation::ModerateRainNotFreezing => 63,
-            DwdWeatherInterpretation::HeavyRainNotFreezing => 65,
-            DwdWeatherInterpretation::RainFreezingSlight => 66,
-            DwdWeatherInterpretation::RainFreezingModerateOrHeavy => 67,
-            DwdWeatherInterpretation::SlightFallOfSnowflakes => 71,
-            DwdWeatherInterpretation::ModerateFallOfSnowflakes => 73,
-            DwdWeatherInterpretation::HeavyFallOfSnowflakes => 75,
-            DwdWeatherInterpretation::SnowGrains => 77,
-            DwdWeatherInterpretation::RainShowerSlight => 80,
-            DwdWeatherInterpretation::RainShowerModerateOrHeavy => 81,
-            DwdWeatherInterpretation::RainShowerViolent => 82,
-            DwdWeatherInterpretation::SnowShowerSlight => 85,
-            DwdWeatherInterpretation::SnowShowerModerateOrHeavy => 86,
-            DwdWeatherInterpretation::ThunderstormSlightOrModerate => 95,
-            DwdWeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm => 96,
-            DwdWeatherInterpretation::ThunderstormWithHeavyRain => 99
+        match self {
+            WeatherInterpretation::ClearSky => 0,
+            WeatherInterpretation::MainlyClearSky => 1,
+            WeatherInterpretation::PartlyCloudy => 2,
+            WeatherInterpretation::Overcast => 3,
+            WeatherInterpretation::Fog => 45,
+            WeatherInterpretation::FogDepositingRime => 48,
+            WeatherInterpretation::SlightDrizzle => 51,
+            WeatherInterpretation::ModerateDrizzle => 53,
+            WeatherInterpretation::HeavyDrizzle => 55,
+            WeatherInterpretation::DrizzleFreezingSlight => 56,
+            WeatherInterpretation::DrizzleFreezingModerateOrHeavy => 57,
+            WeatherInterpretation::SlightRainNotFreezing => 61,
+            WeatherInterpretation::ModerateRainNotFreezing => 63,
+            WeatherInterpretation::HeavyRainNotFreezing => 65,
+            WeatherInterpretation::RainFreezingSlight => 66,
+            WeatherInterpretation::RainFreezingModerateOrHeavy => 67,
+            WeatherInterpretation::SlightFallOfSnowflakes => 71,
+            WeatherInterpretation::ModerateFallOfSnowflakes => 73,
+            WeatherInterpretation::HeavyFallOfSnowflakes => 75,
+            WeatherInterpretation::SnowGrains => 77,
+            WeatherInterpretation::RainShowerSlight => 80,
+            WeatherInterpretation::RainShowerModerateOrHeavy => 81,
+            WeatherInterpretation::RainShowerViolent => 82,
+            WeatherInterpretation::SnowShowerSlight => 85,
+            WeatherInterpretation::SnowShowerModerateOrHeavy => 86,
+            WeatherInterpretation::ThunderstormSlightOrModerate => 95,
+            WeatherInterpretation::ThunderstormWithHailOrHeavyThunderstorm => 96,
+            WeatherInterpretation::ThunderstormWithHeavyRain => 99
         }
     }
 }
 
 
-
 #[cfg(test)]
 mod tests {
-    use crate::meteo_layer::weather_interpretation::DwdWeatherInterpretation;
+    use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
 
     #[test]
     fn it_converts_from_a_byte_value() {
         let in_value = 45;
 
-        let result = DwdWeatherInterpretation::from_value(in_value);
+        let result = WeatherInterpretation::from_value(in_value);
 
-        assert_eq!(DwdWeatherInterpretation::Fog, result);
+        assert_eq!(WeatherInterpretation::Fog, result);
     }
 
 
     #[test]
     fn it_converts_to_a_byte_value() {
-        let in_value = DwdWeatherInterpretation::SnowGrains;
+        let in_value = WeatherInterpretation::SnowGrains;
 
         let result = in_value.to_value();
 

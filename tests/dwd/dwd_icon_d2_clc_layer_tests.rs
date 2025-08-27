@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::meteo_layer::cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;
 use meteo_grib2_renderer::geo::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
@@ -11,7 +11,7 @@ pub const CLC_TEST_FILE_NO_DATAPOINTS: &str = "./tests/resources/icon-d2_germany
 fn it_successfully_reads_a_d2_clc_test_file() {
     let doc = Grib2DocumentReader::read_single_doc_from_file(CLC_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let layer = DwdCloudLayer::new(grid);
+    let layer = MeteoCloudLayer::new(grid);
 
     let pos1 = LatLon { lat: 47.0, lon: 7.0 };
     let clc_value1 = layer.get_cloud_cover_by_lat_lon(&pos1).unwrap();
@@ -27,7 +27,7 @@ fn it_successfully_reads_a_d2_clc_test_file() {
 fn it_successfully_reads_a_d2_clc_test_file_without_datapoints() {
     let doc = Grib2DocumentReader::read_single_doc_from_file(CLC_TEST_FILE_NO_DATAPOINTS).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
-    let layer = DwdCloudLayer::new(grid);
+    let layer = MeteoCloudLayer::new(grid);
 
     let pos1 = LatLon { lat: 47.0, lon: 7.0 };
     let clc_value1 = layer.get_cloud_cover_by_lat_lon(&pos1);

@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::logging::tstamp::TStamp;
-use meteo_grib2_renderer::meteo_layer::temp_layer::DwdTempLayer;
+use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
@@ -39,7 +39,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     let regular_grid = grid.create_regular_grid();
 
     TStamp::print_us("DwdTempLayer::new...");
-    let dwd_temp_layer = DwdTempLayer::new(regular_grid).unwrap();
+    let dwd_temp_layer = MeteoTempLayer::new(regular_grid).unwrap();
 
     TStamp::print_us("TempChartRenderer::render_full_chart...");
     let drawable = TempChartRenderer::render_full_chart(&dwd_temp_layer).unwrap();

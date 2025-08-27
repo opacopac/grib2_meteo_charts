@@ -1,17 +1,18 @@
-use crate::meteo_layer::wind_layer::DwdWindLayer;
+use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 
-pub struct DwdWindMeteobin {
-    wind_layer: DwdWindLayer
+
+pub struct WindMeteobin {
+    wind_layer: MeteoWindLayer,
 }
 
 
-impl DwdWindMeteobin {
+impl WindMeteobin {
     const KNOTS_PER_MPS: f32 = 1.94384;
     const NONE_BIN_VALUE: u8 = 0xFF;
 
 
-    pub fn new(wind_layer: DwdWindLayer) -> DwdWindMeteobin {
-        return DwdWindMeteobin { wind_layer };
+    pub fn new(wind_layer: MeteoWindLayer) -> WindMeteobin {
+        WindMeteobin { wind_layer }
     }
 
 
@@ -37,17 +38,17 @@ impl DwdWindMeteobin {
             }
         }
 
-        return out_values;
+        out_values
     }
 
 
     fn calc_speed_kt_value(value_mps: f32) -> u8 {
-        return (value_mps * Self::KNOTS_PER_MPS + 128.0).round().min(254.0).max(0.0) as u8;
+        (value_mps * Self::KNOTS_PER_MPS + 128.0).round().min(254.0).max(0.0) as u8
     }
 
 
     fn calc_gust_kt_value(value_mps: Option<f32>) -> u8 {
-        return match value_mps {
+        match value_mps {
             None => Self::NONE_BIN_VALUE,
             Some(val_mps) => (val_mps * Self::KNOTS_PER_MPS).round().min(254.0).max(0.0) as u8
         }
@@ -57,12 +58,12 @@ impl DwdWindMeteobin {
 
 #[cfg(test)]
 mod tests {
-    use crate::metobin::dwd_wind_metobin::DwdWindMeteobin;
+    use crate::metobin::wind_metobin::WindMeteobin;
 
     #[test]
     fn it_calculates_the_bin_value_for_3kt() {
-        let in_value = 3.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
+        let in_value = 3.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(3 + 128, result);
     }
@@ -70,8 +71,8 @@ mod tests {
 
     #[test]
     fn it_limits_the_max_bin_value_to_plus127() {
-        let in_value = 150.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
+        let in_value = 150.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(254, result);
     }
@@ -79,8 +80,8 @@ mod tests {
 
     #[test]
     fn it_limits_the_min_bin_value_to_neg128() {
-        let in_value = -200.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
+        let in_value = -200.0 / WindMeteobin::KNOTS_PER_MPS;
+        let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(0 as u8, result);
     }

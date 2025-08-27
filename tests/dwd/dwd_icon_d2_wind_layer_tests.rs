@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate::LatitudeLongitude;
-use meteo_grib2_renderer::meteo_layer::wind_layer::DwdWindLayer;
+use meteo_grib2_renderer::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const WIND_U_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
@@ -23,7 +23,7 @@ fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
         _ => {}
     }
 
-    let layer = DwdWindLayer::new(grid_u, grid_v, None).unwrap();
+    let layer = MeteoWindLayer::new(grid_u, grid_v, None).unwrap();
     println!("{:?}", layer.get_grid_dimensions());
     println!("{:?}", layer.get_lat_lon_extent());
 
@@ -38,7 +38,7 @@ fn it_returns_an_error_when_the_grid_sizes_dont_match() {
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
-    let result = DwdWindLayer::new(grid_u, grid_v, None);
+    let result = MeteoWindLayer::new(grid_u, grid_v, None);
 
     assert!(result.is_err());
 }

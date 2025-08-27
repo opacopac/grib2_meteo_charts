@@ -2,7 +2,7 @@ use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_layer::wind_layer::DwdWindLayer;
+use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 
 pub struct WindChartRenderer;
 
@@ -11,7 +11,7 @@ impl WindChartRenderer {
     const KNOTS_TO_MPS: f32 = 0.514444;
 
 
-    pub fn render_full_chart(wind_layer: &DwdWindLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(wind_layer: &MeteoWindLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = wind_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -25,7 +25,7 @@ impl WindChartRenderer {
 
 
     pub fn render_map_tiles<S>(
-        wind_layer: &DwdWindLayer,
+        wind_layer: &MeteoWindLayer,
         zoom_range: (u32, u32),
         save_fn: S
     ) -> Result<(), Grib2Error> where

@@ -11,8 +11,8 @@ use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::meteo_layer::vertical_cloud_layer::DwdVerticalCloudLayer;
-use crate::metobin::dwd_vertical_cloud_metobin::DwdVerticalCloudMeteobin;
+use crate::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 
 pub struct IconD2VerticalCloudForecastRenderer;
 
@@ -29,10 +29,10 @@ impl IconD2VerticalCloudForecastRenderer {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let vertical_cloud_layer = DwdVerticalCloudLayer::new(&hhl_grids, clc_grids);
+                let vertical_cloud_layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let vert_cloud_bin = DwdVerticalCloudMeteobin::new(vertical_cloud_layer);
+                let vert_cloud_bin = VerticalCloudMeteobin::new(vertical_cloud_layer);
                 let data = vert_cloud_bin.create_bin_values();
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
                 let filename = format!("{}VERTICAL_CLOUDS_D2.meteobin", path);

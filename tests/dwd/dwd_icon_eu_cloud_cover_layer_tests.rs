@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate::LatitudeLongitude;
-use meteo_grib2_renderer::meteo_layer::cloud_layer::DwdCloudLayer;
+use meteo_grib2_renderer::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
@@ -23,7 +23,7 @@ fn it_successfully_reads_an_icon_eu_clct_test_file() {
 
 
 
-    let _layer = DwdCloudLayer::new(grid);
+    let _layer = MeteoCloudLayer::new(grid);
 
     assert!(true);
 }

@@ -1,13 +1,13 @@
 use crate::chart::map_tile_renderer::MapTileRenderer;
 use crate::chart::single_chart_renderer::SingleChartRenderer;
-use crate::meteo_layer::temp_layer::DwdTempLayer;
+use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 
 pub struct TempChartRenderer;
 
 impl TempChartRenderer {
-    pub fn render_full_chart(temp_layer: &DwdTempLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(temp_layer: &MeteoTempLayer) -> Result<Drawable, Grib2Error> {
         let dimensions = temp_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -20,7 +20,7 @@ impl TempChartRenderer {
     }
 
     pub fn render_map_tiles<S>(
-        temp_layer: &DwdTempLayer,
+        temp_layer: &MeteoTempLayer,
         zoom_range: (u32, u32),
         save_fn: S,
     ) -> Result<(), Grib2Error>

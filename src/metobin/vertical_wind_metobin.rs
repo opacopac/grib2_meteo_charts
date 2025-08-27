@@ -1,16 +1,19 @@
-use crate::meteo_layer::vertical_wind_layer::DwdVerticalWindLayer;
+use crate::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 
-pub struct DwdVerticalWindMeteobin<'a> {
-    layer: DwdVerticalWindLayer<'a>
+
+pub struct VerticalWindMeteobin<'a> {
+    layer: MeteoVerticalWindLayer<'a>,
 }
 
-impl <'a> DwdVerticalWindMeteobin<'a> {
+
+impl<'a> VerticalWindMeteobin<'a> {
     const MISSING_VALUE: u8 = 255;
 
+
     pub fn new(
-        layer: DwdVerticalWindLayer
-    ) -> DwdVerticalWindMeteobin {
-        return DwdVerticalWindMeteobin { layer };
+        layer: MeteoVerticalWindLayer
+    ) -> VerticalWindMeteobin {
+        VerticalWindMeteobin { layer }
     }
 
 
@@ -39,36 +42,6 @@ impl <'a> DwdVerticalWindMeteobin<'a> {
             }
         }
 
-        return out_values;
+        out_values
     }
-}
-
-
-#[cfg(test)]
-mod tests {
-    /*#[test]
-    fn it_calculates_the_bin_value_for_3kt() {
-        let in_value = 3.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
-
-        assert_eq!(3 + 128, result);
-    }
-
-
-    #[test]
-    fn it_limits_the_max_bin_value_to_plus127() {
-        let in_value = 150.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
-
-        assert_eq!(254, result);
-    }
-
-
-    #[test]
-    fn it_limits_the_min_bin_value_to_neg128() {
-        let in_value = -200.0 / DwdWindMeteobin::KNOTS_PER_MPS;
-        let result = DwdWindMeteobin::calc_speed_kt_value(in_value);
-
-        assert_eq!(0 as u8, result);
-    }*/
 }
