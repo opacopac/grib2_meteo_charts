@@ -3,7 +3,7 @@ use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_forecast::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_forecast::meteo_forecast_run::{MeteoForecastRun, MeteoForecastRunTrait};
 use crate::meteo_forecast::meteo_forecast_step::MeteoForecastStep;
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::metobin::temp_metobin::TempMeteoBin;
@@ -20,13 +20,13 @@ pub struct IconCh1TempForecastRenderer;
 
 
 impl IconCh1TempForecastRenderer {
-    pub fn create(forecast_run: &MeteoForecastRun) -> Result<(), ForecastRendererError> {
+    pub fn create<T: MeteoForecastRunTrait>(forecast_run: &T) -> Result<(), ForecastRendererError> {
         forecast_run.get_step_range()
             .into_par_iter()
             .try_for_each(|step| {
                 info!("creating temperature charts, time step {}", step);
-                
-                let fc_step = &forecast_run.steps[step];
+
+                //let fc_step = &forecast_run.steps[step];
 
                 /*let temp_grid = IconD2T2mReader::read_grid_from_file(&fc_step)?;
                 let layer = MeteoTempLayer::new(temp_grid)?;
