@@ -25,9 +25,10 @@ impl IconCh1TempForecastRenderer {
             .into_par_iter()
             .try_for_each(|step| {
                 info!("creating temperature charts, time step {}", step);
+                
+                let fc_step = &forecast_run.steps[step];
 
-                /*let fc_step = MeteoForecastStep::new(forecast_run, step);
-                let temp_grid = IconD2T2mReader::read_grid_from_file(&fc_step)?;
+                /*let temp_grid = IconD2T2mReader::read_grid_from_file(&fc_step)?;
                 let layer = MeteoTempLayer::new(temp_grid)?;
 
                 // map tiles

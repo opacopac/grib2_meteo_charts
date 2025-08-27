@@ -1,17 +1,18 @@
-use crate::meteo_forecast::meteo_forecast_run::MeteoForecastRun;
+use chrono::{DateTime, Utc};
 
 
-pub struct MeteoForecastStep<'a> {
-    pub run: &'a MeteoForecastRun,
+#[derive(Debug)]
+pub struct MeteoForecastStep {
     pub step: usize,
+    pub date_time: DateTime<Utc>,
 }
 
 
-impl MeteoForecastStep<'_> {
+impl MeteoForecastStep {
     pub fn new(
-        run: &MeteoForecastRun,
         step: usize,
+        date_time: DateTime<Utc>,
     ) -> MeteoForecastStep {
-        MeteoForecastStep { run, step }
+        MeteoForecastStep { step, date_time }
     }
 }
