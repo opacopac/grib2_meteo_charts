@@ -1,7 +1,8 @@
 use crate::chart::temp_chart_renderer::TempChartRenderer;
-use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
@@ -19,17 +20,19 @@ pub struct IconCh1TempForecastRenderer;
 
 
 impl IconCh1TempForecastRenderer {
-    pub fn create(forecast_run: &IconChForecastRun) -> Result<(), MeteoSwissError> {
+    pub fn create(
+        forecast_run: &IconChForecastRun,
+        unstructured_grid: &UnstructuredGrid,
+    ) -> Result<(), MeteoSwissError> {
         forecast_run.get_step_range()
             .into_par_iter()
             .try_for_each(|step_idx| {
                 info!("creating temperature charts, time step {}", step_idx);
 
                 let fc_step = &forecast_run.steps[step_idx];
-                let missing_value = 999.0;
-                let temp_grid = FileToGridConverter::read_grid_from_file(&fc_step.href, missing_value)?;
+                let grid = IconChT2mReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
 
-                let layer = MeteoTempLayer::new(temp_grid)?;
+                let layer = MeteoTempLayer::new(grid)?;
 
                 // map tiles
                 let zoom_range = (0, 7);

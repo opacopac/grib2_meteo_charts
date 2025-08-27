@@ -10,7 +10,7 @@ impl IconD2T2mReader {
     pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, DwdError> {
         let url = IconD2FileT2m::get_file_url(&fc_step);
         let missing_value = -1.0;
-        let grid = FileToGridConverter::read_grid_from_file(&url, missing_value)?;
+        let grid = FileToGridConverter::read_rectangular_grid_from_file(&url, missing_value)?;
 
         Ok(grid)
     }

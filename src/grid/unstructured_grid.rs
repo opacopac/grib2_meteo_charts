@@ -4,11 +4,14 @@ use crate::grid::coord_dist::CoordDist;
 use crate::grid::coord_dist_triple::CoordDistTriple;
 use crate::grid::lat_lon_grid::LatLonGrid;
 
+
+#[derive(Clone)]
 pub struct UnstructuredGrid {
     lat_lon_grid: LatLonGrid,
     coordinates: Vec<LatLon>,
     coord_dist_lookup_map: Vec<CoordDistTriple>,
 }
+
 
 impl UnstructuredGrid {
     pub fn new(

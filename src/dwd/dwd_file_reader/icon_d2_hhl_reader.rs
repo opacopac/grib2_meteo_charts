@@ -30,7 +30,7 @@ impl IconD2HhlReader {
             .map(|level| {
                 info!("reading hhl layers for level {}", level);
                 let url = IconD2FileHhl::get_file_url(&forecast_run, level as usize);
-                let grid = FileToGridConverter::read_grid_from_file_and_convert(&url, Self::MISSING_VALUE, transform_fn)?;
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_convert(&url, Self::MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)
             }).collect();

@@ -1,6 +1,6 @@
 use crate::geo::lat_lon::LatLon;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LatLonExtent {
     pub min_coord: LatLon,
     pub max_coord: LatLon,

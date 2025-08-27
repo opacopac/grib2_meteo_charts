@@ -1,6 +1,8 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 
+
+#[derive(Clone)]
 pub struct LatLonGrid {
     dimensions: (usize, usize),
     lat_lon_extent: LatLonExtent,
