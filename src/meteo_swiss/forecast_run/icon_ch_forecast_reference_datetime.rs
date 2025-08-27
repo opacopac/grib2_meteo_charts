@@ -43,6 +43,11 @@ impl IconChForecastReferenceDateTime {
         self.datetime
             .to_rfc3339_opts(SecondsFormat::Secs, true)
     }
+    
+    
+    pub fn get_date(&self) -> chrono::NaiveDate {
+        self.datetime.date().naive_utc()
+    }
 }
 
 
@@ -78,6 +83,20 @@ mod tests {
 
         // then
         assert_eq!(name, datetime_str);
+    }
+    
+    
+    #[test]
+    fn it_gets_the_date_of_an_instance() {
+        // given
+        let datetime_str = "2025-08-25T12:00:00Z";
+        let reference_datetime = IconChForecastReferenceDateTime::from_str(datetime_str).unwrap();
+
+        // when
+        let date = reference_datetime.get_date();
+
+        // then
+        assert_eq!(date, chrono::NaiveDate::from_ymd_opt(2025, 8, 25).unwrap());
     }
 
 

@@ -1,5 +1,5 @@
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
-use chrono::{FixedOffset, Timelike};
+use chrono::Timelike;
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -16,7 +16,7 @@ pub enum IconChForecastRunName {
 
 
 impl IconChForecastRunName {
-    pub fn create_from_datetime(datetime: &chrono::DateTime<FixedOffset>) -> Result<IconChForecastRunName, MeteoSwissError> {
+    pub fn create_from_datetime(datetime: &chrono::DateTime<chrono::Utc>) -> Result<IconChForecastRunName, MeteoSwissError> {
         let hour = datetime.hour();
 
         match hour {

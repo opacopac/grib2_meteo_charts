@@ -1,5 +1,4 @@
 pub mod icon_d2_file;
-pub mod icon_d2_file_to_grid_converter;
 pub mod icon_d2_file_clct_mod;
 pub mod icon_d2_file_tot_prec;
 pub mod icon_d2_file_ww;

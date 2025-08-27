@@ -1,7 +1,7 @@
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_step::IconCh1ForecastStep;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_step::IconChForecastStep;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use crate::meteo_swiss::forecast_search::icon_ch_forecast_endpoint::IconChForecastEndpoint;
 use crate::meteo_swiss::forecast_search::icon_ch_forecast_request::{IconChForecastRequest, IconChForecastRequestBuilder};
@@ -60,7 +60,7 @@ impl IconChForecastSearchService {
         model: &IconChForecastModel,
         variable: &IconChForecastVariable,
         reference_datetime: &IconChForecastReferenceDateTime,
-    ) -> Result<Vec<IconCh1ForecastStep>, MeteoSwissError> {
+    ) -> Result<Vec<IconChForecastStep>, MeteoSwissError> {
         let request = IconChForecastRequestBuilder::new()
             .with_model(model)
             .with_forecast_variable(variable)
@@ -70,7 +70,7 @@ impl IconChForecastSearchService {
 
         let response = IconChForecastSearchService::search(&request)?;
 
-        let steps: Result<Vec<IconCh1ForecastStep>, MeteoSwissError> = response
+        let steps: Result<Vec<IconChForecastStep>, MeteoSwissError> = response
             .features
             .iter()
             .map(|f| Self::create_step_from_feature(f))
@@ -83,13 +83,13 @@ impl IconChForecastSearchService {
     }
 
 
-    fn create_step_from_feature(feature: &ForecastResponseFeature) -> Result<IconCh1ForecastStep, MeteoSwissError> {
+    fn create_step_from_feature(feature: &ForecastResponseFeature) -> Result<IconChForecastStep, MeteoSwissError> {
         let title = feature.properties.title.clone();
         let horizon_str = feature.properties.forecast_horizon.clone();
         let horizon = IconChForecastHorizon::from_str(&horizon_str)?;
         let href = Self::extract_href_from_assets(&feature.assets)?;
 
-        Ok(IconCh1ForecastStep::new(title, horizon, href))
+        Ok(IconChForecastStep::new(title, horizon, href))
     }
 
 
