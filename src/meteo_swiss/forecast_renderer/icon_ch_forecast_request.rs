@@ -70,25 +70,25 @@ impl IconChForecastRequestBuilder {
     }
 
 
-    pub fn with_model(mut self, model: IconChForecastModel) -> Self {
-        self.model = Some(model);
+    pub fn with_model(mut self, model: &IconChForecastModel) -> Self {
+        self.model = Some(model.clone());
         self
     }
 
 
-    pub fn with_forecast_reference_datetime(mut self, datetime: IconChForecastReferenceDateTime) -> Self {
+    pub fn with_forecast_reference_datetime(mut self, datetime: &IconChForecastReferenceDateTime) -> Self {
         self.forecast_reference_datetime = Some(datetime.get_name());
         self
     }
 
 
-    pub fn with_forecast_horizon(mut self, horizon: IconChForecastHorizon) -> Self {
+    pub fn with_forecast_horizon(mut self, horizon: &IconChForecastHorizon) -> Self {
         self.forecast_horizon = Some(horizon.get_name());
         self
     }
 
 
-    pub fn with_forecast_variable(mut self, variable: IconChForecastVariable) -> Self {
+    pub fn with_forecast_variable(mut self, variable: &IconChForecastVariable) -> Self {
         self.forecast_variable = Some(variable.get_name());
         self
     }
@@ -134,10 +134,10 @@ mod tests {
         let datetime_reference = IconChForecastReferenceDateTime::from_str(datetime_str).unwrap();
         let horizon = IconChForecastHorizon::new(1, 6);
         let builder = IconChForecastRequestBuilder::new()
-            .with_model(model.clone())
-            .with_forecast_variable(variable.clone())
-            .with_forecast_reference_datetime(datetime_reference)
-            .with_forecast_horizon(horizon.clone())
+            .with_model(&model)
+            .with_forecast_variable(&variable)
+            .with_forecast_reference_datetime(&datetime_reference)
+            .with_forecast_horizon(&horizon)
             .with_forecast_perturbed(false);
 
         // when
@@ -161,8 +161,8 @@ mod tests {
         let horizon = IconChForecastHorizon::create_zero();
         let variable = IconChForecastVariable::T2m;
         let builder = IconChForecastRequestBuilder::new()
-            .with_forecast_horizon(horizon)
-            .with_forecast_variable(variable)
+            .with_forecast_horizon(&horizon)
+            .with_forecast_variable(&variable)
             .with_forecast_perturbed(false);
 
         // when

@@ -14,7 +14,7 @@ pub struct IconChForecastSearchService;
 
 
 impl IconChForecastSearchService {
-    pub fn search(request: IconChForecastRequest) -> Result<IconChForecastResponse, MeteoSwissError> {
+    pub fn search(request: &IconChForecastRequest) -> Result<IconChForecastResponse, MeteoSwissError> {
         let url = IconChForecastEndpoint::get_endpoint_url();
         debug!("Request URL: {}", url);
 
@@ -32,18 +32,18 @@ impl IconChForecastSearchService {
 
 
     pub fn find_latest_ref_datetime(
-        model: IconChForecastModel,
+        model: &IconChForecastModel,
     ) -> Result<IconChForecastReferenceDateTime, MeteoSwissError> {
         let variable = IconChForecastVariable::T2m;
         let horizon = IconChForecastHorizon::create_zero();
         let request = IconChForecastRequestBuilder::new()
             .with_model(model)
-            .with_forecast_variable(variable)
-            .with_forecast_horizon(horizon)
+            .with_forecast_variable(&variable)
+            .with_forecast_horizon(&horizon)
             .with_forecast_perturbed(false)
             .build()?;
 
-        let response = Self::search(request)?;
+        let response = Self::search(&request)?;
         if response.features.is_empty() {
             return Err(MeteoSwissError::NoForecastRunsFound());
         }
@@ -57,9 +57,9 @@ impl IconChForecastSearchService {
 
 
     pub fn find_forecast_file_urls(
-        model: IconChForecastModel,
-        variable: IconChForecastVariable,
-        reference_datetime: IconChForecastReferenceDateTime,
+        model: &IconChForecastModel,
+        variable: &IconChForecastVariable,
+        reference_datetime: &IconChForecastReferenceDateTime,
     ) -> Result<Vec<IconCh1ForecastStep>, MeteoSwissError> {
         let request = IconChForecastRequestBuilder::new()
             .with_model(model)
@@ -68,7 +68,7 @@ impl IconChForecastSearchService {
             .with_forecast_perturbed(false)
             .build()?;
 
-        let response = IconChForecastSearchService::search(request)?;
+        let response = IconChForecastSearchService::search(&request)?;
 
         let steps: Result<Vec<IconCh1ForecastStep>, MeteoSwissError> = response
             .features
@@ -122,16 +122,16 @@ mod tests {
         let now_minus_3h = chrono::Utc::now() - chrono::Duration::hours(3);
         let reference_datetime = IconChForecastReferenceDateTime::get_latest(now_minus_3h);
         let request = IconChForecastRequestBuilder::new()
-            .with_model(model)
-            .with_forecast_variable(variable)
-            .with_forecast_horizon(horizon)
+            .with_model(&model)
+            .with_forecast_variable(&variable)
+            .with_forecast_horizon(&horizon)
             .with_forecast_perturbed(false)
-            .with_forecast_reference_datetime(reference_datetime)
+            .with_forecast_reference_datetime(&reference_datetime)
             .build()
             .unwrap();
 
         // when
-        let result = IconChForecastSearchService::search(request);
+        let result = IconChForecastSearchService::search(&request);
 
         // then
         assert!(
@@ -148,7 +148,7 @@ mod tests {
         let model = IconChForecastModel::IconCh1;
 
         // when
-        let result = IconChForecastSearchService::find_latest_ref_datetime(model);
+        let result = IconChForecastSearchService::find_latest_ref_datetime(&model);
 
         // then
         assert!(result.is_ok());
@@ -167,9 +167,9 @@ mod tests {
 
         // when
         let result = IconChForecastSearchService::find_forecast_file_urls(
-            model,
-            variable,
-            reference_datetime,
+            &model,
+            &variable,
+            &reference_datetime,
         );
 
         // then

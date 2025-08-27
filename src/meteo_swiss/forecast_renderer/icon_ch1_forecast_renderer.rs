@@ -2,24 +2,24 @@ use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_search_service::Icon
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 
 pub struct IconCh1ForecastRenderer;
 
 impl IconCh1ForecastRenderer {
     pub fn create_latest_dwd_forecasts() -> Result<(), MeteoSwissError> {
+        let model = IconChForecastModel::IconCh1;
         info!("rendering latest icon ch1 forecasts...");
 
         info!("search latest available forecast...");
-        let latest_ref_datetime = IconChForecastSearchService::find_latest_ref_datetime(
-            IconChForecastModel::IconCh1,
-        )?;
+        let latest_ref_datetime = IconChForecastSearchService::find_latest_ref_datetime(&model)?;
         info!("latest ref datetime found: {:?}", latest_ref_datetime);
 
         info!("search t2m forecast steps...");
         let forecast_steps_t2m = IconChForecastSearchService::find_forecast_file_urls(
-            IconChForecastModel::IconCh1,
-            crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable::T2m,
-            latest_ref_datetime,
+            &model,
+            &IconChForecastVariable::T2m,
+            &latest_ref_datetime,
         );
         info!("found {} t2m forecast steps", forecast_steps_t2m.as_ref().map(|s| s.len()).unwrap_or(0));
 
