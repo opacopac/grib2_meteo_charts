@@ -37,7 +37,7 @@ impl IconChForecastRequest {
         Self {
             collections: collections
                 .into_iter()
-                .map(|c| c.get_name().to_string())
+                .map(|c| c.get_search_request_name().to_string())
                 .collect(),
             forecast_reference_datetime,
             forecast_horizon,
@@ -106,7 +106,7 @@ impl IconChForecastRequestBuilder {
         }
 
         Ok(IconChForecastRequest {
-            collections: vec![self.model.unwrap().get_name().to_string()],
+            collections: vec![self.model.unwrap().get_search_request_name().to_string()],
             forecast_reference_datetime: self.forecast_reference_datetime,
             forecast_horizon: self.forecast_horizon,
             forecast_variable: self.forecast_variable,
@@ -146,7 +146,7 @@ mod tests {
         assert!(request.is_ok());
 
         let request = request.unwrap();
-        assert_eq!(request.collections, vec![model.get_name()]);
+        assert_eq!(request.collections, vec![model.get_search_request_name()]);
         assert_eq!(request.forecast_variable, Some(variable.get_name()));
         assert_eq!(request.forecast_reference_datetime, Some(datetime_str.to_string()));
         assert_eq!(request.forecast_horizon, Some(horizon.get_name()));

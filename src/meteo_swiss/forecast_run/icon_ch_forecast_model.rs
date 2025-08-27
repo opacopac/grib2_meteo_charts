@@ -6,10 +6,18 @@ pub enum IconChForecastModel {
 
 
 impl IconChForecastModel {
-    pub fn get_name(&self) -> String {
+    pub fn get_name(&self) -> &str {
         match self {
-            IconChForecastModel::IconCh1 => "ch.meteoschweiz.ogd-forecasting-icon-ch1".to_string(),
-            IconChForecastModel::IconCh2 => "ch.meteoschweiz.ogd-forecasting-icon-ch2".to_string(),
+            IconChForecastModel::IconCh1 => "icon-ch1",
+            IconChForecastModel::IconCh2 => "icon-ch2",
+        }
+    }
+
+    
+    pub fn get_search_request_name(&self) -> &str {
+        match self {
+            IconChForecastModel::IconCh1 => "ch.meteoschweiz.ogd-forecasting-icon-ch1",
+            IconChForecastModel::IconCh2 => "ch.meteoschweiz.ogd-forecasting-icon-ch2",
         }
     }
 }
