@@ -1,11 +1,11 @@
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_endpoint::IconChForecastEndpoint;
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::{IconChForecastRequest, IconChForecastRequestBuilder};
-use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_response::{ForecastResponseAssets, ForecastResponseFeature, IconChForecastResponse};
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_step::IconCh1ForecastStep;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
+use crate::meteo_swiss::forecast_search::icon_ch_forecast_endpoint::IconChForecastEndpoint;
+use crate::meteo_swiss::forecast_search::icon_ch_forecast_request::{IconChForecastRequest, IconChForecastRequestBuilder};
+use crate::meteo_swiss::forecast_search::icon_ch_forecast_response::{ForecastResponseAssets, ForecastResponseFeature, IconChForecastResponse};
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::debug;
 use serde_json::to_string;
@@ -105,13 +105,12 @@ impl IconChForecastSearchService {
 
 #[cfg(test)]
 mod tests {
-    use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_request::IconChForecastRequestBuilder;
-    use crate::meteo_swiss::forecast_renderer::icon_ch_forecast_search_service::IconChForecastSearchService;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHorizon;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-
+    use crate::meteo_swiss::forecast_search::icon_ch_forecast_request::IconChForecastRequestBuilder;
+    use crate::meteo_swiss::forecast_search::icon_ch_forecast_search_service::IconChForecastSearchService;
 
     #[test]
     fn it_executes_a_forecast_search() {
