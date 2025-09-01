@@ -13,7 +13,7 @@ pub struct IconChForecastRun {
 
 
 impl IconChForecastRun {
-    const MIN_STEP: usize = 2;
+    const MIN_STEP: usize = 2; // TODO: why not 1?
 
 
     pub fn new(
@@ -26,6 +26,6 @@ impl IconChForecastRun {
 
 
     pub fn get_step_range(&self) -> RangeInclusive<usize> {
-        Self::MIN_STEP..=self.steps.len()
+        Self::MIN_STEP..=self.steps.len() - 1
     }
 }

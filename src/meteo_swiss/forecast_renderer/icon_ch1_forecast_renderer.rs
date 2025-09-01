@@ -40,25 +40,25 @@ impl IconCh1ForecastRenderer {
         );
         info!("found {} t2m forecast steps", forecast_run.steps.len());
 
-        info!("rendering cloud & precipitation forecast...");
-        // IconD2CloudPrecipRenderer::create(&latest_run)?;
-        info!("finished rendering cloud & precipitation forecast");
+        /*info!("rendering cloud & precipitation forecast...");
+        IconD2CloudPrecipRenderer::create(&latest_run)?;
+        info!("finished rendering cloud & precipitation forecast");*/
 
-        info!("rendering wind forecast...");
-        // IconD2WindForecastRenderer::create(&latest_run)?;
-        info!("finished rendering wind forecast");
+        /*info!("rendering wind forecast...");
+        IconD2WindForecastRenderer::create(&latest_run)?;
+        info!("finished rendering wind forecast");*/
 
         info!("rendering temperature forecast...");
         IconCh1TempForecastRenderer::create(&forecast_run, &unstructured_grid)?;
         info!("finished rendering temperature forecast");
 
-        info!("rendering vertical cloud forecast...");
-        // IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
-        info!("finished rendering vertical cloud forecast");
+        /*info!("rendering vertical cloud forecast...");
+        IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
+        info!("finished rendering vertical cloud forecast");*/
 
-        info!("rendering vertical wind forecast...");
-        // IconD2VerticalWindForecastRenderer::create(&latest_run)?;
-        info!("finished rendering vertical cloud forecast");
+        /*info!("rendering vertical wind forecast...");
+        IconD2VerticalWindForecastRenderer::create(&latest_run)?;
+        info!("finished rendering vertical cloud forecast");*/
 
         Ok(())
     }
