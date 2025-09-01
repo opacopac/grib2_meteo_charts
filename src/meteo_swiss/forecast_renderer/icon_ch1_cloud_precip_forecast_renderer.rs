@@ -1,0 +1,77 @@
+use crate::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
+use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::imaging::drawable::Drawable;
+use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
+use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
+use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
+use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
+use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::metobin::precip_metobin::PrecipMeteoBin;
+use log::info;
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+use std::fs::File;
+use std::io::{BufWriter, Write};
+
+pub struct IconCh1CloudPrecipRenderer;
+
+
+const WEATHER_LAYER: &str = "clct_precip";
+
+
+impl IconCh1CloudPrecipRenderer {
+    pub fn create(
+        forecast_run_clct: &IconChForecastRun,
+        forecast_run_tot_prec: &IconChForecastRun,
+        unstructured_grid: &UnstructuredGrid,
+    ) -> Result<(), MeteoSwissError> {
+        forecast_run_clct.get_step_range()
+            .into_par_iter()
+            .try_for_each(|step_idx| {
+                info!("creating weather charts, time step {}", step_idx);
+
+                let fc_step = &forecast_run_clct.steps[step_idx];
+                let fc_previous_step = &forecast_run_clct.steps[step_idx - 1];
+                let clct_grid = IconChClctReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
+                let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step.href, &unstructured_grid)?;
+                let precip_grid1 = IconChTotPrecReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
+                let layer = MeteoCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
+
+                // map tiles
+                let _ = CloudPrecipChartRenderer::render_map_tiles(
+                    &layer,
+                    IconCh1ForecastRendererHelper::get_zoom_range(),
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconCh1ForecastRendererHelper::save_tile_step(
+                        tile, zoom, x, y, WEATHER_LAYER, forecast_run_clct, step_idx,
+                    ),
+                );
+
+                // precip meteobin
+                let precip_bin = PrecipMeteoBin::new(layer);
+                let precip_data = precip_bin.create_bin_values();
+                let precip_filename = format!(
+                    "{}PRECIP.meteobin",
+                    IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, WEATHER_LAYER),
+                );
+                let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
+                let _ = precip_file.write_all(&precip_data);
+
+
+                // ww meteobin
+                /*let ww_grid = IconD2WwReader::read_grid_from_file(&fc_step)?;
+                let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
+
+                let weather_layer = WeatherLayer::new(ww_grid, ceiling_grid)?;
+                let weather_bin = WeatherMeteoBin::new(weather_layer);
+                let ww_data = weather_bin.create_bin_values();
+                let ww_filename = format!(
+                    "{}WW.meteobin",
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                );
+                let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
+                let _ = ww_file.write_all(&ww_data);*/
+
+                Ok(())
+            })
+    }
+}

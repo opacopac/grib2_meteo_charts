@@ -7,6 +7,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastV
 use crate::meteo_swiss::forecast_search::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
+use crate::meteo_swiss::forecast_renderer::icon_ch1_cloud_precip_forecast_renderer::IconCh1CloudPrecipRenderer;
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
 
@@ -27,29 +28,46 @@ impl IconCh1ForecastRenderer {
         let latest_ref_datetime = IconChForecastSearchService::find_latest_ref_datetime(&model)?;
         info!("latest ref datetime found: {:?}", latest_ref_datetime);
 
-        info!("search t2m forecast steps...");
-        let forecast_steps_t2m = IconChForecastSearchService::find_forecast_file_urls(
+        info!("rendering cloud & precipitation forecast...");
+        let forecast_steps_clct = IconChForecastSearchService::find_forecast_file_urls(
             &model,
-            &IconChForecastVariable::T2m,
+            &IconChForecastVariable::Clct,
             &latest_ref_datetime,
         )?;
-        let forecast_run = IconChForecastRun::new(
+        let forecast_run_clct = IconChForecastRun::new(
             latest_ref_datetime.get_date(),
             IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
-            forecast_steps_t2m,
+            forecast_steps_clct,
         );
-        info!("found {} t2m forecast steps", forecast_run.steps.len());
-
-        /*info!("rendering cloud & precipitation forecast...");
-        IconD2CloudPrecipRenderer::create(&latest_run)?;
-        info!("finished rendering cloud & precipitation forecast");*/
+        let forecast_steps_tot_prec = IconChForecastSearchService::find_forecast_file_urls(
+            &model,
+            &IconChForecastVariable::TotPrec,
+            &latest_ref_datetime,
+        )?;
+        let forecast_run_tot_prec = IconChForecastRun::new(
+            latest_ref_datetime.get_date(),
+            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
+            forecast_steps_tot_prec,
+        );
+        IconCh1CloudPrecipRenderer::create(&forecast_run_clct, &forecast_run_tot_prec, &unstructured_grid)?;
+        info!("finished rendering cloud & precipitation forecast");
 
         /*info!("rendering wind forecast...");
         IconD2WindForecastRenderer::create(&latest_run)?;
         info!("finished rendering wind forecast");*/
 
         info!("rendering temperature forecast...");
-        IconCh1TempForecastRenderer::create(&forecast_run, &unstructured_grid)?;
+        let forecast_steps_t2m = IconChForecastSearchService::find_forecast_file_urls(
+            &model,
+            &IconChForecastVariable::T2m,
+            &latest_ref_datetime,
+        )?;
+        let forecast_run_t2m = IconChForecastRun::new(
+            latest_ref_datetime.get_date(),
+            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
+            forecast_steps_t2m,
+        );
+        IconCh1TempForecastRenderer::create(&forecast_run_t2m, &unstructured_grid)?;
         info!("finished rendering temperature forecast");
 
         /*info!("rendering vertical cloud forecast...");

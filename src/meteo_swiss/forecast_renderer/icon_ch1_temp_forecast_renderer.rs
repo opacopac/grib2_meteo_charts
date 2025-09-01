@@ -31,7 +31,6 @@ impl IconCh1TempForecastRenderer {
 
                 let fc_step = &forecast_run.steps[step_idx];
                 let grid = IconChT2mReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
-
                 let layer = MeteoTempLayer::new(grid)?;
 
                 // map tiles
@@ -53,7 +52,7 @@ impl IconCh1TempForecastRenderer {
                 fs::create_dir_all(&path).unwrap();
 
                 let filename = format!(
-                    "{}TEMP_D2.meteobin",
+                    "{}TEMP.meteobin",
                     &path,
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
