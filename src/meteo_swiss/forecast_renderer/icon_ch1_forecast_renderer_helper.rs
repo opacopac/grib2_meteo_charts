@@ -10,6 +10,11 @@ const DATE_FORMAT: &str = "%Y%m%d";
 
 
 impl IconCh1ForecastRendererHelper {
+    pub fn get_zoom_range() -> (u32, u32) {
+        (0, 8)
+    }
+
+
     pub fn save_tile_step(
         tile: &Drawable,
         zoom: u32,

@@ -1,0 +1,9 @@
+[env]
+# Default for all builds (can be overridden below)
+RUST_LOG = "warn"
+
+[profile.dev.env]
+RUST_LOG = "debug"
+
+[profile.release.env]
+RUST_LOG = "info"

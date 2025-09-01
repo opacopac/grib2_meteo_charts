@@ -35,7 +35,7 @@ impl IconCh1TempForecastRenderer {
                 let layer = MeteoTempLayer::new(grid)?;
 
                 // map tiles
-                let zoom_range = (0, 7);
+                let zoom_range = IconCh1ForecastRendererHelper::get_zoom_range();
                 let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| IconCh1ForecastRendererHelper::save_tile_step(
                     tile, zoom, x, y, TEMP_LAYER, forecast_run, step_idx,
                 );
