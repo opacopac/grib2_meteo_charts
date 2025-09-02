@@ -30,11 +30,12 @@ impl IconCh1CloudPrecipRenderer {
             .try_for_each(|step_idx| {
                 info!("creating weather charts, time step {}", step_idx);
 
-                let fc_step = &forecast_run_clct.steps[step_idx];
-                let fc_previous_step = &forecast_run_clct.steps[step_idx - 1];
-                let clct_grid = IconChClctReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
-                let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step.href, &unstructured_grid)?;
-                let precip_grid1 = IconChTotPrecReader::read_grid_from_file(&fc_step.href, &unstructured_grid)?;
+                let fc_step_clct = &forecast_run_clct.steps[step_idx];
+                let fc_step_tot_prec = &forecast_run_tot_prec.steps[step_idx];
+                let fc_previous_step_tot_prec = &forecast_run_clct.steps[step_idx - 1];
+                let clct_grid = IconChClctReader::read_grid_from_file(&fc_step_clct.href, &unstructured_grid)?;
+                let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step_tot_prec.href, &unstructured_grid)?;
+                let precip_grid1 = IconChTotPrecReader::read_grid_from_file(&fc_step_tot_prec.href, &unstructured_grid)?;
                 let layer = MeteoCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
 
                 // map tiles

@@ -41,9 +41,15 @@ impl TempChartRenderer {
     fn color_fn(value: f32) -> [u8; 4] {
         const TRANSPARENCY: u8 = 127; // 50% transparency
 
-        // todo: lower values?
+        // todo: lower/higher values?
 
-        if value < -2.0 {
+        if value < -8.0 {
+            [255, 255, 255, TRANSPARENCY] // white
+        } else if value < -6.0 {
+            [219, 235, 250, TRANSPARENCY] // naerly white blue
+        } else if value < -4.0 {
+            [0, 212, 245, TRANSPARENCY] // cyan
+        } else if value < -2.0 {
             [148, 189, 240, TRANSPARENCY] // light blue
         } else if value < 0.0 {
             [115, 166, 235, TRANSPARENCY] // cornflower blue
