@@ -46,7 +46,7 @@ impl TempChartRenderer {
         if value < -8.0 {
             [255, 255, 255, TRANSPARENCY] // white
         } else if value < -6.0 {
-            [219, 235, 250, TRANSPARENCY] // nearly white blue
+            [219, 235, 250, TRANSPARENCY] // white blue
         } else if value < -4.0 {
             [0, 212, 245, TRANSPARENCY] // cyan
         } else if value < -2.0 {
