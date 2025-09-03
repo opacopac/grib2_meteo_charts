@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::logging::tstamp::TStamp;
 use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
@@ -12,7 +12,7 @@ use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocume
 pub const T_2M_GRIB_FILE: &str =
     "./tests/resources/icon_global_icosahedral_single-level_2025081318_000_T_2M.grib2";
 pub const NETCDF_FILE: &str = "./tests/resources/icon_grid_0026_R03B07_G.nc";
-pub const CHART_OUTPUT_FILE: &str = "./icon-global-t_2m-chart.png";
+pub const CHART_OUTPUT_FILE: &str = "./icon-global-t_2m-meteo_chart.png";
 
 #[test]
 fn it_successfully_reads_an_icon_global_clct_test_file() {

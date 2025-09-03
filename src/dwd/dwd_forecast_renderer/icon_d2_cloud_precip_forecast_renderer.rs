@@ -4,7 +4,7 @@ use std::io::{BufWriter, Write};
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
+use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::IconD2CeilingReader;
 use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;

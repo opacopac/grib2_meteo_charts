@@ -4,7 +4,7 @@ use std::io::{BufWriter, Write};
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::chart::wind_chart_renderer::WindChartRenderer;
+use crate::meteo_chart::wind_chart_renderer::WindChartRenderer;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;

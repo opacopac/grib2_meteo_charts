@@ -1,7 +1,7 @@
-use meteo_grib2_renderer::chart::wind_chart_renderer::WindChartRenderer;
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
-use meteo_grib2_renderer::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
+use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::meteo_chart::wind_chart_renderer::WindChartRenderer;
+use meteo_grib2_renderer::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 
 pub const WIND_U_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
 pub const WIND_V_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
@@ -16,6 +16,7 @@ pub fn read_test_wind_layer() -> MeteoWindLayer {
 
     return layer;
 }
+
 
 #[test]
 fn it_creates_an_image_from_a_wind_layer_with_the_correct_dimensions() {

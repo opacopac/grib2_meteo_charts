@@ -4,8 +4,8 @@ use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentR
 
 mod grib2;
 mod dwd;
+mod meteo_chart;
 mod meteo_swiss;
-mod chart;
 mod netcdf;
 
 pub const DATA_DIR: &str = "./tests/resources/";

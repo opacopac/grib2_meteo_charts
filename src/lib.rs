@@ -1,10 +1,10 @@
-pub mod chart;
 pub mod dwd;
 pub mod geo;
 pub mod grib2;
 pub mod grid;
 pub mod imaging;
 pub mod logging;
+pub mod meteo_chart;
 pub mod meteo_forecast;
 pub mod meteo_layer;
 pub mod meteo_swiss;

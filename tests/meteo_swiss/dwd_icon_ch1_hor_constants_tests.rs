@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::chart::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
@@ -9,7 +9,7 @@ use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
 pub const T2M_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202508100900-0-t_2m-ctrl.grib2";
-pub const CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-chart.png";
+pub const CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-meteo_chart.png";
 
 
 #[test]
