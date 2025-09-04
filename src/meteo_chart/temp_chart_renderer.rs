@@ -43,7 +43,11 @@ impl TempChartRenderer {
 
         // todo: lower/higher values?
 
-        if value < -8.0 {
+        if value < -12.0 {
+            [255, 153, 255, TRANSPARENCY] // pink
+        } else if value < -10.0 {
+            [255, 204, 255, TRANSPARENCY] // white pink
+        } else if value < -8.0 {
             [255, 255, 255, TRANSPARENCY] // white
         } else if value < -6.0 {
             [219, 235, 250, TRANSPARENCY] // white blue
