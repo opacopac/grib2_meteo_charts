@@ -1,11 +1,45 @@
 extern crate core;
 
+use clap::Parser;
 use meteo_grib2_renderer::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer::IconD2ForecastRenderer;
 use meteo_grib2_renderer::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
+
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// name of the model to render (e.g. icon-ch1, icon-d2)
+    #[arg(short, long)]
+    model: String,
+
+    /// name of the variables to render (e.g. wind, temp, cloud-precip)
+    #[arg(short, long, num_args = 1..)]
+    variables: Vec<String>,
+}
+
 
 fn main() {
     env_logger::init();
 
-    //let _ = IconD2ForecastRenderer::create_latest_forecasts().unwrap();
-    let _ = IconCh1ForecastRenderer::create_latest_forecasts().unwrap();
+    let args = Args::parse();
+
+    match args.model.as_str() {
+        "icon-ch1" => {
+            let _ = IconCh1ForecastRenderer::create_latest_forecasts(&args.variables)
+                .or_else(|e| {
+                    println!("error while rendering icon-ch1 forecast: {}", e);
+                    Err(e)
+                });
+        }
+        "icon-d2" => {
+            let _ = IconD2ForecastRenderer::create_latest_forecasts(&args.variables)
+                .or_else(|e| {
+                    println!("error while rendering icon-d2 forecast: {}", e);
+                    Err(e)
+                });
+        }
+        _ => {
+            println!("unknown model: {}", args.model);
+        }
+    }
 }

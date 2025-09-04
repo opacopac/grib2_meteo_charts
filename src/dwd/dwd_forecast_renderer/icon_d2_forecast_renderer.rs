@@ -12,7 +12,9 @@ pub struct IconD2ForecastRenderer;
 
 
 impl IconD2ForecastRenderer {
-    pub fn create_latest_forecasts() -> Result<(), ForecastRendererError> {
+    pub fn create_latest_forecasts(
+        variables: &Vec<String>
+    ) -> Result<(), ForecastRendererError> {
         info!("creating latest dwd forecasts...");
 
         info!("search available forecasts...");
