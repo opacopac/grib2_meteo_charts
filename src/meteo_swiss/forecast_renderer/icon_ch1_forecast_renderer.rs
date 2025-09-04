@@ -19,7 +19,7 @@ pub struct IconCh1ForecastRenderer;
 
 impl IconCh1ForecastRenderer {
     pub fn create_latest_forecasts(
-        variables: &Vec<String>
+        _variables: &Vec<String>
     ) -> Result<(), MeteoSwissError> {
         let model = IconChForecastModel::IconCh1;
         info!("rendering latest icon ch1 forecasts...");
