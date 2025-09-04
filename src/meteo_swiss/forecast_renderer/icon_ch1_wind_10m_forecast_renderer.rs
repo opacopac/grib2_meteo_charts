@@ -45,7 +45,7 @@ impl IconCh1Wind10mForecastRenderer {
                 // map tiles
                 let _ = WindChartRenderer::render_map_tiles(
                     &layer,
-                    (0, 7),
+                    IconCh1ForecastRendererHelper::get_zoom_range(),
                     |tile: &Drawable, zoom: u32, x: u32, y: u32| IconCh1ForecastRendererHelper::save_tile_step(
                         tile, zoom, x, y, WIND_LAYER, &fc_run_u10m, step_idx,
                     ),
