@@ -6,7 +6,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2Foreca
 use crate::dwd::dwd_forecast_renderer::icon_d2_temp_forecast_renderer::IconD2TempForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_cloud_forecast_renderer::IconD2VerticalCloudForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::IconD2VerticalWindForecastRenderer;
-use crate::dwd::dwd_forecast_renderer::icon_d2_wind_forecast_renderer::IconD2WindForecastRenderer;
+use crate::dwd::dwd_forecast_renderer::icon_d2_wind_10m_forecast_renderer::IconD2Wind10mForecastRenderer;
 
 pub struct IconD2ForecastRenderer;
 
@@ -24,7 +24,7 @@ impl IconD2ForecastRenderer {
         info!("finished rendering cloud & precipitation forecast");
 
         info!("rendering wind forecast...");
-        IconD2WindForecastRenderer::create(&latest_run)?;
+        IconD2Wind10mForecastRenderer::create(&latest_run)?;
         info!("finished rendering wind forecast");
 
         info!("rendering temperature forecast...");

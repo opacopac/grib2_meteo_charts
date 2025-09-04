@@ -2,3 +2,4 @@ pub mod icon_ch1_forecast_renderer;
 pub mod icon_ch1_temp_forecast_renderer;
 pub mod icon_ch1_forecast_renderer_helper;
 pub mod icon_ch1_cloud_precip_forecast_renderer;
+pub mod icon_ch1_wind_10m_forecast_renderer;
