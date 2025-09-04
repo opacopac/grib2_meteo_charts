@@ -1,8 +1,5 @@
 use std::ops::Add;
 
-use chrono;
-use chrono::{Duration, Utc};
-
 use crate::dwd::dwd_files::icon_d2_file_ceiling::IconD2FileCeiling;
 use crate::dwd::dwd_files::icon_d2_file_clc::IconD2FileClc;
 use crate::dwd::dwd_files::icon_d2_file_clct_mod::IconD2FileClctMod;
@@ -18,13 +15,16 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
 use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 use crate::grib2::common::grib2_error::Grib2Error;
+use chrono;
+use chrono::{Duration, Utc};
+
 
 pub struct IconD2ForecastRunFinder;
 
 
 impl IconD2ForecastRunFinder {
     pub fn find_latest_forecast_run() -> Result<DwdForecastRun, Grib2Error> {
-        let date_today = Utc::today().naive_utc();
+        let date_today = Utc::now().date_naive();
 
         // return Ok(IconD2ForecastRun::new(date_today, IconD2ForecastRunName::Run12));
         let last_step = DwdForecastStep::get_step_range().end().clone();
@@ -59,7 +59,7 @@ impl IconD2ForecastRunFinder {
         }
 
         // TODO: check if yesterday's files really exist
-        let date_yesterday = Utc::today().add(Duration::days(-1)).naive_utc();
+        let date_yesterday = Utc::now().date_naive().add(Duration::days(-1));
         let fc_run = DwdForecastRun::new(DwdModelType::IconD2, date_yesterday, IconD2ForecastRunName::Run21);
 
         return Ok(fc_run);

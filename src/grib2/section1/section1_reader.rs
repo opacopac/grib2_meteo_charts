@@ -1,14 +1,14 @@
 use std::io::Read;
 
-use byteorder::{BigEndian, ReadBytesExt};
-use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-
 use crate::grib2::common::byte_reader::ByteReader;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::section1::processed_data_type::ProcessedDataType;
 use crate::grib2::section1::production_status::ProductionStatus;
 use crate::grib2::section1::ref_time_significance::RefTimeSignificance;
 use crate::grib2::section1::section1::Section1;
+use byteorder::{BigEndian, ReadBytesExt};
+use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+
 
 pub struct Section1Reader;
 
@@ -35,7 +35,7 @@ impl Section1Reader {
             ref_time_significance,
             ref_time,
             production_status,
-            processed_data_type
+            processed_data_type,
         )?;
 
         let _ = ByteReader::read_n_bytes(reader, length as usize - 21)?;
@@ -67,8 +67,8 @@ impl Section1Reader {
         let minute = reader.read_u8()? as u32;
         let second = reader.read_u8()? as u32;
         let ref_time = NaiveDateTime::new(
-            NaiveDate::from_ymd(year, month, day),
-            NaiveTime::from_hms(hour, minute, second)
+            NaiveDate::from_ymd_opt(year, month, day).unwrap(), // TODO: handle invalid date
+            NaiveTime::from_hms_opt(hour, minute, second).unwrap(), // TODO: handle invalid time
         );
 
         return Ok(ref_time);

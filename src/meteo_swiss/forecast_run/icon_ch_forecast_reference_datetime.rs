@@ -43,18 +43,18 @@ impl IconChForecastReferenceDateTime {
         self.datetime
             .to_rfc3339_opts(SecondsFormat::Secs, true)
     }
-    
-    
+
+
     pub fn get_date(&self) -> chrono::NaiveDate {
-        self.datetime.date().naive_utc()
+        self.datetime.date_naive()
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use chrono::Timelike;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
+    use chrono::Timelike;
 
 
     #[test]
@@ -84,8 +84,8 @@ mod tests {
         // then
         assert_eq!(name, datetime_str);
     }
-    
-    
+
+
     #[test]
     fn it_gets_the_date_of_an_instance() {
         // given
