@@ -4,11 +4,12 @@ use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 
-pub struct IconChClctReader;
+pub struct IconChT2mReader;
 
 
-impl IconChClctReader {
-    const MISSING_VALUE: f32 = -1.0;
+impl IconChT2mReader {
+    const FEET_PER_M: f32 = 3.28084; // TODO: move to common
+    const MISSING_VALUE: f32 = 0.0;
 
     pub fn read_grid_from_file(file_url: &str, unstructured_grid: &UnstructuredGrid) -> Result<LatLonValueGrid<f32>, MeteoSwissError> {
         let regular_grid = FileToGridConverter::read_unstructured_grid_from_file_and_convert(
@@ -23,6 +24,6 @@ impl IconChClctReader {
 
 
     pub fn transform_values(value: f32) -> f32 {
-        value
+        value * Self::FEET_PER_M / 100.0
     }
 }
