@@ -47,14 +47,14 @@ impl IconCh1ForecastRenderer {
             let fc_run_v10m = Self::get_forecast_run(&model, IconChForecastVariable::V10m, &date_ref)?;
             let fc_run_vmax10m = Self::get_forecast_run(&model, IconChForecastVariable::VMax10m, &date_ref)?;
             IconCh1Wind10mForecastRenderer::create(&fc_run_u10m, &fc_run_v10m, &fc_run_vmax10m, &unstructured_grid)?;
-            info!("finished rendering wind forecast");
+            info!("finished rendering wind 10m forecast");
         }
 
         if variables.is_empty() || variables.contains(&MeteoLayer::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             let fc_run_t2m = Self::get_forecast_run(&model, IconChForecastVariable::T2m, &date_ref)?;
             IconCh1TempForecastRenderer::create(&fc_run_t2m, &unstructured_grid)?;
-            info!("finished rendering temperature forecast");
+            info!("finished rendering temperature 2m forecast");
         }
 
         if variables.is_empty() || variables.contains(&MeteoLayer::VerticalCloud.get_name()) {
