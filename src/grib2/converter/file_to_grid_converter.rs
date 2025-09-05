@@ -36,13 +36,12 @@ impl FileToGridConverter {
     }
 
 
-    // TODO: use value type T instead of f32
-    pub fn read_unstructured_grid_from_file_and_transform(
+    pub fn read_unstructured_grid_from_file_and_transform<T: GridValueType>(
         file_url: &str,
-        missing_value: f32,
-        transform_fn: fn(f32) -> f32,
+        missing_value: T,
+        transform_fn: fn(f32) -> T,
         unstructured_grid: &UnstructuredGrid,
-    ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    ) -> Result<LatLonValueGrid<T>, Grib2Error> {
         let doc = Grib2DocumentReader::read_single_doc_from_file(&file_url)?;
         let unstructured_values = doc.calculate_data_points(missing_value, transform_fn)?;
         let value_grid = UnstructuredValueGrid::new(unstructured_values, missing_value, unstructured_grid.clone());

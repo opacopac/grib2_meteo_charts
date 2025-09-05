@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufReader, Read};
-
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section0::section0_reader::Section0Reader;
@@ -13,6 +10,8 @@ use crate::grib2::section6::section6_reader::Section6Reader;
 use crate::grib2::section7::section7_reader::Section7Reader;
 use crate::grib2::section8::section8_reader::Section8Reader;
 use peekbufread::PeekRead;
+use std::fs::File;
+use std::io::{BufReader, Read};
 
 
 pub struct Grib2DocumentReader;
