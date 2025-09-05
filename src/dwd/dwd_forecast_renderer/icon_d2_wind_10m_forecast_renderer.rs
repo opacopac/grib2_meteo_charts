@@ -22,7 +22,7 @@ const WIND_LAYER: &str = "wind";
 
 
 impl IconD2Wind10mForecastRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run: &DwdForecastRun,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {

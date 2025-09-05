@@ -13,7 +13,7 @@ pub struct IconD2ForecastRenderer;
 
 
 impl IconD2ForecastRenderer {
-    pub fn create_latest_forecasts(
+    pub fn render_latest_forecasts(
         variable_filter: &Vec<String>,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {
@@ -25,31 +25,31 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
-            IconD2CloudPrecipRenderer::create(&latest_run, &step_filter)?;
+            IconD2CloudPrecipRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Wind10m.get_name()) {
             info!("rendering wind 10m forecast...");
-            IconD2Wind10mForecastRenderer::create(&latest_run, &step_filter)?;
+            IconD2Wind10mForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering wind 10m forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
-            IconD2TempForecastRenderer::create(&latest_run, &step_filter)?;
+            IconD2TempForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
             info!("rendering vertical cloud forecast...");
-            IconD2VerticalCloudForecastRenderer::create(&latest_run, &step_filter)?;
+            IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering vertical cloud forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
             info!("rendering vertical wind forecast...");
-            IconD2VerticalWindForecastRenderer::create(&latest_run, &step_filter)?;
+            IconD2VerticalWindForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering vertical cloud forecast");
         }
 

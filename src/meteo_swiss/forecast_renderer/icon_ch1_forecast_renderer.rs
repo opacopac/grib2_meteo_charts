@@ -19,7 +19,7 @@ pub struct IconCh1ForecastRenderer;
 
 
 impl IconCh1ForecastRenderer {
-    pub fn create_latest_forecasts(
+    pub fn render_latest_forecasts(
         variable_filter: &Vec<String>,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
@@ -38,7 +38,7 @@ impl IconCh1ForecastRenderer {
             info!("rendering cloud & precipitation forecast...");
             let fc_run_clct = Self::get_forecast_run(&model, IconChForecastVariable::Clct, &date_ref)?;
             let fc_run_tot_prec = Self::get_forecast_run(&model, IconChForecastVariable::TotPrec, &date_ref)?;
-            IconCh1CloudPrecipRenderer::create(&fc_run_clct, &fc_run_tot_prec, &unstructured_grid, &step_filter)?;
+            IconCh1CloudPrecipRenderer::render(&fc_run_clct, &fc_run_tot_prec, &unstructured_grid, &step_filter)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
@@ -47,14 +47,14 @@ impl IconCh1ForecastRenderer {
             let fc_run_u10m = Self::get_forecast_run(&model, IconChForecastVariable::U10m, &date_ref)?;
             let fc_run_v10m = Self::get_forecast_run(&model, IconChForecastVariable::V10m, &date_ref)?;
             let fc_run_vmax10m = Self::get_forecast_run(&model, IconChForecastVariable::VMax10m, &date_ref)?;
-            IconCh1Wind10mForecastRenderer::create(&fc_run_u10m, &fc_run_v10m, &fc_run_vmax10m, &unstructured_grid, &step_filter)?;
+            IconCh1Wind10mForecastRenderer::render(&fc_run_u10m, &fc_run_v10m, &fc_run_vmax10m, &unstructured_grid, &step_filter)?;
             info!("finished rendering wind 10m forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             let fc_run_t2m = Self::get_forecast_run(&model, IconChForecastVariable::T2m, &date_ref)?;
-            IconCh1TempForecastRenderer::create(&fc_run_t2m, &unstructured_grid, &step_filter)?;
+            IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 

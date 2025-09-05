@@ -1,23 +1,22 @@
-use std::fs::File;
-use std::io::{BufWriter, Write};
-
-use log::info;
-use rayon::prelude::{IntoParallelIterator, ParallelIterator};
-
-use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::IconD2CeilingReader;
 use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
-use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
-use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
+use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::imaging::drawable::Drawable;
+use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_layer::weather_layer::WeatherLayer;
-use crate::imaging::drawable::Drawable;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
+use log::info;
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+use std::fs::File;
+use std::io::{BufWriter, Write};
+
 
 pub struct IconD2CloudPrecipRenderer;
 
@@ -26,7 +25,7 @@ const WEATHER_LAYER: &str = "clct_precip";
 
 
 impl IconD2CloudPrecipRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run: &DwdForecastRun,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {
@@ -36,7 +35,7 @@ impl IconD2CloudPrecipRenderer {
                 if !step_filter.is_empty() && !step_filter.contains(&step) {
                     return Ok(());
                 }
-                
+
                 info!("creating weather charts, time step {}", step);
 
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
@@ -55,7 +54,7 @@ impl IconD2CloudPrecipRenderer {
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
-                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step)
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step),
                 );
 
                 // precip meteobin

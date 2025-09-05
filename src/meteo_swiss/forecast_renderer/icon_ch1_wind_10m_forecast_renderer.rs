@@ -21,7 +21,7 @@ const WIND_LAYER: &str = "wind";
 
 
 impl IconCh1Wind10mForecastRenderer {
-    pub fn create(
+    pub fn render(
         fc_run_u10m: &IconChForecastRun,
         fc_run_v10m: &IconChForecastRun,
         fc_run_vmax10m: &IconChForecastRun,

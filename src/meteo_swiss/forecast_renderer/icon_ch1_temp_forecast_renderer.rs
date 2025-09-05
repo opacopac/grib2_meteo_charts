@@ -21,7 +21,7 @@ const TEMP_LAYER: &str = "temp";
 
 
 impl IconCh1TempForecastRenderer {
-    pub fn create(
+    pub fn render(
         fc_run_temp: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
         step_filter: &Vec<usize>,

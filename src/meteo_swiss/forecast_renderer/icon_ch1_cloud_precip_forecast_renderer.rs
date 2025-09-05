@@ -21,7 +21,7 @@ const WEATHER_LAYER: &str = "clct_precip";
 
 
 impl IconCh1CloudPrecipRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run_clct: &IconChForecastRun,
         forecast_run_tot_prec: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,

@@ -29,14 +29,14 @@ fn main() {
 
     match args.model.as_str() {
         "icon-ch1" => {
-            let _ = IconCh1ForecastRenderer::create_latest_forecasts(&args.variables, &args.steps)
+            let _ = IconCh1ForecastRenderer::render_latest_forecasts(&args.variables, &args.steps)
                 .or_else(|e| {
                     println!("error while rendering icon-ch1 forecast: {}", e);
                     Err(e)
                 });
         }
         "icon-d2" => {
-            let _ = IconD2ForecastRenderer::create_latest_forecasts(&args.variables, &args.steps)
+            let _ = IconD2ForecastRenderer::render_latest_forecasts(&args.variables, &args.steps)
                 .or_else(|e| {
                     println!("error while rendering icon-d2 forecast: {}", e);
                     Err(e)

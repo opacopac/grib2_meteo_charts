@@ -12,14 +12,16 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::ops::RangeInclusive;
 
+
 pub struct IconD2VerticalCloudForecastRenderer;
+
 
 const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
 impl IconD2VerticalCloudForecastRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run: &DwdForecastRun,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {

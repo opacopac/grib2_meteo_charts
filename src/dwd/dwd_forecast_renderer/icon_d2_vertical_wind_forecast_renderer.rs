@@ -22,7 +22,7 @@ const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
 impl IconD2VerticalWindForecastRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run: &DwdForecastRun,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {

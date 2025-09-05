@@ -19,7 +19,7 @@ const TEMP_LAYER: &str = "temp";
 
 
 impl IconD2TempForecastRenderer {
-    pub fn create(
+    pub fn render(
         forecast_run: &DwdForecastRun,
         step_filter: &Vec<usize>,
     ) -> Result<(), ForecastRendererError> {
