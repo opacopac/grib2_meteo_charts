@@ -11,6 +11,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastV
 use crate::meteo_swiss::forecast_search::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
+use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
 
 pub const HOR_CONST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2"; // TODO
 
@@ -59,9 +60,16 @@ impl IconCh1ForecastRenderer {
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
-            /*info!("rendering vertical cloud forecast...");
-            IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
-            info!("finished rendering vertical cloud forecast");*/
+            info!("rendering vertical cloud forecast...");
+            let fc_run_hhl = Self::get_forecast_run(&model, IconChForecastVariable::Hhl, &date_ref)?;
+            let fc_run_clc = Self::get_forecast_run(&model, IconChForecastVariable::Clc, &date_ref)?;
+            IconCh1VerticalCloudForecastRenderer::render(
+                &fc_run_hhl,
+                &fc_run_clc,
+                &unstructured_grid,
+                &step_filter,
+            )?;
+            info!("finished rendering vertical cloud forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {

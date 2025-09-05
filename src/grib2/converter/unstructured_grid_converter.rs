@@ -5,12 +5,13 @@ use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::grid::unstructured_value_grid::UnstructuredValueGrid;
-use std::ops::{Add, Mul};
+
 
 pub struct UnstructuredGridConverter;
 
+
 impl UnstructuredGridConverter {
-    pub fn create<T: GridValueType + Mul<f32, Output = T> + Add<Output = T> + std::iter::Sum + std::fmt::Display>(
+    pub fn create<T: GridValueType>(
         grib2_doc: &Grib2Document,
         transform_fn: fn(f32) -> T,
         missing_value: T,

@@ -34,7 +34,7 @@ impl IconD2UReader {
             .map(|level| {
                 info!("reading clc layers for level {}", level);
                 let url = IconD2FileU::get_file_url(&fc_step, level as usize);
-                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_convert(
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
                     &url,
                     Self::MISSING_VALUE,
                     transform_fn,

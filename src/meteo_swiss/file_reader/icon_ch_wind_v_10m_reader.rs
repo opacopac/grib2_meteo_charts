@@ -11,7 +11,7 @@ impl IconChWindV10mReader {
     const MISSING_VALUE: f32 = -1.0;
 
     pub fn read_grid_from_file(file_url: &str, unstructured_grid: &UnstructuredGrid) -> Result<LatLonValueGrid<f32>, MeteoSwissError> {
-        let regular_grid = FileToGridConverter::read_unstructured_grid_from_file_and_convert(
+        let regular_grid = FileToGridConverter::read_unstructured_grid_from_file_and_transform(
             file_url,
             Self::MISSING_VALUE,
             Self::transform_values,

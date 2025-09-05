@@ -1,16 +1,15 @@
-use std::ops::{Add, Mul};
-
 use crate::geo::lat_lon::LatLon;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+
 
 pub struct LatLonValueGridInterpolator;
 
 
 impl LatLonValueGridInterpolator {
-    pub fn interpolate<T: GridValueType + Mul<f32, Output = T> + Add<Output = T>>(
+    pub fn interpolate<T: GridValueType>(
         value_grid: &LatLonValueGrid<T>,
-        pos: &LatLon
+        pos: &LatLon,
     ) -> Option<T> {
         let grid = value_grid.get_grid();
         let dimensions = grid.get_dimensions();
@@ -45,11 +44,11 @@ impl LatLonValueGridInterpolator {
     }
 
 
-    fn interpolate_value<T: Copy + PartialEq + Mul<f32, Output = T> + Add<Output = T>>(
+    fn interpolate_value<T: GridValueType>(
         value1: Option<T>,
         weight1: f32,
         value2: Option<T>,
-        weight2: f32
+        weight2: f32,
     ) -> Option<T> {
         if value1.is_none() || value2.is_none() {
             return None;
@@ -57,7 +56,7 @@ impl LatLonValueGridInterpolator {
 
         let val1 = value1.unwrap(); // TODO
         let val2 = value2.unwrap(); // TODO
-        let value = val1 * weight1 + val2 * weight2;
+        let value = val1.scale(weight1).add(val2.scale(weight2));
 
         return Some(value);
     }
@@ -76,7 +75,7 @@ mod tests {
         let dimensions = (2, 3);
         let lat_lon_extent = LatLonExtent::new(
             LatLon::new(40.0, 7.0),
-            LatLon::new(46.0, 9.0)
+            LatLon::new(46.0, 9.0),
         );
 
         return LatLonValueGrid::new(values, missing_value, dimensions, lat_lon_extent);

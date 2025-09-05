@@ -6,3 +6,4 @@ pub mod icon_ch_wind_u_10m_reader;
 pub mod icon_ch_wind_v_10m_reader;
 pub mod icon_ch_wind_vmax_10m_reader;
 pub mod icon_ch_hhl_reader;
+pub mod icon_ch_clc_reader;

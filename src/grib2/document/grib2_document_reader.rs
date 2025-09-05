@@ -48,7 +48,7 @@ impl Grib2DocumentReader {
     }
 
 
-    pub fn read_single_doc_from_stream(reader: &mut impl Read) -> Result<Grib2Document, Grib2Error> {
+    fn read_single_doc_from_stream(reader: &mut impl Read) -> Result<Grib2Document, Grib2Error> {
         let section0 = Section0Reader::read(reader)?;
         let section1 = Section1Reader::read(reader)?;
         let section2 = Section2Reader::read(reader)?;

@@ -5,12 +5,10 @@ use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
 use std::ops::RangeInclusive;
 
+pub struct IconChClcReader;
 
-pub struct IconChHhlReader;
 
-
-impl IconChHhlReader {
-    const FEET_PER_M: f32 = 3.28084; // TODO: move to common
+impl IconChClcReader {
     const MISSING_VALUE: u8 = 0;
 
 
@@ -19,7 +17,7 @@ impl IconChHhlReader {
         unstructured_grid: &UnstructuredGrid,
         vertical_level_range: Option<RangeInclusive<usize>>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, MeteoSwissError> {
-        info!("reading hhl grids...");
+        info!("reading clc grids...");
 
         let regular_grids = FileToGridConverter::read_multi_unstructured_grids_from_file_and_transform(
             file_url,
@@ -29,13 +27,13 @@ impl IconChHhlReader {
             vertical_level_range,
         )?;
 
-        info!("reading hhl grids done.");
+        info!("reading clc grids done.");
 
         Ok(regular_grids)
     }
 
 
     fn transform_values(value: f32) -> u8 {
-        (value * Self::FEET_PER_M / 100.0) as u8
+        value as u8
     }
 }
