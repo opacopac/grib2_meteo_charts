@@ -1,28 +1,35 @@
+use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
+use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
+use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
+use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
+use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::metobin::temp_metobin::TempMeteoBin;
+use log::info;
+use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
-use log::info;
-use rayon::prelude::{IntoParallelIterator, ParallelIterator};
-
-use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
-use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
-use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
-use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
-use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-use crate::metobin::temp_metobin::TempMeteoBin;
 
 pub struct IconD2TempForecastRenderer;
+
 
 const TEMP_LAYER: &str = "temp";
 
 
 impl IconD2TempForecastRenderer {
-    pub fn create(forecast_run: &DwdForecastRun) -> Result<(), ForecastRendererError> {
+    pub fn create(
+        forecast_run: &DwdForecastRun,
+        step_filter: &Vec<usize>,
+    ) -> Result<(), ForecastRendererError> {
         DwdForecastStep::get_step_range()
             .into_par_iter()
             .try_for_each(|step| {
+                if !step_filter.is_empty() && !step_filter.contains(&step) {
+                    return Ok(());
+                }
+
                 info!("creating temperature charts, time step {}", step);
 
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);

@@ -26,10 +26,17 @@ const WEATHER_LAYER: &str = "clct_precip";
 
 
 impl IconD2CloudPrecipRenderer {
-    pub fn create(forecast_run: &DwdForecastRun) -> Result<(), ForecastRendererError> {
+    pub fn create(
+        forecast_run: &DwdForecastRun,
+        step_filter: &Vec<usize>,
+    ) -> Result<(), ForecastRendererError> {
         DwdForecastStep::get_step_range()
             .into_par_iter()
             .try_for_each(|step| {
+                if !step_filter.is_empty() && !step_filter.contains(&step) {
+                    return Ok(());
+                }
+                
                 info!("creating weather charts, time step {}", step);
 
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);

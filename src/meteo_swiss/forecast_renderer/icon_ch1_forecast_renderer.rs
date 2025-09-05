@@ -20,7 +20,8 @@ pub struct IconCh1ForecastRenderer;
 
 impl IconCh1ForecastRenderer {
     pub fn create_latest_forecasts(
-        variables: &Vec<String>
+        variable_filter: &Vec<String>,
+        step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
         let model = IconChForecastModel::IconCh1;
         info!("rendering latest icon ch1 forecasts...");
@@ -33,37 +34,37 @@ impl IconCh1ForecastRenderer {
         let date_ref = IconChForecastSearchService::find_latest_ref_datetime(&model)?;
         info!("latest ref datetime found: {:?}", date_ref);
 
-        if variables.is_empty() || variables.contains(&MeteoLayer::CloudPrecip.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
             let fc_run_clct = Self::get_forecast_run(&model, IconChForecastVariable::Clct, &date_ref)?;
             let fc_run_tot_prec = Self::get_forecast_run(&model, IconChForecastVariable::TotPrec, &date_ref)?;
-            IconCh1CloudPrecipRenderer::create(&fc_run_clct, &fc_run_tot_prec, &unstructured_grid)?;
+            IconCh1CloudPrecipRenderer::create(&fc_run_clct, &fc_run_tot_prec, &unstructured_grid, &step_filter)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
-        if variables.is_empty() || variables.contains(&MeteoLayer::Wind10m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Wind10m.get_name()) {
             info!("rendering wind 10m forecast...");
             let fc_run_u10m = Self::get_forecast_run(&model, IconChForecastVariable::U10m, &date_ref)?;
             let fc_run_v10m = Self::get_forecast_run(&model, IconChForecastVariable::V10m, &date_ref)?;
             let fc_run_vmax10m = Self::get_forecast_run(&model, IconChForecastVariable::VMax10m, &date_ref)?;
-            IconCh1Wind10mForecastRenderer::create(&fc_run_u10m, &fc_run_v10m, &fc_run_vmax10m, &unstructured_grid)?;
+            IconCh1Wind10mForecastRenderer::create(&fc_run_u10m, &fc_run_v10m, &fc_run_vmax10m, &unstructured_grid, &step_filter)?;
             info!("finished rendering wind 10m forecast");
         }
 
-        if variables.is_empty() || variables.contains(&MeteoLayer::Temp2m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             let fc_run_t2m = Self::get_forecast_run(&model, IconChForecastVariable::T2m, &date_ref)?;
-            IconCh1TempForecastRenderer::create(&fc_run_t2m, &unstructured_grid)?;
+            IconCh1TempForecastRenderer::create(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
-        if variables.is_empty() || variables.contains(&MeteoLayer::VerticalCloud.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
             /*info!("rendering vertical cloud forecast...");
             IconD2VerticalCloudForecastRenderer::create(&latest_run)?;
             info!("finished rendering vertical cloud forecast");*/
         }
 
-        if variables.is_empty() || variables.contains(&MeteoLayer::VerticalWind.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
             /*info!("rendering vertical wind forecast...");
             IconD2VerticalWindForecastRenderer::create(&latest_run)?;
             info!("finished rendering vertical cloud forecast");*/

@@ -25,10 +25,15 @@ impl IconCh1CloudPrecipRenderer {
         forecast_run_clct: &IconChForecastRun,
         forecast_run_tot_prec: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
+        step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
         forecast_run_clct.get_step_range()
             .into_par_iter()
             .try_for_each(|step_idx| {
+                if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
+                    return Ok(());
+                }
+                
                 info!("creating weather charts, time step {}", step_idx);
 
                 let fc_step_clct = &forecast_run_clct.steps[step_idx];

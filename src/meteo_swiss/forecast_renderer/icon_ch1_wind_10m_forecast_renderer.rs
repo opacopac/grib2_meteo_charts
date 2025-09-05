@@ -26,10 +26,15 @@ impl IconCh1Wind10mForecastRenderer {
         fc_run_v10m: &IconChForecastRun,
         fc_run_vmax10m: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
+        step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
         fc_run_u10m.get_step_range()
             .into_par_iter()
             .try_for_each(|step_idx| {
+                if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
+                    return Ok(());
+                }
+                
                 info!("creating wind charts, time step {}", step_idx);
 
                 let fc_step_u10m = &fc_run_u10m.steps[step_idx];

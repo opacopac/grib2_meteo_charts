@@ -24,10 +24,15 @@ impl IconCh1TempForecastRenderer {
     pub fn create(
         fc_run_temp: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
+        step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
         fc_run_temp.get_step_range()
             .into_par_iter()
             .try_for_each(|step_idx| {
+                if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
+                    return Ok(());
+                }
+                
                 info!("creating temperature charts, time step {}", step_idx);
 
                 let fc_step_temp = &fc_run_temp.steps[step_idx];
