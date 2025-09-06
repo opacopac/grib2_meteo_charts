@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::grib2::common::grib2_error::Grib2Error;
+use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::document::grib2_document::Grib2Document;
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
 
 mod grib2;
 mod dwd;
@@ -14,5 +14,5 @@ pub const CLCT_ICON_GLOBAL_TEST_FILE: &str = "./tests/resources/icon_global_icos
 
 
 pub fn read_icon_d2_test_document_result() -> Result<Grib2Document, Grib2Error> {
-    return Grib2DocumentReader::read_single_doc_from_file(CLCT_ICON_D2_TEST_FILE);
+    FileToGridConverter::read_single_doc_from_file_or_url(CLCT_ICON_D2_TEST_FILE)
 }

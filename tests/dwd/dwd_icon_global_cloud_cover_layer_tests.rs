@@ -1,9 +1,9 @@
-use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
-use meteo_grib2_renderer::logging::tstamp::TStamp;
-use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
+use meteo_grib2_renderer::logging::tstamp::TStamp;
+use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use meteo_grib2_renderer::netcdf::converter::netcdf_to_grid_converter::{
     NetCdftoGridConverter, CLAT_VAR_NAME, CLON_VAR_NAME,
 };
@@ -16,8 +16,8 @@ pub const CHART_OUTPUT_FILE: &str = "./icon-global-t_2m-meteo_chart.png";
 
 #[test]
 fn it_successfully_reads_an_icon_global_clct_test_file() {
-    TStamp::print_us("Grib2DocumentReader::read_single_doc_from_file...");
-    let grib2_doc = Grib2DocumentReader::read_single_doc_from_file(T_2M_GRIB_FILE).unwrap();
+    TStamp::print_us("FileToGridConverter::read_single_doc_from_file...");
+    let grib2_doc = FileToGridConverter::read_single_doc_from_file_or_url(T_2M_GRIB_FILE).unwrap();
     let dimensions = (4096, 4096);
     TStamp::print_us("NetCdfDocumentReader::read_file...");
     let netcdf_doc =
@@ -34,7 +34,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
         LatLonExtent::MERCATOR_EXTENT,
         0.117, // TODO
     )
-    .unwrap();
+        .unwrap();
     TStamp::print_us("grid.create_regular_grid...");
     let regular_grid = grid.create_regular_grid();
 

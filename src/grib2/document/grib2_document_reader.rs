@@ -9,45 +9,34 @@ use crate::grib2::section5::section5_reader::Section5Reader;
 use crate::grib2::section6::section6_reader::Section6Reader;
 use crate::grib2::section7::section7_reader::Section7Reader;
 use crate::grib2::section8::section8_reader::Section8Reader;
-use peekbufread::PeekRead;
-use std::fs::File;
-use std::io::{BufReader, Read};
-
+use std::io::Read;
 
 pub struct Grib2DocumentReader;
 
 
 impl Grib2DocumentReader {
-    pub fn read_single_doc_from_file(filename: &str) -> Result<Grib2Document, Grib2Error> {
-        let file = File::open(filename)?;
-        let mut reader = BufReader::new(file);
-
-        Self::read_single_doc_from_stream(&mut reader)
-    }
-
-
-    pub fn read_multi_doc_from_file(filename: &str) -> Result<Vec<Grib2Document>, Grib2Error> {
-        let file = File::open(filename)?;
-        let mut reader = PeekRead::new(file);
+    pub fn read_multi_doc_from_stream(reader: &mut impl Read) -> Result<Vec<Grib2Document>, Grib2Error> {
         let mut documents = Vec::new();
 
         loop {
-            let doc = Self::read_single_doc_from_stream(&mut reader)?;
-            documents.push(doc);
-
-            // Check if we have reached the end of the file
-            let mut buf = [0; 1];
-            let peeked_bytes = reader.peek(&mut buf).unwrap_or(0);
-            if peeked_bytes == 0 {
+            let result = Self::read_single_doc_from_stream(reader);
+            // TODO: check for specific eof error
+            if result.is_ok() {
+                documents.push(result?);
+            } else {
                 break;
             }
+        }
+
+        if documents.is_empty() {
+            return Err(Grib2Error::InvalidData("No valid GRIB2 documents found".to_string()));
         }
 
         Ok(documents)
     }
 
 
-    fn read_single_doc_from_stream(reader: &mut impl Read) -> Result<Grib2Document, Grib2Error> {
+    pub fn read_single_doc_from_stream(reader: &mut impl Read) -> Result<Grib2Document, Grib2Error> {
         let section0 = Section0Reader::read(reader)?;
         let section1 = Section1Reader::read(reader)?;
         let section2 = Section2Reader::read(reader)?;

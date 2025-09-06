@@ -1,14 +1,14 @@
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate::LatitudeLongitude;
 use meteo_grib2_renderer::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;
-use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-lat-lon_single-level_2022042700_047_CLCT_MOD.grib2";
 
 
 #[test]
 fn it_successfully_reads_an_icon_eu_clct_test_file() {
-    let doc = Grib2DocumentReader::read_single_doc_from_file(CLCT_TEST_FILE).unwrap();
+    let doc = FileToGridConverter::read_single_doc_from_file_or_url(CLCT_TEST_FILE).unwrap();
     let grid = RegularGridConverter::create(&doc, -1.0).unwrap();
 
     match doc.section3.grid_definition_template {
@@ -20,7 +20,6 @@ fn it_successfully_reads_an_icon_eu_clct_test_file() {
         }
         _ => {}
     }
-
 
 
     let _layer = MeteoCloudLayer::new(grid);

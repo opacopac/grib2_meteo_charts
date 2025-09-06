@@ -1,7 +1,7 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
-use crate::grib2::document::grib2_document_reader::Grib2DocumentReader;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
@@ -19,7 +19,7 @@ impl IconHorConstReader {
 
 
     pub fn read_grid_from_file(file_url: &str) -> Result<UnstructuredGrid, MeteoSwissError> {
-        let hor_docs = Grib2DocumentReader::read_multi_doc_from_file(file_url)?;
+        let hor_docs = FileToGridConverter::read_multi_doc_from_file_or_url(file_url)?;
         let clat_doc = &hor_docs[4];
         let clon_doc = &hor_docs[3];
         let lat_lon_extent = LatLonExtent::new(

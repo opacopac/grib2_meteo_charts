@@ -1,7 +1,7 @@
-use meteo_grib2_renderer::grib2::document::grib2_document_reader::Grib2DocumentReader;
+use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::grib2::section3::grid_definition_template::GridDefinitionTemplate::LatitudeLongitude;
 use meteo_grib2_renderer::meteo_layer::meteo_wind_layer::MeteoWindLayer;
-use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 
 pub const WIND_U_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_u_10m.grib2";
 pub const WIND_V_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042600_000_2d_v_10m.grib2";
@@ -9,8 +9,8 @@ pub const WIND_V_EU_TEST_FILE: &str = "./tests/resources/icon-eu_europe_regular-
 
 #[test]
 fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
-    let doc_u = Grib2DocumentReader::read_single_doc_from_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_single_doc_from_file(WIND_V_TEST_FILE).unwrap();
+    let doc_u = FileToGridConverter::read_single_doc_from_file_or_url(WIND_U_TEST_FILE).unwrap();
+    let doc_v = FileToGridConverter::read_single_doc_from_file_or_url(WIND_V_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
@@ -33,8 +33,8 @@ fn it_successfully_creates_a_wind_test_file_from_wind_u_and_v_grib_docs() {
 
 #[test]
 fn it_returns_an_error_when_the_grid_sizes_dont_match() {
-    let doc_u = Grib2DocumentReader::read_single_doc_from_file(WIND_U_TEST_FILE).unwrap();
-    let doc_v = Grib2DocumentReader::read_single_doc_from_file(WIND_V_EU_TEST_FILE).unwrap();
+    let doc_u = FileToGridConverter::read_single_doc_from_file_or_url(WIND_U_TEST_FILE).unwrap();
+    let doc_v = FileToGridConverter::read_single_doc_from_file_or_url(WIND_V_EU_TEST_FILE).unwrap();
     let grid_u = RegularGridConverter::create(&doc_u, -1.0).unwrap();
     let grid_v = RegularGridConverter::create(&doc_v, -1.0).unwrap();
 
