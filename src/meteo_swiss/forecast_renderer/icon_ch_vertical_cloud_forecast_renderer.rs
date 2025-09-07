@@ -1,7 +1,6 @@
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
-use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
@@ -11,6 +10,7 @@ use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::ops::RangeInclusive;
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconCh1VerticalCloudForecastRenderer;
 
@@ -21,9 +21,9 @@ const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
 
 impl IconCh1VerticalCloudForecastRenderer {
     pub fn render(
-        fc_run_hhl: &IconChForecastRun,
         fc_run_clc: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
         fc_run_clc.get_step_range()
@@ -33,10 +33,8 @@ impl IconCh1VerticalCloudForecastRenderer {
                 }
 
                 info!("creating vertical cloud charts, time step {}", step_idx);
-                let fc_step_hhl = &fc_run_hhl.steps[step_idx];
                 let fc_step_clc = &fc_run_clc.steps[step_idx];
 
-                let hhl_grids = IconChHhlReader::read_grids(&fc_step_hhl.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
                 let clc_grids = IconChClcReader::read_grids(&fc_step_clc.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
 
                 let vertical_cloud_layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);

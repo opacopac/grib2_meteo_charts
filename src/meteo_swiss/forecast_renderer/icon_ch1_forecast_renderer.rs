@@ -1,22 +1,26 @@
 use crate::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
+use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
+use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::file_reader::icon_ch_hor_const_reader::IconHorConstReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_cloud_precip_forecast_renderer::IconCh1CloudPrecipRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_temp_forecast_renderer::IconCh1TempForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_wind_10m_forecast_renderer::IconCh1Wind10mForecastRenderer;
+use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
-use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
-
-pub const HOR_CONST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2"; // TODO
+use std::ops::RangeInclusive;
 
 
 pub struct IconCh1ForecastRenderer;
+
+
+const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
 
 
 impl IconCh1ForecastRenderer {
@@ -27,9 +31,15 @@ impl IconCh1ForecastRenderer {
         let model = IconChForecastModel::IconCh1;
         info!("rendering latest icon ch1 forecasts...");
 
-        info!("reading horizontal constants...");
-        let unstructured_grid = IconHorConstReader::read_grid_from_file(HOR_CONST_FILE)?;
-        info!("finished reading horizontal constants");
+        info!("reading horizontal/vertical constants...");
+        let icon_ch1_assets = IconChAssetsService::get()?;
+
+        let hor_consts = icon_ch1_assets.get_horizontal_constants().unwrap();
+        let unstructured_grid = IconHorConstReader::read_grid_from_file(&hor_consts.href)?;
+
+        let vert_consts = icon_ch1_assets.get_vertical_constants().unwrap();
+        let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
+        info!("finished reading horizontal/vertical constants");
 
         info!("search latest available forecast...");
         let date_ref = IconChForecastSearchService::find_latest_ref_datetime(&model)?;
@@ -61,12 +71,11 @@ impl IconCh1ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
             info!("rendering vertical cloud forecast...");
-            let fc_run_hhl = Self::get_forecast_run(&model, IconChForecastVariable::Hhl, &date_ref)?;
             let fc_run_clc = Self::get_forecast_run(&model, IconChForecastVariable::Clc, &date_ref)?;
             IconCh1VerticalCloudForecastRenderer::render(
-                &fc_run_hhl,
                 &fc_run_clc,
                 &unstructured_grid,
+                &hhl_grids,
                 &step_filter,
             )?;
             info!("finished rendering vertical cloud forecast");
