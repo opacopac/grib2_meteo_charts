@@ -7,6 +7,7 @@ use crate::meteo_swiss::forecast_renderer::icon_ch1_cloud_precip_forecast_render
 use crate::meteo_swiss::forecast_renderer::icon_ch1_temp_forecast_renderer::IconCh1TempForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_wind_10m_forecast_renderer::IconCh1Wind10mForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
+use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_wind_forecast_renderer::IconCh1VerticalWindForecastRenderer;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
@@ -15,7 +16,6 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastV
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
 use std::ops::RangeInclusive;
-
 
 pub struct IconCh1ForecastRenderer;
 
@@ -82,9 +82,17 @@ impl IconCh1ForecastRenderer {
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
-            /*info!("rendering vertical wind forecast...");
-            IconD2VerticalWindForecastRenderer::create(&latest_run)?;
-            info!("finished rendering vertical cloud forecast");*/
+            info!("rendering vertical wind forecast...");
+            let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
+            let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
+            IconCh1VerticalWindForecastRenderer::render(
+                &fc_run_u,
+                &fc_run_v,
+                &unstructured_grid,
+                &hhl_grids,
+                &step_filter,
+            )?;
+            info!("finished rendering vertical cloud forecast");
         }
 
         Ok(())
@@ -108,5 +116,25 @@ impl IconCh1ForecastRenderer {
         );
 
         Ok(forecast_run)
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::meteo_layer::meteo_layer::MeteoLayer;
+    use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
+
+    #[test]
+    fn it_successfully_renders_a_part_of_the_latest_icon_ch1_forecasts() {
+        // given
+        let variable_filter = vec![MeteoLayer::Temp2m.get_name()];
+        let step_filter = vec![2, 3, 4];
+        
+        // when
+        let result = IconCh1ForecastRenderer::render_latest_forecasts(&variable_filter, &step_filter);
+        
+        // then
+        assert!(result.is_ok());
     }
 }
