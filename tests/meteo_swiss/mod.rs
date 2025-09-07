@@ -1,2 +1,2 @@
 #[cfg(test)]
-mod dwd_icon_ch1_hor_constants_tests;
+mod dwd_icon_ch1_chart_tests;
