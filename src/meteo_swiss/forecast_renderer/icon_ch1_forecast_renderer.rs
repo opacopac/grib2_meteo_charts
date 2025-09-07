@@ -8,7 +8,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconC
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-use crate::meteo_swiss::forecast_search::icon_ch_forecast_search_service::IconChForecastSearchService;
+use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;

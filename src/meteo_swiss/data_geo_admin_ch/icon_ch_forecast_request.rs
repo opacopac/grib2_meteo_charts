@@ -5,6 +5,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastV
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use serde::Serialize;
 
+
 #[derive(Debug, Serialize)]
 pub struct IconChForecastRequest {
     pub collections: Vec<String>,
@@ -122,7 +123,7 @@ mod tests {
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
     use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-    use crate::meteo_swiss::forecast_search::icon_ch_forecast_request::IconChForecastRequestBuilder;
+    use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_request::IconChForecastRequestBuilder;
 
     #[test]
     fn it_builds_a_forecast_request() {
