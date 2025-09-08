@@ -57,8 +57,8 @@ mod tests {
     #[ignore = "only for manual testing"]
     fn it_renders_the_icon_ch1_charts() {
         // given
-        let variable_filter = vec!["cloud_precip".to_string()]; // vec!["temp_2m".to_string()];
-        let step_filter = vec![]; // vec![2, 3, 4];
+        let variable_filter = vec!["vertical_cloud".to_string(), "vertical_wind".to_string()]; // vec!["temp_2m".to_string()];
+        let step_filter = vec![2];
 
          // when
         let result = IconCh1ForecastRenderer::render_latest_forecasts(&variable_filter, &step_filter);
