@@ -38,7 +38,7 @@ impl IconCh1CloudPrecipRenderer {
 
                 let fc_step_clct = &forecast_run_clct.steps[step_idx];
                 let fc_step_tot_prec = &forecast_run_tot_prec.steps[step_idx];
-                let fc_previous_step_tot_prec = &forecast_run_clct.steps[step_idx - 1];
+                let fc_previous_step_tot_prec = &forecast_run_tot_prec.steps[step_idx - 1];
                 
                 let clct_grid = IconChClctReader::read_grid_from_file(&fc_step_clct.href, &unstructured_grid)?;
                 let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step_tot_prec.href, &unstructured_grid)?;

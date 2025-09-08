@@ -33,12 +33,9 @@ impl IconCh1ForecastRenderer {
 
         info!("reading horizontal/vertical constants...");
         let icon_ch1_assets = IconChAssetsService::get()?;
-
         let hor_consts = icon_ch1_assets.get_horizontal_constants().unwrap();
         let unstructured_grid = IconHorConstReader::read_grid_from_file(&hor_consts.href)?;
-
         let vert_consts = icon_ch1_assets.get_vertical_constants().unwrap();
-        let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
         info!("finished reading horizontal/vertical constants");
 
         info!("search latest available forecast...");
@@ -69,30 +66,38 @@ impl IconCh1ForecastRenderer {
             info!("finished rendering temperature 2m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
-            info!("rendering vertical cloud forecast...");
-            let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
-            IconCh1VerticalCloudForecastRenderer::render(
-                &fc_run_clc,
-                &unstructured_grid,
-                &hhl_grids,
-                &step_filter,
-            )?;
-            info!("finished rendering vertical cloud forecast");
-        }
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name())
+            || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()
+        ) {
+            info!("reading hhl grids...");
+            let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
+            info!("finished reading hhl grids");
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
-            info!("rendering vertical wind forecast...");
-            let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
-            let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
-            IconCh1VerticalWindForecastRenderer::render(
-                &fc_run_u,
-                &fc_run_v,
-                &unstructured_grid,
-                &hhl_grids,
-                &step_filter,
-            )?;
-            info!("finished rendering vertical cloud forecast");
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
+                info!("rendering vertical cloud forecast...");
+                let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+                IconCh1VerticalCloudForecastRenderer::render(
+                    &fc_run_clc,
+                    &unstructured_grid,
+                    &hhl_grids,
+                    &step_filter,
+                )?;
+                info!("finished rendering vertical cloud forecast");
+            }
+
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
+                info!("rendering vertical wind forecast...");
+                let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
+                let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
+                IconCh1VerticalWindForecastRenderer::render(
+                    &fc_run_u,
+                    &fc_run_v,
+                    &unstructured_grid,
+                    &hhl_grids,
+                    &step_filter,
+                )?;
+                info!("finished rendering vertical cloud forecast");
+            }
         }
 
         Ok(())
