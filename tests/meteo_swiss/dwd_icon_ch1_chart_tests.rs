@@ -9,11 +9,12 @@ use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 
+
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
 pub const T2M_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202508100900-0-t_2m-ctrl.grib2";
-pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509061800-0-clct-ctrl.grib2";
-pub const TOT_PREC1_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509061800-10-tot_prec-ctrl.grib2";
-pub const TOT_PREC2_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509061800-11-tot_prec-ctrl.grib2";
+pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509080600-11-clct-ctrl.grib2";
+pub const TOT_PREC1_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509080600-10-tot_prec-ctrl.grib2";
+pub const TOT_PREC2_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509080600-11-tot_prec-ctrl.grib2";
 pub const T2M_CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-meteo_chart.png";
 pub const CLCT_PREC_CHART_OUTPUT_FILE: &str = "./icon-ch1-clct-precip-meteo_chart.png";
 pub const CHART_IMG_DIM: (usize, usize) = (1024, 1024);
