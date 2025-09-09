@@ -26,46 +26,38 @@ impl<T: GridValueType> UnstructuredValueGrid<T>
         }
     }
 
+
     pub fn get_grid(&self) -> &UnstructuredGrid {
         &self.grid
     }
+
 
     pub fn get_grid_dimensions(&self) -> (usize, usize) {
         self.grid.get_dimensions()
     }
 
+
     pub fn get_grid_lat_lon_extent(&self) -> &LatLonExtent {
         self.grid.get_lat_lon_extent()
     }
+
 
     pub fn get_missing_value(&self) -> T {
         self.missing_value
     }
 
+
     pub fn get_value_by_xy(&self, x: usize, y: usize) -> Option<T> {
-        let coord_dist_triple = self.grid.get_coord_dist_triple(x, y)?;
-        let coord_dists = coord_dist_triple.get_coord_dists();
+        let coord_dist = match self.grid.get_coord_dist(x, y) {
+            Some(coord_dist) => coord_dist,
+            None => return None,
+        };
 
-        if coord_dists.is_empty() {
-            return None;
-        }
-
-        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
-
-        let value: T = coord_dists
-            .iter()
-            .filter_map(|cd| {
-                let value_index = cd.get_coord_index();
-                if let Some(value) = self.values.get(value_index) {
-                    if *value == self.missing_value {
-                        return None;
-                    }
-                    return Some(value.scale(cd.get_coord_dist_squared().sqrt() / coord_dist_sum));
-                } else {
-                    return None;
-                }
-            })
-            .sum();
+        let value_index = coord_dist.get_coord_index();
+        let value = match self.values.get(value_index) {
+            Some(val) => *val,
+            None => return None,
+        };
 
         Some(value)
     }

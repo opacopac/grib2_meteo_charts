@@ -1,27 +1,31 @@
 use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::coord_dist::CoordDist;
+use crate::grid::coord_dist_triple::CoordDistTriple;
 use crate::grid::lat_lon_grid::LatLonGrid;
 
-pub struct UnstructuredGrid2 {
+
+#[derive(Clone)]
+pub struct UnstructuredGrid1 {
     lat_lon_grid: LatLonGrid,
     coordinates: Vec<LatLon>,
-    coord_dist_map: Vec<Option<CoordDist>>,
+    coord_dist_lookup_map: Vec<CoordDistTriple>,
 }
 
-impl UnstructuredGrid2 {
+
+impl UnstructuredGrid1 {
     pub fn new(
         dimensions: (usize, usize),
         lat_lon_extent: LatLonExtent,
         coordinates: Vec<LatLon>,
-    ) -> UnstructuredGrid2 {
+    ) -> UnstructuredGrid1 {
         let lat_lon_grid = LatLonGrid::new(dimensions, lat_lon_extent);
-        let coord_dist: Vec<Option<CoordDist>> = vec![None; dimensions.0 * dimensions.1];
+        let coord_dist_lookup_map = vec![CoordDistTriple::new(); dimensions.0 * dimensions.1];
 
-        UnstructuredGrid2 {
+        UnstructuredGrid1 {
             lat_lon_grid,
             coordinates,
-            coord_dist_map: coord_dist,
+            coord_dist_lookup_map,
         }
     }
 
@@ -41,10 +45,9 @@ impl UnstructuredGrid2 {
         &self.lat_lon_grid.get_lat_lon_extent()
     }
 
-    pub fn get_coord_dist(&self, x: usize, y: usize) -> Option<&CoordDist> {
+    pub fn get_coord_dist_triple(&self, x: usize, y: usize) -> Option<&CoordDistTriple> {
         let idx = self.get_index_by_x_y(x, y)?;
-
-        self.coord_dist_map[idx].as_ref()
+        Some(&self.coord_dist_lookup_map[idx])
     }
 
     pub fn calc_coord_dist_lookup_map(&mut self, max_deg_coord_dist: f32) {
@@ -67,29 +70,22 @@ impl UnstructuredGrid2 {
             let (min_xy, max_xy) = self.calc_min_max_xy_for_coord(coord, max_deg_coord_dist);
             for x in min_xy.0..=max_xy.0 {
                 for y in min_xy.1..=max_xy.1 {
-                    let idx = match self.get_index_by_x_y(x, y) {
-                        Some(idx) => idx,
-                        None => continue,
-                    };
-                    let lat_lon = match self
-                        .lat_lon_grid
-                        .get_lat_lon_by_x_y(x as f32 + 0.5, y as f32 + 0.5)
-                    {
-                        Some(lat_lon) => lat_lon,
-                        None => continue,
-                    };
-                    let new_dist_squared = coord.calc_euclidean_dist_squared(&lat_lon);
-                    if new_dist_squared > max_deg_coord_dist_squared {
-                        continue;
-                    }
-                    let current_dist_squared = match self.coord_dist_map[idx] {
-                        Some(coord_dist) => coord_dist.get_coord_dist_squared(),
-                        None => max_deg_coord_dist_squared
-                    };
-                    if new_dist_squared > current_dist_squared {
-                        continue;
-                    } else {
-                        self.coord_dist_map[idx] = Some(CoordDist::new(i, new_dist_squared));
+                    if let Some(idx) = self.get_index_by_x_y(x, y) {
+                        let lat_lon = self
+                            .lat_lon_grid
+                            .get_lat_lon_by_x_y(x as f32 + 0.5, y as f32 + 0.5);
+                        let dist_squared = match lat_lon {
+                            Some(lat_lon) => coord.calc_euclidean_dist_squared(&lat_lon),
+                            None => continue, // skip if lat_lon is not found
+                        };
+
+                        if dist_squared > max_deg_coord_dist_squared {
+                            continue; // skip if distance exceeds max distance
+                        }
+
+                        let coord_dist = CoordDist::new(i, dist_squared);
+                        let coord_triple = &mut self.coord_dist_lookup_map[idx];
+                        coord_triple.add_coord_dist(coord_dist);
                     }
                 }
             }
@@ -129,7 +125,7 @@ impl UnstructuredGrid2 {
 
 #[cfg(test)]
 mod tests {
-    /*use crate::geo::lat_lon::LatLon;
+    use crate::geo::lat_lon::LatLon;
     use crate::geo::lat_lon_extent::LatLonExtent;
 
     #[test]
@@ -144,7 +140,7 @@ mod tests {
         let lat_lon_extent = LatLonExtent::MAX_EXTENT;
 
         // when
-        let grid = super::UnstructuredGrid::new(dimensions, lat_lon_extent, coordinates);
+        let grid = super::UnstructuredGrid1::new(dimensions, lat_lon_extent, coordinates);
 
         // then
         assert_eq!((2, 3), grid.get_dimensions());
@@ -167,7 +163,7 @@ mod tests {
         let dimensions = (5, 5);
         let coordinates = vec![LatLon::new(25.0, 25.0)];
         let lat_lon_extent = LatLonExtent::new(LatLon::new(0.0, 0.0), LatLon::new(50.0, 50.0));
-        let mut grid = super::UnstructuredGrid::new(dimensions, lat_lon_extent, coordinates);
+        let mut grid = super::UnstructuredGrid1::new(dimensions, lat_lon_extent, coordinates);
         let max_dist = 15.0;
 
         // when
@@ -194,5 +190,5 @@ mod tests {
             assert_eq!(0, dist.get_coord_index());
             assert!(dist.get_coord_dist_squared() <= max_dist);
         }
-    }*/
+    }
 }

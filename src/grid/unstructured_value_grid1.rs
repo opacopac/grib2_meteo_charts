@@ -2,62 +2,70 @@ use crate::geo::lat_lon::LatLon;
 use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::unstructured_grid2::UnstructuredGrid2;
+use crate::grid::unstructured_grid1::UnstructuredGrid1;
 
 
-pub struct UnstructuredValueGrid2<T> {
-    grid: UnstructuredGrid2,
+pub struct UnstructuredValueGrid1<T> {
+    grid: UnstructuredGrid1,
     values: Vec<T>,
     missing_value: T,
 }
 
 
-impl<T: GridValueType> UnstructuredValueGrid2<T>
+impl<T: GridValueType> UnstructuredValueGrid1<T>
 {
     pub fn new(
         values: Vec<T>,
         missing_value: T,
-        grid: UnstructuredGrid2,
-    ) -> UnstructuredValueGrid2<T> {
-        UnstructuredValueGrid2 {
+        grid: UnstructuredGrid1,
+    ) -> UnstructuredValueGrid1<T> {
+        UnstructuredValueGrid1 {
             grid,
             values,
             missing_value,
         }
     }
 
-
-    pub fn get_grid(&self) -> &UnstructuredGrid2 {
+    pub fn get_grid(&self) -> &UnstructuredGrid1 {
         &self.grid
     }
-
 
     pub fn get_grid_dimensions(&self) -> (usize, usize) {
         self.grid.get_dimensions()
     }
 
-
     pub fn get_grid_lat_lon_extent(&self) -> &LatLonExtent {
         self.grid.get_lat_lon_extent()
     }
-
 
     pub fn get_missing_value(&self) -> T {
         self.missing_value
     }
 
-
     pub fn get_value_by_xy(&self, x: usize, y: usize) -> Option<T> {
-        let coord_dist = match self.grid.get_coord_dist(x, y) {
-            Some(coord_dist) => coord_dist,
-            None => return None,
-        };
+        let coord_dist_triple = self.grid.get_coord_dist_triple(x, y)?;
+        let coord_dists = coord_dist_triple.get_coord_dists();
 
-        let value_index = coord_dist.get_coord_index();
-        let value = match self.values.get(value_index) {
-            Some(val) => *val,
-            None => return None,
-        };
+        if coord_dists.is_empty() {
+            return None;
+        }
+
+        let coord_dist_sum: f32 = coord_dists.iter().map(|cd| cd.get_coord_dist_squared().sqrt()).sum();
+
+        let value: T = coord_dists
+            .iter()
+            .filter_map(|cd| {
+                let value_index = cd.get_coord_index();
+                if let Some(value) = self.values.get(value_index) {
+                    if *value == self.missing_value {
+                        return None;
+                    }
+                    return Some(value.scale(cd.get_coord_dist_squared().sqrt() / coord_dist_sum));
+                } else {
+                    return None;
+                }
+            })
+            .sum();
 
         Some(value)
     }
