@@ -49,7 +49,7 @@ impl IconD2CloudPrecipRenderer {
                 let precip_grid1 = IconD2TotPrecReader::read_grid_from_file(&fc_step)
                     .map_err(|err| ForecastRendererError::ReadGridFromPrecipFileError(err))?;
 
-                let layer = MeteoCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
+                let layer = MeteoCloudPrecipLayer::new(clct_grid.clone(), precip_grid0, precip_grid1)?;
 
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
                     &layer,
@@ -72,7 +72,7 @@ impl IconD2CloudPrecipRenderer {
                 let ww_grid = IconD2WwReader::read_grid_from_file(&fc_step)?;
                 let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
 
-                let weather_layer = WeatherLayer::new(ww_grid, ceiling_grid)?;
+                let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, Some(ww_grid))?;
                 let weather_bin = WeatherMeteoBin::new(weather_layer);
                 let ww_data = weather_bin.create_bin_values();
                 let ww_filename = format!(

@@ -1,13 +1,16 @@
-use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
+use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_layer::weather_layer::WeatherLayer;
+use crate::meteo_swiss::file_reader::icon_ch_ceiling_reader::IconChCeilingReader;
 use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
+use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use std::fs::File;
@@ -24,6 +27,7 @@ impl IconCh1CloudPrecipRenderer {
     pub fn render(
         forecast_run_clct: &IconChForecastRun,
         forecast_run_tot_prec: &IconChForecastRun,
+        forecast_run_ceiling: &IconChForecastRun,
         unstructured_grid: &UnstructuredGrid,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
@@ -33,18 +37,18 @@ impl IconCh1CloudPrecipRenderer {
                 if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
                     return Ok(());
                 }
-                
+
                 info!("creating weather charts, time step {}", step_idx);
 
                 let fc_step_clct = &forecast_run_clct.steps[step_idx];
                 let fc_step_tot_prec = &forecast_run_tot_prec.steps[step_idx];
                 let fc_previous_step_tot_prec = &forecast_run_tot_prec.steps[step_idx - 1];
-                
+
                 let clct_grid = IconChClctReader::read_grid_from_file(&fc_step_clct.href, &unstructured_grid)?;
                 let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step_tot_prec.href, &unstructured_grid)?;
                 let precip_grid1 = IconChTotPrecReader::read_grid_from_file(&fc_step_tot_prec.href, &unstructured_grid)?;
-                
-                let layer = MeteoCloudPrecipLayer::new(clct_grid, precip_grid0, precip_grid1)?;
+
+                let layer = MeteoCloudPrecipLayer::new(clct_grid.clone(), precip_grid0, precip_grid1)?;
 
                 // map tiles
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
@@ -67,18 +71,18 @@ impl IconCh1CloudPrecipRenderer {
 
 
                 // ww meteobin
-                /*let ww_grid = IconD2WwReader::read_grid_from_file(&fc_step)?;
-                let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
+                let fc_step_ceiling = &forecast_run_ceiling.steps[step_idx];
+                let ceiling_grid = IconChCeilingReader::read_grid_from_file(&fc_step_ceiling.href, &unstructured_grid)?;
 
-                let weather_layer = WeatherLayer::new(ww_grid, ceiling_grid)?;
+                let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
                 let weather_bin = WeatherMeteoBin::new(weather_layer);
                 let ww_data = weather_bin.create_bin_values();
                 let ww_filename = format!(
                     "{}WW.meteobin",
-                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                    IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, WEATHER_LAYER),
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
-                let _ = ww_file.write_all(&ww_data);*/
+                let _ = ww_file.write_all(&ww_data);
 
                 Ok(())
             })

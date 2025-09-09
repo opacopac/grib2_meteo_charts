@@ -9,3 +9,4 @@ pub mod icon_ch_hhl_reader;
 pub mod icon_ch_clc_reader;
 pub mod icon_ch_u_reader;
 pub mod icon_ch_v_reader;
+pub mod icon_ch_ceiling_reader;

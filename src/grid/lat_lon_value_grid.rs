@@ -3,11 +3,14 @@ use crate::geo::lat_lon_extent::LatLonExtent;
 use crate::grid::grid_value_type::GridValueType;
 use crate::grid::lat_lon_grid::LatLonGrid;
 
+
+#[derive(Clone)]
 pub struct LatLonValueGrid<T: GridValueType> {
     grid: LatLonGrid,
     values: Vec<T>,
     missing_value: T
 }
+
 
 impl <T: GridValueType> LatLonValueGrid<T> {
     pub fn new(
@@ -34,6 +37,11 @@ impl <T: GridValueType> LatLonValueGrid<T> {
 
     pub fn get_grid_lat_lon_extent(&self) -> &LatLonExtent {
         self.grid.get_lat_lon_extent()
+    }
+
+
+    pub fn get_values(&self) -> &Vec<T> {
+        &self.values
     }
 
 

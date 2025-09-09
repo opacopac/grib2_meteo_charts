@@ -17,6 +17,7 @@ use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use log::info;
 use std::ops::RangeInclusive;
 
+
 pub struct IconCh1ForecastRenderer;
 
 
@@ -46,7 +47,8 @@ impl IconCh1ForecastRenderer {
             info!("rendering cloud & precipitation forecast...");
             let fc_run_clct = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
             let fc_run_tot_prec = Self::get_forecast_run(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
-            IconCh1CloudPrecipRenderer::render(&fc_run_clct, &fc_run_tot_prec, &unstructured_grid, &step_filter)?;
+            let fc_run_ceiling = Self::get_forecast_run(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
+            IconCh1CloudPrecipRenderer::render(&fc_run_clct, &fc_run_tot_prec, &fc_run_ceiling, &unstructured_grid, &step_filter)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
@@ -135,10 +137,10 @@ mod tests {
         // given
         let variable_filter = vec![MeteoLayer::Temp2m.get_name()];
         let step_filter = vec![2, 3, 4];
-        
+
         // when
         let result = IconCh1ForecastRenderer::render_latest_forecasts(&variable_filter, &step_filter);
-        
+
         // then
         assert!(result.is_ok());
     }
