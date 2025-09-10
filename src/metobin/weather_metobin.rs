@@ -23,8 +23,9 @@ impl WeatherMeteoBin {
         for y in 0..dim.1 {
             for x in 0..dim.0 {
                 let result_ww = self.layer.get_ww_by_xy(x, y);
+                let result_clct = self.layer.get_clct_by_xy(x, y);
                 let result_ceiling = self.layer.get_ceiling_by_xy(x, y);
-                let out_val_ww = Self::calc_ww_value(result_ww);
+                let out_val_ww = Self::calc_ww_value(result_ww, result_clct);
                 let out_val_ceiling = Self::calc_ceiling_100ft_value(result_ceiling);
 
                 out_values.push(out_val_ww);
@@ -36,10 +37,35 @@ impl WeatherMeteoBin {
     }
 
 
-    fn calc_ww_value(value_ww: Option<WeatherInterpretation>) -> u8 {
+    fn calc_ww_value(
+        value_ww: Option<WeatherInterpretation>,
+        value_clct: Option<f32>,
+    ) -> u8 {
+        // check if ww values is present and > 4 then return it directly, otherwise calculate from clct
         match value_ww {
-            Some(val_ww) => val_ww.to_value(),
-            None => Self::NONE_BIN_VALUE
+            Some(val_ww) if val_ww.to_value() > 4 => val_ww.to_value(),
+            _ => {
+                let derived_ww = Self::calc_ww_value_from_clct(value_clct);
+                match derived_ww {
+                    Some(val_clct) => val_clct.to_value(),
+                    None => Self::NONE_BIN_VALUE
+                }
+            }
+        }
+    }
+
+
+    fn calc_ww_value_from_clct(
+        value_clct: Option<f32>
+    ) -> Option<WeatherInterpretation> {
+        // source: https://www.dwd.de/DE/forschung/wettervorhersage/num_modellierung/01_num_vorhersagemodelle/01c_wetterinterpretation/wetter_interpretation.pdf?__blob=publicationFile&v=6
+        // chapter 5.7.2 Kein signifikantes Wetter
+        match value_clct {
+            None => None,
+            Some(val) if val <= 6.25 => Some(WeatherInterpretation::ClearSky),
+            Some(val) if val <= 43.75 => Some(WeatherInterpretation::MainlyClearSky),
+            Some(val) if val <= 81.25 => Some(WeatherInterpretation::PartlyCloudy),
+            Some(_) => Some(WeatherInterpretation::Overcast)
         }
     }
 
