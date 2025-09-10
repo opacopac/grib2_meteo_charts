@@ -62,9 +62,9 @@ impl WeatherMeteoBin {
         // chapter 5.7.2 Kein signifikantes Wetter
         match value_clct {
             None => None,
-            Some(val) if val <= 6.25 => Some(WeatherInterpretation::ClearSky),
-            Some(val) if val <= 43.75 => Some(WeatherInterpretation::MainlyClearSky),
-            Some(val) if val <= 81.25 => Some(WeatherInterpretation::PartlyCloudy),
+            Some(val) if val <= 6.25 / 100.0 => Some(WeatherInterpretation::ClearSky),
+            Some(val) if val <= 43.75 / 100.0 => Some(WeatherInterpretation::MainlyClearSky),
+            Some(val) if val <= 81.25 / 100.0 => Some(WeatherInterpretation::PartlyCloudy),
             Some(_) => Some(WeatherInterpretation::Overcast)
         }
     }

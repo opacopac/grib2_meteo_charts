@@ -23,6 +23,6 @@ impl IconChClctReader {
 
 
     pub fn transform_values(value: f32) -> f32 {
-        value
+        value / 100.0
     }
 }
