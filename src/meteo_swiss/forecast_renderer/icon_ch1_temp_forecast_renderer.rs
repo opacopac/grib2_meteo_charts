@@ -58,7 +58,7 @@ impl IconCh1TempForecastRenderer {
                 fs::create_dir_all(&path).unwrap();
 
                 let filename = format!(
-                    "{}TEMP.meteobin",
+                    "{}TEMP_D2.meteobin",
                     &path,
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
