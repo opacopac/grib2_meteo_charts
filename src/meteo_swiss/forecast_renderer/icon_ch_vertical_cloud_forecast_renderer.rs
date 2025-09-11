@@ -1,3 +1,4 @@
+use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
@@ -6,17 +7,18 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 use log::info;
+use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
 use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::ops::RangeInclusive;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconCh1VerticalCloudForecastRenderer;
 
 
 const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
+const MAX_PARALLEL_STEPS: usize = 3;
 
 
 impl IconCh1VerticalCloudForecastRenderer {
@@ -26,7 +28,11 @@ impl IconCh1VerticalCloudForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
-        fc_run_clc.get_step_range()
+        let steps = fc_run_clc.get_step_range().collect::<Vec<usize>>();
+
+        steps
+            .into_par_iter()
+            .with_max_len(MAX_PARALLEL_STEPS)
             .try_for_each(|step_idx| {
                 if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
                     return Ok(());

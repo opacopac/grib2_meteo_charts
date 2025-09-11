@@ -8,6 +8,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
+use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
 use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -18,6 +19,7 @@ pub struct IconCh1VerticalWindForecastRenderer;
 
 const VERTICAL_WIND_SUB_DIR: &str = "vertical_wind";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
+const MAX_PARALLEL_STEPS: usize = 3;
 
 
 impl IconCh1VerticalWindForecastRenderer {
@@ -28,7 +30,11 @@ impl IconCh1VerticalWindForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
-        fc_run_u.get_step_range()
+        let steps = fc_run_u.get_step_range().collect::<Vec<usize>>();
+
+        steps
+            .into_par_iter()
+            .with_max_len(MAX_PARALLEL_STEPS)
             .try_for_each(|step_idx| {
                 if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
                     return Ok(());
