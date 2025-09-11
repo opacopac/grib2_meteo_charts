@@ -17,30 +17,38 @@ impl fmt::Display for Grib2Error {
     }
 }
 
+// from std::error::Error
+
+impl From<ureq::Error> for Grib2Error {
+    fn from(err: ureq::Error) -> Self {
+        Grib2Error::Internal(err.to_string())
+    }
+}
+
 
 impl From<std::io::Error> for Grib2Error {
     fn from(err: std::io::Error) -> Self {
-        return Grib2Error::Internal(err.to_string());
+        Grib2Error::Internal(err.to_string())
     }
 }
 
 
 impl From<std::str::Utf8Error> for Grib2Error {
     fn from(err: std::str::Utf8Error) -> Self {
-        return Grib2Error::Internal(err.to_string());
+        Grib2Error::Internal(err.to_string())
     }
 }
 
 
 impl From<std::convert::Infallible> for Grib2Error {
     fn from(err: std::convert::Infallible) -> Self {
-        return Grib2Error::Internal(err.to_string());
+        Grib2Error::Internal(err.to_string())
     }
 }
 
 
 impl From<image::ImageError> for Grib2Error {
     fn from(err: image::ImageError) -> Self {
-        return Grib2Error::Internal(err.to_string());
+        Grib2Error::Internal(err.to_string())
     }
 }

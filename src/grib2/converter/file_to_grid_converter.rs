@@ -19,7 +19,7 @@ pub struct FileToGridConverter;
 impl FileToGridConverter {
     pub fn read_single_doc_from_file_or_url(file_or_url: &str) -> Result<Grib2Document, Grib2Error> {
         if Self::is_url(file_or_url) {
-            let mut reader = FileHelper::get_url_reader(&file_or_url);
+            let mut reader = FileHelper::get_url_reader(&file_or_url)?;
 
             Grib2DocumentReader::read_single_doc_from_stream(&mut reader)
         } else {
@@ -33,7 +33,7 @@ impl FileToGridConverter {
 
     pub fn read_multi_doc_from_file_or_url(file_or_url: &str) -> Result<Vec<Grib2Document>, Grib2Error> {
         if Self::is_url(file_or_url) {
-            let mut reader = FileHelper::get_url_reader(&file_or_url);
+            let mut reader = FileHelper::get_url_reader(&file_or_url)?;
 
             Grib2DocumentReader::read_multi_doc_from_stream(&mut reader)
         } else {
