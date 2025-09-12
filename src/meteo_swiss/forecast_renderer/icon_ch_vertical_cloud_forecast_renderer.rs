@@ -17,7 +17,7 @@ pub struct IconCh1VerticalCloudForecastRenderer;
 
 
 const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
-const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
+const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=79;
 const MAX_PARALLEL_STEPS: usize = 3;
 
 
