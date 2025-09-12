@@ -92,11 +92,8 @@ impl FileToGridConverter {
     ) -> Result<Vec<LatLonValueGrid<T>>, Grib2Error> {
         let docs = Self::read_multi_doc_from_file_or_url(&file_url)?;
         let filtered_docs: Vec<&_> = match filter_doc_indexes {
-            Some(range) => docs
-                .iter()
-                .enumerate()
-                .filter(|(i, _)| range.contains(i))
-                .map(|(_, doc)| doc)
+            Some(range) => docs.iter().enumerate()
+                .filter_map(|(i, doc)| range.contains(&i).then_some(doc))
                 .collect(),
             None => docs.iter().collect(),
         };
