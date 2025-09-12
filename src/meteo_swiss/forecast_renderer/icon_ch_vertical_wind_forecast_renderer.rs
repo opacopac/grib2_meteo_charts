@@ -18,7 +18,7 @@ pub struct IconCh1VerticalWindForecastRenderer;
 
 
 const VERTICAL_WIND_SUB_DIR: &str = "vertical_wind";
-const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 0..=79;
+const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 39..=79;
 const MAX_PARALLEL_STEPS: usize = 3;
 
 
