@@ -1,5 +1,6 @@
 #[derive(Debug, PartialEq, Clone)]
 pub enum MeteoParameterCategory {
+    Temperature,
     Moisture,
     Momentum,
     Mass,
