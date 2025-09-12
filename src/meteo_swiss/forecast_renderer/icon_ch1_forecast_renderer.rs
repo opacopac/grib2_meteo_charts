@@ -22,7 +22,7 @@ pub struct IconCh1ForecastRenderer;
 
 
 const MODEL: IconChForecastModel = IconChForecastModel::IconCh1;
-const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=65;
+const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 25..=79;
 
 
 impl IconCh1ForecastRenderer {
