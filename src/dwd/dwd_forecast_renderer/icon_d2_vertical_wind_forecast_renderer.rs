@@ -44,7 +44,7 @@ impl IconD2VerticalWindForecastRenderer {
                 let vert_wind_bin = VerticalWindMeteobin::new(vertical_wind_layer);
                 let data = vert_wind_bin.create_bin_values();
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_WIND_SUB_DIR);
-                let filename = format!("{}VERTICAL_WIND_D2.meteobin", path);
+                let filename = format!("{}VERTICAL_WIND.meteobin", path);
 
                 info!("writing vertical wind meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;

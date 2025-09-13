@@ -42,7 +42,7 @@ impl IconD2VerticalCloudForecastRenderer {
                 let vert_cloud_bin = VerticalCloudMeteobin::new(vertical_cloud_layer);
                 let data = vert_cloud_bin.create_bin_values();
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
-                let filename = format!("{}VERTICAL_CLOUDS_D2.meteobin", path);
+                let filename = format!("{}VERTICAL_CLOUDS.meteobin", path);
 
                 info!("writing vertical clouds meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;

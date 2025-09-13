@@ -60,7 +60,7 @@ impl IconCh1Wind10mForecastRenderer {
                 let wind_bin = WindMeteobin::new(layer);
                 let data = wind_bin.create_bin_values();
                 let filename = format!(
-                    "{}WIND_D2.meteobin",
+                    "{}WIND.meteobin",
                     IconCh1ForecastRendererHelper::get_output_path(&fc_run_u10m, step_idx, WIND_LAYER),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));

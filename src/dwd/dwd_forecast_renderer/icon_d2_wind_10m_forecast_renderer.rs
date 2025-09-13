@@ -54,7 +54,7 @@ impl IconD2Wind10mForecastRenderer {
                 let wind_bin = WindMeteobin::new(layer);
                 let data = wind_bin.create_bin_values();
                 let filename = format!(
-                    "{}WIND_D2.meteobin",
+                    "{}WIND.meteobin",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, WIND_LAYER),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));

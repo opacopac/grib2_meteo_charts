@@ -61,7 +61,7 @@ impl IconD2CloudPrecipRenderer {
                 let precip_bin = PrecipMeteoBin::new(layer);
                 let precip_data = precip_bin.create_bin_values();
                 let precip_filename = format!(
-                    "{}PRECIP_D2.meteobin",
+                    "{}PRECIP.meteobin",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
@@ -76,7 +76,7 @@ impl IconD2CloudPrecipRenderer {
                 let weather_bin = WeatherMeteoBin::new(weather_layer);
                 let ww_data = weather_bin.create_bin_values();
                 let ww_filename = format!(
-                    "{}WW_D2.meteobin",
+                    "{}WW.meteobin",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
