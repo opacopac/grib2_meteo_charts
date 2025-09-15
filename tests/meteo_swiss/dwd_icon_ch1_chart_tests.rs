@@ -17,7 +17,7 @@ pub const TOT_PREC1_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-2025090806
 pub const TOT_PREC2_TEST_FILE: &str = "./tests/resources/icon-ch1-eps-202509080600-11-tot_prec-ctrl.grib2";
 pub const T2M_CHART_OUTPUT_FILE: &str = "./icon-ch1-t_2m-meteo_chart.png";
 pub const CLCT_PREC_CHART_OUTPUT_FILE: &str = "./icon-ch1-clct-precip-meteo_chart.png";
-pub const CHART_IMG_DIM: (usize, usize) = (1024, 1024);
+pub const CHART_IMG_DIM: (usize, usize) = (1851, 847);
 pub const MAX_COORD_DIST_DEG: f32 = 0.01;
 
 
@@ -42,7 +42,11 @@ fn it_successfully_renders_an_icon_ch1_temp_2m_chart() {
     let t2m_doc = FileToGridConverter::read_single_doc_from_file_or_url(T2M_TEST_FILE).unwrap();
 
     TStamp::print_us("UnstructuredGridConverter::create...");
-    let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
+    // let lat_lon_extent = LatLonExtent::calc_min_bounding_extent(&coordinates);
+    let lat_lon_extent = LatLonExtent::new(
+        LatLon::new(42.03, -0.81),
+        LatLon::new(50.50, 17.70),
+    );
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
         |x| x - 273.15, // convert Kelvin to Celsius

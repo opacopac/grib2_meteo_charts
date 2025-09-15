@@ -10,12 +10,12 @@ pub struct IconHorConstReader;
 
 
 impl IconHorConstReader {
-    const IMG_DIMENSIONS: (usize, usize) = (1024, 1024);
+    const IMG_DIMENSIONS: (usize, usize) = (1851, 847); // (1024, 1024);
     const MAX_COORD_DIST_DEG: f32 = 0.01;
-    const MIN_LAT: f32 = 42.0279274;
-    const MAX_LAT: f32 = 50.5005836;
-    const MIN_LON: f32 = -0.817148566;
-    const MAX_LON: f32 = 17.7106838;
+    const MIN_LAT: f32 = 42.03; // 42.0279274;
+    const MAX_LAT: f32 = 50.50; // 50.5005836;
+    const MIN_LON: f32 = -0.81; // -0.817148566;
+    const MAX_LON: f32 = 17.70; // 17.7106838;
 
 
     pub fn read_grid_from_file(file_url: &str) -> Result<UnstructuredGrid, MeteoSwissError> {
