@@ -8,7 +8,7 @@ pub struct IconChT2mReader;
 
 
 impl IconChT2mReader {
-    const MISSING_VALUE: f32 = 999.0;
+    const MISSING_VALUE: f32 = -1.0;
 
     pub fn read_grid_from_file(file_url: &str, unstructured_grid: &UnstructuredGrid) -> Result<LatLonValueGrid<f32>, MeteoSwissError> {
         let regular_grid = FileToGridConverter::read_unstructured_grid_from_file_and_transform(
@@ -23,6 +23,6 @@ impl IconChT2mReader {
 
 
     pub fn transform_values(value: f32) -> f32 {
-        value - 273.15 // convert Kelvin to Celsius
+        value
     }
 }
