@@ -1,10 +1,10 @@
-use crate::geo::lat_lon::LatLon;
-use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 use crate::grib2::section3::grid_definition_template::GridDefinitionTemplate;
-use crate::grid::grid_value_type::GridValueType;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::grid::grid_value_type::GridValueType;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct RegularGridConverter;
 

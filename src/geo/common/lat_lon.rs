@@ -74,7 +74,7 @@ impl PartialEq for LatLon {
 
 #[cfg(test)]
 mod tests {
-    use crate::geo::lat_lon::LatLon;
+    use crate::geo::common::lat_lon::LatLon;
 
     #[test]
     fn it_creates_an_instance() {

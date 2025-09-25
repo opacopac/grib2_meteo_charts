@@ -1,4 +1,4 @@
-use meteo_grib2_renderer::geo::lat_lon::LatLon;
+use meteo_grib2_renderer::geo::common::lat_lon::LatLon;
 use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
 use meteo_grib2_renderer::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;

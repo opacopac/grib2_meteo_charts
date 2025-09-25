@@ -1,4 +1,4 @@
-use crate::geo::lat_lon::LatLon;
+use crate::geo::common::lat_lon::LatLon;
 
 #[derive(Debug, Clone)]
 pub struct LatLonExtent {
@@ -84,8 +84,8 @@ impl PartialEq for LatLonExtent {
 
 #[cfg(test)]
 mod tests {
-    use crate::geo::lat_lon::LatLon;
-    use crate::geo::lat_lon_extent::LatLonExtent;
+    use crate::geo::common::lat_lon::LatLon;
+    use crate::geo::common::lat_lon_extent::LatLonExtent;
 
     #[test]
     fn it_creates_a_new_extent() {

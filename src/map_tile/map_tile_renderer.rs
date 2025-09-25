@@ -2,9 +2,9 @@ use log::debug;
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::geo::lat_lon::LatLon;
-use crate::geo::lat_lon_extent::LatLonExtent;
-use crate::geo::map_tile_coord::MapTileCoord;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
+use crate::map_tile::map_tile_coord::MapTileCoord;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 

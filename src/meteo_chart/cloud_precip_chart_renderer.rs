@@ -1,4 +1,4 @@
-use crate::meteo_chart::map_tile_renderer::MapTileRenderer;
+use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;

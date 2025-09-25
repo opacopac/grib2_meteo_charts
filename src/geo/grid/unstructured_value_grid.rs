@@ -1,8 +1,8 @@
-use crate::geo::lat_lon::LatLon;
-use crate::geo::lat_lon_extent::LatLonExtent;
-use crate::grid::grid_value_type::GridValueType;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
+use crate::geo::grid::grid_value_type::GridValueType;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 
 
 pub struct UnstructuredValueGrid<T> {

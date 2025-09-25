@@ -1,13 +1,13 @@
 pub mod dwd;
 pub mod geo;
 pub mod grib2;
-pub mod grid;
 pub mod imaging;
-pub mod logging;
+pub mod map_tile;
 pub mod meteo_chart;
 pub mod meteo_forecast;
 pub mod meteo_layer;
 pub mod meteo_swiss;
 pub mod metobin;
 pub mod netcdf;
+pub mod physics;
 pub mod system;

@@ -1,6 +1,6 @@
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 

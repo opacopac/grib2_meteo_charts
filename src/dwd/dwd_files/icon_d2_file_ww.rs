@@ -2,7 +2,7 @@ use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_files::icon_d2_file::IconD2File;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 
 pub struct IconD2FileWw;
 

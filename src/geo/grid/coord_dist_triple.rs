@@ -1,4 +1,4 @@
-use crate::grid::coord_dist::CoordDist;
+use crate::geo::grid::coord_dist::CoordDist;
 
 #[derive(Clone)]
 pub struct CoordDistTriple {
@@ -74,7 +74,7 @@ mod tests {
     fn it_adds_a_single_coord_dist() {
         // given
         let mut coord_dist_triple = super::CoordDistTriple::new();
-        let coord_dist = crate::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
+        let coord_dist = crate::geo::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
 
         // when
         coord_dist_triple.add_coord_dist(coord_dist);
@@ -91,10 +91,10 @@ mod tests {
     fn it_adds_coord_dist_and_replaces_highest_distance() {
         // given
         let mut coord_dist_triple = super::CoordDistTriple::new();
-        let coord_dist1 = crate::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
-        let coord_dist2 = crate::grid::coord_dist::CoordDist::new(1, 5.0 * 5.0);
-        let coord_dist3 = crate::grid::coord_dist::CoordDist::new(2, 15.0 * 15.0);
-        let coord_dist4 = crate::grid::coord_dist::CoordDist::new(3, 8.0 * 8.0);
+        let coord_dist1 = crate::geo::grid::coord_dist::CoordDist::new(0, 10.0 * 10.0);
+        let coord_dist2 = crate::geo::grid::coord_dist::CoordDist::new(1, 5.0 * 5.0);
+        let coord_dist3 = crate::geo::grid::coord_dist::CoordDist::new(2, 15.0 * 15.0);
+        let coord_dist4 = crate::geo::grid::coord_dist::CoordDist::new(3, 8.0 * 8.0);
 
         // when
         coord_dist_triple.add_coord_dist(coord_dist1);

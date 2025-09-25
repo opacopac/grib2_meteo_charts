@@ -1,0 +1,1 @@
+pub const ZERO_CELSIUS_IN_KELVIN: f32 = 273.15;

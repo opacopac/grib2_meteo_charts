@@ -1,8 +1,8 @@
-use crate::geo::lat_lon::LatLon;
-use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
 
 

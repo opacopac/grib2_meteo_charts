@@ -1,4 +1,4 @@
-use crate::geo::lat_lon::LatLon;
+use crate::geo::common::lat_lon::LatLon;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::document::grib2_document::Grib2Document;
 

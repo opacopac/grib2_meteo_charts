@@ -1,4 +1,4 @@
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::wind_chart_renderer::WindChartRenderer;
 use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;

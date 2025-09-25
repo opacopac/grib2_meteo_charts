@@ -1,6 +1,6 @@
-use crate::geo::lat_lon::LatLon;
-use crate::grid::grid_value_type::GridValueType;
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::grid::grid_value_type::GridValueType;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 
 
 pub struct LatLonValueGridInterpolator;
@@ -65,9 +65,9 @@ impl LatLonValueGridInterpolator {
 
 #[cfg(test)]
 mod tests {
-    use crate::geo::lat_lon::LatLon;
-    use crate::geo::lat_lon_extent::LatLonExtent;
-    use crate::grid::lat_lon_value_grid::LatLonValueGrid;
+    use crate::geo::common::lat_lon::LatLon;
+    use crate::geo::common::lat_lon_extent::LatLonExtent;
+    use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 
     fn create_test_grid() -> LatLonValueGrid<f32> {
         let values = vec![00.0, 01.0, 10.0, 11.0, -1.0, 21.0];

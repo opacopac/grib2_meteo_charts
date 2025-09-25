@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 
 use derive_new::new;
 
-use crate::geo::lat_lon::LatLon;
+use crate::geo::common::lat_lon::LatLon;
 
 #[derive(Debug, new)]
 pub struct MapTileCoord {

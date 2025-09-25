@@ -1,4 +1,5 @@
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::physics::constants::ZERO_CELSIUS_IN_KELVIN;
 
 
 pub struct TempMeteoBin {}
@@ -6,7 +7,6 @@ pub struct TempMeteoBin {}
 
 impl TempMeteoBin {
     const NONE_BIN_VALUE: u8 = 0xFF;
-    const KELVIN_OFFSET: f32 = 273.15;
 
 
     pub fn create_bin_values(layer: &MeteoTempLayer) -> Vec<u8> {
@@ -27,7 +27,7 @@ impl TempMeteoBin {
 
     fn calc_temp_value(value_temp: Option<f32>) -> u8 {
         match value_temp {
-            Some(val) => (((val - Self::KELVIN_OFFSET) * 2.0).round() + 128.0) as u8,
+            Some(val) => (((val - ZERO_CELSIUS_IN_KELVIN) * 2.0).round() + 128.0) as u8,
             None => Self::NONE_BIN_VALUE
         }
     }

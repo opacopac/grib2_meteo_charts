@@ -1,5 +1,5 @@
-use crate::geo::lat_lon::LatLon;
-use crate::geo::lat_lon_extent::LatLonExtent;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
 
 
 #[derive(Clone)]
@@ -68,9 +68,9 @@ impl LatLonGrid {
 
 #[cfg(test)]
 mod tests {
-    use crate::geo::lat_lon::LatLon;
-    use crate::geo::lat_lon_extent::LatLonExtent;
-    use crate::grid::lat_lon_grid::LatLonGrid;
+    use crate::geo::common::lat_lon::LatLon;
+    use crate::geo::common::lat_lon_extent::LatLonExtent;
+    use crate::geo::grid::lat_lon_grid::LatLonGrid;
     use assert_approx_eq::assert_approx_eq;
 
     fn create_test_grid() -> LatLonGrid {

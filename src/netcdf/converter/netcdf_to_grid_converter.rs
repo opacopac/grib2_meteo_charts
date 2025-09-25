@@ -1,4 +1,4 @@
-use crate::geo::lat_lon::LatLon;
+use crate::geo::common::lat_lon::LatLon;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::netcdf::document::netcdf_document::NetCdfDocument;
 

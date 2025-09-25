@@ -1,9 +1,9 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::map_tile_renderer::MapTileRenderer;
+use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-
+use crate::physics::constants::ZERO_CELSIUS_IN_KELVIN;
 
 pub struct TempChartRenderer;
 
@@ -44,9 +44,8 @@ impl TempChartRenderer {
 
     fn color_fn(value_k: f32) -> [u8; 4] {
         const TRANSPARENCY: u8 = 127; // 50% transparency
-        const KELVIN_OFFSET: f32 = 273.15;
 
-        let value_c = value_k - KELVIN_OFFSET;
+        let value_c = value_k - ZERO_CELSIUS_IN_KELVIN;
 
         // todo: lower/higher values?
         if value_c < -12.0 {

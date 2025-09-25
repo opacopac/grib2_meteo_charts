@@ -1,5 +1,5 @@
-use crate::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::grid::unstructured_grid::UnstructuredGrid;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;

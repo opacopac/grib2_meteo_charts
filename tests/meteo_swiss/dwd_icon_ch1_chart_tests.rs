@@ -1,13 +1,14 @@
-use meteo_grib2_renderer::geo::lat_lon::LatLon;
-use meteo_grib2_renderer::geo::lat_lon_extent::LatLonExtent;
+use meteo_grib2_renderer::geo::common::lat_lon::LatLon;
+use meteo_grib2_renderer::geo::common::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
-use meteo_grib2_renderer::logging::tstamp::TStamp;
 use meteo_grib2_renderer::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use meteo_grib2_renderer::physics::constants::ZERO_CELSIUS_IN_KELVIN;
+use meteo_grib2_renderer::system::tstamp::TStamp;
 
 
 pub const HOR_CONST_TEST_FILE: &str = "./tests/resources/horizontal_constants_icon-ch1-eps.grib2";
@@ -49,7 +50,7 @@ fn it_successfully_renders_an_icon_ch1_temp_2m_chart() {
     );
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
-        |x| x - 273.15, // convert Kelvin to Celsius
+        |x| x - ZERO_CELSIUS_IN_KELVIN,
         255.0,          // TODO
         coordinates,
         CHART_IMG_DIM,
@@ -138,4 +139,3 @@ fn it_successfully_renders_an_icon_ch1_clct_precip_chart() {
 
     assert_eq!(0.0, 0.0);
 }
-
