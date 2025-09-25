@@ -3,7 +3,8 @@ use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-use crate::physics::constants::ZERO_CELSIUS_IN_KELVIN;
+use crate::physics::temperature::Temperature;
+
 
 pub struct TempChartRenderer;
 
@@ -45,7 +46,7 @@ impl TempChartRenderer {
     fn color_fn(value_k: f32) -> [u8; 4] {
         const TRANSPARENCY: u8 = 127; // 50% transparency
 
-        let value_c = value_k - ZERO_CELSIUS_IN_KELVIN;
+        let value_c = Temperature::from_kelvin_to_celsius(value_k);
 
         // todo: lower/higher values?
         if value_c < -12.0 {

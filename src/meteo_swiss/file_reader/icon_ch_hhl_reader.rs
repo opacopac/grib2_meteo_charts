@@ -1,16 +1,15 @@
-use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
+use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::physics::length::Length;
 use log::info;
 use std::ops::RangeInclusive;
-
 
 pub struct IconChHhlReader;
 
 
 impl IconChHhlReader {
-    const FEET_PER_M: f32 = 3.28084; // TODO: move to common
     const MISSING_VALUE: u8 = 0;
 
 
@@ -36,6 +35,6 @@ impl IconChHhlReader {
 
 
     fn transform_values(value: f32) -> u8 {
-        (value * Self::FEET_PER_M / 100.0) as u8
+        (Length::from_meters_to_feet(value) / 100.0) as u8
     }
 }

@@ -7,7 +7,7 @@ use meteo_grib2_renderer::meteo_chart::cloud_precip_chart_renderer::CloudPrecipC
 use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
 use meteo_grib2_renderer::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-use meteo_grib2_renderer::physics::constants::ZERO_CELSIUS_IN_KELVIN;
+use meteo_grib2_renderer::physics::temperature::Temperature;
 use meteo_grib2_renderer::system::tstamp::TStamp;
 
 
@@ -50,7 +50,7 @@ fn it_successfully_renders_an_icon_ch1_temp_2m_chart() {
     );
     let grid = UnstructuredGridConverter::create(
         &t2m_doc,
-        |x| x - ZERO_CELSIUS_IN_KELVIN,
+        |x| Temperature::from_kelvin_to_celsius(x),
         255.0,          // TODO
         coordinates,
         CHART_IMG_DIM,

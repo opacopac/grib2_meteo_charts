@@ -1,5 +1,5 @@
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-use crate::physics::constants::ZERO_CELSIUS_IN_KELVIN;
+use crate::physics::temperature::Temperature;
 
 
 pub struct TempMeteoBin {}
@@ -27,7 +27,7 @@ impl TempMeteoBin {
 
     fn calc_temp_value(value_temp: Option<f32>) -> u8 {
         match value_temp {
-            Some(val) => (((val - ZERO_CELSIUS_IN_KELVIN) * 2.0).round() + 128.0) as u8,
+            Some(val) => ((Temperature::from_kelvin_to_celsius(val) * 2.0).round() + 128.0) as u8,
             None => Self::NONE_BIN_VALUE
         }
     }

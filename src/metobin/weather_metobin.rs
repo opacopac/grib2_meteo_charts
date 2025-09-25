@@ -1,5 +1,6 @@
 use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
 use crate::meteo_layer::weather_layer::WeatherLayer;
+use crate::physics::length::Length;
 
 
 pub struct WeatherMeteoBin {}
@@ -7,7 +8,6 @@ pub struct WeatherMeteoBin {}
 
 impl WeatherMeteoBin {
     const NONE_BIN_VALUE: u8 = 0xFF;
-    const FEET_PER_M: f32 = 3.28084;
 
 
     pub fn create_bin_values(layer: &WeatherLayer) -> Vec<u8> {
@@ -66,8 +66,8 @@ impl WeatherMeteoBin {
     fn calc_ceiling_100ft_value(value_m: Option<f32>) -> u8 {
         match value_m {
             None => Self::NONE_BIN_VALUE,
-            Some(val) if (val * Self::FEET_PER_M / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
-            Some(val) => (val * Self::FEET_PER_M / 200.0).round().min(254.0).max(0.0) as u8
+            Some(val) if (Length::from_meters_to_feet(val) / 200.0).round() >= 255.0 => Self::NONE_BIN_VALUE,
+            Some(val) => (Length::from_meters_to_feet(val) / 200.0).round().min(254.0).max(0.0) as u8
         }
     }
 }

@@ -7,13 +7,13 @@ use rayon::prelude::IntoParallelIterator;
 use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_files::icon_d2_file_hhl::IconD2FileHhl;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
-use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::physics::length::Length;
 
 pub struct IconD2HhlReader;
 
 impl IconD2HhlReader {
-    const FEET_PER_M: f32 = 3.28084; // TODO: move to common
     const MISSING_VALUE: u8 = 0;
 
 
@@ -21,7 +21,7 @@ impl IconD2HhlReader {
         forecast_run: &DwdForecastRun,
         vertical_level_range: RangeInclusive<u8>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
-        let transform_fn = |x| (x * Self::FEET_PER_M / 100.0) as u8;
+        let transform_fn = |x| (Length::from_meters_to_feet(x) / 100.0) as u8;
 
         info!("reading hhl grids...");
 

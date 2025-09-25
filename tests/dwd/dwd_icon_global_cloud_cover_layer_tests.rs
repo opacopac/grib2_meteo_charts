@@ -7,7 +7,7 @@ use meteo_grib2_renderer::netcdf::converter::netcdf_to_grid_converter::{
     NetCdftoGridConverter, CLAT_VAR_NAME, CLON_VAR_NAME,
 };
 use meteo_grib2_renderer::netcdf::document::netcdf_document_reader::NetCdfDocumentReader;
-use meteo_grib2_renderer::physics::constants::ZERO_CELSIUS_IN_KELVIN;
+use meteo_grib2_renderer::physics::temperature::Temperature;
 use meteo_grib2_renderer::system::tstamp::TStamp;
 
 
@@ -30,7 +30,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     TStamp::print_us("UnstructuredGridConverter::create...");
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,
-        |x| x - ZERO_CELSIUS_IN_KELVIN, // convert Kelvin to Celsius,
+        |x| Temperature::from_kelvin_to_celsius(x),
         255.0,
         coordinates,
         dimensions,
