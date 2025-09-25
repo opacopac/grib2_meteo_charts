@@ -32,7 +32,7 @@ impl IconCh1TempForecastRenderer {
                 if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
                     return Ok(());
                 }
-                
+
                 info!("creating temperature charts, time step {}", step_idx);
 
                 let fc_step_temp = &fc_run_temp.steps[step_idx];
@@ -51,8 +51,7 @@ impl IconCh1TempForecastRenderer {
                 );
 
                 // meteobin
-                let temp_bin = TempMeteoBin::new(layer);
-                let data = temp_bin.create_bin_values();
+                let bin_data = TempMeteoBin::create_bin_values(&layer);
 
                 let path = IconCh1ForecastRendererHelper::get_output_path(fc_run_temp, step_idx, TEMP_LAYER);
                 fs::create_dir_all(&path).unwrap();
@@ -62,7 +61,7 @@ impl IconCh1TempForecastRenderer {
                     &path,
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
-                let _ = file.write_all(&data);
+                let _ = file.write_all(&bin_data);
 
                 Ok(())
             })

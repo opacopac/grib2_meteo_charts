@@ -1,9 +1,7 @@
 use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 
 
-pub struct WindMeteobin {
-    wind_layer: MeteoWindLayer,
-}
+pub struct WindMeteobin {}
 
 
 impl WindMeteobin {
@@ -11,18 +9,13 @@ impl WindMeteobin {
     const NONE_BIN_VALUE: u8 = 0xFF;
 
 
-    pub fn new(wind_layer: MeteoWindLayer) -> WindMeteobin {
-        WindMeteobin { wind_layer }
-    }
-
-
-    pub fn create_bin_values(&self) -> Vec<u8> {
-        let dim = self.wind_layer.get_grid_dimensions();
+    pub fn create_bin_values(wind_layer: &MeteoWindLayer) -> Vec<u8> {
+        let dim = wind_layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {
             for x in 0..dim.0 {
-                let wind_result = self.wind_layer.get_wind_speed_e_n_by_xy(x, y);
-                let gust_result = self.wind_layer.get_gusts_by_xy(x, y);
+                let wind_result = wind_layer.get_wind_speed_e_n_by_xy(x, y);
+                let gust_result = wind_layer.get_gusts_by_xy(x, y);
                 let out_val = match wind_result {
                     Some(val_e_n) => (
                         Self::calc_speed_kt_value(val_e_n.0),

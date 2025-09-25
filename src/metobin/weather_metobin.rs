@@ -2,9 +2,7 @@ use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
 use crate::meteo_layer::weather_layer::WeatherLayer;
 
 
-pub struct WeatherMeteoBin {
-    layer: WeatherLayer,
-}
+pub struct WeatherMeteoBin {}
 
 
 impl WeatherMeteoBin {
@@ -12,19 +10,14 @@ impl WeatherMeteoBin {
     const FEET_PER_M: f32 = 3.28084;
 
 
-    pub fn new(weather_layer: WeatherLayer) -> WeatherMeteoBin {
-        WeatherMeteoBin { layer: weather_layer }
-    }
-
-
-    pub fn create_bin_values(&self) -> Vec<u8> {
-        let dim = self.layer.get_grid_dimensions();
+    pub fn create_bin_values(layer: &WeatherLayer) -> Vec<u8> {
+        let dim = layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {
             for x in 0..dim.0 {
-                let result_ww = self.layer.get_ww_by_xy(x, y);
-                let result_clct = self.layer.get_clct_by_xy(x, y);
-                let result_ceiling = self.layer.get_ceiling_by_xy(x, y);
+                let result_ww = layer.get_ww_by_xy(x, y);
+                let result_clct = layer.get_clct_by_xy(x, y);
+                let result_ceiling = layer.get_ceiling_by_xy(x, y);
                 let out_val_ww = Self::calc_ww_value(result_ww, result_clct);
                 let out_val_ceiling = Self::calc_ceiling_100ft_value(result_ceiling);
 

@@ -44,8 +44,7 @@ impl IconD2TempForecastRenderer {
                 );*/
 
                 // meteobin
-                let temp_bin = TempMeteoBin::new(layer);
-                let data = temp_bin.create_bin_values();
+                let bin_data = TempMeteoBin::create_bin_values(&layer);
 
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, TEMP_LAYER);
                 fs::create_dir_all(&path).unwrap();
@@ -55,7 +54,7 @@ impl IconD2TempForecastRenderer {
                     &path,
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
-                let _ = file.write_all(&data);
+                let _ = file.write_all(&bin_data);
 
                 Ok(())
             })

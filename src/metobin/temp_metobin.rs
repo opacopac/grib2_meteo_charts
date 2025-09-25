@@ -1,9 +1,7 @@
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 
 
-pub struct TempMeteoBin {
-    layer: MeteoTempLayer,
-}
+pub struct TempMeteoBin {}
 
 
 impl TempMeteoBin {
@@ -11,17 +9,12 @@ impl TempMeteoBin {
     const KELVIN_OFFSET: f32 = 273.15;
 
 
-    pub fn new(temp_layer: MeteoTempLayer) -> TempMeteoBin {
-        TempMeteoBin { layer: temp_layer }
-    }
-
-
-    pub fn create_bin_values(&self) -> Vec<u8> {
-        let dim = self.layer.get_grid_dimensions();
+    pub fn create_bin_values(layer: &MeteoTempLayer) -> Vec<u8> {
+        let dim = layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {
             for x in 0..dim.0 {
-                let result_temp = self.layer.get_temp_by_xy(x, y);
+                let result_temp = layer.get_temp_by_xy(x, y);
                 let out_val_temp = Self::calc_temp_value(result_temp);
 
                 out_values.push(out_val_temp);

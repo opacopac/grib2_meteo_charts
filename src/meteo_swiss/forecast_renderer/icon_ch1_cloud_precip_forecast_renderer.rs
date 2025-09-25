@@ -60,14 +60,13 @@ impl IconCh1CloudPrecipRenderer {
                 );
 
                 // precip meteobin
-                let precip_bin = PrecipMeteoBin::new(layer);
-                let precip_data = precip_bin.create_bin_values();
+                let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
                 let precip_filename = format!(
                     "{}PRECIP.meteobin",
                     IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, WEATHER_LAYER),
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
-                let _ = precip_file.write_all(&precip_data);
+                let _ = precip_file.write_all(&precip_bin_data);
 
 
                 // ww meteobin
@@ -75,14 +74,13 @@ impl IconCh1CloudPrecipRenderer {
                 let ceiling_grid = IconChCeilingReader::read_grid_from_file(&fc_step_ceiling.href, &unstructured_grid)?;
 
                 let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
-                let weather_bin = WeatherMeteoBin::new(weather_layer);
-                let ww_data = weather_bin.create_bin_values();
+                let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
                 let ww_filename = format!(
                     "{}WW.meteobin",
                     IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, WEATHER_LAYER),
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
-                let _ = ww_file.write_all(&ww_data);
+                let _ = ww_file.write_all(&ww_bin_data);
 
                 Ok(())
             })

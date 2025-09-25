@@ -13,6 +13,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::ops::RangeInclusive;
 
+
 pub struct IconCh1VerticalCloudForecastRenderer;
 
 
@@ -46,15 +47,14 @@ impl IconCh1VerticalCloudForecastRenderer {
                 let vertical_cloud_layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let vert_cloud_bin = VerticalCloudMeteobin::new(vertical_cloud_layer);
-                let data = vert_cloud_bin.create_bin_values();
+                let bin_data = VerticalCloudMeteobin::create_bin_values(&vertical_cloud_layer);
                 let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_clc, step_idx, VERTICAL_CLOUDS_SUB_DIR);
                 let filename = format!("{}VERTICAL_CLOUDS.meteobin", path);
 
                 info!("writing vertical clouds meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;
                 let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical clouds meteobin file {}", &filename)));
-                let _ = file.write_all(&data);
+                let _ = file.write_all(&bin_data);
 
                 Ok(())
             })

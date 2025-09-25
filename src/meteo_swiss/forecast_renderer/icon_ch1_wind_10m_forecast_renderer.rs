@@ -34,7 +34,7 @@ impl IconCh1Wind10mForecastRenderer {
                 if !step_filter.is_empty() && !step_filter.contains(&step_idx) {
                     return Ok(());
                 }
-                
+
                 info!("creating wind charts, time step {}", step_idx);
 
                 let fc_step_u10m = &fc_run_u10m.steps[step_idx];
@@ -57,14 +57,13 @@ impl IconCh1Wind10mForecastRenderer {
                 );
 
                 // meteobin
-                let wind_bin = WindMeteobin::new(layer);
-                let data = wind_bin.create_bin_values();
+                let bin_data = WindMeteobin::create_bin_values(&layer);
                 let filename = format!(
                     "{}WIND.meteobin",
                     IconCh1ForecastRendererHelper::get_output_path(&fc_run_u10m, step_idx, WIND_LAYER),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
-                let _ = file.write_all(&data);
+                let _ = file.write_all(&bin_data);
 
                 Ok(())
             })

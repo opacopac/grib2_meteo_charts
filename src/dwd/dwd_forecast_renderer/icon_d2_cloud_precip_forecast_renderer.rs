@@ -58,14 +58,13 @@ impl IconD2CloudPrecipRenderer {
                 );
 
                 // precip meteobin
-                let precip_bin = PrecipMeteoBin::new(layer);
-                let precip_data = precip_bin.create_bin_values();
+                let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
                 let precip_filename = format!(
                     "{}PRECIP.meteobin",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
-                let _ = precip_file.write_all(&precip_data);
+                let _ = precip_file.write_all(&precip_bin_data);
 
 
                 // ww meteobin
@@ -73,14 +72,13 @@ impl IconD2CloudPrecipRenderer {
                 let ceiling_grid = IconD2CeilingReader::read_grid_from_file(&fc_step)?;
 
                 let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, Some(ww_grid))?;
-                let weather_bin = WeatherMeteoBin::new(weather_layer);
-                let ww_data = weather_bin.create_bin_values();
+                let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
                 let ww_filename = format!(
                     "{}WW.meteobin",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
-                let _ = ww_file.write_all(&ww_data);
+                let _ = ww_file.write_all(&ww_bin_data);
 
                 Ok(())
             })
