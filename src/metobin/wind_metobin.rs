@@ -1,11 +1,10 @@
 use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
-
+use crate::physics::speed::Speed;
 
 pub struct WindMeteobin {}
 
 
 impl WindMeteobin {
-    const KNOTS_PER_MPS: f32 = 1.94384;
     const NONE_BIN_VALUE: u8 = 0xFF;
 
 
@@ -36,14 +35,14 @@ impl WindMeteobin {
 
 
     fn calc_speed_kt_value(value_mps: f32) -> u8 {
-        (value_mps * Self::KNOTS_PER_MPS + 128.0).round().min(254.0).max(0.0) as u8
+        (Speed::from_mps_to_knots(value_mps) + 128.0).round().min(254.0).max(0.0) as u8
     }
 
 
     fn calc_gust_kt_value(value_mps: Option<f32>) -> u8 {
         match value_mps {
             None => Self::NONE_BIN_VALUE,
-            Some(val_mps) => (val_mps * Self::KNOTS_PER_MPS).round().min(254.0).max(0.0) as u8
+            Some(val_mps) => Speed::from_mps_to_knots(val_mps).round().min(254.0).max(0.0) as u8
         }
     }
 }
@@ -52,10 +51,12 @@ impl WindMeteobin {
 #[cfg(test)]
 mod tests {
     use crate::metobin::wind_metobin::WindMeteobin;
+    use crate::physics::speed::Speed;
+
 
     #[test]
     fn it_calculates_the_bin_value_for_3kt() {
-        let in_value = 3.0 / WindMeteobin::KNOTS_PER_MPS;
+        let in_value = Speed::from_knots_to_mps(3.0);
         let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(3 + 128, result);
@@ -64,7 +65,7 @@ mod tests {
 
     #[test]
     fn it_limits_the_max_bin_value_to_plus127() {
-        let in_value = 150.0 / WindMeteobin::KNOTS_PER_MPS;
+        let in_value = Speed::from_knots_to_mps(150.0);
         let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(254, result);
@@ -73,7 +74,7 @@ mod tests {
 
     #[test]
     fn it_limits_the_min_bin_value_to_neg128() {
-        let in_value = -200.0 / WindMeteobin::KNOTS_PER_MPS;
+        let in_value = Speed::from_knots_to_mps(-200.0);
         let result = WindMeteobin::calc_speed_kt_value(in_value);
 
         assert_eq!(0 as u8, result);
