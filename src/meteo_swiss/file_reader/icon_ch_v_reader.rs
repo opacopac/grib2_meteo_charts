@@ -1,7 +1,8 @@
-use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
+use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::physics::speed::Speed;
 use log::info;
 use std::ops::RangeInclusive;
 
@@ -10,7 +11,6 @@ pub struct IconChVReader;
 
 impl IconChVReader {
     const MISSING_VALUE: u8 = 0xFF;
-    const KNOTS_PER_MPS: f32 = 1.94384; // TODO: move to common place
 
 
     pub fn read_grids(
@@ -35,7 +35,7 @@ impl IconChVReader {
 
 
     fn transform_values(value: f32) -> u8 {
-        (value * Self::KNOTS_PER_MPS + 128.0)
+        (Speed::from_mps_to_knots(value) + 128.0)
             .round()
             .min(254.0)
             .max(0.0) as u8
