@@ -2,10 +2,12 @@ use std::fmt::{Display, Formatter};
 
 use crate::netcdf::common::netcdf_error::NetCdfError;
 
+
 pub struct NetCdfMagic {
     pub magic: String,
-    pub version: u8
+    pub version: u8,
 }
+
 
 const NETCDF_MAGIC: &str = "CDF";
 
@@ -13,7 +15,7 @@ const NETCDF_MAGIC: &str = "CDF";
 impl NetCdfMagic {
     pub fn new(
         magic: String,
-        version: u8
+        version: u8,
     ) -> Result<NetCdfMagic, NetCdfError> {
         if magic != NETCDF_MAGIC {
             return Err(NetCdfError::InvalidData(
@@ -27,10 +29,10 @@ impl NetCdfMagic {
             ));
         }
 
-        return Ok(NetCdfMagic {
+        Ok(NetCdfMagic {
             magic,
-            version
-        });
+            version,
+        })
     }
 }
 
@@ -40,14 +42,14 @@ impl Display for NetCdfMagic {
         writeln!(f, "  magic: {}", self.magic)?;
         writeln!(f, "  version: {}", self.version)?;
 
-        return Ok(());
+        Ok(())
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use crate::netcdf::header::netcdf_magic::{NETCDF_MAGIC, NetCdfMagic};
+    use crate::netcdf::header::netcdf_magic::{NetCdfMagic, NETCDF_MAGIC};
 
     #[test]
     fn it_verifies_the_correct_magic() {

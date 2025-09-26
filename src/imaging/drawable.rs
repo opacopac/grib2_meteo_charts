@@ -1,12 +1,14 @@
 use image::ColorType;
 
-use crate::grib2::common::grib2_error::Grib2Error;
+
+use crate::imaging::imaging_error::ImagingError;
 use crate::imaging::NUM_COLOR_VALUES;
+
 
 pub struct Drawable {
     color_values: Vec<u8>,
     width: u32,
-    height: u32
+    height: u32,
 }
 
 
@@ -14,7 +16,7 @@ impl Drawable {
     const INIT_COLOR_VALUE: u8 = 0;
 
 
-    pub fn create_with_data(width: u32, height: u32, px_rows: Vec<Vec<[u8; 4]>>) -> Result<Drawable, Grib2Error> {
+    pub fn create_with_data(width: u32, height: u32, px_rows: Vec<Vec<[u8; 4]>>) -> Result<Drawable, ImagingError> {
         let mut drawable = Drawable::create_empty(width, height)?;
         let mut y = 0;
 
@@ -27,30 +29,30 @@ impl Drawable {
             y += 1;
         }
 
-        return Result::Ok(drawable);
+        Ok(drawable)
     }
 
 
-    pub fn create_empty(width: u32, height: u32) -> Result<Drawable, Grib2Error> {
+    pub fn create_empty(width: u32, height: u32) -> Result<Drawable, ImagingError> {
         if width == 0 || height == 0 {
-            return Err(Grib2Error::InvalidData(String::from("width/height must not be 0")));
+            return Err(ImagingError::InvalidData(String::from("width/height must not be 0")));
         }
 
         let px_count = (width * height * NUM_COLOR_VALUES) as usize;
         let mut color_values = Vec::new();
         color_values.resize(px_count, Drawable::INIT_COLOR_VALUE);
 
-        return Result::Ok(Drawable { color_values, width, height });
+        Ok(Drawable { color_values, width, height })
     }
 
 
     pub fn width(&self) -> u32 {
-        return self.width;
+        self.width
     }
 
 
     pub fn height(&self) -> u32 {
-        return self.height;
+        self.height
     }
 
 
@@ -82,7 +84,7 @@ impl Drawable {
             self.draw_point(x0 as u32, y0 as u32, color);
 
             if x0 == x1 && y0 == y1 {
-                break
+                break;
             };
 
             err2 = 2 * err;
@@ -98,15 +100,15 @@ impl Drawable {
     }
 
 
-    pub fn safe_image(&self, filename: &str) -> Result<(), Grib2Error> {
+    pub fn safe_image(&self, filename: &str) -> Result<(), ImagingError> {
         image::save_buffer(
             filename,
             &*self.color_values,
             self.width,
             self.height,
-            ColorType::Rgba8
+            ColorType::Rgba8,
         )?;
 
-        return Result::Ok(());
+        Ok(())
     }
 }

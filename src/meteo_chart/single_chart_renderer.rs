@@ -1,15 +1,17 @@
-use crate::grib2::common::grib2_error::Grib2Error;
+use crate::common::meteo_chart_error::MeteoChartError;
 use crate::imaging::drawable::Drawable;
 
+
 pub struct SingleChartRenderer;
+
 
 impl SingleChartRenderer {
     pub fn render<T>(
         width: u32,
         height: u32,
         value_fn: impl Fn(usize, usize) -> Option<T>,
-        color_fn: impl Fn(T) -> [u8; 4]
-    ) -> Result<Drawable, Grib2Error> {
+        color_fn: impl Fn(T) -> [u8; 4],
+    ) -> Result<Drawable, MeteoChartError> {
         let mut drawable = Drawable::create_empty(width, height)?;
 
         for i in 0..height {

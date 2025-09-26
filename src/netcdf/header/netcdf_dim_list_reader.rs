@@ -1,12 +1,12 @@
-use std::io::{BufReader, Read, Seek};
-
-use byteorder::{BigEndian, ReadBytesExt};
-
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_dim::NetCdfDim;
 use crate::netcdf::header::netcdf_dim_reader::NetCdfDimReader;
+use byteorder::{BigEndian, ReadBytesExt};
+use std::io::{BufReader, Read, Seek};
+
 
 pub struct NetCdfDimListReader;
+
 
 impl NetCdfDimListReader {
     const NC_DIMENSION_TAG: u32 = 0x000A;
@@ -28,18 +28,18 @@ impl NetCdfDimListReader {
             return Ok(dim_list);
         }
 
-        return Err(NetCdfError::InvalidData(
+        Err(NetCdfError::InvalidData(
             format!("invalid values for nc_dimensions: '{}' & num_elements: '{}' in dim list!", nc_dimension, num_elements)
-        ));
+        ))
     }
 }
 
 
 #[cfg(test)]
 mod tests {
+    use crate::netcdf::header::netcdf_dim_list_reader::NetCdfDimListReader;
     use std::io::{BufReader, Cursor, Seek};
 
-    use crate::netcdf::header::netcdf_dim_list_reader::NetCdfDimListReader;
 
     #[test]
     fn it_correctly_parses_the_dim_list() {

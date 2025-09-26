@@ -1,33 +1,14 @@
-#[derive(Debug)]
+use thiserror::Error;
+
+
+#[derive(Debug, Error)]
 pub enum NetCdfError {
+    #[error("The NetCDF data is invalid: {0}")]
     InvalidData(String),
-    Internal(String)
-}
 
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
 
-impl std::convert::From<std::io::Error> for NetCdfError {
-    fn from(err: std::io::Error) -> Self {
-        return NetCdfError::Internal(err.to_string());
-    }
-}
-
-
-impl std::convert::From<std::str::Utf8Error> for NetCdfError {
-    fn from(err: std::str::Utf8Error) -> Self {
-        return NetCdfError::Internal(err.to_string());
-    }
-}
-
-
-impl std::convert::From<std::convert::Infallible> for NetCdfError {
-    fn from(err: std::convert::Infallible) -> Self {
-        return NetCdfError::Internal(err.to_string());
-    }
-}
-
-
-impl std::convert::From<image::ImageError> for NetCdfError {
-    fn from(err: image::ImageError) -> Self {
-        return NetCdfError::Internal(err.to_string());
-    }
+    #[error(transparent)]
+    Utf8(#[from] std::str::Utf8Error),
 }

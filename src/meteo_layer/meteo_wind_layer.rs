@@ -1,8 +1,7 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
-use crate::grib2::common::grib2_error::Grib2Error;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
-
+use crate::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 pub struct MeteoWindLayer {
     zonal_value_grid: LatLonValueGrid<f32>,
@@ -16,22 +15,22 @@ impl MeteoWindLayer {
         zonal_value_grid: LatLonValueGrid<f32>,
         meridional_value_grid: LatLonValueGrid<f32>,
         gusts_value_grid: Option<LatLonValueGrid<f32>>,
-    ) -> Result<MeteoWindLayer, Grib2Error> {
+    ) -> Result<MeteoWindLayer, MeteoLayerError> {
         if zonal_value_grid.get_grid_dimensions() != meridional_value_grid.get_grid_dimensions() {
-            return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
+            return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
         }
 
         if zonal_value_grid.get_grid_lat_lon_extent() != meridional_value_grid.get_grid_lat_lon_extent() {
-            return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
+            return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
         }
 
         if let Some(gusts_grid) = &gusts_value_grid {
             if gusts_grid.get_grid_dimensions() != zonal_value_grid.get_grid_dimensions() {
-                return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
+                return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
             }
 
             if gusts_grid.get_grid_lat_lon_extent() != zonal_value_grid.get_grid_lat_lon_extent() {
-                return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
+                return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
             }
         }
 

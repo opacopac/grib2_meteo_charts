@@ -1,12 +1,12 @@
+use crate::common::meteo_chart_error::MeteoChartError;
+use crate::geo::common::lat_lon::LatLon;
+use crate::geo::common::lat_lon_extent::LatLonExtent;
+use crate::imaging::drawable::Drawable;
+use crate::map_tile::map_tile_coord::MapTileCoord;
 use log::debug;
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::geo::common::lat_lon::LatLon;
-use crate::geo::common::lat_lon_extent::LatLonExtent;
-use crate::map_tile::map_tile_coord::MapTileCoord;
-use crate::grib2::common::grib2_error::Grib2Error;
-use crate::imaging::drawable::Drawable;
 
 pub struct MapTileRenderer;
 
@@ -17,11 +17,11 @@ impl MapTileRenderer {
         zoom_range: (u32, u32),
         value_fn: V,
         color_fn: C,
-        save_fn: S
-    ) -> Result<(), Grib2Error> where
+        save_fn: S,
+    ) -> Result<(), MeteoChartError> where
         V: Fn(&LatLon) -> Option<T> + Sync,
         C: Fn(T) -> [u8; 4] + Sync,
-        S: Fn(&Drawable, u32, u32, u32) -> () + Sync
+        S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
     {
         let pos_tl = LatLon { lat: lat_long_extent.min_coord.lat, lon: lat_long_extent.max_coord.lon };
         let pos_br = LatLon { lat: lat_long_extent.max_coord.lat, lon: lat_long_extent.min_coord.lon };
@@ -52,8 +52,8 @@ impl MapTileRenderer {
     pub fn create_single_tile<V, C, T>(
         value_fn: V,
         map_tile_coords: &MapTileCoord,
-        color_fn: C
-    ) -> Result<Drawable, Grib2Error> where
+        color_fn: C,
+    ) -> Result<Drawable, MeteoChartError> where
         V: Fn(&LatLon) -> Option<T> + Sync,
         C: Fn(T) -> [u8; 4] + Sync,
     {

@@ -1,7 +1,7 @@
+use crate::netcdf::common::netcdf_error::NetCdfError;
 use std::io::{BufReader, Read};
 use std::str::from_utf8;
 
-use crate::netcdf::common::netcdf_error::NetCdfError;
 
 pub struct StringReader;
 
@@ -13,6 +13,6 @@ impl StringReader {
 
         let text = from_utf8(&buf)?.to_string();
 
-        return Ok(text);
+        Ok(text)
     }
 }

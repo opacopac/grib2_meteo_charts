@@ -1,10 +1,9 @@
-use std::io::{BufReader, Read, Seek};
-
-use byteorder::{BigEndian, ReadBytesExt};
-
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_var::NetCdfVar;
 use crate::netcdf::header::netcdf_var_reader::NetCdfVarReader;
+use byteorder::{BigEndian, ReadBytesExt};
+use std::io::{BufReader, Read, Seek};
+
 
 pub struct NetCdfVarListReader;
 
@@ -30,19 +29,19 @@ impl NetCdfVarListReader {
             return Ok(variables);
         }
 
-        return Err(NetCdfError::InvalidData(
+        Err(NetCdfError::InvalidData(
             format!("invalid values for nc_variable: '{}' & num_elements: '{}' in variable list!", nc_variable, num_elements)
-        ));
+        ))
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use std::io::{BufReader, Cursor, Seek};
     use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
-
     use crate::netcdf::header::netcdf_var_list_reader::NetCdfVarListReader;
+    use std::io::{BufReader, Cursor, Seek};
+
 
     #[test]
     fn it_correctly_parses_the_var_list() {

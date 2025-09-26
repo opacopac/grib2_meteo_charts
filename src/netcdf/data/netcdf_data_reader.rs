@@ -1,28 +1,28 @@
-use std::collections::HashMap;
-use std::io::{BufReader, Read, Seek, SeekFrom};
-
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::common::netcdf_values::NetCdfValues;
 use crate::netcdf::common::netcdf_values_reader::NetCdfValuesReader;
 use crate::netcdf::header::netcdf_header::NetCdfHeader;
 use crate::netcdf::header::netcdf_var::NetCdfVar;
+use std::collections::HashMap;
+use std::io::{BufReader, Read, Seek, SeekFrom};
+
 
 pub struct NetCdfDataReader;
 
 
 impl NetCdfDataReader {
-    pub fn read_data_map<T: Read+Seek>(reader: &mut BufReader<T>, header: &NetCdfHeader, var_names: Vec<&str>) -> Result<HashMap<String, NetCdfValues>, NetCdfError> {
+    pub fn read_data_map<T: Read + Seek>(reader: &mut BufReader<T>, header: &NetCdfHeader, var_names: Vec<&str>) -> Result<HashMap<String, NetCdfValues>, NetCdfError> {
         let mut data_map = HashMap::new();
         for var_name in var_names {
             let data = Self::read_data_by_var(reader, header, var_name)?;
             data_map.insert(var_name.to_string(), data);
         }
 
-        return Ok(data_map);
+        Ok(data_map)
     }
 
 
-    fn read_data_by_var<T: Read+Seek>(reader: &mut BufReader<T>, header: &NetCdfHeader, var_name: &str) -> Result<NetCdfValues, NetCdfError> {
+    fn read_data_by_var<T: Read + Seek>(reader: &mut BufReader<T>, header: &NetCdfHeader, var_name: &str) -> Result<NetCdfValues, NetCdfError> {
         let var_idx = Self::get_variable_idx(header, var_name)?;
         let variable = &header.var_list[var_idx];
         let entry_count = Self::get_entry_count(&variable);
@@ -32,7 +32,7 @@ impl NetCdfDataReader {
 
         let values = NetCdfValuesReader::read(reader, entry_count, &variable.nc_type)?;
 
-        return Ok(values);
+        Ok(values)
     }
 
 
@@ -43,9 +43,7 @@ impl NetCdfDataReader {
             }
         }
 
-        return Err(NetCdfError::InvalidData(
-            format!("variable '{}' not found!", var_name)
-        ));
+        Err(NetCdfError::InvalidData(format!("variable '{}' not found!", var_name)))
     }
 
 
@@ -53,6 +51,6 @@ impl NetCdfDataReader {
         let var_size = var.nc_type.get_byte_size() as usize;
         let entry_count = var.size as usize / var_size;
 
-        return entry_count;
+        entry_count
     }
 }

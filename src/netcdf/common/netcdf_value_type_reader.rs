@@ -1,9 +1,8 @@
-use std::io::{BufReader, Read};
-
-use byteorder::{BigEndian, ReadBytesExt};
-
 use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::common::netcdf_value_type::NetCdfValueType;
+use byteorder::{BigEndian, ReadBytesExt};
+use std::io::{BufReader, Read};
+
 
 pub struct NetCdfValueTypeReader;
 
@@ -23,6 +22,6 @@ impl NetCdfValueTypeReader {
             ))*/
         };
 
-        return Ok(nc_type);
+        Ok(nc_type)
     }
 }

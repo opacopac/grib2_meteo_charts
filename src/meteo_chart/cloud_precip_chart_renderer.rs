@@ -1,20 +1,20 @@
+use crate::common::meteo_chart_error::MeteoChartError;
+use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
-use crate::grib2::common::grib2_error::Grib2Error;
-use crate::imaging::drawable::Drawable;
 use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 
 pub struct CloudPrecipChartRenderer;
 
 
 impl CloudPrecipChartRenderer {
-    pub fn render_full_chart(cloud_precip_layer: &MeteoCloudPrecipLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(cloud_precip_layer: &MeteoCloudPrecipLayer) -> Result<Drawable, MeteoChartError> {
         let dimensions = cloud_precip_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
             dimensions.1 as u32,
             |x, y| cloud_precip_layer.get_cloud_and_precip_by_xy(x, y),
-            |value| Self::color_fn(value)
+            |value| Self::color_fn(value),
         )?;
 
         return Ok(drawable);
@@ -24,9 +24,9 @@ impl CloudPrecipChartRenderer {
     pub fn render_map_tiles<S>(
         cloud_layer: &MeteoCloudPrecipLayer,
         zoom_range: (u32, u32),
-        save_fn: S
-    ) -> Result<(), Grib2Error> where
-        S: Fn(&Drawable, u32, u32, u32) -> () + Sync
+        save_fn: S,
+    ) -> Result<(), MeteoChartError> where
+        S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
     {
         let extent = cloud_layer.get_lat_lon_extent();
 
@@ -35,7 +35,7 @@ impl CloudPrecipChartRenderer {
             zoom_range,
             |pos| cloud_layer.get_cloud_and_precip_by_lat_lon(pos),
             |value| Self::color_fn(value),
-            save_fn
+            save_fn,
         )
     }
 
@@ -84,7 +84,7 @@ impl CloudPrecipChartRenderer {
             [255, 0, 0, 191] // red
         } else {
             [163, 73, 164, 191] // purple
-        }
+        };
     }
 
 
@@ -120,6 +120,6 @@ impl CloudPrecipChartRenderer {
             [255, 255, 255, 239]
         } else {
             [255, 255, 255, 255]
-        }
+        };
     }
 }

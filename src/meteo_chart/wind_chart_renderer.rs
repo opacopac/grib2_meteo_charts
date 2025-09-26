@@ -1,8 +1,9 @@
+use crate::common::meteo_chart_error::MeteoChartError;
+use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
-use crate::grib2::common::grib2_error::Grib2Error;
-use crate::imaging::drawable::Drawable;
 use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+
 
 pub struct WindChartRenderer;
 
@@ -11,13 +12,13 @@ impl WindChartRenderer {
     const KNOTS_TO_MPS: f32 = 0.514444;
 
 
-    pub fn render_full_chart(wind_layer: &MeteoWindLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(wind_layer: &MeteoWindLayer) -> Result<Drawable, MeteoChartError> {
         let dimensions = wind_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
             dimensions.1 as u32,
             |x, y| wind_layer.get_wind_speed_tot_xy(x, y),
-            |value| Self::color_fn(value)
+            |value| Self::color_fn(value),
         )?;
 
         return Ok(drawable);
@@ -27,9 +28,9 @@ impl WindChartRenderer {
     pub fn render_map_tiles<S>(
         wind_layer: &MeteoWindLayer,
         zoom_range: (u32, u32),
-        save_fn: S
-    ) -> Result<(), Grib2Error> where
-        S: Fn(&Drawable, u32, u32, u32) -> () + Sync
+        save_fn: S,
+    ) -> Result<(), MeteoChartError> where
+        S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
     {
         let extent = wind_layer.get_lat_lon_extent();
 
@@ -38,7 +39,7 @@ impl WindChartRenderer {
             zoom_range,
             |pos| wind_layer.get_wind_speed_tot_by_lat_lon(pos),
             |value| Self::color_fn(value),
-            save_fn
+            save_fn,
         )
     }
 
@@ -64,6 +65,6 @@ impl WindChartRenderer {
             [99, 112, 247, 255] // light blue
         } else {
             [0, 0, 255, 255] // blue
-        }
+        };
     }
 }

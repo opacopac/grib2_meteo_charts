@@ -1,4 +1,4 @@
-use crate::grib2::common::grib2_error::Grib2Error;
+use crate::common::meteo_chart_error::MeteoChartError;
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
@@ -10,7 +10,7 @@ pub struct TempChartRenderer;
 
 
 impl TempChartRenderer {
-    pub fn render_full_chart(temp_layer: &MeteoTempLayer) -> Result<Drawable, Grib2Error> {
+    pub fn render_full_chart(temp_layer: &MeteoTempLayer) -> Result<Drawable, MeteoChartError> {
         let dimensions = temp_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -27,7 +27,7 @@ impl TempChartRenderer {
         temp_layer: &MeteoTempLayer,
         zoom_range: (u32, u32),
         save_fn: S,
-    ) -> Result<(), Grib2Error>
+    ) -> Result<(), MeteoChartError>
     where
         S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
     {

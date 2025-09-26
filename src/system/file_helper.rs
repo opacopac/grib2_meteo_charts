@@ -1,7 +1,8 @@
-use crate::grib2::common::grib2_error::Grib2Error;
+use crate::system::system_error::SystemError;
 use bzip2::read::BzDecoder;
 use log::info;
 use std::io::Read;
+
 
 pub struct FileHelper;
 
@@ -10,12 +11,11 @@ const BZ2_SUFFIX: &str = ".bz2";
 
 
 impl FileHelper {
-    pub fn get_url_reader(file_url: &str) -> Result<Box<dyn Read>, Grib2Error> {
+    pub fn get_url_reader(file_url: &str) -> Result<Box<dyn Read>, SystemError> {
         info!("reading file {}", file_url);
         let response = ureq::get(file_url)
             .header("Accept-Encoding", "gzip, br")
-            .call()
-            .map_err(Grib2Error::from)?;
+            .call()?;
 
         // TOODO: temp
         /*if let Some(enc) = response.headers().get("Content-Encoding") {

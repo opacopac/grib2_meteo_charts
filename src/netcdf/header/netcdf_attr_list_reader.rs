@@ -6,6 +6,7 @@ use crate::netcdf::common::netcdf_error::NetCdfError;
 use crate::netcdf::header::netcdf_attr::NetCdfAttr;
 use crate::netcdf::header::netcdf_attr_reader::NetCdfAttrReader;
 
+
 pub struct NetCdfAttrListReader;
 
 
@@ -30,9 +31,9 @@ impl NetCdfAttrListReader {
             return Ok(attributes);
         }
 
-        return Err(NetCdfError::InvalidData(
+        Err(NetCdfError::InvalidData(
             format!("invalid values for nc_attribute: '{}' & num_elements: '{}' in attribute list!", nc_attribute, num_elements)
-        ));
+        ))
     }
 }
 

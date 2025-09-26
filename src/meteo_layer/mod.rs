@@ -9,3 +9,4 @@ pub mod meteo_vertical_cloud_layer;
 pub mod meteo_vertical_wind_layer;
 pub mod meteo_temp_layer;
 pub mod meteo_layer;
+pub mod meteo_layer_error;
