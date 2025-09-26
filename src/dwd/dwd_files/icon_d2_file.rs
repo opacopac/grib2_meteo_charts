@@ -11,7 +11,7 @@ impl IconD2File {
     pub fn get_single_level_file_url(
         file_prefix: &str,
         file_suffix: &str,
-        forecast_step: &DwdForecastStep
+        forecast_step: &DwdForecastStep,
     ) -> String {
         let date_str = forecast_step.run.start_date.format(DWD_DATE_FORMAT).to_string();
         let step_str = format!("{:03}", forecast_step.step);
@@ -34,7 +34,7 @@ impl IconD2File {
         file_prefix: &str,
         file_suffix: &str,
         level: usize,
-        forecast_step: &DwdForecastStep
+        forecast_step: &DwdForecastStep,
     ) -> String {
         let date_str = forecast_step.run.start_date.format(DWD_DATE_FORMAT).to_string();
         let step_str = format!("{:03}", forecast_step.step);
@@ -58,7 +58,7 @@ impl IconD2File {
         file_prefix: &str,
         file_suffix: &str,
         level: usize,
-        forecast_run: &DwdForecastRun
+        forecast_run: &DwdForecastRun,
     ) -> String {
         let date_str = forecast_run.start_date.format(DWD_DATE_FORMAT).to_string();
         let step_str = "000";
@@ -81,19 +81,24 @@ impl IconD2File {
 
 #[cfg(test)]
 mod tests {
-    use chrono::NaiveDate;
-
     use crate::dwd::dwd_files::icon_d2_file::IconD2File;
     use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
     use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
     use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
     use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
+    use chrono::NaiveDate;
+
 
     #[test]
     fn it_creates_the_correct_single_level_file_url() {
         let file_prefix = "/xxx/PREFIX_";
         let file_suffix = "_SUFFIX.grib2.bz2";
-        let forecast_step = DwdForecastStep::new(DwdModelType::IconD2, NaiveDate::from_ymd(2022, 6, 19), IconD2ForecastRunName::Run00, 13);
+        let forecast_step = DwdForecastStep::new(
+            DwdModelType::IconD2,
+            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
+            IconD2ForecastRunName::Run00,
+            13,
+        );
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/xxx/PREFIX_2022061900_013_SUFFIX.grib2.bz2";
 
         let result = IconD2File::get_single_level_file_url(file_prefix, file_suffix, &forecast_step);
@@ -107,7 +112,12 @@ mod tests {
         let file_prefix = "/xxx/PREFIX_";
         let file_suffix = "_SUFFIX.grib2.bz2";
         let level = 66;
-        let forecast_step = DwdForecastStep::new(DwdModelType::IconD2, NaiveDate::from_ymd(2022, 6, 19), IconD2ForecastRunName::Run00, 12);
+        let forecast_step = DwdForecastStep::new(
+            DwdModelType::IconD2,
+            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
+            IconD2ForecastRunName::Run00,
+            12,
+        );
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/xxx/PREFIX_2022061900_012_66_SUFFIX.grib2.bz2";
 
         let result = IconD2File::get_multi_level_file_url(file_prefix, file_suffix, level, &forecast_step);
@@ -121,7 +131,11 @@ mod tests {
         let file_prefix = "/xxx/PREFIX_";
         let file_suffix = "_SUFFIX.grib2.bz2";
         let level = 66;
-        let forecast_run = DwdForecastRun::new(DwdModelType::IconD2, NaiveDate::from_ymd(2022, 6, 19), IconD2ForecastRunName::Run00);
+        let forecast_run = DwdForecastRun::new(
+            DwdModelType::IconD2,
+            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
+            IconD2ForecastRunName::Run00,
+        );
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/xxx/PREFIX_2022061900_000_66_SUFFIX.grib2.bz2";
 
         let result = IconD2File::get_multi_level_time_invariant_file_url(file_prefix, file_suffix, level, &forecast_run);

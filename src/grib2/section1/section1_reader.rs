@@ -129,6 +129,7 @@ mod tests {
     use crate::grib2::section1::ref_time_significance::RefTimeSignificance;
     use crate::grib2::section1::section1_reader::Section1Reader;
 
+
     #[test]
     fn it_correctly_parses_section1() {
         let mut reader = BufReader::new(Cursor::new([
@@ -147,7 +148,13 @@ mod tests {
         assert_eq!(19, section1.master_table_version);
         assert_eq!(1, section1.local_table_version);
         assert_eq!(RefTimeSignificance::StartOfForecast, section1.ref_time_significance);
-        assert_eq!(NaiveDateTime::new(NaiveDate::from_ymd(2022, 4, 17), NaiveTime::from_hms(0, 0, 0)), section1.ref_time);
+        assert_eq!(
+            NaiveDateTime::new(
+                NaiveDate::from_ymd_opt(2022, 4, 17).unwrap(),
+                NaiveTime::from_hms_opt(0, 0, 0).unwrap()
+            ),
+            section1.ref_time
+        );
         assert_eq!(ProductionStatus::Operational, section1.production_status);
         assert_eq!(ProcessedDataType::Forecast, section1.processed_data_type);
 
