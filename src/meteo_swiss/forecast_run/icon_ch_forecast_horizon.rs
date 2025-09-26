@@ -1,4 +1,4 @@
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct IconChForecastHorizon {

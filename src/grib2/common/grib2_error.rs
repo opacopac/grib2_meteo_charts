@@ -1,17 +1,14 @@
-use thiserror::Error;
 use crate::system::system_error::SystemError;
+use thiserror::Error;
 
 
 #[derive(Debug, Error)]
 pub enum Grib2Error {
     #[error("invalid data: {0}")]
     InvalidData(String),
-    
-    #[error(transparent)]
-    SystemError(#[from] SystemError),
 
     #[error(transparent)]
-    Ureq(#[from] ureq::Error),
+    SystemError(#[from] SystemError),
 
     #[error(transparent)]
     Io(#[from] std::io::Error),

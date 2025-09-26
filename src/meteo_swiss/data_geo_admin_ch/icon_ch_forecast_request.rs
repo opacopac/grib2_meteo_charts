@@ -2,7 +2,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_horizon::IconChForecastHo
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use serde::Serialize;
 
 

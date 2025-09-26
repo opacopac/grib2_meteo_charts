@@ -3,7 +3,7 @@ use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 
 
 pub struct IconHorConstReader;

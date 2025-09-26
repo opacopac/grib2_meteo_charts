@@ -5,7 +5,4 @@ use thiserror::Error;
 pub enum MeteoLayerError {
     #[error("Invalid data: {0}")]
     InvalidData(String),
-
-    #[error(transparent)]
-    Image(#[from] image::ImageError),
 }

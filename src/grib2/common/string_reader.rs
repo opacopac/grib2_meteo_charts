@@ -1,7 +1,7 @@
+use crate::grib2::common::grib2_error::Grib2Error;
 use std::io::Read;
 use std::str::from_utf8;
 
-use crate::grib2::common::grib2_error::Grib2Error;
 
 pub struct StringReader;
 

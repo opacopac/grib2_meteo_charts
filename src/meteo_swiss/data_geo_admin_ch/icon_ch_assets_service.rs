@@ -1,6 +1,6 @@
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_response::IconChAssetsResponse;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_endpoint::IconChForecastEndpoint;
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use log::debug;
 
 pub struct IconChAssetsService;

@@ -6,7 +6,4 @@ use thiserror::Error;
 pub enum DwdError {
     #[error(transparent)]
     Grib2Error(#[from] Grib2Error),
-
-    #[error(transparent)]
-    IoError(#[from] std::io::Error),
 }

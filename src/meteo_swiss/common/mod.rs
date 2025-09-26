@@ -1,0 +1,1 @@
+pub mod meteo_swiss_error;

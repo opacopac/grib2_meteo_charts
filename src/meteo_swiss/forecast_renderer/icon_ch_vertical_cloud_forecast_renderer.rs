@@ -4,7 +4,7 @@ use crate::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 use log::info;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};

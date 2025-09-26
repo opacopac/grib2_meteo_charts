@@ -6,7 +6,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastV
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_endpoint::IconChForecastEndpoint;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_request::{IconChForecastRequest, IconChForecastRequestBuilder};
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_response::{ForecastResponseAssets, ForecastResponseFeature, IconChForecastResponse};
-use crate::meteo_swiss::meteo_swiss_error::MeteoSwissError;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use log::debug;
 use serde_json::to_string;
 

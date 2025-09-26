@@ -15,9 +15,6 @@ pub enum MeteoSwissError {
     ChronoError(#[from] chrono::ParseError),
 
     #[error(transparent)]
-    SerdeError(#[from] serde_json::Error),
-
-    #[error(transparent)]
     Grib2Error(#[from] Grib2Error),
 
     #[error(transparent)]
