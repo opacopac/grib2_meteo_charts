@@ -5,7 +5,7 @@ use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRenderer
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-use crate::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
+use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
 use std::fs;

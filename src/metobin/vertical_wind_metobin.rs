@@ -1,4 +1,4 @@
-use crate::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
+use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 
 
 pub struct VerticalWindMeteobin {}

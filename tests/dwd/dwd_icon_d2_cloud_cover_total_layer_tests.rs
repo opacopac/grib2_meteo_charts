@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
-use meteo_grib2_renderer::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;
+use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_cloud_layer::MeteoCloudLayer;
 
 pub const CLCT_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022041700_000_2d_clct_mod.grib2";
 

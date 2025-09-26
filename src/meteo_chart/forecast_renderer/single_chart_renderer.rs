@@ -1,5 +1,5 @@
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::meteo_chart_error::MeteoChartError;
+use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 
 
 pub struct SingleChartRenderer;

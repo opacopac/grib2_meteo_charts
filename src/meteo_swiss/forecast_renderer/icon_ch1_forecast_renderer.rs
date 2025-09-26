@@ -1,4 +1,4 @@
-use crate::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
@@ -129,7 +129,7 @@ impl IconCh1ForecastRenderer {
 
 #[cfg(test)]
 mod tests {
-    use crate::meteo_layer::meteo_layer::MeteoLayer;
+    use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
     use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
 
     #[test]

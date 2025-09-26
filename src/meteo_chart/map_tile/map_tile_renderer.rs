@@ -1,8 +1,8 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::imaging::drawable::Drawable;
-use crate::map_tile::map_tile_coord::MapTileCoord;
-use crate::map_tile::map_tile_error::MapTileError;
+use crate::meteo_chart::map_tile::map_tile_coord::MapTileCoord;
+use crate::meteo_chart::map_tile::map_tile_error::MapTileError;
 use log::debug;
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};

@@ -1,8 +1,8 @@
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
-use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
-use crate::meteo_layer::weather_layer::WeatherLayer;
+use crate::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::meteo_swiss::file_reader::icon_ch_ceiling_reader::IconChCeilingReader;
 use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;

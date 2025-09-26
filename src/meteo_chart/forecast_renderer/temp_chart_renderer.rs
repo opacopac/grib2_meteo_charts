@@ -1,8 +1,8 @@
 use crate::imaging::drawable::Drawable;
-use crate::map_tile::map_tile_renderer::MapTileRenderer;
-use crate::meteo_chart::meteo_chart_error::MeteoChartError;
-use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
-use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_chart::map_tile::map_tile_renderer::MapTileRenderer;
+use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
+use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::physics::temperature::Temperature;
 
 

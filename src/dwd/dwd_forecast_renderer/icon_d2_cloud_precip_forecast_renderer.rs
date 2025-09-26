@@ -7,9 +7,9 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
-use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
-use crate::meteo_layer::weather_layer::WeatherLayer;
+use crate::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;

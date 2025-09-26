@@ -6,8 +6,8 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::wind_chart_renderer::WindChartRenderer;
-use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};

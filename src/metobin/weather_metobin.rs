@@ -1,5 +1,5 @@
-use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
-use crate::meteo_layer::weather_layer::WeatherLayer;
+use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
+use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::physics::length::Length;
 
 

@@ -1,4 +1,4 @@
-use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 
 
 pub struct PrecipMeteoBin {}

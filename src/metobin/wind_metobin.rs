@@ -1,4 +1,4 @@
-use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use crate::physics::speed::Speed;
 
 pub struct WindMeteobin {}

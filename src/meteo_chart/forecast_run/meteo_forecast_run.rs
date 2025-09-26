@@ -1,4 +1,4 @@
-use crate::meteo_forecast::meteo_forecast_step::MeteoForecastStep;
+use crate::meteo_chart::forecast_run::meteo_forecast_step::MeteoForecastStep;
 use chrono::NaiveDate;
 use std::ops::RangeInclusive;
 

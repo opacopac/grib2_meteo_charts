@@ -3,10 +3,10 @@ use meteo_grib2_renderer::geo::common::lat_lon_extent::LatLonExtent;
 use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
-use meteo_grib2_renderer::meteo_chart::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
-use meteo_grib2_renderer::meteo_chart::temp_chart_renderer::TempChartRenderer;
-use meteo_grib2_renderer::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
-use meteo_grib2_renderer::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use meteo_grib2_renderer::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
+use meteo_grib2_renderer::meteo_chart::forecast_renderer::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use meteo_grib2_renderer::physics::temperature::Temperature;
 use meteo_grib2_renderer::system::tstamp::TStamp;
 

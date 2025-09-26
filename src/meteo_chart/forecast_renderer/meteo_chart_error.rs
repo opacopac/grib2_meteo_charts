@@ -1,5 +1,5 @@
 use crate::imaging::imaging_error::ImagingError;
-use crate::map_tile::map_tile_error::MapTileError;
+use crate::meteo_chart::map_tile::map_tile_error::MapTileError;
 use thiserror::Error;
 
 

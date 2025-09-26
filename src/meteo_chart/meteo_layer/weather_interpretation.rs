@@ -104,7 +104,7 @@ impl WeatherInterpretation {
 
 #[cfg(test)]
 mod tests {
-    use crate::meteo_layer::weather_interpretation::WeatherInterpretation;
+    use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
 
     #[test]
     fn it_converts_from_a_byte_value() {

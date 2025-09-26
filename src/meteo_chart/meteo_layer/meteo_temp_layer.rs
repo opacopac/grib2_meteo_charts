@@ -1,7 +1,7 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::meteo_layer::meteo_layer_error::MeteoLayerError;
+use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 pub struct MeteoTempLayer {
     temp_value_grid: LatLonValueGrid<f32>,

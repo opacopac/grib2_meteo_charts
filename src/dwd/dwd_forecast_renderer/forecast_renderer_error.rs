@@ -1,6 +1,6 @@
 use crate::dwd::common::dwd_error::DwdError;
 use crate::grib2::common::grib2_error::Grib2Error;
-use crate::meteo_layer::meteo_layer_error::MeteoLayerError;
+use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 use thiserror::Error;
 
 

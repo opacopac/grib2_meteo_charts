@@ -1,6 +1,6 @@
 use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use meteo_grib2_renderer::grib2::converter::regular_grid_converter::RegularGridConverter;
-use meteo_grib2_renderer::meteo_layer::meteo_precip_layer::MeteoPrecipLayer;
+use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_precip_layer::MeteoPrecipLayer;
 
 pub const PREC_TEST_FILE: &str = "./tests/resources/icon-d2_germany_regular-lat-lon_single-level_2022042500_001_2d_tot_prec.grib2";
 

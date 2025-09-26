@@ -7,7 +7,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_temp_forecast_renderer::IconD2Tem
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_cloud_forecast_renderer::IconD2VerticalCloudForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::IconD2VerticalWindForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_wind_10m_forecast_renderer::IconD2Wind10mForecastRenderer;
-use crate::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
 
 pub struct IconD2ForecastRenderer;
 

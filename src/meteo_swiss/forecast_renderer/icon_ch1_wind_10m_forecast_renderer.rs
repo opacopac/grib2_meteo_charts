@@ -1,7 +1,7 @@
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::wind_chart_renderer::WindChartRenderer;
-use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use crate::meteo_swiss::file_reader::icon_ch_wind_u_10m_reader::IconChWindU10mReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_v_10m_reader::IconChWindV10mReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_vmax_10m_reader::IconChWindVmax10mReader;
