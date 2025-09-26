@@ -1,6 +1,6 @@
-use crate::common::meteo_chart_error::MeteoChartError;
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
+use crate::meteo_chart::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::physics::temperature::Temperature;
@@ -33,13 +33,15 @@ impl TempChartRenderer {
     {
         let extent = temp_layer.get_lat_lon_extent();
 
-        MapTileRenderer::create_all_tiles(
+        let _ = MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
             |pos| temp_layer.get_temp_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,
-        )
+        )?;
+
+        Ok(())
     }
 
 

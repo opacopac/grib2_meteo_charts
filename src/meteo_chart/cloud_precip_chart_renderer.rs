@@ -1,8 +1,9 @@
-use crate::common::meteo_chart_error::MeteoChartError;
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
+use crate::meteo_chart::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+
 
 pub struct CloudPrecipChartRenderer;
 
@@ -17,7 +18,7 @@ impl CloudPrecipChartRenderer {
             |value| Self::color_fn(value),
         )?;
 
-        return Ok(drawable);
+        Ok(drawable)
     }
 
 
@@ -30,13 +31,15 @@ impl CloudPrecipChartRenderer {
     {
         let extent = cloud_layer.get_lat_lon_extent();
 
-        MapTileRenderer::create_all_tiles(
+        let _ = MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
             |pos| cloud_layer.get_cloud_and_precip_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,
-        )
+        )?;
+
+        Ok(())
     }
 
 
@@ -54,7 +57,7 @@ impl CloudPrecipChartRenderer {
             (rain_color[3] as u32 + cloud_color[3] as u32 * (255 - rain_color[3] as u32) / 255) as u8,
         ];
 
-        return composite_color;
+        composite_color
         /*return if rain_color[3] == 0 {
             cloud_color
         } else {
@@ -64,7 +67,7 @@ impl CloudPrecipChartRenderer {
 
 
     fn get_rain_color(value: f32) -> [u8; 4] {
-        return if value < 0.1 {
+        if value < 0.1 {
             [0, 0, 0, 0] // transparent
         } else if value < 1.0 {
             [0, 192, 255, 127] // light blue
@@ -84,7 +87,7 @@ impl CloudPrecipChartRenderer {
             [255, 0, 0, 191] // red
         } else {
             [163, 73, 164, 191] // purple
-        };
+        }
     }
 
 
@@ -98,7 +101,7 @@ impl CloudPrecipChartRenderer {
         return [255, 255, 255, alpha];*/
 
 
-        return if value < 0.05 {
+        if value < 0.05 {
             [0, 0, 0, 127] // transparent
         } else if value < 0.1 {
             [255, 255, 255, 127]
@@ -120,6 +123,6 @@ impl CloudPrecipChartRenderer {
             [255, 255, 255, 239]
         } else {
             [255, 255, 255, 255]
-        };
+        }
     }
 }

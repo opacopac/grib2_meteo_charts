@@ -1,6 +1,6 @@
-use crate::common::meteo_chart_error::MeteoChartError;
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
+use crate::meteo_chart::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 
@@ -21,7 +21,7 @@ impl WindChartRenderer {
             |value| Self::color_fn(value),
         )?;
 
-        return Ok(drawable);
+        Ok(drawable)
     }
 
 
@@ -34,18 +34,20 @@ impl WindChartRenderer {
     {
         let extent = wind_layer.get_lat_lon_extent();
 
-        MapTileRenderer::create_all_tiles(
+        let _ = MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
             |pos| wind_layer.get_wind_speed_tot_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,
-        )
+        )?;
+
+        Ok(())
     }
 
 
     fn color_fn(value: f32) -> [u8; 4] {
-        return /*if value < 2.5 * Self::KNOTS_TO_MPS {
+        /*if value < 2.5 * Self::KNOTS_TO_MPS {
             [0, 0, 0, 0] // transparent
         } else*/ if value < 5.0 * Self::KNOTS_TO_MPS {
             [0, 127, 0, 255] // dark green
@@ -65,6 +67,6 @@ impl WindChartRenderer {
             [99, 112, 247, 255] // light blue
         } else {
             [0, 0, 255, 255] // blue
-        };
+        }
     }
 }

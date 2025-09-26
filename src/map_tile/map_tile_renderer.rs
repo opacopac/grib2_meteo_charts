@@ -1,8 +1,8 @@
-use crate::common::meteo_chart_error::MeteoChartError;
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_coord::MapTileCoord;
+use crate::map_tile::map_tile_error::MapTileError;
 use log::debug;
 use min_max::{max, min};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
@@ -18,7 +18,7 @@ impl MapTileRenderer {
         value_fn: V,
         color_fn: C,
         save_fn: S,
-    ) -> Result<(), MeteoChartError> where
+    ) -> Result<(), MapTileError> where
         V: Fn(&LatLon) -> Option<T> + Sync,
         C: Fn(T) -> [u8; 4] + Sync,
         S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
@@ -53,7 +53,7 @@ impl MapTileRenderer {
         value_fn: V,
         map_tile_coords: &MapTileCoord,
         color_fn: C,
-    ) -> Result<Drawable, MeteoChartError> where
+    ) -> Result<Drawable, MapTileError> where
         V: Fn(&LatLon) -> Option<T> + Sync,
         C: Fn(T) -> [u8; 4] + Sync,
     {
@@ -81,6 +81,6 @@ impl MapTileRenderer {
             }
         }
 
-        return Ok(drawable);
+        Ok(drawable)
     }
 }
