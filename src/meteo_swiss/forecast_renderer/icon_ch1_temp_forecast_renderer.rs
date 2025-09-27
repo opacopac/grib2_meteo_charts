@@ -1,7 +1,6 @@
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::forecast_renderer::temp_chart_renderer::TempChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
