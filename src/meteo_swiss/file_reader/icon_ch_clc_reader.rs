@@ -1,9 +1,10 @@
-use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
+use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use log::info;
 use std::ops::RangeInclusive;
+
 
 pub struct IconChClcReader;
 
@@ -15,7 +16,7 @@ impl IconChClcReader {
     pub fn read_grids(
         file_url: &str,
         unstructured_grid: &UnstructuredGrid,
-        vertical_level_range: Option<RangeInclusive<usize>>,
+        vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, MeteoSwissError> {
         info!("reading clc grids...");
 
