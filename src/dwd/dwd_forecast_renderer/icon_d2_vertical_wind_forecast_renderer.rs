@@ -6,6 +6,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
 use std::fs;
@@ -42,7 +43,7 @@ impl IconD2VerticalWindForecastRenderer {
                 // meteobin
                 let bin_data = VerticalWindMeteobin::create_bin_values(&layer);
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
-                let filename = format!("{}VERTICAL_WIND.meteobin", path);
+                let filename = format!("{}{}", path, MeteobinType::VerticalWind.get_output_file());
 
                 info!("writing vertical wind meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;

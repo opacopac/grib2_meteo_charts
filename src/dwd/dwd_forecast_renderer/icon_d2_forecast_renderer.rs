@@ -7,7 +7,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_temp_forecast_renderer::IconD2Tem
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_cloud_forecast_renderer::IconD2VerticalCloudForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::IconD2VerticalWindForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_wind_10m_forecast_renderer::IconD2Wind10mForecastRenderer;
-use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 
 pub struct IconD2ForecastRenderer;
 
@@ -23,31 +23,31 @@ impl IconD2ForecastRenderer {
         let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
         info!("latest run found: {:?}", &latest_run);
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::CloudPrecip.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
             IconD2CloudPrecipRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Wind10m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Wind10m.get_name()) {
             info!("rendering wind 10m forecast...");
             IconD2Wind10mForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering wind 10m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Temp2m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             IconD2TempForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
             info!("rendering vertical cloud forecast...");
             IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering vertical cloud forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
             info!("rendering vertical wind forecast...");
             IconD2VerticalWindForecastRenderer::render(&latest_run, &step_filter)?;
             info!("finished rendering vertical cloud forecast");

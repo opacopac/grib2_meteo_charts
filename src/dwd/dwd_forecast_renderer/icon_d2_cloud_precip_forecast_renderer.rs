@@ -10,6 +10,7 @@ use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;
@@ -58,8 +59,9 @@ impl IconD2CloudPrecipRenderer {
                 // precip meteobin
                 let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
                 let precip_filename = format!(
-                    "{}PRECIP.meteobin",
+                    "{}{}",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
+                    &MeteobinType::Precip.get_output_file()
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
                 let _ = precip_file.write_all(&precip_bin_data);
@@ -72,8 +74,9 @@ impl IconD2CloudPrecipRenderer {
                 let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, Some(ww_grid))?;
                 let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
                 let ww_filename = format!(
-                    "{}WW.meteobin",
+                    "{}{}",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
+                    MeteobinType::Weather.get_output_file()
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
                 let _ = ww_file.write_all(&ww_bin_data);

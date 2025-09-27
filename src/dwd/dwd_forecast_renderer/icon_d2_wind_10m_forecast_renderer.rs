@@ -8,12 +8,12 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use std::fs::File;
 use std::io::{BufWriter, Write};
-
 
 pub struct IconD2Wind10mForecastRenderer;
 
@@ -51,8 +51,9 @@ impl IconD2Wind10mForecastRenderer {
                 // meteobin
                 let bin_data = WindMeteobin::create_bin_values(&layer);
                 let filename = format!(
-                    "{}WIND.meteobin",
+                    "{}{}",
                     IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
+                    MeteobinType::Wind10m.get_output_file()
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
                 let _ = file.write_all(&bin_data);

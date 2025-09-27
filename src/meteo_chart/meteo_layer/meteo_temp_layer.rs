@@ -1,12 +1,12 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 
 pub struct MeteoTempLayer {
-    layer_type: MeteoLayer,
+    layer_type: MeteoLayerType,
     temp_value_grid: LatLonValueGrid<f32>,
 }
 
@@ -16,7 +16,7 @@ impl MeteoTempLayer {
         temp_value_grid: LatLonValueGrid<f32>
     ) -> Result<MeteoTempLayer, MeteoLayerError> {
         let layer = MeteoTempLayer {
-            layer_type: MeteoLayer::Temp2m,
+            layer_type: MeteoLayerType::Temp2m,
             temp_value_grid,
         };
 
@@ -24,7 +24,7 @@ impl MeteoTempLayer {
     }
     
     
-    pub fn get_type(&self) -> &MeteoLayer {
+    pub fn get_type(&self) -> &MeteoLayerType {
         &self.layer_type
     }
 

@@ -4,6 +4,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
@@ -47,8 +48,9 @@ impl IconD2TempForecastRenderer {
                 fs::create_dir_all(&path).unwrap();
 
                 let filename = format!(
-                    "{}TEMP.meteobin",
+                    "{}{}",
                     &path,
+                    &MeteobinType::Temp2m.get_output_file()
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
                 let _ = file.write_all(&bin_data);

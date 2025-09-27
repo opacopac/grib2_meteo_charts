@@ -2,12 +2,12 @@ use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::lat_lon_value_grid_interpolator::LatLonValueGridInterpolator;
-use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 
 pub struct MeteoCloudPrecipLayer {
-    layer_type: MeteoLayer,
+    layer_type: MeteoLayerType,
     cloud_value_grid: LatLonValueGrid<f32>,
     precip0_value_grid: LatLonValueGrid<f32>,
     precip1_value_grid: LatLonValueGrid<f32>,
@@ -31,7 +31,7 @@ impl MeteoCloudPrecipLayer {
         }
 
         let layer = MeteoCloudPrecipLayer {
-            layer_type: MeteoLayer::CloudPrecip,
+            layer_type: MeteoLayerType::CloudPrecip,
             cloud_value_grid,
             precip0_value_grid,
             precip1_value_grid,
@@ -39,9 +39,9 @@ impl MeteoCloudPrecipLayer {
 
         Ok(layer)
     }
-    
-    
-    pub fn get_type(&self) -> &MeteoLayer {
+
+
+    pub fn get_type(&self) -> &MeteoLayerType {
         &self.layer_type
     }
 

@@ -5,6 +5,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 use log::info;
 use std::fs;
@@ -40,7 +41,7 @@ impl IconD2VerticalCloudForecastRenderer {
                 // meteobin
                 let bin_data = VerticalCloudMeteobin::create_bin_values(&layer);
                 let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
-                let filename = format!("{}VERTICAL_CLOUDS.meteobin", path);
+                let filename = format!("{}{}", path, &MeteobinType::VerticalClouds.get_output_file());
 
                 info!("writing vertical clouds meteobin file {}", &filename);
                 fs::create_dir_all(&path)?;

@@ -1,4 +1,4 @@
-use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
@@ -43,7 +43,7 @@ impl IconCh1ForecastRenderer {
         let date_ref = IconChForecastSearchService::find_latest_ref_datetime(&MODEL)?;
         info!("latest ref datetime found: {:?}", date_ref);
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::CloudPrecip.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
             let fc_run_clct = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
             let fc_run_tot_prec = Self::get_forecast_run(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
@@ -52,7 +52,7 @@ impl IconCh1ForecastRenderer {
             info!("finished rendering cloud & precipitation forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Wind10m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Wind10m.get_name()) {
             info!("rendering wind 10m forecast...");
             let fc_run_u10m = Self::get_forecast_run(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
             let fc_run_v10m = Self::get_forecast_run(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
@@ -61,21 +61,21 @@ impl IconCh1ForecastRenderer {
             info!("finished rendering wind 10m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::Temp2m.get_name()) {
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name())
-            || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name())
+            || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()
         ) {
             info!("reading hhl grids...");
             let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
             info!("finished reading hhl grids");
 
-            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalCloud.get_name()) {
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
                 let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
                 IconCh1VerticalCloudForecastRenderer::render(
@@ -87,7 +87,7 @@ impl IconCh1ForecastRenderer {
                 info!("finished rendering vertical cloud forecast");
             }
 
-            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayer::VerticalWind.get_name()) {
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
                 info!("rendering vertical wind forecast...");
                 let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
                 let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
@@ -129,13 +129,13 @@ impl IconCh1ForecastRenderer {
 
 #[cfg(test)]
 mod tests {
-    use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+    use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
     use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
 
     #[test]
     fn it_successfully_renders_a_part_of_the_latest_icon_ch1_forecasts() {
         // given
-        let variable_filter = vec![MeteoLayer::Temp2m.get_name()];
+        let variable_filter = vec![MeteoLayerType::Temp2m.get_name()];
         let step_filter = vec![2, 3, 4];
 
         // when

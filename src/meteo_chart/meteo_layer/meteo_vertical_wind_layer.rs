@@ -1,10 +1,10 @@
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 
 
 pub struct MeteoVerticalWindLayer<'a> {
-    layer_type: MeteoLayer,
+    layer_type: MeteoLayerType,
     hhl_grids: &'a Vec<LatLonValueGrid<u8>>,
     u_grids: Vec<LatLonValueGrid<u8>>,
     v_grids: Vec<LatLonValueGrid<u8>>,
@@ -27,7 +27,7 @@ impl<'a> MeteoVerticalWindLayer<'a> {
         }
 
         MeteoVerticalWindLayer {
-            layer_type: MeteoLayer::VerticalWind,
+            layer_type: MeteoLayerType::VerticalWind,
             hhl_grids,
             u_grids,
             v_grids,
@@ -35,7 +35,7 @@ impl<'a> MeteoVerticalWindLayer<'a> {
     }
 
 
-    pub fn get_type(&self) -> &MeteoLayer {
+    pub fn get_type(&self) -> &MeteoLayerType {
         &self.layer_type
     }
 

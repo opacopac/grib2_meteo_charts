@@ -9,6 +9,7 @@ use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;
@@ -59,8 +60,9 @@ impl IconCh1CloudPrecipRenderer {
                 // precip meteobin
                 let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
                 let precip_filename = format!(
-                    "{}PRECIP.meteobin",
+                    "{}{}",
                     IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, &layer.get_type().get_output_subdir()),
+                    &MeteobinType::Precip.get_output_file()
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
                 let _ = precip_file.write_all(&precip_bin_data);
@@ -73,8 +75,9 @@ impl IconCh1CloudPrecipRenderer {
                 let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
                 let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
                 let ww_filename = format!(
-                    "{}WW.meteobin",
+                    "{}{}",
                     IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, &layer.get_type().get_output_subdir()),
+                    &MeteobinType::Weather.get_output_file()
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
                 let _ = ww_file.write_all(&ww_bin_data);
