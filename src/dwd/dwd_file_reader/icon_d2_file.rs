@@ -81,7 +81,7 @@ impl IconD2File {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_files::icon_d2_file::IconD2File;
+    use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
     use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
     use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
     use crate::dwd::forecast_run::dwd_model_type::DwdModelType;

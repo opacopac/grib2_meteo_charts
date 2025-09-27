@@ -10,3 +10,4 @@ pub mod icon_d2_v_10m_reader;
 pub mod icon_d2_vmax_10m_reader;
 pub mod icon_d2_ww_reader;
 pub mod icon_d2_t_2m_reader;
+pub mod icon_d2_file;

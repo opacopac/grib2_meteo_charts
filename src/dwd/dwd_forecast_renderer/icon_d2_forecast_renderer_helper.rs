@@ -1,6 +1,6 @@
 use std::fs;
 
-use crate::dwd::dwd_files::icon_d2_file::DWD_DATE_FORMAT;
+use crate::dwd::dwd_file_reader::icon_d2_file::DWD_DATE_FORMAT;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
 
