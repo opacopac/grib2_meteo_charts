@@ -6,6 +6,7 @@ use crate::physics::speed::Speed;
 use log::info;
 use std::ops::RangeInclusive;
 
+
 pub struct IconChUReader;
 
 
@@ -16,7 +17,7 @@ impl IconChUReader {
     pub fn read_grids(
         file_url: &str,
         unstructured_grid: &UnstructuredGrid,
-        vertical_level_range: Option<RangeInclusive<usize>>,
+        vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, MeteoSwissError> {
         info!("reading u grids...");
 

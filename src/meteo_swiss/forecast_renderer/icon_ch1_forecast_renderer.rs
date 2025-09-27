@@ -1,4 +1,6 @@
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
+use crate::meteo_swiss::common::icon_ch1_model_config::IconCh1ModelConfig;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
@@ -13,16 +15,13 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconC
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
-use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use log::info;
-use std::ops::RangeInclusive;
 
 
 pub struct IconCh1ForecastRenderer;
 
 
 const MODEL: IconChForecastModel = IconChForecastModel::IconCh1;
-const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 31..=79;
 
 
 impl IconCh1ForecastRenderer {
@@ -72,7 +71,8 @@ impl IconCh1ForecastRenderer {
             || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()
         ) {
             info!("reading hhl grids...");
-            let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
+            let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
+            let hhl_grids = IconChHhlReader::read_grids(&vert_consts.href, &unstructured_grid, Some(&vertical_levels))?;
             info!("finished reading hhl grids");
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {

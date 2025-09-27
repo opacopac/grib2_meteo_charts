@@ -6,6 +6,7 @@ use crate::physics::length::Length;
 use log::info;
 use std::ops::RangeInclusive;
 
+
 pub struct IconChHhlReader;
 
 
@@ -16,7 +17,7 @@ impl IconChHhlReader {
     pub fn read_grids(
         file_url: &str,
         unstructured_grid: &UnstructuredGrid,
-        vertical_level_range: Option<RangeInclusive<usize>>,
+        vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, MeteoSwissError> {
         info!("reading hhl grids...");
 

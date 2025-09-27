@@ -89,7 +89,7 @@ impl FileToGridConverter {
         missing_value: T,
         transform_fn: fn(f32) -> T,
         unstructured_grid: &UnstructuredGrid,
-        filter_doc_indexes: Option<RangeInclusive<usize>>,
+        filter_doc_indexes: Option<&RangeInclusive<usize>>,
     ) -> Result<Vec<LatLonValueGrid<T>>, Grib2Error> {
         let docs = Self::read_multi_doc_from_file_or_url(&file_url)?;
         let filtered_docs: Vec<&_> = match filter_doc_indexes {
