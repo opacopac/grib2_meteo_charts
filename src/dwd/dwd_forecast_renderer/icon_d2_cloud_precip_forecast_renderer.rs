@@ -21,9 +21,6 @@ use std::io::{BufWriter, Write};
 pub struct IconD2CloudPrecipRenderer;
 
 
-const WEATHER_LAYER: &str = "clct_precip";
-
-
 impl IconD2CloudPrecipRenderer {
     pub fn render(
         forecast_run: &DwdForecastRun,
@@ -54,14 +51,15 @@ impl IconD2CloudPrecipRenderer {
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
-                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WEATHER_LAYER, &fc_step),
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(
+                        tile, zoom, x, y, &layer.get_type().get_output_subdir(), &fc_step),
                 );
 
                 // precip meteobin
                 let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
                 let precip_filename = format!(
                     "{}PRECIP.meteobin",
-                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
                 );
                 let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
                 let _ = precip_file.write_all(&precip_bin_data);
@@ -75,7 +73,7 @@ impl IconD2CloudPrecipRenderer {
                 let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
                 let ww_filename = format!(
                     "{}WW.meteobin",
-                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WEATHER_LAYER),
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
                 );
                 let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
                 let _ = ww_file.write_all(&ww_bin_data);

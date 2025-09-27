@@ -16,7 +16,6 @@ use std::ops::RangeInclusive;
 pub struct IconD2VerticalCloudForecastRenderer;
 
 
-const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
@@ -36,11 +35,11 @@ impl IconD2VerticalCloudForecastRenderer {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let vertical_cloud_layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
+                let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let bin_data = VerticalCloudMeteobin::create_bin_values(&vertical_cloud_layer);
-                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_CLOUDS_SUB_DIR);
+                let bin_data = VerticalCloudMeteobin::create_bin_values(&layer);
+                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
                 let filename = format!("{}VERTICAL_CLOUDS.meteobin", path);
 
                 info!("writing vertical clouds meteobin file {}", &filename);

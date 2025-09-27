@@ -17,7 +17,6 @@ use std::ops::RangeInclusive;
 pub struct IconD2VerticalWindForecastRenderer;
 
 
-const VERTICAL_WIND_SUB_DIR: &str = "vertical_wind";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<u8> = 25..=65; //25..=65;
 
 
@@ -38,11 +37,11 @@ impl IconD2VerticalWindForecastRenderer {
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let u_grids = IconD2UReader::read_u_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
                 let v_grids = IconD2VReader::read_v_grids(&fc_step, VERTICAL_LEVEL_RANGE)?;
-                let vertical_wind_layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
+                let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
 
                 // meteobin
-                let bin_data = VerticalWindMeteobin::create_bin_values(&vertical_wind_layer);
-                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, VERTICAL_WIND_SUB_DIR);
+                let bin_data = VerticalWindMeteobin::create_bin_values(&layer);
+                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
                 let filename = format!("{}VERTICAL_WIND.meteobin", path);
 
                 info!("writing vertical wind meteobin file {}", &filename);

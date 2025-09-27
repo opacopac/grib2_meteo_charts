@@ -1,8 +1,10 @@
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::meteo_chart::meteo_layer::meteo_layer::MeteoLayer;
 
 
 pub struct MeteoVerticalCloudLayer<'a> {
+    layer_type: MeteoLayer,
     hhl_grids: &'a Vec<LatLonValueGrid<u8>>,
     clc_grids: Vec<LatLonValueGrid<u8>>,
 }
@@ -22,7 +24,16 @@ impl<'a> MeteoVerticalCloudLayer<'a> {
             panic!("number of hhl grids ({}) and clc grids ({}) must be the same", hhl_grids.len(), clc_grids.len()); // TODO: return error
         }
 
-        MeteoVerticalCloudLayer { hhl_grids, clc_grids }
+        MeteoVerticalCloudLayer {
+            layer_type: MeteoLayer::VerticalCloud,
+            hhl_grids,
+            clc_grids,
+        }
+    }
+
+
+    pub fn get_type(&self) -> &MeteoLayer {
+        &self.layer_type
     }
 
 

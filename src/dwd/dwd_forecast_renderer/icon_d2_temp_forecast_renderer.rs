@@ -15,9 +15,6 @@ use std::io::{BufWriter, Write};
 pub struct IconD2TempForecastRenderer;
 
 
-const TEMP_LAYER: &str = "temp";
-
-
 impl IconD2TempForecastRenderer {
     pub fn render(
         forecast_run: &DwdForecastRun,
@@ -40,13 +37,13 @@ impl IconD2TempForecastRenderer {
                 /*let _ = WindChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
-                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step)
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, &layer.get_type().get_output_subdir(), &fc_step)
                 );*/
 
                 // meteobin
                 let bin_data = TempMeteoBin::create_bin_values(&layer);
 
-                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, TEMP_LAYER);
+                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
                 fs::create_dir_all(&path).unwrap();
 
                 let filename = format!(

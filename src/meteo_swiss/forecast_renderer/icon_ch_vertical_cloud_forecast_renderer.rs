@@ -1,10 +1,10 @@
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 use log::info;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
@@ -17,7 +17,6 @@ use std::ops::RangeInclusive;
 pub struct IconCh1VerticalCloudForecastRenderer;
 
 
-const VERTICAL_CLOUDS_SUB_DIR: &str = "vertical_clouds";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 31..=79;
 const MAX_PARALLEL_STEPS: usize = 3;
 
@@ -44,11 +43,11 @@ impl IconCh1VerticalCloudForecastRenderer {
 
                 let clc_grids = IconChClcReader::read_grids(&fc_step_clc.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
 
-                let vertical_cloud_layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
+                let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let bin_data = VerticalCloudMeteobin::create_bin_values(&vertical_cloud_layer);
-                let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_clc, step_idx, VERTICAL_CLOUDS_SUB_DIR);
+                let bin_data = VerticalCloudMeteobin::create_bin_values(&layer);
+                let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_clc, step_idx, &layer.get_type().get_output_subdir());
                 let filename = format!("{}VERTICAL_CLOUDS.meteobin", path);
 
                 info!("writing vertical clouds meteobin file {}", &filename);

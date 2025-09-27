@@ -18,9 +18,6 @@ use std::io::{BufWriter, Write};
 pub struct IconD2Wind10mForecastRenderer;
 
 
-const WIND_LAYER: &str = "wind";
-
-
 impl IconD2Wind10mForecastRenderer {
     pub fn render(
         forecast_run: &DwdForecastRun,
@@ -47,14 +44,15 @@ impl IconD2Wind10mForecastRenderer {
                 let _ = WindChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
-                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(tile, zoom, x, y, WIND_LAYER, &fc_step),
+                    |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(
+                        tile, zoom, x, y, &layer.get_type().get_output_subdir(), &fc_step),
                 );
 
                 // meteobin
                 let bin_data = WindMeteobin::create_bin_values(&layer);
                 let filename = format!(
                     "{}WIND.meteobin",
-                    IconD2ForecastRendererHelper::get_output_path(&fc_step, WIND_LAYER),
+                    IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir()),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
                 let _ = file.write_all(&bin_data);

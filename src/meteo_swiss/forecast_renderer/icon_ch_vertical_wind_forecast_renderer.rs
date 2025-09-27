@@ -1,11 +1,11 @@
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_u_reader::IconChUReader;
 use crate::meteo_swiss::file_reader::icon_ch_v_reader::IconChVReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
@@ -18,7 +18,6 @@ use std::ops::RangeInclusive;
 pub struct IconCh1VerticalWindForecastRenderer;
 
 
-const VERTICAL_WIND_SUB_DIR: &str = "vertical_wind";
 const VERTICAL_LEVEL_RANGE: RangeInclusive<usize> = 31..=79;
 const MAX_PARALLEL_STEPS: usize = 3;
 
@@ -48,11 +47,11 @@ impl IconCh1VerticalWindForecastRenderer {
                 let u_grids = IconChUReader::read_grids(&fc_step_u.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
                 let v_grids = IconChVReader::read_grids(&fc_step_v.href, &unstructured_grid, Some(VERTICAL_LEVEL_RANGE))?;
 
-                let vertical_wind_layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
+                let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
 
                 // meteobin
-                let bin_data = VerticalWindMeteobin::create_bin_values(&vertical_wind_layer);
-                let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_u, step_idx, VERTICAL_WIND_SUB_DIR);
+                let bin_data = VerticalWindMeteobin::create_bin_values(&layer);
+                let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_u, step_idx, &layer.get_type().get_output_subdir());
                 let filename = format!("{}VERTICAL_WIND.meteobin", path);
 
                 info!("writing vertical wind meteobin file {}", &filename);

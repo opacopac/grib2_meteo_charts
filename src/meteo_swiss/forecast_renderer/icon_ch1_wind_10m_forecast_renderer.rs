@@ -2,22 +2,20 @@ use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_wind_u_10m_reader::IconChWindU10mReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_v_10m_reader::IconChWindV10mReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_vmax_10m_reader::IconChWindVmax10mReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
+
 pub struct IconCh1Wind10mForecastRenderer;
-
-
-const WIND_LAYER: &str = "wind";
 
 
 impl IconCh1Wind10mForecastRenderer {
@@ -52,7 +50,7 @@ impl IconCh1Wind10mForecastRenderer {
                     &layer,
                     IconCh1ForecastRendererHelper::get_zoom_range(),
                     |tile: &Drawable, zoom: u32, x: u32, y: u32| IconCh1ForecastRendererHelper::save_tile_step(
-                        tile, zoom, x, y, WIND_LAYER, &fc_run_u10m, step_idx,
+                        tile, zoom, x, y, &layer.get_type().get_output_subdir(), &fc_run_u10m, step_idx,
                     ),
                 );
 
@@ -60,7 +58,7 @@ impl IconCh1Wind10mForecastRenderer {
                 let bin_data = WindMeteobin::create_bin_values(&layer);
                 let filename = format!(
                     "{}WIND.meteobin",
-                    IconCh1ForecastRendererHelper::get_output_path(&fc_run_u10m, step_idx, WIND_LAYER),
+                    IconCh1ForecastRendererHelper::get_output_path(&fc_run_u10m, step_idx, &layer.get_type().get_output_subdir()),
                 );
                 let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
                 let _ = file.write_all(&bin_data);
