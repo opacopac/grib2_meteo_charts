@@ -42,7 +42,7 @@ impl IconCh1VerticalCloudForecastRenderer {
                 let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, fc_run_clc, step_idx);
+                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, fc_run_clc, step_idx)?;
 
                 Ok(())
             })

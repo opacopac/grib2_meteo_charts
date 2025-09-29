@@ -32,7 +32,7 @@ impl IconD2VerticalCloudForecastRenderer {
                 let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, forecast_run, step);
+                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, forecast_run, step)?;
 
                 Ok(())
             })

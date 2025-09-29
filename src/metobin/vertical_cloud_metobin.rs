@@ -1,8 +1,10 @@
 use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::metobin::meteobin_error::MeteoBinError;
 use crate::metobin::meteobin_type::MeteobinType;
 use log::info;
+use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
@@ -18,18 +20,23 @@ impl VerticalCloudMeteobin {
         layer: &MeteoVerticalCloudLayer,
         fc_run: &dyn MeteoForecastRun,
         fc_step: usize,
-    ) {
+    ) -> Result<(), MeteoBinError> {
         let bin_data = Self::create_bin_values(layer);
+        let path = MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type());
         let filename = format!(
             "{}{}",
-            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            &path,
             MeteobinType::VerticalClouds.get_output_file()
         );
 
         info!("writing vertical cloud meteobin file {}", &filename);
 
-        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create vertical cloud meteobin file"));
-        let _ = file.write_all(&bin_data);
+        fs::create_dir_all(&path)?;
+        let mut file = BufWriter::new(File::create(&filename)
+            .expect("Unable to create vertical cloud meteobin file"));
+        let _ = file.write_all(&bin_data)?;
+
+        Ok(())
     }
 
 

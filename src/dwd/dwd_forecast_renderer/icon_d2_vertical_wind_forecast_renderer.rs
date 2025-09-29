@@ -34,7 +34,7 @@ impl IconD2VerticalWindForecastRenderer {
                 let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
 
                 // meteobin
-                let _ = VerticalWindMeteobin::create_meteobin_file(&layer, forecast_run, step);
+                let _ = VerticalWindMeteobin::create_meteobin_file(&layer, forecast_run, step)?;
 
                 Ok(())
             })

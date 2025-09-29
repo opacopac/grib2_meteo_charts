@@ -1,5 +1,6 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
+use crate::metobin::meteobin_error::MeteoBinError;
 use thiserror::Error;
 
 
@@ -25,4 +26,7 @@ pub enum MeteoSwissError {
 
     #[error(transparent)]
     MeteoLayerError(#[from] MeteoLayerError),
+
+    #[error(transparent)]
+    MeteoBinError(#[from] MeteoBinError),
 }
