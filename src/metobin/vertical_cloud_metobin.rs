@@ -1,4 +1,10 @@
+use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::metobin::meteobin_type::MeteobinType;
+use log::info;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 
 
 pub struct VerticalCloudMeteobin {}
@@ -8,7 +14,26 @@ impl VerticalCloudMeteobin {
     const MISSING_VALUE: u8 = 255;
 
 
-    pub fn create_bin_values(layer: &MeteoVerticalCloudLayer) -> Vec<u8> {
+    pub fn create_meteobin_file(
+        layer: &MeteoVerticalCloudLayer,
+        fc_run: &dyn MeteoForecastRun,
+        fc_step: usize,
+    ) {
+        let bin_data = Self::create_bin_values(layer);
+        let filename = format!(
+            "{}{}",
+            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            MeteobinType::VerticalClouds.get_output_file()
+        );
+
+        info!("writing vertical cloud meteobin file {}", &filename);
+
+        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create vertical cloud meteobin file"));
+        let _ = file.write_all(&bin_data);
+    }
+
+
+    fn create_bin_values(layer: &MeteoVerticalCloudLayer) -> Vec<u8> {
         let (dim_x, dim_y, dim_level) = layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim_y {

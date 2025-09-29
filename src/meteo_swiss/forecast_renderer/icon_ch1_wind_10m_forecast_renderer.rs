@@ -8,12 +8,9 @@ use crate::meteo_swiss::file_reader::icon_ch_wind_v_10m_reader::IconChWindV10mRe
 use crate::meteo_swiss::file_reader::icon_ch_wind_vmax_10m_reader::IconChWindVmax10mReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
-use std::fs::File;
-use std::io::{BufWriter, Write};
 
 
 pub struct IconCh1Wind10mForecastRenderer;
@@ -56,14 +53,7 @@ impl IconCh1Wind10mForecastRenderer {
                 );
 
                 // meteobin
-                let bin_data = WindMeteobin::create_bin_values(&layer);
-                let filename = format!(
-                    "{}{}",
-                    IconCh1ForecastRendererHelper::get_output_path(&fc_run_u10m, step_idx, &layer.get_type().get_output_subdir()),
-                    MeteobinType::Wind10m.get_output_file()
-                );
-                let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
-                let _ = file.write_all(&bin_data);
+                let _ = WindMeteobin::create_meteobin_file(&layer, fc_run_u10m, step_idx);
 
                 Ok(())
             })

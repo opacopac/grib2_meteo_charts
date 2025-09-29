@@ -6,13 +6,9 @@ use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
-use std::fs;
-use std::fs::File;
-use std::io::{BufWriter, Write};
 
 
 pub struct IconCh1TempForecastRenderer;
@@ -49,18 +45,7 @@ impl IconCh1TempForecastRenderer {
                 );
 
                 // meteobin
-                let bin_data = TempMeteoBin::create_bin_values(&layer);
-
-                let path = IconCh1ForecastRendererHelper::get_output_path(fc_run_temp, step_idx, &layer.get_type().get_output_subdir());
-                fs::create_dir_all(&path).unwrap();
-
-                let filename = format!(
-                    "{}{}",
-                    &path,
-                    &MeteobinType::Temp2m.get_output_file()
-                );
-                let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temperature meteobin file"));
-                let _ = file.write_all(&bin_data);
+                let _ = TempMeteoBin::create_meteobin_file(&layer, fc_run_temp, step_idx);
 
                 Ok(())
             })

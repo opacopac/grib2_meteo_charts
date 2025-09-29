@@ -9,13 +9,10 @@ use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
-use std::fs::File;
-use std::io::{BufWriter, Write};
 
 
 pub struct IconCh1CloudPrecipRenderer;
@@ -41,12 +38,15 @@ impl IconCh1CloudPrecipRenderer {
                 let fc_step_clct = &forecast_run_clct.steps[step_idx];
                 let fc_step_tot_prec = &forecast_run_tot_prec.steps[step_idx];
                 let fc_previous_step_tot_prec = &forecast_run_tot_prec.steps[step_idx - 1];
+                let fc_step_ceiling = &forecast_run_ceiling.steps[step_idx];
 
                 let clct_grid = IconChClctReader::read_grid_from_file(&fc_step_clct.href, &unstructured_grid)?;
                 let precip_grid0 = IconChTotPrecReader::read_grid_from_file(&fc_previous_step_tot_prec.href, &unstructured_grid)?;
                 let precip_grid1 = IconChTotPrecReader::read_grid_from_file(&fc_step_tot_prec.href, &unstructured_grid)?;
+                let ceiling_grid = IconChCeilingReader::read_grid_from_file(&fc_step_ceiling.href, &unstructured_grid)?;
 
                 let layer = MeteoCloudPrecipLayer::new(clct_grid.clone(), precip_grid0, precip_grid1)?;
+                let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
 
                 // map tiles
                 let _ = CloudPrecipChartRenderer::render_map_tiles(
@@ -58,29 +58,10 @@ impl IconCh1CloudPrecipRenderer {
                 );
 
                 // precip meteobin
-                let precip_bin_data = PrecipMeteoBin::create_bin_values(&layer);
-                let precip_filename = format!(
-                    "{}{}",
-                    IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, &layer.get_type().get_output_subdir()),
-                    &MeteobinType::Precip.get_output_file()
-                );
-                let mut precip_file = BufWriter::new(File::create(&precip_filename).expect("Unable to create file"));
-                let _ = precip_file.write_all(&precip_bin_data);
-
+                let _ = PrecipMeteoBin::create_meteobin_file(&layer, forecast_run_clct, step_idx);
 
                 // ww meteobin
-                let fc_step_ceiling = &forecast_run_ceiling.steps[step_idx];
-                let ceiling_grid = IconChCeilingReader::read_grid_from_file(&fc_step_ceiling.href, &unstructured_grid)?;
-
-                let weather_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
-                let ww_bin_data = WeatherMeteoBin::create_bin_values(&weather_layer);
-                let ww_filename = format!(
-                    "{}{}",
-                    IconCh1ForecastRendererHelper::get_output_path(forecast_run_clct, step_idx, &layer.get_type().get_output_subdir()),
-                    &MeteobinType::Weather.get_output_file()
-                );
-                let mut ww_file = BufWriter::new(File::create(&ww_filename).expect("Unable to create file"));
-                let _ = ww_file.write_all(&ww_bin_data);
+                let _ = WeatherMeteoBin::create_meteobin_file(&weather_layer, forecast_run_clct, step_idx);
 
                 Ok(())
             })

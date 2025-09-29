@@ -3,16 +3,11 @@ use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
-use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
-use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
-use std::fs;
-use std::fs::File;
-use std::io::{BufWriter, Write};
 
 
 pub struct IconD2VerticalWindForecastRenderer;
@@ -39,14 +34,7 @@ impl IconD2VerticalWindForecastRenderer {
                 let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
 
                 // meteobin
-                let bin_data = VerticalWindMeteobin::create_bin_values(&layer);
-                let path = IconD2ForecastRendererHelper::get_output_path(&fc_step, &layer.get_type().get_output_subdir());
-                let filename = format!("{}{}", path, MeteobinType::VerticalWind.get_output_file());
-
-                info!("writing vertical wind meteobin file {}", &filename);
-                fs::create_dir_all(&path)?;
-                let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical wind meteobin file {}", &filename)));
-                let _ = file.write_all(&bin_data);
+                let _ = VerticalWindMeteobin::create_meteobin_file(&layer, forecast_run, step);
 
                 Ok(())
             })

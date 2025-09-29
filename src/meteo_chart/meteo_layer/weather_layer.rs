@@ -2,10 +2,12 @@ use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
+use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
 
 
 pub struct WeatherLayer {
+    layer_type: MeteoLayerType,
     clct_grid: LatLonValueGrid<f32>,
     ceiling_grid: LatLonValueGrid<f32>,
     ww_grid: Option<LatLonValueGrid<f32>>,
@@ -26,9 +28,19 @@ impl WeatherLayer {
             return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
         }
 
-        let layer = WeatherLayer { clct_grid, ceiling_grid, ww_grid };
+        let layer = WeatherLayer {
+            layer_type: MeteoLayerType::Weather,
+            clct_grid,
+            ceiling_grid,
+            ww_grid,
+        };
 
         Ok(layer)
+    }
+
+
+    pub fn get_type(&self) -> &MeteoLayerType {
+        &self.layer_type
     }
 
 

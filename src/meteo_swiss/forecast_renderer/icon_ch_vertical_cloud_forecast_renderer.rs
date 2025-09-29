@@ -4,15 +4,10 @@ use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCl
 use crate::meteo_swiss::common::icon_ch1_model_config::IconCh1ModelConfig;
 use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
-use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
-use crate::metobin::meteobin_type::MeteobinType;
 use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
 use log::info;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
-use std::fs;
-use std::fs::File;
-use std::io::{BufWriter, Write};
 
 
 pub struct IconCh1VerticalCloudForecastRenderer;
@@ -47,14 +42,7 @@ impl IconCh1VerticalCloudForecastRenderer {
                 let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
 
                 // meteobin
-                let bin_data = VerticalCloudMeteobin::create_bin_values(&layer);
-                let path = IconCh1ForecastRendererHelper::get_output_path(&fc_run_clc, step_idx, &layer.get_type().get_output_subdir());
-                let filename = format!("{}{}", path, &MeteobinType::VerticalClouds.get_output_file());
-
-                info!("writing vertical clouds meteobin file {}", &filename);
-                fs::create_dir_all(&path)?;
-                let mut file = BufWriter::new(File::create(&filename).expect(&*format!("Unable to create vertical clouds meteobin file {}", &filename)));
-                let _ = file.write_all(&bin_data);
+                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, fc_run_clc, step_idx);
 
                 Ok(())
             })

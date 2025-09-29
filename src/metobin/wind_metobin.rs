@@ -1,5 +1,12 @@
+use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
 use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::metobin::meteobin_type::MeteobinType;
 use crate::physics::speed::Speed;
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use log::info;
+
 
 pub struct WindMeteobin {}
 
@@ -8,7 +15,26 @@ impl WindMeteobin {
     const NONE_BIN_VALUE: u8 = 0xFF;
 
 
-    pub fn create_bin_values(wind_layer: &MeteoWindLayer) -> Vec<u8> {
+    pub fn create_meteobin_file(
+        layer: &MeteoWindLayer,
+        fc_run: &dyn MeteoForecastRun,
+        fc_step: usize,
+    ) {
+        let bin_data = Self::create_bin_values(layer);
+        let filename = format!(
+            "{}{}",
+            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            MeteobinType::Wind10m.get_output_file()
+        );
+
+        info!("writing wind meteobin file {}", &filename);
+        
+        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
+        let _ = file.write_all(&bin_data);
+    }
+
+
+    fn create_bin_values(wind_layer: &MeteoWindLayer) -> Vec<u8> {
         let dim = wind_layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {
