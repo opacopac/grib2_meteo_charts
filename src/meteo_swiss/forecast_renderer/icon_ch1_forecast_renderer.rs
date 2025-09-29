@@ -117,6 +117,7 @@ impl IconCh1ForecastRenderer {
             &latest_ref_datetime,
         )?;
         let forecast_run = IconChForecastRun::new(
+            model.clone(),
             latest_ref_datetime.get_date(),
             IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
             forecast_steps,

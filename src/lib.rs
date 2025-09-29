@@ -3,6 +3,7 @@ pub mod geo;
 pub mod grib2;
 pub mod imaging;
 pub mod meteo_chart;
+pub mod meteo_common;
 pub mod meteo_swiss;
 pub mod metobin;
 pub mod netcdf;
