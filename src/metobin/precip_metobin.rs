@@ -1,4 +1,4 @@
-use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::metobin::meteobin_type::MeteobinType;
@@ -22,7 +22,7 @@ impl PrecipMeteoBin {
         let bin_data = Self::create_bin_values(layer);
         let filename = format!(
             "{}{}",
-            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type()),
             MeteobinType::Precip.get_output_file()
         );
 

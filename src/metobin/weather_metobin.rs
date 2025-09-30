@@ -1,4 +1,4 @@
-use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
 use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
@@ -24,7 +24,7 @@ impl WeatherMeteoBin {
         let bin_data = Self::create_bin_values(layer);
         let filename = format!(
             "{}{}",
-            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type()),
             MeteobinType::Weather.get_output_file()
         );
 

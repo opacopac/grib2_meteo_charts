@@ -1,4 +1,4 @@
-use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::metobin::meteobin_error::MeteoBinError;
@@ -22,7 +22,7 @@ impl VerticalCloudMeteobin {
         fc_step: usize,
     ) -> Result<(), MeteoBinError> {
         let bin_data = Self::create_bin_values(layer);
-        let path = MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer.get_type());
+        let path = MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type());
         let filename = format!(
             "{}{}",
             &path,

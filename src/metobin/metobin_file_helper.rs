@@ -1,4 +1,4 @@
-use crate::meteo_chart::forecast_renderer::meteo_forecast_renderer_helper::MeteoForecastRendererHelper;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::metobin::meteobin_type::MeteobinType;
@@ -19,7 +19,7 @@ impl MeteobinFileHelper {
     ) {
         let filename = format!(
             "{}{}",
-            MeteoForecastRendererHelper::get_output_path(fc_run, fc_step, layer_type),
+            MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer_type),
             meteobin_type.get_output_file()
         );
         let mut file = BufWriter::new(File::create(&filename).expect("Unable to create wind meteobin file"));
