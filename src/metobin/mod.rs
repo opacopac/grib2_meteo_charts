@@ -5,5 +5,4 @@ pub mod weather_metobin;
 pub mod wind_metobin;
 pub mod vertical_cloud_metobin;
 pub mod vertical_wind_metobin;
-pub mod metobin_file_helper;
 pub mod meteobin_error;
