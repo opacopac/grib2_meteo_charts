@@ -1,14 +1,13 @@
+use crate::geo::common::lat_lon::LatLon;
+use derive_new::new;
 use std::f32::consts::PI;
 
-use derive_new::new;
-
-use crate::geo::common::lat_lon::LatLon;
 
 #[derive(Debug, new)]
 pub struct MapTileCoord {
     pub x: u32,
     pub y: u32,
-    pub zoom: u32
+    pub zoom: u32,
 }
 
 
@@ -21,7 +20,7 @@ impl MapTileCoord {
         let x_tile = ((pos.lon + 180.0) / 360.0 * pow).floor() as u32;
         let y_tile = ((1.0 - (pos.lat.to_radians().tan() + 1.0 / pos.lat.to_radians().cos()).ln() / PI) / 2.0 * pow).floor() as u32;
 
-        return MapTileCoord { x: x_tile, y: y_tile, zoom };
+        MapTileCoord { x: x_tile, y: y_tile, zoom }
     }
 
 
@@ -30,6 +29,6 @@ impl MapTileCoord {
         let lon = self.x as f32 / n * 360.0 - 180.0;
         let lat = (((PI * (1.0 - 2.0 * self.y as f32 / n)).sinh()).atan()).to_degrees();
 
-        return LatLon { lat, lon }
+        LatLon { lat, lon }
     }
 }
