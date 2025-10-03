@@ -3,7 +3,7 @@ use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
-
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconD2T2mReader;
 
@@ -17,6 +17,13 @@ impl IconD2T2mReader {
     pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, DwdError> {
         let url = Self::get_file_url(&fc_step);
         let grid = FileToGridConverter::read_rectangular_grid_from_file(&url, MISSING_VALUE)?;
+
+        Ok(grid)
+    }
+
+
+    pub fn read_grid_from_file2(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, DwdError> {
+        let grid = FileToGridConverter::read_rectangular_grid_from_file(&fc_step.get_file_url(), MISSING_VALUE)?;
 
         Ok(grid)
     }

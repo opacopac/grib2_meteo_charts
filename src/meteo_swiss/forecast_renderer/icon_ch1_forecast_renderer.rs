@@ -69,7 +69,8 @@ impl IconCh1ForecastRenderer {
             //let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             //IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             let fc_run_t2m = Self::get_forecast_run2(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
-            IconCh1TempForecastRenderer::render2(&fc_run_t2m, &unstructured_grid, &step_filter)?;
+            let fc_steps_t2m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
+            IconCh1TempForecastRenderer::render2(&fc_run_t2m, &fc_steps_t2m, &unstructured_grid, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
@@ -153,15 +154,31 @@ impl IconCh1ForecastRenderer {
         let forecast_run2 = MeteoForecastRun2::new(
             MeteoForecastModel::IconCh1,
             forecast_run.get_start_date(),
-            forecast_run.get_name(),
-            forecast_run.steps
-                .iter()
-                .enumerate()
-                .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
-                .collect(),
+            forecast_run.get_name()
         );
 
         Ok(forecast_run2)
+    }
+
+
+    fn get_forecast_run2_steps(
+        model: &IconChForecastModel,
+        variable: IconChForecastVariable,
+        latest_ref_datetime: &IconChForecastReferenceDateTime,
+    ) -> Result<Vec<MeteoForecastRun2Step>, MeteoSwissError> {
+        let forecast_steps = IconChForecastSearchService::find_forecast_file_urls(
+            &model,
+            &variable,
+            &latest_ref_datetime,
+        )?;
+
+        let steps = forecast_steps
+            .iter()
+            .enumerate()
+            .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
+            .collect();
+
+        Ok(steps)
     }
 }
 

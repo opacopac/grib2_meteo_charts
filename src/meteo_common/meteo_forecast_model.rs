@@ -21,7 +21,7 @@ impl MeteoForecastModel {
     }
 
 
-    pub fn get_step_range(&self) -> RangeInclusive<u32> {
+    pub fn get_step_range(&self) -> RangeInclusive<usize> {
         match self {
             MeteoForecastModel::IconGlobal => 2..=78, // TODO: check and adjust
             MeteoForecastModel::IconEu => 2..=78, // TODO: check and adjust

@@ -10,7 +10,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
-
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconCh1TempForecastRenderer;
 
@@ -55,26 +55,27 @@ impl IconCh1TempForecastRenderer {
 
     pub fn render2(
         fc_run_temp: &MeteoForecastRun2,
+        fc_steps_temp: &Vec<MeteoForecastRun2Step>,
         unstructured_grid: &UnstructuredGrid,
         step_filter: &Vec<usize>,
     ) -> Result<(), MeteoSwissError> {
-        fc_run_temp.get_steps()
+        fc_steps_temp
             .par_iter()
             .try_for_each(|fc_step_temp| {
-                if !step_filter.is_empty() && !step_filter.contains(&fc_step_temp.get_index()) {
+                if !step_filter.is_empty() && !step_filter.contains(&fc_step_temp.get_step_nr()) {
                     return Ok(());
                 }
 
-                info!("creating temperature charts, time step {}", fc_step_temp.get_index());
+                info!("creating temperature charts, time step {}", fc_step_temp.get_step_nr());
 
                 let grid = IconChT2mReader::read_grid_from_file(&fc_step_temp.get_file_url(), &unstructured_grid)?;
                 let layer = MeteoTempLayer::new(grid)?;
 
                 // map tiles
-                let _ = TempChartRenderer::render_map_tiles2(&layer, fc_run_temp, fc_step_temp.get_index());
+                let _ = TempChartRenderer::render_map_tiles2(&layer, fc_run_temp, fc_step_temp.get_step_nr());
 
                 // meteobin
-                let _ = TempMeteoBin::create_meteobin_file2(&layer, fc_run_temp, fc_step_temp.get_index());
+                let _ = TempMeteoBin::create_meteobin_file2(&layer, fc_run_temp, fc_step_temp.get_step_nr());
 
                 Ok(())
             })
