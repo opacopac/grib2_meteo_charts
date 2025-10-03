@@ -36,7 +36,7 @@ impl MeteoForecastFileHelper {
         format!(
             "{}{}/{}{}/{:03}/{}/",
             FORECAST_BASE_DIR,
-            fc_run.get_model_name(),
+            fc_run.get_model().get_name(),
             fc_run.get_start_date().format(FC_STARTDATE_FORMAT),
             fc_run.get_name(),
             fc_step,

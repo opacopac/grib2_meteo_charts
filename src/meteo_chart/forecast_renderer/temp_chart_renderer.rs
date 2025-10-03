@@ -59,7 +59,7 @@ impl TempChartRenderer {
 
         let _ = MapTileRenderer::create_all_tiles(
             extent,
-            fc_run_temp.get_zoom_range(),
+            fc_run_temp.get_model().get_zoom_range(),
             |pos| temp_layer.get_temp_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,

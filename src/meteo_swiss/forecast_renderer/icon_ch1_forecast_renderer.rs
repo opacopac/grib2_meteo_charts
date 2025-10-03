@@ -1,4 +1,5 @@
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
+use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
@@ -9,7 +10,6 @@ use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::Icon
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::file_reader::icon_ch_hor_const_reader::IconHorConstReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_cloud_precip_forecast_renderer::IconCh1CloudPrecipRenderer;
-use crate::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer_helper::IconCh1ForecastRendererHelper;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_temp_forecast_renderer::IconCh1TempForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_wind_10m_forecast_renderer::IconCh1Wind10mForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
@@ -20,7 +20,6 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use log::info;
-
 
 pub struct IconCh1ForecastRenderer;
 
@@ -69,7 +68,7 @@ impl IconCh1ForecastRenderer {
 
             let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             let fc_run_t2b = MeteoForecastRun2::new(
-                fc_run_t2m.get_model_name(),
+                MeteoForecastModel::IconCh1,
                 fc_run_t2m.get_start_date(),
                 fc_run_t2m.get_name(),
                 fc_run_t2m.steps
@@ -77,7 +76,6 @@ impl IconCh1ForecastRenderer {
                     .enumerate()
                     .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
                     .collect(),
-                IconCh1ForecastRendererHelper::get_zoom_range(),
             );
             //IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             IconCh1TempForecastRenderer::render2(&fc_run_t2b, &unstructured_grid, &step_filter)?;
