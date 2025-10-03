@@ -21,6 +21,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastR
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use log::info;
 
+
 pub struct IconCh1ForecastRenderer;
 
 
@@ -65,21 +66,10 @@ impl IconCh1ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
-
-            let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
-            let fc_run_t2b = MeteoForecastRun2::new(
-                MeteoForecastModel::IconCh1,
-                fc_run_t2m.get_start_date(),
-                fc_run_t2m.get_name(),
-                fc_run_t2m.steps
-                    .iter()
-                    .enumerate()
-                    .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
-                    .collect(),
-            );
+            //let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             //IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
-            IconCh1TempForecastRenderer::render2(&fc_run_t2b, &unstructured_grid, &step_filter)?;
-
+            let fc_run_t2m = Self::get_forecast_run2(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
+            IconCh1TempForecastRenderer::render2(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             info!("finished rendering temperature 2m forecast");
         }
 
@@ -140,6 +130,38 @@ impl IconCh1ForecastRenderer {
         );
 
         Ok(forecast_run)
+    }
+
+
+    fn get_forecast_run2(
+        model: &IconChForecastModel,
+        variable: IconChForecastVariable,
+        latest_ref_datetime: &IconChForecastReferenceDateTime,
+    ) -> Result<MeteoForecastRun2, MeteoSwissError> {
+        let forecast_steps = IconChForecastSearchService::find_forecast_file_urls(
+            &model,
+            &variable,
+            &latest_ref_datetime,
+        )?;
+        let forecast_run = IconChForecastRun::new(
+            model.clone(),
+            latest_ref_datetime.get_date(),
+            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
+            forecast_steps,
+        );
+
+        let forecast_run2 = MeteoForecastRun2::new(
+            MeteoForecastModel::IconCh1,
+            forecast_run.get_start_date(),
+            forecast_run.get_name(),
+            forecast_run.steps
+                .iter()
+                .enumerate()
+                .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
+                .collect(),
+        );
+
+        Ok(forecast_run2)
     }
 }
 

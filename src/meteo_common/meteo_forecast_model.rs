@@ -26,7 +26,7 @@ impl MeteoForecastModel {
             MeteoForecastModel::IconGlobal => 2..=78, // TODO: check and adjust
             MeteoForecastModel::IconEu => 2..=78, // TODO: check and adjust
             MeteoForecastModel::IconD2 => 2..=48,
-            MeteoForecastModel::IconCh1 => 2..=32,
+            MeteoForecastModel::IconCh1 => 2..=33,
         }
     }
 
