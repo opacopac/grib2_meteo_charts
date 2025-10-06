@@ -10,6 +10,7 @@ use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
+use crate::dwd::common::dwd_error::DwdError;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconD2TempForecastRenderer;
@@ -48,11 +49,15 @@ impl IconD2TempForecastRenderer {
     }
 
 
-    pub fn render2(
+    pub fn render2<S>(
         fc_run: &MeteoForecastRun2,
         fc_steps: &Vec<MeteoForecastRun2Step>,
         step_filter: &Vec<usize>,
-    ) -> Result<(), ForecastRendererError> {
+        read_layer_fn: S,
+    ) -> Result<(), ForecastRendererError>
+    where
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, DwdError> + Sync,
+    {
         fc_steps
             .par_iter()
             .try_for_each(|fc_step| {
@@ -61,9 +66,7 @@ impl IconD2TempForecastRenderer {
                 }
 
                 info!("creating temperature charts, time step {}", fc_step.get_step_nr());
-
-                let temp_grid = IconD2T2mReader::read_grid_from_file2(&fc_step)?;
-                let layer = MeteoTempLayer::new(temp_grid)?;
+                let layer = read_layer_fn(&fc_step)?;
 
                 // map tiles
                 let _ = TempChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());

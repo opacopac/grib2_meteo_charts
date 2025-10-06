@@ -46,8 +46,11 @@ impl IconD2ForecastRenderer {
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
             let fc_steps = Self::get_temp_forecast_steps(&latest_run)?;
+            let read_fn = |step: &MeteoForecastRun2Step| {
+                IconD2T2mReader::read_layer_from_file2(&step)
+            };
             //IconD2TempForecastRenderer::render(&latest_run, &step_filter)?;
-            IconD2TempForecastRenderer::render2(&fc_run, &fc_steps, &step_filter)?;
+            IconD2TempForecastRenderer::render2(&fc_run, &fc_steps, &step_filter, read_fn)?;
             info!("finished rendering temperature 2m forecast");
         }
 
