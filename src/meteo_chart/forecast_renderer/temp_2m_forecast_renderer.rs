@@ -9,10 +9,10 @@ use log::info;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
 
-pub struct TempForecastRenderer;
+pub struct Temp2mForecastRenderer;
 
 
-impl TempForecastRenderer {
+impl Temp2mForecastRenderer {
     pub fn render<S>(
         fc_run: &MeteoForecastRun2,
         fc_steps: &Vec<MeteoForecastRun2Step>,

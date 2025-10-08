@@ -1,4 +1,4 @@
-use crate::meteo_chart::forecast_renderer::temp_forecast_renderer::TempForecastRenderer;
+use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
@@ -67,14 +67,12 @@ impl IconCh1ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::Temp2m.get_name()) {
             info!("rendering temperature 2m forecast...");
-            //let fc_run_t2m = Self::get_forecast_run(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
-            //IconCh1TempForecastRenderer::render(&fc_run_t2m, &unstructured_grid, &step_filter)?;
             let fc_run_t2m = Self::get_forecast_run2(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             let fc_steps_t2m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
             let read_fn = |step: &MeteoForecastRun2Step| {
                 IconChT2mReader::read_layer_from_file(&step.get_file_url(), &unstructured_grid)
             };
-            TempForecastRenderer::render(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
+            Temp2mForecastRenderer::render(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
             info!("finished rendering temperature 2m forecast");
         }
 

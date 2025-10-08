@@ -7,7 +7,7 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::
 use crate::dwd::dwd_forecast_renderer::icon_d2_wind_10m_forecast_renderer::IconD2Wind10mForecastRenderer;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-use crate::meteo_chart::forecast_renderer::temp_forecast_renderer::TempForecastRenderer;
+use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
@@ -49,7 +49,7 @@ impl IconD2ForecastRenderer {
             let read_fn = |step: &MeteoForecastRun2Step| {
                 IconD2T2mReader::read_layer_from_file(&step)
             };
-            TempForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
+            Temp2mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
             info!("finished rendering temperature 2m forecast");
         }
 
