@@ -1,12 +1,12 @@
-use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
-use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::meteobin_type::MeteobinType;
 use crate::physics::temperature::Temperature;
 use log::info;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+
 
 pub struct TempMeteoBin {}
 
@@ -16,25 +16,6 @@ impl TempMeteoBin {
 
 
     pub fn create_meteobin_file(
-        layer: &MeteoTempLayer,
-        fc_run: &dyn MeteoForecastRun,
-        fc_step: usize,
-    ) {
-        let bin_data = Self::create_bin_values(layer);
-        let filename = format!(
-            "{}{}",
-            MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type()),
-            MeteobinType::Temp2m.get_output_file()
-        );
-
-        info!("writing temp meteobin file {}", &filename);
-
-        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create temp meteobin file"));
-        let _ = file.write_all(&bin_data);
-    }
-
-
-    pub fn create_meteobin_file2(
         layer: &MeteoTempLayer,
         fc_run: &MeteoForecastRun2,
         fc_step: usize,

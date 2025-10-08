@@ -33,10 +33,10 @@ impl TempForecastRenderer {
                 let layer = read_layer_fn(&fc_step)?;
 
                 // map tiles
-                let _ = TempChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
+                let _ = TempChartRenderer::render_map_tiles(&layer, fc_run, fc_step.get_step_nr());
 
                 // meteobin
-                let _ = TempMeteoBin::create_meteobin_file2(&layer, fc_run, fc_step.get_step_nr());
+                let _ = TempMeteoBin::create_meteobin_file(&layer, fc_run, fc_step.get_step_nr());
 
                 Ok(())
             })

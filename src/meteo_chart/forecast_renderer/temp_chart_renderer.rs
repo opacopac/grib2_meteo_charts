@@ -25,29 +25,7 @@ impl TempChartRenderer {
     }
 
 
-    pub fn render_map_tiles<S>(
-        temp_layer: &MeteoTempLayer,
-        zoom_range: (u32, u32),
-        save_fn: S,
-    ) -> Result<(), MeteoChartError>
-    where
-        S: Fn(&Drawable, u32, u32, u32) -> () + Sync,
-    {
-        let extent = temp_layer.get_lat_lon_extent();
-
-        let _ = MapTileRenderer::create_all_tiles(
-            extent,
-            zoom_range,
-            |pos| temp_layer.get_temp_by_lat_lon(pos),
-            |value| Self::color_fn(value),
-            save_fn,
-        )?;
-
-        Ok(())
-    }
-
-
-    pub fn render_map_tiles2(
+    pub fn render_map_tiles(
         temp_layer: &MeteoTempLayer,
         fc_run_temp: &MeteoForecastRun2,
         step_idx: usize,
