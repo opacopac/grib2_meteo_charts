@@ -2,8 +2,8 @@ use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::lat_lon_value_grid_interpolator::LatLonValueGridInterpolator;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
-use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 
 pub struct MeteoCloudPrecipLayer {
@@ -19,15 +19,15 @@ impl MeteoCloudPrecipLayer {
         cloud_value_grid: LatLonValueGrid<f32>,
         precip0_value_grid: LatLonValueGrid<f32>,
         precip1_value_grid: LatLonValueGrid<f32>,
-    ) -> Result<MeteoCloudPrecipLayer, MeteoLayerError> {
+    ) -> Result<MeteoCloudPrecipLayer, Grib2Error> {
         if cloud_value_grid.get_grid_dimensions() != precip0_value_grid.get_grid_dimensions() ||
             precip0_value_grid.get_grid_dimensions() != precip1_value_grid.get_grid_dimensions() {
-            return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
         }
 
         if cloud_value_grid.get_grid_lat_lon_extent() != precip0_value_grid.get_grid_lat_lon_extent() ||
             precip0_value_grid.get_grid_lat_lon_extent() != precip1_value_grid.get_grid_lat_lon_extent() {
-            return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
         }
 
         let layer = MeteoCloudPrecipLayer {

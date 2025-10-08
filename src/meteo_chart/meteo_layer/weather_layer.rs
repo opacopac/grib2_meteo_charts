@@ -1,7 +1,7 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
-use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
 
@@ -19,13 +19,13 @@ impl WeatherLayer {
         clct_grid: LatLonValueGrid<f32>,
         ceiling_grid: LatLonValueGrid<f32>,
         ww_grid: Option<LatLonValueGrid<f32>>,
-    ) -> Result<WeatherLayer, MeteoLayerError> {
+    ) -> Result<WeatherLayer, Grib2Error> {
         if clct_grid.get_grid_dimensions() != ceiling_grid.get_grid_dimensions() { // TODO: also check ww_grid if present
-            return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
         }
 
         if clct_grid.get_grid_lat_lon_extent() != ceiling_grid.get_grid_lat_lon_extent() { // TODO: also check ww_grid if present
-            return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
         }
 
         let layer = WeatherLayer {
