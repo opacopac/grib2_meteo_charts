@@ -11,7 +11,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
-
+use crate::grib2::common::grib2_error::Grib2Error;
 
 pub struct IconCh1TempForecastRenderer;
 
@@ -33,7 +33,7 @@ impl IconCh1TempForecastRenderer {
 
                 let fc_step_temp = &fc_run_temp.steps[step_idx];
                 let grid = IconChT2mReader::read_grid_from_file(&fc_step_temp.href, &unstructured_grid)?;
-                let layer = MeteoTempLayer::new(grid)?;
+                let layer = MeteoTempLayer::new(grid);
 
                 // map tiles
                 let zoom_range = IconCh1ForecastRendererHelper::get_zoom_range();
@@ -61,7 +61,7 @@ impl IconCh1TempForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), MeteoSwissError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, MeteoSwissError> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, Grib2Error> + Sync,
     {
         fc_steps_temp
             .par_iter()

@@ -3,15 +3,16 @@ use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRenderer
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2ForecastRendererHelper;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::forecast_renderer::temp_chart_renderer::TempChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
-use crate::dwd::common::dwd_error::DwdError;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+
 
 pub struct IconD2TempForecastRenderer;
 
@@ -32,7 +33,7 @@ impl IconD2TempForecastRenderer {
 
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let temp_grid = IconD2T2mReader::read_grid_from_file(&fc_step)?;
-                let layer = MeteoTempLayer::new(temp_grid)?;
+                let layer = MeteoTempLayer::new(temp_grid);
 
                 // map tiles
                 let _ = TempChartRenderer::render_map_tiles(
@@ -56,7 +57,7 @@ impl IconD2TempForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), ForecastRendererError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, DwdError> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, Grib2Error> + Sync,
     {
         fc_steps
             .par_iter()
@@ -73,7 +74,7 @@ impl IconD2TempForecastRenderer {
 
                 // meteobin
                 let _ = TempMeteoBin::create_meteobin_file2(&layer, fc_run, fc_step.get_step_nr());
-                
+
                 Ok(())
             })
     }
