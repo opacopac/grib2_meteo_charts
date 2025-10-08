@@ -27,17 +27,17 @@ impl TempChartRenderer {
 
     pub fn render_map_tiles(
         temp_layer: &MeteoTempLayer,
-        fc_run_temp: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun2,
         step_idx: usize,
     ) -> Result<(), MeteoChartError> {
-        let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step2(
-            tile, zoom, x, y, &temp_layer.get_type(), fc_run_temp, step_idx,
-        );
         let extent = temp_layer.get_lat_lon_extent();
+        let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step2(
+            tile, zoom, x, y, &temp_layer.get_type(), fc_run, step_idx,
+        );
 
         let _ = MapTileRenderer::create_all_tiles(
             extent,
-            fc_run_temp.get_model().get_zoom_range(),
+            fc_run.get_model().get_zoom_range(),
             |pos| temp_layer.get_temp_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,

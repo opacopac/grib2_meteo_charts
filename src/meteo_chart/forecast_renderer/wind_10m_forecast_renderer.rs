@@ -1,18 +1,18 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
-use crate::meteo_chart::forecast_renderer::temp_chart_renderer::TempChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
-use crate::metobin::temp_metobin::TempMeteoBin;
+use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
 
-pub struct Temp2mForecastRenderer;
+pub struct Wind10mForecastRenderer;
 
 
-impl Temp2mForecastRenderer {
+impl Wind10mForecastRenderer {
     pub fn render<S>(
         fc_run: &MeteoForecastRun2,
         fc_steps: &Vec<MeteoForecastRun2Step>,
@@ -20,7 +20,7 @@ impl Temp2mForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTempLayer, Grib2Error> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoWindLayer, Grib2Error> + Sync,
     {
         fc_steps
             .par_iter()
@@ -29,14 +29,14 @@ impl Temp2mForecastRenderer {
                     return Ok(());
                 }
 
-                info!("creating temperature 2m charts, time step {}", fc_step.get_step_nr());
+                info!("creating wind 10m charts, time step {}", fc_step.get_step_nr());
                 let layer = read_layer_fn(&fc_step)?;
 
                 // map tiles
-                let _ = TempChartRenderer::render_map_tiles(&layer, fc_run, fc_step.get_step_nr());
+                let _ = WindChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
 
                 // meteobin
-                let _ = TempMeteoBin::create_meteobin_file(&layer, fc_run, fc_step.get_step_nr());
+                let _ = WindMeteobin::create_meteobin_file2(&layer, fc_run, fc_step.get_step_nr());
 
                 Ok(())
             })

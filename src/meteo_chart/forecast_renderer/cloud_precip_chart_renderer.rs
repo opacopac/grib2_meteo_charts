@@ -1,8 +1,10 @@
 use crate::imaging::drawable::Drawable;
 use crate::map_tile::map_tile_renderer::MapTileRenderer;
+use crate::meteo_chart::forecast_renderer::map_tile_file_helper::MapTileFileHelper;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 
 
 pub struct CloudPrecipChartRenderer;
@@ -34,6 +36,28 @@ impl CloudPrecipChartRenderer {
         let _ = MapTileRenderer::create_all_tiles(
             extent,
             zoom_range,
+            |pos| cloud_layer.get_cloud_and_precip_by_lat_lon(pos),
+            |value| Self::color_fn(value),
+            save_fn,
+        )?;
+
+        Ok(())
+    }
+
+
+    pub fn render_map_tiles2(
+        cloud_layer: &MeteoCloudPrecipLayer,
+        fc_run: &MeteoForecastRun2,
+        step_idx: usize,
+    ) -> Result<(), MeteoChartError> {
+        let extent = cloud_layer.get_lat_lon_extent();
+        let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step2(
+            tile, zoom, x, y, &cloud_layer.get_type(), fc_run, step_idx,
+        );
+
+        let _ = MapTileRenderer::create_all_tiles(
+            extent,
+            fc_run.get_model().get_zoom_range(),
             |pos| cloud_layer.get_cloud_and_precip_by_lat_lon(pos),
             |value| Self::color_fn(value),
             save_fn,
