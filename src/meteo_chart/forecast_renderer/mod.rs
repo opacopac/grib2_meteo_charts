@@ -7,3 +7,5 @@ pub mod map_tile_file_helper;
 pub mod temp_2m_forecast_renderer;
 pub mod wind_10m_forecast_renderer;
 pub mod cloud_precip_forecast_renderer;
+pub mod vertical_wind_forecast_renderer;
+pub mod vertical_clouds_forecast_renderer;
