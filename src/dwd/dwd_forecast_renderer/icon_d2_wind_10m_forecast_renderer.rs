@@ -6,8 +6,8 @@ use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer_helper::IconD2F
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::forecast_renderer::wind_10m_chart_renderer::Wind10mChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
@@ -36,10 +36,10 @@ impl IconD2Wind10mForecastRenderer {
                 let wind_v_grid = IconD2V10mReader::read_grid_from_file(&fc_step)?;
                 let wind_v_max_grid = IconD2Vmax10mReader::read_grid_from_file(&fc_step)?;
 
-                let layer = MeteoWindLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid))?;
+                let layer = MeteoWind10mLayer::new(wind_u_grid, wind_v_grid, Some(wind_v_max_grid))?;
 
                 // map tiles
-                let _ = WindChartRenderer::render_map_tiles(
+                let _ = Wind10mChartRenderer::render_map_tiles(
                     &layer,
                     (0, 7),
                     |tile: &Drawable, zoom: u32, x: u32, y: u32| IconD2ForecastRendererHelper::save_tile_step(

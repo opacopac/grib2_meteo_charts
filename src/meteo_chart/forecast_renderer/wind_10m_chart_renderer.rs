@@ -3,18 +3,18 @@ use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::forecast_renderer::map_tile_file_helper::MapTileFileHelper;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 
 
-pub struct WindChartRenderer;
+pub struct Wind10mChartRenderer;
 
 
-impl WindChartRenderer {
+impl Wind10mChartRenderer {
     const KNOTS_TO_MPS: f32 = 0.514444;
 
 
-    pub fn render_full_chart(wind_layer: &MeteoWindLayer) -> Result<Drawable, MeteoChartError> {
+    pub fn render_full_chart(wind_layer: &MeteoWind10mLayer) -> Result<Drawable, MeteoChartError> {
         let dimensions = wind_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -28,7 +28,7 @@ impl WindChartRenderer {
 
 
     pub fn render_map_tiles<S>(
-        wind_layer: &MeteoWindLayer,
+        wind_layer: &MeteoWind10mLayer,
         zoom_range: (u32, u32),
         save_fn: S,
     ) -> Result<(), MeteoChartError> where
@@ -49,7 +49,7 @@ impl WindChartRenderer {
 
 
     pub fn render_map_tiles2(
-        wind_layer: &MeteoWindLayer,
+        wind_layer: &MeteoWind10mLayer,
         fc_run: &MeteoForecastRun2,
         step_idx: usize,
     ) -> Result<(), MeteoChartError> {

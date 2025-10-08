@@ -1,12 +1,12 @@
 pub mod meteo_cloud_layer;
 pub mod meteo_precip_layer;
-pub mod meteo_wind_layer;
+pub mod meteo_wind_10m_layer;
 pub mod meteo_cloud_precip_layer;
 pub mod weather_layer;
 pub mod weather_interpretation;
 pub mod meteo_hhl_layer;
 pub mod meteo_vertical_cloud_layer;
 pub mod meteo_vertical_wind_layer;
-pub mod meteo_temp_layer;
+pub mod meteo_temp_2m_layer;
 pub mod meteo_layer_type;
 pub mod meteo_layer_error;

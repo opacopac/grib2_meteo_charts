@@ -4,9 +4,9 @@ use meteo_grib2_renderer::grib2::converter::file_to_grid_converter::FileToGridCo
 use meteo_grib2_renderer::grib2::converter::grib2_to_grid_converter::Grib2ToGridConverter;
 use meteo_grib2_renderer::grib2::converter::unstructured_grid_converter::UnstructuredGridConverter;
 use meteo_grib2_renderer::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
-use meteo_grib2_renderer::meteo_chart::forecast_renderer::temp_chart_renderer::TempChartRenderer;
+use meteo_grib2_renderer::meteo_chart::forecast_renderer::temp_2m_chart_renderer::Temp2mChartRenderer;
 use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
-use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use meteo_grib2_renderer::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
 use meteo_grib2_renderer::physics::temperature::Temperature;
 use meteo_grib2_renderer::system::tstamp::TStamp;
 
@@ -62,10 +62,10 @@ fn it_successfully_renders_an_icon_ch1_temp_2m_chart() {
     let regular_grid = grid.create_regular_grid();
 
     TStamp::print_us("DwdTempLayer::new...");
-    let dwd_temp_layer = MeteoTempLayer::new(regular_grid);
+    let dwd_temp_layer = MeteoTemp2mLayer::new(regular_grid);
 
     TStamp::print_us("TempChartRenderer::render_full_chart...");
-    let drawable = TempChartRenderer::render_full_chart(&dwd_temp_layer).unwrap();
+    let drawable = Temp2mChartRenderer::render_full_chart(&dwd_temp_layer).unwrap();
 
     TStamp::print_us("Drawable::safe_image...");
     drawable.safe_image(T2M_CHART_OUTPUT_FILE).unwrap();

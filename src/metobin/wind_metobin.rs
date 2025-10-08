@@ -1,4 +1,4 @@
-use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
@@ -17,7 +17,7 @@ impl WindMeteobin {
 
 
     pub fn create_meteobin_file(
-        layer: &MeteoWindLayer,
+        layer: &MeteoWind10mLayer,
         fc_run: &dyn MeteoForecastRun,
         fc_step: usize,
     ) {
@@ -36,7 +36,7 @@ impl WindMeteobin {
 
 
     pub fn create_meteobin_file2(
-        layer: &MeteoWindLayer,
+        layer: &MeteoWind10mLayer,
         fc_run: &MeteoForecastRun2,
         fc_step: usize,
     ) {
@@ -54,7 +54,7 @@ impl WindMeteobin {
     }
 
 
-    fn create_bin_values(wind_layer: &MeteoWindLayer) -> Vec<u8> {
+    fn create_bin_values(wind_layer: &MeteoWind10mLayer) -> Vec<u8> {
         let dim = wind_layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {

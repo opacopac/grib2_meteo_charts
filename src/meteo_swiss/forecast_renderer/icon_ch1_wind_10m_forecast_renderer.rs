@@ -1,7 +1,7 @@
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::imaging::drawable::Drawable;
-use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::forecast_renderer::wind_10m_chart_renderer::Wind10mChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::file_reader::icon_ch_wind_u_10m_reader::IconChWindU10mReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_v_10m_reader::IconChWindV10mReader;
@@ -41,10 +41,10 @@ impl IconCh1Wind10mForecastRenderer {
                 let wind_v10m_grid = IconChWindV10mReader::read_grid_from_file(&fc_step_v10m.href, &unstructured_grid)?;
                 let wind_vmax10m_grid = IconChWindVmax10mReader::read_grid_from_file(&fc_step_vmax10m.href, &unstructured_grid)?;
 
-                let layer = MeteoWindLayer::new(wind_u10m_grid, wind_v10m_grid, Some(wind_vmax10m_grid))?;
+                let layer = MeteoWind10mLayer::new(wind_u10m_grid, wind_v10m_grid, Some(wind_vmax10m_grid))?;
 
                 // map tiles
-                let _ = WindChartRenderer::render_map_tiles(
+                let _ = Wind10mChartRenderer::render_map_tiles(
                     &layer,
                     IconCh1ForecastRendererHelper::get_zoom_range(),
                     |tile: &Drawable, zoom: u32, x: u32, y: u32| IconCh1ForecastRendererHelper::save_tile_step(

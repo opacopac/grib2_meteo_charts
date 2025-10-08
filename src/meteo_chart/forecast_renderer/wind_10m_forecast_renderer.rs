@@ -1,7 +1,7 @@
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
-use crate::meteo_chart::forecast_renderer::wind_chart_renderer::WindChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_wind_layer::MeteoWindLayer;
+use crate::meteo_chart::forecast_renderer::wind_10m_chart_renderer::Wind10mChartRenderer;
+use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 use crate::metobin::wind_metobin::WindMeteobin;
@@ -20,7 +20,7 @@ impl Wind10mForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoWindLayer, Grib2Error> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoWind10mLayer, Grib2Error> + Sync,
     {
         fc_steps
             .par_iter()
@@ -33,7 +33,7 @@ impl Wind10mForecastRenderer {
                 let layer = read_layer_fn(&fc_step)?;
 
                 // map tiles
-                let _ = WindChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
+                let _ = Wind10mChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
 
                 // meteobin
                 let _ = WindMeteobin::create_meteobin_file2(&layer, fc_run, fc_step.get_step_nr());

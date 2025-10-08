@@ -1,4 +1,4 @@
-use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
 use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::meteobin_type::MeteobinType;
@@ -15,7 +15,7 @@ impl TempMeteoBin {
 
 
     pub fn create_meteobin_file(
-        layer: &MeteoTempLayer,
+        layer: &MeteoTemp2mLayer,
         fc_run: &MeteoForecastRun2,
         fc_step: usize,
     ) {
@@ -33,7 +33,7 @@ impl TempMeteoBin {
     }
 
 
-    fn create_bin_values(layer: &MeteoTempLayer) -> Vec<u8> {
+    fn create_bin_values(layer: &MeteoTemp2mLayer) -> Vec<u8> {
         let dim = layer.get_grid_dimensions();
         let mut out_values = vec![];
         for y in 0..dim.1 {

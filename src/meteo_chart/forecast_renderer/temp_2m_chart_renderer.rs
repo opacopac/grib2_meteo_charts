@@ -3,16 +3,16 @@ use crate::map_tile::map_tile_renderer::MapTileRenderer;
 use crate::meteo_chart::forecast_renderer::map_tile_file_helper::MapTileFileHelper;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
-use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::physics::temperature::Temperature;
 
 
-pub struct TempChartRenderer;
+pub struct Temp2mChartRenderer;
 
 
-impl TempChartRenderer {
-    pub fn render_full_chart(temp_layer: &MeteoTempLayer) -> Result<Drawable, MeteoChartError> {
+impl Temp2mChartRenderer {
+    pub fn render_full_chart(temp_layer: &MeteoTemp2mLayer) -> Result<Drawable, MeteoChartError> {
         let dimensions = temp_layer.get_grid_dimensions();
         let drawable = SingleChartRenderer::render(
             dimensions.0 as u32,
@@ -26,7 +26,7 @@ impl TempChartRenderer {
 
 
     pub fn render_map_tiles(
-        temp_layer: &MeteoTempLayer,
+        temp_layer: &MeteoTemp2mLayer,
         fc_run: &MeteoForecastRun2,
         step_idx: usize,
     ) -> Result<(), MeteoChartError> {

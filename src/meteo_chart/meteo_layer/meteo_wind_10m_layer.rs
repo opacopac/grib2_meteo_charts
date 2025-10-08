@@ -1,11 +1,11 @@
 use crate::geo::common::lat_lon::LatLon;
 use crate::geo::common::lat_lon_extent::LatLonExtent;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
-use crate::meteo_chart::meteo_layer::meteo_layer_error::MeteoLayerError;
 
 
-pub struct MeteoWindLayer {
+pub struct MeteoWind10mLayer {
     layer_type: MeteoLayerType,
     zonal_value_grid: LatLonValueGrid<f32>,
     meridional_value_grid: LatLonValueGrid<f32>,
@@ -13,31 +13,31 @@ pub struct MeteoWindLayer {
 }
 
 
-impl MeteoWindLayer {
+impl MeteoWind10mLayer {
     pub fn new(
         zonal_value_grid: LatLonValueGrid<f32>,
         meridional_value_grid: LatLonValueGrid<f32>,
         gusts_value_grid: Option<LatLonValueGrid<f32>>,
-    ) -> Result<MeteoWindLayer, MeteoLayerError> {
+    ) -> Result<MeteoWind10mLayer, Grib2Error> {
         if zonal_value_grid.get_grid_dimensions() != meridional_value_grid.get_grid_dimensions() {
-            return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
         }
 
         if zonal_value_grid.get_grid_lat_lon_extent() != meridional_value_grid.get_grid_lat_lon_extent() {
-            return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
+            return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
         }
 
         if let Some(gusts_grid) = &gusts_value_grid {
             if gusts_grid.get_grid_dimensions() != zonal_value_grid.get_grid_dimensions() {
-                return Err(MeteoLayerError::InvalidData("grids have different dimensions".to_string()));
+                return Err(Grib2Error::InvalidData("grids have different dimensions".to_string()));
             }
 
             if gusts_grid.get_grid_lat_lon_extent() != zonal_value_grid.get_grid_lat_lon_extent() {
-                return Err(MeteoLayerError::InvalidData("grids have different lat lon extents".to_string()));
+                return Err(Grib2Error::InvalidData("grids have different lat lon extents".to_string()));
             }
         }
 
-        let layer = MeteoWindLayer {
+        let layer = MeteoWind10mLayer {
             layer_type: MeteoLayerType::Wind10m,
             zonal_value_grid,
             meridional_value_grid,
@@ -46,8 +46,8 @@ impl MeteoWindLayer {
 
         Ok(layer)
     }
-    
-    
+
+
     pub fn get_type(&self) -> &MeteoLayerType {
         &self.layer_type
     }

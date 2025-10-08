@@ -10,4 +10,7 @@ pub enum DwdError {
 
     #[error(transparent)]
     MeteoLayerError(#[from] MeteoLayerError),
+
+    #[error("invalid data: {0}")]
+    InvalidData(String),
 }

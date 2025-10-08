@@ -3,7 +3,7 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
-use crate::meteo_chart::meteo_layer::meteo_temp_layer::MeteoTempLayer;
+use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 
@@ -16,9 +16,9 @@ const MISSING_VALUE: f32 = -1.0;
 
 
 impl IconD2T2mReader {
-    pub fn read_layer_from_file(fc_step: &MeteoForecastRun2Step) -> Result<MeteoTempLayer, Grib2Error> {
+    pub fn read_layer_from_file(fc_step: &MeteoForecastRun2Step) -> Result<MeteoTemp2mLayer, Grib2Error> {
         let grid = Self::read_grid_from_file(fc_step)?;
-        let layer = MeteoTempLayer::new(grid);
+        let layer = MeteoTemp2mLayer::new(grid);
 
         Ok(layer)
     }

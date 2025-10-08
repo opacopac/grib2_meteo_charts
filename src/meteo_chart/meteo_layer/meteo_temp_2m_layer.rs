@@ -4,17 +4,17 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 
 
-pub struct MeteoTempLayer {
+pub struct MeteoTemp2mLayer {
     layer_type: MeteoLayerType,
     temp_value_grid: LatLonValueGrid<f32>,
 }
 
 
-impl MeteoTempLayer {
+impl MeteoTemp2mLayer {
     pub fn new(
         temp_value_grid: LatLonValueGrid<f32>
-    ) -> MeteoTempLayer {
-        let layer = MeteoTempLayer {
+    ) -> MeteoTemp2mLayer {
+        let layer = MeteoTemp2mLayer {
             layer_type: MeteoLayerType::Temp2m,
             temp_value_grid,
         };

@@ -12,7 +12,7 @@ struct Args {
     #[arg(short, long)]
     model: String,
 
-    /// name of the variables to render (e.g. wind, temp, cloud-precip) or empty for all
+    /// name of the variables to render (e.g. wind_10m, temp_2m, cloud_precip) or empty for all
     #[arg(short, long, num_args = 1..)]
     variables: Vec<String>,
     
