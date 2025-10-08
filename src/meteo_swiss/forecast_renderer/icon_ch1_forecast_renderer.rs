@@ -1,3 +1,4 @@
+use crate::meteo_chart::forecast_renderer::temp_forecast_renderer::TempForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
@@ -11,7 +12,6 @@ use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::file_reader::icon_ch_hor_const_reader::IconHorConstReader;
 use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_cloud_precip_forecast_renderer::IconCh1CloudPrecipRenderer;
-use crate::meteo_swiss::forecast_renderer::icon_ch1_temp_forecast_renderer::IconCh1TempForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch1_wind_10m_forecast_renderer::IconCh1Wind10mForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_wind_forecast_renderer::IconCh1VerticalWindForecastRenderer;
@@ -21,6 +21,7 @@ use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use log::info;
+
 
 pub struct IconCh1ForecastRenderer;
 
@@ -73,7 +74,7 @@ impl IconCh1ForecastRenderer {
             let read_fn = |step: &MeteoForecastRun2Step| {
                 IconChT2mReader::read_layer_from_file(&step.get_file_url(), &unstructured_grid)
             };
-            IconCh1TempForecastRenderer::render2(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
+            TempForecastRenderer::render(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
             info!("finished rendering temperature 2m forecast");
         }
 

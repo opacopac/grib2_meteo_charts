@@ -5,3 +5,4 @@ pub mod temp_chart_renderer;
 pub mod meteo_chart_error;
 pub mod map_tile_file_helper;
 pub mod metobin_file_helper;
+pub mod temp_forecast_renderer;
