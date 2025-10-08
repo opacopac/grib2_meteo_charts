@@ -1,3 +1,4 @@
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
@@ -83,27 +84,13 @@ impl IconCh1ForecastRenderer {
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
-                let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
-                IconCh1VerticalCloudForecastRenderer::render(
-                    &fc_run_clc,
-                    &unstructured_grid,
-                    &hhl_grids,
-                    &step_filter,
-                )?;
+                Self::render_vertical_clouds_forecast(&step_filter, &unstructured_grid, &date_ref, &hhl_grids)?;
                 info!("finished rendering vertical cloud forecast");
             }
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
                 info!("rendering vertical wind forecast...");
-                let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
-                let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
-                IconCh1VerticalWindForecastRenderer::render(
-                    &fc_run_u,
-                    &fc_run_v,
-                    &unstructured_grid,
-                    &hhl_grids,
-                    &step_filter,
-                )?;
+                Self::render_vertical_wind_forecast(&step_filter, &unstructured_grid, &date_ref, &hhl_grids)?;
                 info!("finished rendering vertical cloud forecast");
             }
         }
@@ -184,6 +171,32 @@ impl IconCh1ForecastRenderer {
 
         Temp2mForecastRenderer::render(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
 
+        Ok(())
+    }
+
+
+    fn render_vertical_clouds_forecast(step_filter: &&Vec<usize>, unstructured_grid: &UnstructuredGrid, date_ref: &IconChForecastReferenceDateTime, hhl_grids: &Vec<LatLonValueGrid<u8>>) -> Result<(), MeteoSwissError> {
+        let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+        IconCh1VerticalCloudForecastRenderer::render(
+            &fc_run_clc,
+            &unstructured_grid,
+            &hhl_grids,
+            &step_filter,
+        )?;
+        Ok(())
+    }
+
+
+    fn render_vertical_wind_forecast(step_filter: &&Vec<usize>, unstructured_grid: &UnstructuredGrid, date_ref: &IconChForecastReferenceDateTime, hhl_grids: &Vec<LatLonValueGrid<u8>>) -> Result<(), MeteoSwissError> {
+        let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
+        let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
+        IconCh1VerticalWindForecastRenderer::render(
+            &fc_run_u,
+            &fc_run_v,
+            &unstructured_grid,
+            &hhl_grids,
+            &step_filter,
+        )?;
         Ok(())
     }
 
