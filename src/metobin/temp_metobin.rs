@@ -7,7 +7,6 @@ use log::info;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 
-
 pub struct TempMeteoBin {}
 
 

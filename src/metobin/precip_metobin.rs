@@ -1,6 +1,7 @@
-use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
+use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::meteobin_type::MeteobinType;
 use log::info;
 use std::fs::File;
@@ -23,6 +24,25 @@ impl PrecipMeteoBin {
         let filename = format!(
             "{}{}",
             MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type()),
+            MeteobinType::Precip.get_output_file()
+        );
+
+        info!("writing precip meteobin file {}", &filename);
+
+        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create precip meteobin file"));
+        let _ = file.write_all(&bin_data);
+    }
+
+
+    pub fn create_meteobin_file2(
+        layer: &MeteoCloudPrecipLayer,
+        fc_run: &MeteoForecastRun2,
+        fc_step: usize,
+    ) {
+        let bin_data = Self::create_bin_values(layer);
+        let filename = format!(
+            "{}{}",
+            MeteoForecastFileHelper::get_output_path2(fc_run, fc_step, layer.get_type()),
             MeteobinType::Precip.get_output_file()
         );
 
