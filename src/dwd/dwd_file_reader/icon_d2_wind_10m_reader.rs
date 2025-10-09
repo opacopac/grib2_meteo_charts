@@ -15,9 +15,9 @@ impl IconD2Wind10mReader {
         fc_step_v10m: &MeteoForecastRun2Step,
         fc_step_vmax10m: &MeteoForecastRun2Step,
     ) -> Result<MeteoWind10mLayer, DwdError> {
-        let grid_u = IconD2U10mReader::read_grid_from_file2(fc_step_u10m)?;
-        let grid_v = IconD2V10mReader::read_grid_from_file2(fc_step_v10m)?;
-        let grid_gusts = IconD2Vmax10mReader::read_grid_from_file2(fc_step_vmax10m)?;
+        let grid_u = IconD2U10mReader::read_grid_from_file(fc_step_u10m)?;
+        let grid_v = IconD2V10mReader::read_grid_from_file(fc_step_v10m)?;
+        let grid_gusts = IconD2Vmax10mReader::read_grid_from_file(fc_step_vmax10m)?;
 
         let layer = MeteoWind10mLayer::new(grid_u, grid_v, Some(grid_gusts))?;
 

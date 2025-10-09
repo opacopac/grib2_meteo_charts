@@ -1,10 +1,10 @@
-use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+
 
 pub struct IconD2U10mReader;
 
@@ -15,16 +15,7 @@ const MISSING_VALUE: f32 = -1.0;
 
 
 impl IconD2U10mReader {
-    pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, DwdError> {
-        let url = Self::get_file_url(&fc_step);
-        let missing_value = MISSING_VALUE;
-        let grid = FileToGridConverter::read_rectangular_grid_from_file(&url, missing_value)?;
-
-        Ok(grid)
-    }
-
-
-    pub fn read_grid_from_file2(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    pub fn read_grid_from_file(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let missing_value = MISSING_VALUE;
         let grid = FileToGridConverter::read_rectangular_grid_from_file(&fc_step.get_file_url(), missing_value)?;
 

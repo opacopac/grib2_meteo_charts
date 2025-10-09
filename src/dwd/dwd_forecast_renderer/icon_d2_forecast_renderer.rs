@@ -98,9 +98,9 @@ impl IconD2ForecastRenderer {
             let v10m_step = &fc_steps_v10m[step_idx];
             let vmax10m_step = &fc_steps_vmax10m[step_idx];
 
-            let u10m_grid = IconD2U10mReader::read_grid_from_file2(&u10m_step)?;
-            let v10m_grid = IconD2V10mReader::read_grid_from_file2(&v10m_step)?;
-            let vmax10m_grid = IconD2Vmax10mReader::read_grid_from_file2(&vmax10m_step)?;
+            let u10m_grid = IconD2U10mReader::read_grid_from_file(&u10m_step)?;
+            let v10m_grid = IconD2V10mReader::read_grid_from_file(&v10m_step)?;
+            let vmax10m_grid = IconD2Vmax10mReader::read_grid_from_file(&vmax10m_step)?;
 
             MeteoWind10mLayer::new(u10m_grid, v10m_grid, Some(vmax10m_grid))
         };

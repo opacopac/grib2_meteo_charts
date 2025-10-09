@@ -15,15 +15,7 @@ const MISSING_VALUE: f32 = -1.0;
 
 
 impl IconD2Vmax10mReader {
-    pub fn read_grid_from_file(fc_step: &DwdForecastStep) -> Result<LatLonValueGrid<f32>, DwdError> {
-        let url = Self::get_file_url(&fc_step);
-        let grid = FileToGridConverter::read_rectangular_grid_from_file(&url, MISSING_VALUE)?;
-
-        Ok(grid)
-    }
-
-
-    pub fn read_grid_from_file2(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    pub fn read_grid_from_file(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let grid = FileToGridConverter::read_rectangular_grid_from_file(&fc_step.get_file_url(), MISSING_VALUE)?;
 
         Ok(grid)
