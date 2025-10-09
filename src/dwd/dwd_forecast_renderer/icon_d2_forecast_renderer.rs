@@ -2,6 +2,7 @@ use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_wind_10m_reader::IconD2Wind10mReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_cloud_precip_forecast_renderer::IconD2CloudPrecipRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
@@ -12,7 +13,6 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
-use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
@@ -98,11 +98,11 @@ impl IconD2ForecastRenderer {
             let v10m_step = &fc_steps_v10m[step_idx];
             let vmax10m_step = &fc_steps_vmax10m[step_idx];
 
-            let u10m_grid = IconD2U10mReader::read_grid_from_file(&u10m_step)?;
-            let v10m_grid = IconD2V10mReader::read_grid_from_file(&v10m_step)?;
-            let vmax10m_grid = IconD2Vmax10mReader::read_grid_from_file(&vmax10m_step)?;
-
-            MeteoWind10mLayer::new(u10m_grid, v10m_grid, Some(vmax10m_grid))
+            IconD2Wind10mReader::read_layer_from_files(
+                u10m_step,
+                v10m_step,
+                vmax10m_step,
+            )
         };
 
         Wind10mForecastRenderer::render(&fc_run, &fc_steps_u10m, &step_filter, read_fn)?;
