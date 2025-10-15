@@ -1,15 +1,20 @@
+use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::IconD2CeilingReader;
+use crate::dwd::dwd_file_reader::icon_d2_cloud_precip_reader::IconD2CloudPrecipReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
+use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_weather_reader::IconD2WeatherReader;
 use crate::dwd::dwd_file_reader::icon_d2_wind_10m_reader::IconD2Wind10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
-use crate::dwd::dwd_forecast_renderer::icon_d2_cloud_precip_forecast_renderer::IconD2CloudPrecipRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_cloud_forecast_renderer::IconD2VerticalCloudForecastRenderer;
 use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::IconD2VerticalWindForecastRenderer;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
@@ -33,11 +38,16 @@ impl IconD2ForecastRenderer {
         let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
         info!("latest run found: {:?}", &latest_run);
 
-        let fc_run = Self::get_forecast_run(&latest_run)?;
+        let fc_run = MeteoForecastRun2::new(
+            MeteoForecastModel::IconD2,
+            latest_run.start_date,
+            latest_run.run_name.get_name(),
+        );
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
-            IconD2CloudPrecipRenderer::render(&latest_run, &step_filter)?;
+            //IconD2CloudPrecipRenderer::render(&latest_run, &step_filter)?;
+            Self::render_cloud_precip_forecast(&step_filter, &latest_run, &fc_run)?;
             info!("finished rendering cloud & precipitation forecast");
         }
 
@@ -69,21 +79,45 @@ impl IconD2ForecastRenderer {
     }
 
 
-    fn get_forecast_run(
-        dwd_run: &DwdForecastRun
-    ) -> Result<MeteoForecastRun2, ForecastRendererError> {
-        let run = MeteoForecastRun2::new(
-            MeteoForecastModel::IconD2,
-            dwd_run.start_date,
-            dwd_run.run_name.get_name(),
-        );
+    fn render_cloud_precip_forecast(
+        step_filter: &Vec<usize>,
+        latest_run: &DwdForecastRun,
+        fc_run: &MeteoForecastRun2,
+    ) -> Result<(), ForecastRendererError> {
+        let fc_steps_clct = Self::get_forecast_steps(&latest_run, IconD2TotPrecReader::get_file_url)?;
+        let fc_steps_prec = Self::get_forecast_steps(&latest_run, IconD2TotPrecReader::get_file_url)?;
+        let fc_steps_ceiling = Self::get_forecast_steps(&latest_run, IconD2CeilingReader::get_file_url)?;
+        let fc_steps_ww = Self::get_forecast_steps(&latest_run, IconD2WwReader::get_file_url)?;
 
-        Ok(run)
+        let read_fn = |clct_step: &MeteoForecastRun2Step| {
+            let step_idx = clct_step.get_step_nr();
+            let precip_step0 = &fc_steps_prec[step_idx - 1];
+            let precip_step1 = &fc_steps_prec[step_idx];
+            let ceiling_step = &fc_steps_ceiling[step_idx];
+            let ww_step = &fc_steps_ww[step_idx];
+
+            let cloud_precip_layer = IconD2CloudPrecipReader::read_layer_from_files(
+                clct_step,
+                precip_step0,
+                precip_step1,
+            )?;
+            let weather_layer = IconD2WeatherReader::read_layer_from_files(
+                clct_step,
+                ceiling_step,
+                ww_step,
+            )?;
+
+            Ok((cloud_precip_layer, weather_layer))
+        };
+
+        CloudPrecipForecastRenderer::render(&fc_run, &fc_steps_clct, &step_filter, read_fn)?;
+
+        Ok(())
     }
 
 
     fn render_temp2m_forecast(
-        step_filter: &&Vec<usize>,
+        step_filter: &Vec<usize>,
         latest_run: &DwdForecastRun,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
@@ -99,7 +133,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_wind10m_forecast(
-        step_filter: &&Vec<usize>,
+        step_filter: &Vec<usize>,
         latest_run: &DwdForecastRun,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
