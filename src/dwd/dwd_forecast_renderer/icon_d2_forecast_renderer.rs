@@ -69,12 +69,25 @@ impl IconD2ForecastRenderer {
     }
 
 
+    fn get_forecast_run(
+        dwd_run: &DwdForecastRun
+    ) -> Result<MeteoForecastRun2, ForecastRendererError> {
+        let run = MeteoForecastRun2::new(
+            MeteoForecastModel::IconD2,
+            dwd_run.start_date,
+            dwd_run.run_name.get_name(),
+        );
+
+        Ok(run)
+    }
+
+
     fn render_temp2m_forecast(
         step_filter: &&Vec<usize>,
         latest_run: &DwdForecastRun,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_temp_forecast_steps(&latest_run)?;
+        let fc_steps = Self::get_forecast_steps(&latest_run, IconD2T2mReader::get_file_url)?;
         let read_fn = |step: &MeteoForecastRun2Step| {
             IconD2T2mReader::read_layer_from_file(&step)
         };
@@ -90,9 +103,9 @@ impl IconD2ForecastRenderer {
         latest_run: &DwdForecastRun,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps_u10m = Self::get_u10m_forecast_steps(latest_run)?;
-        let fc_steps_v10m = Self::get_v10m_forecast_steps(latest_run)?;
-        let fc_steps_vmax10m = Self::get_vmax10m_forecast_steps(latest_run)?;
+        let fc_steps_u10m = Self::get_forecast_steps(latest_run, IconD2U10mReader::get_file_url)?;
+        let fc_steps_v10m = Self::get_forecast_steps(latest_run, IconD2V10mReader::get_file_url)?;
+        let fc_steps_vmax10m = Self::get_forecast_steps(latest_run, IconD2Vmax10mReader::get_file_url)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
             let step_idx = u10m_step.get_step_nr();
             let v10m_step = &fc_steps_v10m[step_idx];
@@ -111,88 +124,17 @@ impl IconD2ForecastRenderer {
     }
 
 
-    fn get_forecast_run(
-        dwd_run: &DwdForecastRun
-    ) -> Result<MeteoForecastRun2, ForecastRendererError> {
-        let run = MeteoForecastRun2::new(
-            MeteoForecastModel::IconD2,
-            dwd_run.start_date,
-            dwd_run.run_name.get_name(),
-        );
-
-        Ok(run)
-    }
-
-
-    fn get_u10m_forecast_steps(
-        dwd_run: &DwdForecastRun
+    fn get_forecast_steps(
+        dwd_run: &DwdForecastRun,
+        fn_get_url: fn(&DwdForecastStep) -> String,
     ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
         let steps = MeteoForecastModel::IconD2
             .get_step_range()
             .into_iter()
             .map(|step_nr| {
                 let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);
-                MeteoForecastRun2Step::new(
-                    step_nr,
-                    IconD2U10mReader::get_file_url(&dwd_step),
-                )
-            })
-            .collect();
-
-        Ok(steps)
-    }
-
-
-    fn get_v10m_forecast_steps(
-        dwd_run: &DwdForecastRun
-    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
-        let steps = MeteoForecastModel::IconD2
-            .get_step_range()
-            .into_iter()
-            .map(|step_nr| {
-                let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);
-                MeteoForecastRun2Step::new(
-                    step_nr,
-                    IconD2V10mReader::get_file_url(&dwd_step),
-                )
-            })
-            .collect();
-
-        Ok(steps)
-    }
-
-
-    fn get_vmax10m_forecast_steps(
-        dwd_run: &DwdForecastRun
-    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
-        let steps = MeteoForecastModel::IconD2
-            .get_step_range()
-            .into_iter()
-            .map(|step_nr| {
-                let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);
-                MeteoForecastRun2Step::new(
-                    step_nr,
-                    IconD2Vmax10mReader::get_file_url(&dwd_step),
-                )
-            })
-            .collect();
-
-        Ok(steps)
-    }
-
-
-    fn get_temp_forecast_steps(
-        dwd_run: &DwdForecastRun
-    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
-        let steps = MeteoForecastModel::IconD2
-            .get_step_range()
-            .into_iter()
-            .map(|step_nr| {
-                let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);
-                MeteoForecastRun2Step::new(
-                    step_nr,
-                    IconD2T2mReader::get_file_url(&dwd_step),
-                )
+                let file_url = fn_get_url(&dwd_step);
+                MeteoForecastRun2Step::new(step_nr, file_url)
             })
             .collect();
 
