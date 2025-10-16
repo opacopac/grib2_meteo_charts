@@ -1,8 +1,9 @@
-use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use log::info;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
@@ -18,10 +19,22 @@ const MISSING_VALUE: u8 = 0;
 
 
 impl IconD2ClcReader {
+    pub fn read_layer_from_file(
+        fc_step: &DwdForecastStep,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
+        vertical_level_range: &RangeInclusive<u8>,
+    ) -> Result<MeteoVerticalCloudLayer, Grib2Error> {
+        let clc_grids = Self::read_clc_grids(fc_step, vertical_level_range)?;
+        let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
+
+        Ok(layer)
+    }
+
+
     pub fn read_clc_grids(
         fc_step: &DwdForecastStep,
         vertical_level_range: &RangeInclusive<u8>,
-    ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
+    ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
         let transform_fn = |x| x as u8;
 
         info!("reading clc grids...");

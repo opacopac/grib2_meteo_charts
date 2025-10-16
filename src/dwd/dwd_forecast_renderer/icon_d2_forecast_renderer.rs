@@ -1,5 +1,7 @@
+use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::IconD2CeilingReader;
 use crate::dwd::dwd_file_reader::icon_d2_cloud_precip_reader::IconD2CloudPrecipReader;
+use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
@@ -22,7 +24,6 @@ use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 use log::info;
-
 
 pub struct IconD2ForecastRenderer;
 
@@ -62,16 +63,21 @@ impl IconD2ForecastRenderer {
             info!("finished rendering temperature 2m forecast");
         }
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
-            info!("rendering vertical cloud forecast...");
-            Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &fc_run)?;
-            info!("finished rendering vertical cloud forecast");
-        }
+        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
+            let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
+            let hhl_grids = IconD2HhlReader::read_hhl_grids(&latest_run, &vertical_levels)?;
 
-        if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
-            info!("rendering vertical wind forecast...");
-            Self::render_vertical_wind_forecast(&step_filter, &latest_run, &fc_run)?;
-            info!("finished rendering vertical cloud forecast");
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
+                info!("rendering vertical cloud forecast...");
+                Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &fc_run)?;
+                info!("finished rendering vertical cloud forecast");
+            }
+
+            if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
+                info!("rendering vertical wind forecast...");
+                Self::render_vertical_wind_forecast(&step_filter, &latest_run, &fc_run)?;
+                info!("finished rendering vertical cloud forecast");
+            }
         }
 
         Ok(())
@@ -162,6 +168,17 @@ impl IconD2ForecastRenderer {
         latest_run: &DwdForecastRun,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
+        /*let read_fn = |step: &MeteoForecastRun2Step| {
+            let step_idx = step.get_step_nr();
+            IconD2ClcReader::read_layer_from_file(
+                step,
+                &IconD2HhlReader::read_hhl_grid_from_file(
+                    &DwdForecastStep::new_from_run(&latest_run, step_idx),
+                    &IconD2ModelConfig::get_vertical_level_range(),
+                )?,
+            )
+        };*/
+
         IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)
     }
 

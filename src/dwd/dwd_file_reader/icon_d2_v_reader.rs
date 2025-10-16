@@ -1,7 +1,7 @@
-use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
+use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::physics::speed::Speed;
 use log::info;
@@ -22,7 +22,7 @@ impl IconD2VReader {
     pub fn read_v_grids(
         fc_step: &DwdForecastStep,
         vertical_level_range: &RangeInclusive<u8>,
-    ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
+    ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
         let transform_fn = |x: f32| (Speed::from_mps_to_knots(x) + 128.0).round().min(254.0).max(0.0) as u8;
 
         info!("reading v grids...");
