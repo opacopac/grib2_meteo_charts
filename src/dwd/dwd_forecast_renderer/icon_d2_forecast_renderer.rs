@@ -64,13 +64,13 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
             info!("rendering vertical cloud forecast...");
-            IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)?;
+            Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &fc_run)?;
             info!("finished rendering vertical cloud forecast");
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
             info!("rendering vertical wind forecast...");
-            IconD2VerticalWindForecastRenderer::render(&latest_run, &step_filter)?;
+            Self::render_vertical_wind_forecast(&step_filter, &latest_run, &fc_run)?;
             info!("finished rendering vertical cloud forecast");
         }
 
@@ -115,22 +115,6 @@ impl IconD2ForecastRenderer {
     }
 
 
-    fn render_temp2m_forecast(
-        step_filter: &Vec<usize>,
-        latest_run: &DwdForecastRun,
-        fc_run: &MeteoForecastRun2,
-    ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps(&latest_run, IconD2T2mReader::get_file_url)?;
-        let read_fn = |step: &MeteoForecastRun2Step| {
-            IconD2T2mReader::read_layer_from_file(&step)
-        };
-
-        Temp2mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
-
-        Ok(())
-    }
-
-
     fn render_wind10m_forecast(
         step_filter: &Vec<usize>,
         latest_run: &DwdForecastRun,
@@ -154,6 +138,40 @@ impl IconD2ForecastRenderer {
         Wind10mForecastRenderer::render(&fc_run, &fc_steps_u10m, &step_filter, read_fn)?;
 
         Ok(())
+    }
+
+
+    fn render_temp2m_forecast(
+        step_filter: &Vec<usize>,
+        latest_run: &DwdForecastRun,
+        fc_run: &MeteoForecastRun2,
+    ) -> Result<(), ForecastRendererError> {
+        let fc_steps = Self::get_forecast_steps(&latest_run, IconD2T2mReader::get_file_url)?;
+        let read_fn = |step: &MeteoForecastRun2Step| {
+            IconD2T2mReader::read_layer_from_file(&step)
+        };
+
+        Temp2mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
+
+        Ok(())
+    }
+
+
+    fn render_vertical_clouds_forecast(
+        step_filter: &Vec<usize>,
+        latest_run: &DwdForecastRun,
+        fc_run: &MeteoForecastRun2,
+    ) -> Result<(), ForecastRendererError> {
+        IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)
+    }
+
+
+    fn render_vertical_wind_forecast(
+        step_filter: &Vec<usize>,
+        latest_run: &DwdForecastRun,
+        fc_run: &MeteoForecastRun2,
+    ) -> Result<(), ForecastRendererError> {
+        IconD2VerticalWindForecastRenderer::render(&latest_run, &step_filter)
     }
 
 
