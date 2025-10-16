@@ -36,7 +36,7 @@ impl Wind10mForecastRenderer {
                 let _ = Wind10mChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
 
                 // meteobin
-                let _ = WindMeteobin::create_meteobin_file2(&layer, fc_run, fc_step.get_step_nr());
+                let _ = WindMeteobin::create_meteobin_file(&layer, fc_run, fc_step.get_step_nr());
 
                 Ok(())
             })

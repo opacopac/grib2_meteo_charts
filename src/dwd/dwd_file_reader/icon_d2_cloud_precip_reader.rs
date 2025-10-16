@@ -14,9 +14,9 @@ impl IconD2CloudPrecipReader {
         fc_step_precip0: &MeteoForecastRun2Step,
         fc_step_precip1: &MeteoForecastRun2Step,
     ) -> Result<MeteoCloudPrecipLayer, Grib2Error> {
-        let grid_clct = IconD2ClctModReader::read_grid_from_file2(fc_step_clct)?;
-        let grid_precip0 = IconD2TotPrecReader::read_grid_from_file2(fc_step_precip0)?;
-        let grid_precip1 = IconD2TotPrecReader::read_grid_from_file2(fc_step_precip1)?;
+        let grid_clct = IconD2ClctModReader::read_grid_from_file(fc_step_clct)?;
+        let grid_precip0 = IconD2TotPrecReader::read_grid_from_file(fc_step_precip0)?;
+        let grid_precip1 = IconD2TotPrecReader::read_grid_from_file(fc_step_precip1)?;
 
         let layer = MeteoCloudPrecipLayer::new(grid_clct, grid_precip0, grid_precip1)?;
 

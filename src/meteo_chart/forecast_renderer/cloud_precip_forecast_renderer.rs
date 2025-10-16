@@ -35,11 +35,11 @@ impl CloudPrecipForecastRenderer {
                 let (layer_cloud_precip, layer_weather) = read_layer_fn(&fc_step)?;
 
                 // map tiles
-                let _ = CloudPrecipChartRenderer::render_map_tiles2(&layer_cloud_precip, fc_run, fc_step.get_step_nr());
+                let _ = CloudPrecipChartRenderer::render_map_tiles(&layer_cloud_precip, fc_run, fc_step.get_step_nr());
 
                 // meteobin
-                let _ = PrecipMeteoBin::create_meteobin_file2(&layer_cloud_precip, fc_run, fc_step.get_step_nr());
-                let _ = WeatherMeteoBin::create_meteobin_file2(&layer_weather, fc_run, fc_step.get_step_nr());
+                let _ = PrecipMeteoBin::create_meteobin_file(&layer_cloud_precip, fc_run, fc_step.get_step_nr());
+                let _ = WeatherMeteoBin::create_meteobin_file(&layer_weather, fc_run, fc_step.get_step_nr());
 
                 Ok(())
             })

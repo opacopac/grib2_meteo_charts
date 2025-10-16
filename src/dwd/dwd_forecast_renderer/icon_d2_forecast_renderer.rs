@@ -46,7 +46,6 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
-            //IconD2CloudPrecipRenderer::render(&latest_run, &step_filter)?;
             Self::render_cloud_precip_forecast(&step_filter, &latest_run, &fc_run)?;
             info!("finished rendering cloud & precipitation forecast");
         }

@@ -31,7 +31,7 @@ impl Temp2mChartRenderer {
         step_idx: usize,
     ) -> Result<(), MeteoChartError> {
         let extent = temp_layer.get_lat_lon_extent();
-        let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step2(
+        let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step(
             tile, zoom, x, y, &temp_layer.get_type(), fc_run, step_idx,
         );
 

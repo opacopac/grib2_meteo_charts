@@ -15,9 +15,9 @@ impl IconD2WeatherReader {
         fc_step_ceiling: &MeteoForecastRun2Step,
         fc_step_ww: &MeteoForecastRun2Step,
     ) -> Result<WeatherLayer, Grib2Error> {
-        let grid_clct = IconD2ClctModReader::read_grid_from_file2(fc_step_clct)?;
-        let grid_ceiling = IconD2CeilingReader::read_grid_from_file2(fc_step_ceiling)?;
-        let grid_ww = IconD2WwReader::read_grid_from_file2(fc_step_ww)?;
+        let grid_clct = IconD2ClctModReader::read_grid_from_file(fc_step_clct)?;
+        let grid_ceiling = IconD2CeilingReader::read_grid_from_file(fc_step_ceiling)?;
+        let grid_ww = IconD2WwReader::read_grid_from_file(fc_step_ww)?;
 
         let layer = WeatherLayer::new(grid_clct, grid_ceiling, Some(grid_ww))?;
 

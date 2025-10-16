@@ -1,7 +1,6 @@
 use crate::meteo_chart::meteo_layer::weather_interpretation::WeatherInterpretation;
 use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
-use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::meteobin_type::MeteobinType;
 use crate::physics::length::Length;
@@ -18,25 +17,6 @@ impl WeatherMeteoBin {
 
 
     pub fn create_meteobin_file(
-        layer: &WeatherLayer,
-        fc_run: &dyn MeteoForecastRun,
-        fc_step: usize,
-    ) {
-        let bin_data = Self::create_bin_values(layer);
-        let filename = format!(
-            "{}{}",
-            MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type()),
-            MeteobinType::Weather.get_output_file()
-        );
-
-        info!("writing weather meteobin file {}", &filename);
-
-        let mut file = BufWriter::new(File::create(&filename).expect("Unable to create weather meteobin file"));
-        let _ = file.write_all(&bin_data);
-    }
-
-
-    pub fn create_meteobin_file2(
         layer: &WeatherLayer,
         fc_run: &MeteoForecastRun2,
         fc_step: usize,
