@@ -43,7 +43,7 @@ impl IconCh1VerticalWindForecastRenderer {
                 let u_grids = IconChUReader::read_grids(&fc_step_u.href, &unstructured_grid, Some(&vertical_levels))?;
                 let v_grids = IconChVReader::read_grids(&fc_step_v.href, &unstructured_grid, Some(&vertical_levels))?;
 
-                let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
+                let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
                 // meteobin
                 let _ = VerticalWindMeteobin::create_meteobin_file(&layer, fc_run_u, step_idx)?;

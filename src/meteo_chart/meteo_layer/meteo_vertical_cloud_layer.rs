@@ -3,18 +3,18 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 
 
-pub struct MeteoVerticalCloudLayer<'a> {
+pub struct MeteoVerticalCloudLayer {
     layer_type: MeteoLayerType,
-    hhl_grids: &'a Vec<LatLonValueGrid<u8>>,
+    hhl_grids: Vec<LatLonValueGrid<u8>>,
     clc_grids: Vec<LatLonValueGrid<u8>>,
 }
 
 
-impl<'a> MeteoVerticalCloudLayer<'a> {
+impl MeteoVerticalCloudLayer {
     pub fn new(
-        hhl_grids: &Vec<LatLonValueGrid<u8>>,
+        hhl_grids: Vec<LatLonValueGrid<u8>>,
         clc_grids: Vec<LatLonValueGrid<u8>>,
-    ) -> MeteoVerticalCloudLayer<'_> {
+    ) -> MeteoVerticalCloudLayer {
         if hhl_grids.len() == 0 || clc_grids.len() == 0 {
             panic!("number of hhl grids or clc grids must not be null"); // TODO: return error
         }

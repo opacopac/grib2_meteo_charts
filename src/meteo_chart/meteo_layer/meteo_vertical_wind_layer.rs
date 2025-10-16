@@ -3,20 +3,20 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 
 
-pub struct MeteoVerticalWindLayer<'a> {
+pub struct MeteoVerticalWindLayer {
     layer_type: MeteoLayerType,
-    hhl_grids: &'a Vec<LatLonValueGrid<u8>>,
+    hhl_grids: Vec<LatLonValueGrid<u8>>,
     u_grids: Vec<LatLonValueGrid<u8>>,
     v_grids: Vec<LatLonValueGrid<u8>>,
 }
 
 
-impl<'a> MeteoVerticalWindLayer<'a> {
+impl MeteoVerticalWindLayer {
     pub fn new(
-        hhl_grids: &Vec<LatLonValueGrid<u8>>,
+        hhl_grids: Vec<LatLonValueGrid<u8>>,
         u_grids: Vec<LatLonValueGrid<u8>>,
         v_grids: Vec<LatLonValueGrid<u8>>,
-    ) -> MeteoVerticalWindLayer<'_> {
+    ) -> MeteoVerticalWindLayer {
         if hhl_grids.len() == 0 || u_grids.len() == 0 || v_grids.len() == 0 {
             panic!("number of hhl, v or u grids must not be null"); // TODO: return error
         }

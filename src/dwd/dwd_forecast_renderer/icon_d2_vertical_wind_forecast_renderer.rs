@@ -31,7 +31,7 @@ impl IconD2VerticalWindForecastRenderer {
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let u_grids = IconD2UReader::read_u_grids(&fc_step, &vertical_levels)?;
                 let v_grids = IconD2VReader::read_v_grids(&fc_step, &vertical_levels)?;
-                let layer = MeteoVerticalWindLayer::new(&hhl_grids, u_grids, v_grids);
+                let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
                 // meteobin
                 let _ = VerticalWindMeteobin::create_meteobin_file(&layer, forecast_run, step)?;

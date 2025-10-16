@@ -2,6 +2,7 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
+use crate::meteo_chart::forecast_renderer::vertical_clouds_forecast_renderer::VerticalCloudsForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
@@ -16,13 +17,13 @@ use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
 use crate::meteo_swiss::file_reader::icon_ch_ceiling_reader::IconChCeilingReader;
+use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
 use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::file_reader::icon_ch_hor_const_reader::IconHorConstReader;
 use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
 use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
 use crate::meteo_swiss::file_reader::icon_ch_wind_u_10m_reader::IconChWindU10mReader;
-use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_cloud_forecast_renderer::IconCh1VerticalCloudForecastRenderer;
 use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_wind_forecast_renderer::IconCh1VerticalWindForecastRenderer;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
@@ -175,19 +176,43 @@ impl IconCh1ForecastRenderer {
     }
 
 
-    fn render_vertical_clouds_forecast(step_filter: &&Vec<usize>, unstructured_grid: &UnstructuredGrid, date_ref: &IconChForecastReferenceDateTime, hhl_grids: &Vec<LatLonValueGrid<u8>>) -> Result<(), MeteoSwissError> {
-        let fc_run_clc = Self::get_forecast_run(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
-        IconCh1VerticalCloudForecastRenderer::render(
+    fn render_vertical_clouds_forecast(
+        step_filter: &Vec<usize>,
+        unstructured_grid: &UnstructuredGrid,
+        date_ref: &IconChForecastReferenceDateTime,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
+    ) -> Result<(), MeteoSwissError> {
+        let fc_run_clc = Self::get_forecast_run2(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+        let fc_steps_clc = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+        let read_fn = |clc_step: &MeteoForecastRun2Step| {
+            let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
+            let clc_layer = IconChClcReader::read_layer_from_file(
+                &clc_step.get_file_url(),
+                &unstructured_grid,
+                hhl_grids,
+                Some(&vertical_levels),
+            );
+
+            clc_layer
+        };
+
+        VerticalCloudsForecastRenderer::render(
             &fc_run_clc,
-            &unstructured_grid,
-            &hhl_grids,
-            &step_filter,
+            &fc_steps_clc,
+            step_filter,
+            read_fn,
         )?;
+
         Ok(())
     }
 
 
-    fn render_vertical_wind_forecast(step_filter: &&Vec<usize>, unstructured_grid: &UnstructuredGrid, date_ref: &IconChForecastReferenceDateTime, hhl_grids: &Vec<LatLonValueGrid<u8>>) -> Result<(), MeteoSwissError> {
+    fn render_vertical_wind_forecast(
+        step_filter: &Vec<usize>,
+        unstructured_grid: &UnstructuredGrid,
+        date_ref: &IconChForecastReferenceDateTime,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
+    ) -> Result<(), MeteoSwissError> {
         let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
         let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
         IconCh1VerticalWindForecastRenderer::render(

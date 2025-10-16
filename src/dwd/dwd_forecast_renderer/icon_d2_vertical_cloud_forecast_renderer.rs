@@ -29,7 +29,7 @@ impl IconD2VerticalCloudForecastRenderer {
                 info!("creating vertical cloud charts, time step {}", step);
                 let fc_step = DwdForecastStep::new_from_run(forecast_run, step);
                 let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, &vertical_levels)?;
-                let layer = MeteoVerticalCloudLayer::new(&hhl_grids, clc_grids);
+                let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
 
                 // meteobin
                 let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, forecast_run, step)?;
