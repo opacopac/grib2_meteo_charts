@@ -1,3 +1,2 @@
 pub mod icon_ch1_forecast_renderer;
-pub mod icon_ch1_forecast_renderer_helper;
 pub mod icon_ch_vertical_wind_forecast_renderer;

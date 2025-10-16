@@ -3,31 +3,26 @@ use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::forecast_renderer::vertical_clouds_forecast_renderer::VerticalCloudsForecastRenderer;
+use crate::meteo_chart::forecast_renderer::vertical_wind_forecast_renderer::VerticalWindForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
-use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
-use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
-use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
-use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 use crate::meteo_swiss::common::icon_ch1_model_config::IconCh1ModelConfig;
 use crate::meteo_swiss::common::meteo_swiss_error::MeteoSwissError;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_assets_service::IconChAssetsService;
 use crate::meteo_swiss::data_geo_admin_ch::icon_ch_forecast_search_service::IconChForecastSearchService;
-use crate::meteo_swiss::file_reader::icon_ch_ceiling_reader::IconChCeilingReader;
 use crate::meteo_swiss::file_reader::icon_ch_clc_reader::IconChClcReader;
-use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
+use crate::meteo_swiss::file_reader::icon_ch_cloud_precip_reader::IconChCloudPrecipReader;
 use crate::meteo_swiss::file_reader::icon_ch_hhl_reader::IconChHhlReader;
 use crate::meteo_swiss::file_reader::icon_ch_hor_const_reader::IconHorConstReader;
 use crate::meteo_swiss::file_reader::icon_ch_t_2m_reader::IconChT2mReader;
-use crate::meteo_swiss::file_reader::icon_ch_tot_prec_reader::IconChTotPrecReader;
-use crate::meteo_swiss::file_reader::icon_ch_wind_u_10m_reader::IconChWindU10mReader;
-use crate::meteo_swiss::forecast_renderer::icon_ch_vertical_wind_forecast_renderer::IconCh1VerticalWindForecastRenderer;
+use crate::meteo_swiss::file_reader::icon_ch_vertical_wind_reader::IconChVerticalWindReader;
+use crate::meteo_swiss::file_reader::icon_ch_wind_10m_reader::IconChWind10mReader;
+use crate::meteo_swiss::file_reader::icon_ch_ww_reader::IconChWwReader;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_model::IconChForecastModel;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_reference_datetime::IconChForecastReferenceDateTime;
-use crate::meteo_swiss::forecast_run::icon_ch_forecast_run::IconChForecastRun;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_run_name::IconChForecastRunName;
 use crate::meteo_swiss::forecast_run::icon_ch_forecast_variable::IconChForecastVariable;
 use log::info;
@@ -105,25 +100,29 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_clct = Self::get_forecast_run2(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
-        let fc_steps_clct = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
-        let fc_steps_tot_prec = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
-        let fc_steps_ceiling = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
+        let fc_run_clct = Self::get_forecast_run(&date_ref)?;
+        let fc_steps_clct = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
+        let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
+        let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
         let read_fn = |clct_step: &MeteoForecastRun2Step| {
             let step_idx = clct_step.get_step_nr();
-            let tot_prec_step = &fc_steps_tot_prec[step_idx];
-            let tot_prec_previous_step = &fc_steps_tot_prec[step_idx - 1];
+            let tot_prec0_step = &fc_steps_tot_prec[step_idx - 1];
+            let tot_prec1_step = &fc_steps_tot_prec[step_idx];
             let ceiling_step = &fc_steps_ceiling[step_idx];
 
-            let clct_grid = IconChClctReader::read_grid_from_file(&clct_step.get_file_url(), &unstructured_grid)?;
-            let tot_prec_grid = IconChTotPrecReader::read_grid_from_file(&tot_prec_step.get_file_url(), &unstructured_grid)?;
-            let tot_prec_previous_grid = IconChTotPrecReader::read_grid_from_file(&tot_prec_previous_step.get_file_url(), &unstructured_grid)?;
-            let ceiling_grid = IconChCeilingReader::read_grid_from_file(&ceiling_step.get_file_url(), &unstructured_grid)?;
+            let cloud_precip_layer = IconChCloudPrecipReader::read_layer_from_files(
+                &clct_step.get_file_url(),
+                &tot_prec0_step.get_file_url(),
+                &tot_prec1_step.get_file_url(),
+                &unstructured_grid,
+            )?;
+            let ww_layer = IconChWwReader::read_layer_from_files(
+                &clct_step.get_file_url(),
+                &ceiling_step.get_file_url(),
+                &unstructured_grid,
+            )?;
 
-            let clct_precip_layer = MeteoCloudPrecipLayer::new(clct_grid.clone(), tot_prec_grid, tot_prec_previous_grid)?;
-            let ww_layer = WeatherLayer::new(clct_grid, ceiling_grid, None)?;
-
-            Ok((clct_precip_layer, ww_layer))
+            Ok((cloud_precip_layer, ww_layer))
         };
 
         CloudPrecipForecastRenderer::render(&fc_run_clct, &fc_steps_clct, &step_filter, read_fn)?;
@@ -137,20 +136,21 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_u10m = Self::get_forecast_run2(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
-        let fc_steps_u10m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
-        let fc_steps_v10m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
-        let fc_steps_vmax10m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref)?;
+        let fc_run_u10m = Self::get_forecast_run(&date_ref)?;
+        let fc_steps_u10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
+        let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
+        let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
             let step_idx = u10m_step.get_step_nr();
             let v10m_step = &fc_steps_v10m[step_idx];
             let vmax10m_step = &fc_steps_vmax10m[step_idx];
 
-            let u10m_grid = IconChWindU10mReader::read_grid_from_file(&u10m_step.get_file_url(), &unstructured_grid)?;
-            let v10m_grid = IconChWindU10mReader::read_grid_from_file(&v10m_step.get_file_url(), &unstructured_grid)?;
-            let vmax10m_grid = IconChWindU10mReader::read_grid_from_file(&vmax10m_step.get_file_url(), &unstructured_grid)?;
-
-            MeteoWind10mLayer::new(u10m_grid, v10m_grid, Some(vmax10m_grid))
+            IconChWind10mReader::read_layer_from_files(
+                &u10m_step.get_file_url(),
+                &v10m_step.get_file_url(),
+                &vmax10m_step.get_file_url(),
+                &unstructured_grid,
+            )
         };
 
         Wind10mForecastRenderer::render(&fc_run_u10m, &fc_steps_u10m, &step_filter, read_fn)?;
@@ -164,8 +164,8 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_t2m = Self::get_forecast_run2(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
-        let fc_steps_t2m = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
+        let fc_run_t2m = Self::get_forecast_run(&date_ref)?;
+        let fc_steps_t2m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
         let read_fn = |t2m_step: &MeteoForecastRun2Step| {
             IconChT2mReader::read_layer_from_file(&t2m_step.get_file_url(), &unstructured_grid)
         };
@@ -182,8 +182,8 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_clc = Self::get_forecast_run2(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
-        let fc_steps_clc = Self::get_forecast_run2_steps(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+        let fc_run_clc = Self::get_forecast_run(&date_ref)?;
+        let fc_steps_clc = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
         let read_fn = |clc_step: &MeteoForecastRun2Step| {
             let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
             let clc_layer = IconChClcReader::read_layer_from_file(
@@ -213,68 +213,45 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_u = Self::get_forecast_run(&MODEL, IconChForecastVariable::U, &date_ref)?;
-        let fc_run_v = Self::get_forecast_run(&MODEL, IconChForecastVariable::V, &date_ref)?;
-        IconCh1VerticalWindForecastRenderer::render(
+        let fc_run_u = Self::get_forecast_run(&date_ref)?;
+        let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref)?;
+        let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref)?;
+        let read_fn = |u_step: &MeteoForecastRun2Step| {
+            let step_idx = u_step.get_step_nr();
+            let v_step = &fc_steps_v[step_idx];
+            let wind_layer = IconChVerticalWindReader::read_layer_from_file(
+                &u_step.get_file_url(),
+                &v_step.get_file_url(),
+                &unstructured_grid,
+                hhl_grids,
+            )?;
+
+            Ok(wind_layer)
+        };
+
+        VerticalWindForecastRenderer::render(
             &fc_run_u,
-            &fc_run_v,
-            &unstructured_grid,
-            &hhl_grids,
+            &fc_steps_u,
             &step_filter,
+            read_fn,
         )?;
+
         Ok(())
     }
 
 
-    fn get_forecast_run(
-        model: &IconChForecastModel,
-        variable: IconChForecastVariable,
-        latest_ref_datetime: &IconChForecastReferenceDateTime,
-    ) -> Result<IconChForecastRun, MeteoSwissError> {
-        let forecast_steps = IconChForecastSearchService::find_forecast_file_urls(
-            &model,
-            &variable,
-            &latest_ref_datetime,
-        )?;
-        let forecast_run = IconChForecastRun::new(
-            model.clone(),
-            latest_ref_datetime.get_date(),
-            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
-            forecast_steps,
-        );
-
-        Ok(forecast_run)
-    }
-
-
-    fn get_forecast_run2(
-        model: &IconChForecastModel,
-        variable: IconChForecastVariable,
-        latest_ref_datetime: &IconChForecastReferenceDateTime,
-    ) -> Result<MeteoForecastRun2, MeteoSwissError> {
-        let forecast_steps = IconChForecastSearchService::find_forecast_file_urls(
-            &model,
-            &variable,
-            &latest_ref_datetime,
-        )?;
-        let forecast_run = IconChForecastRun::new(
-            model.clone(),
-            latest_ref_datetime.get_date(),
-            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?,
-            forecast_steps,
-        );
-
+    fn get_forecast_run(latest_ref_datetime: &IconChForecastReferenceDateTime) -> Result<MeteoForecastRun2, MeteoSwissError> {
         let forecast_run2 = MeteoForecastRun2::new(
             MeteoForecastModel::IconCh1,
-            forecast_run.get_start_date(),
-            forecast_run.get_name(),
+            latest_ref_datetime.get_date(),
+            IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?.get_name(),
         );
 
         Ok(forecast_run2)
     }
 
 
-    fn get_forecast_run2_steps(
+    fn get_forecast_run_steps(
         model: &IconChForecastModel,
         variable: IconChForecastVariable,
         latest_ref_datetime: &IconChForecastReferenceDateTime,
