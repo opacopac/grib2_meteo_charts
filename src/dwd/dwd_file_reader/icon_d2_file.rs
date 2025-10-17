@@ -1,5 +1,7 @@
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconD2File;
 
@@ -39,6 +41,31 @@ impl IconD2File {
         let date_str = forecast_step.run.start_date.format(DWD_DATE_FORMAT).to_string();
         let step_str = format!("{:03}", forecast_step.step);
         let run_str = &forecast_step.run.run_name.get_name();
+
+        return format!(
+            "{}{}{}{}{}_{}_{}{}",
+            DWD_ICON_D2_BASE_URL,
+            run_str,
+            file_prefix,
+            date_str,
+            run_str,
+            step_str,
+            level,
+            file_suffix
+        );
+    }
+
+
+    pub fn get_multi_level_file_url2(
+        file_prefix: &str,
+        file_suffix: &str,
+        level: usize,
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+    ) -> String {
+        let date_str = fc_run.get_start_date().format(DWD_DATE_FORMAT).to_string();
+        let step_str = format!("{:03}", fc_step.get_step_nr());
+        let run_str = &fc_run.get_name();
 
         return format!(
             "{}{}{}{}{}_{}_{}{}",

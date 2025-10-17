@@ -4,11 +4,12 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 use log::info;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
-
 
 pub struct IconD2ClcReader;
 
@@ -20,11 +21,12 @@ const MISSING_VALUE: u8 = 0;
 
 impl IconD2ClcReader {
     pub fn read_layer_from_file(
-        fc_step: &DwdForecastStep,
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         vertical_level_range: &RangeInclusive<u8>,
     ) -> Result<MeteoVerticalCloudLayer, Grib2Error> {
-        let clc_grids = Self::read_clc_grids(fc_step, vertical_level_range)?;
+        let clc_grids = Self::read_clc_grids2(fc_run, fc_step, vertical_level_range)?;
         let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
 
         Ok(layer)
@@ -43,7 +45,32 @@ impl IconD2ClcReader {
             .into_par_iter()
             .map(|level| {
                 info!("reading clc layers for level {}", level);
-                let url = Self::get_file_url(&fc_step, level as usize);
+                let url = Self::get_file_url(fc_step, level as usize);
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, MISSING_VALUE, transform_fn)?;
+
+                Ok(grid)
+            }).collect();
+
+        info!("reading clc grids done");
+
+        clc_grids
+    }
+
+
+    pub fn read_clc_grids2(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+        vertical_level_range: &RangeInclusive<u8>,
+    ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
+        let transform_fn = |x| x as u8;
+
+        info!("reading clc grids...");
+
+        let clc_grids = vertical_level_range.clone()
+            .into_par_iter()
+            .map(|level| {
+                info!("reading clc layers for level {}", level);
+                let url = Self::get_file_url2(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)
@@ -61,6 +88,21 @@ impl IconD2ClcReader {
             DWD_ICON_D2_CLC_FILE_SUFFIX,
             level,
             forecast_step,
+        )
+    }
+
+
+    pub fn get_file_url2(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+        level: usize,
+    ) -> String {
+        IconD2File::get_multi_level_file_url2(
+            DWD_ICON_D2_CLC_FILE_PREFIX,
+            DWD_ICON_D2_CLC_FILE_SUFFIX,
+            level,
+            fc_run,
+            fc_step,
         )
     }
 }

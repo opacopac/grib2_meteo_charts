@@ -8,7 +8,8 @@ use log::info;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
-
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconD2UReader;
 
@@ -53,12 +54,62 @@ impl IconD2UReader {
     }
 
 
+    pub fn read_u_grids2(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+        vertical_level_range: &RangeInclusive<u8>,
+    ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
+        let transform_fn = |x: f32| {
+            (Speed::from_mps_to_knots(x) + 128.0)
+                .round()
+                .min(254.0)
+                .max(0.0) as u8
+        };
+
+        info!("reading u grids...");
+
+        let u_grids = vertical_level_range.clone()
+            .into_par_iter()
+            .map(|level| {
+                info!("reading clc layers for level {}", level);
+                let url = Self::get_file_url2(fc_run, fc_step, level as usize);
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
+                    &url,
+                    MISSING_VALUE,
+                    transform_fn,
+                )?;
+
+                Ok(grid)
+            })
+            .collect();
+
+        info!("reading u grids done");
+
+        u_grids
+    }
+    
+
     pub fn get_file_url(forecast_step: &DwdForecastStep, level: usize) -> String {
         IconD2File::get_multi_level_file_url(
             DWD_ICON_D2_U_FILE_PREFIX,
             DWD_ICON_D2_U_FILE_SUFFIX,
             level,
             forecast_step,
+        )
+    }
+
+
+    pub fn get_file_url2(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+        level: usize
+    ) -> String {
+        IconD2File::get_multi_level_file_url2(
+            DWD_ICON_D2_U_FILE_PREFIX,
+            DWD_ICON_D2_U_FILE_SUFFIX,
+            level,
+            fc_run,
+            fc_step,
         )
     }
 }
