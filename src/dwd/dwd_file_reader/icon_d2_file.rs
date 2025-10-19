@@ -32,6 +32,29 @@ impl IconD2File {
     }
 
 
+    pub fn get_single_level_file_url2(
+        file_prefix: &str,
+        file_suffix: &str,
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+    ) -> String {
+        let date_str = fc_run.get_start_date().format(DWD_DATE_FORMAT).to_string();
+        let step_str = format!("{:03}", fc_step.get_step_nr());
+        let run_str = fc_run.get_name();
+
+        return format!(
+            "{}{}{}{}{}_{}{}",
+            DWD_ICON_D2_BASE_URL,
+            run_str,
+            file_prefix,
+            date_str,
+            run_str,
+            step_str,
+            file_suffix
+        );
+    }
+
+
     pub fn get_multi_level_file_url(
         file_prefix: &str,
         file_suffix: &str,

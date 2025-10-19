@@ -46,7 +46,7 @@ impl IconD2HhlReader {
 
 
     pub fn read_hhl_grids2(
-        forecast_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun2,
         vertical_level_range: &RangeInclusive<u8>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
         let transform_fn = |x| (Length::from_meters_to_feet(x) / 100.0) as u8;
@@ -57,7 +57,7 @@ impl IconD2HhlReader {
             .into_par_iter()
             .map(|level| {
                 info!("reading hhl layers for level {}", level);
-                let url = Self::get_file_url2(&forecast_run, level as usize);
+                let url = Self::get_file_url2(&fc_run, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, Self::MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)

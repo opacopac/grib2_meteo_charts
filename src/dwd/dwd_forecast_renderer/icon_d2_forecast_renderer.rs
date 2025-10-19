@@ -103,11 +103,13 @@ impl IconD2ForecastRenderer {
             let ww_step = &fc_steps_ww[step_idx];
 
             let cloud_precip_layer = IconD2CloudPrecipReader::read_layer_from_files(
+                fc_run,
                 clct_step,
                 precip_step0,
                 precip_step1,
             )?;
             let weather_layer = IconD2WeatherReader::read_layer_from_files(
+                fc_run,
                 clct_step,
                 ceiling_step,
                 ww_step,
@@ -136,6 +138,7 @@ impl IconD2ForecastRenderer {
             let vmax10m_step = &fc_steps_vmax10m[step_idx];
 
             IconD2Wind10mReader::read_layer_from_files(
+                fc_run,
                 u10m_step,
                 v10m_step,
                 vmax10m_step,
@@ -155,7 +158,7 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps(&latest_run, IconD2T2mReader::get_file_url)?;
         let read_fn = |step: &MeteoForecastRun2Step| {
-            IconD2T2mReader::read_layer_from_file(&step)
+            IconD2T2mReader::read_layer_from_file(fc_run, step)
         };
 
         Temp2mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;

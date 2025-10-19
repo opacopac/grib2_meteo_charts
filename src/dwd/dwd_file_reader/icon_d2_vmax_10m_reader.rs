@@ -3,6 +3,7 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 
@@ -14,8 +15,14 @@ const MISSING_VALUE: f32 = -1.0;
 
 
 impl IconD2Vmax10mReader {
-    pub fn read_grid_from_file(fc_step: &MeteoForecastRun2Step) -> Result<LatLonValueGrid<f32>, Grib2Error> {
-        let grid = FileToGridConverter::read_rectangular_grid_from_file(&fc_step.get_file_url(), MISSING_VALUE)?;
+    pub fn read_grid_from_file(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+    ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        let grid = FileToGridConverter::read_rectangular_grid_from_file(
+            Self::get_file_url2(fc_run, fc_step).as_str(),
+            MISSING_VALUE,
+        )?;
 
         Ok(grid)
     }
@@ -26,6 +33,19 @@ impl IconD2Vmax10mReader {
             DWD_ICON_D2_VMAX_10M_FILE_PREFIX,
             DWD_ICON_D2_VMAX_10M_FILE_SUFFIX,
             forecast_step,
+        )
+    }
+
+
+    pub fn get_file_url2(
+        fc_run: &MeteoForecastRun2,
+        fc_step: &MeteoForecastRun2Step,
+    ) -> String {
+        IconD2File::get_single_level_file_url2(
+            DWD_ICON_D2_VMAX_10M_FILE_PREFIX,
+            DWD_ICON_D2_VMAX_10M_FILE_SUFFIX,
+            fc_run,
+            fc_step,
         )
     }
 }
