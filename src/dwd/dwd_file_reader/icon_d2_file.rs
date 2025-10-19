@@ -103,6 +103,30 @@ impl IconD2File {
             file_suffix
         );
     }
+
+
+    pub fn get_multi_level_time_invariant_file_url2(
+        file_prefix: &str,
+        file_suffix: &str,
+        level: usize,
+        forecast_run: &MeteoForecastRun2,
+    ) -> String {
+        let date_str = forecast_run.get_start_date().format(DWD_DATE_FORMAT).to_string();
+        let step_str = "000";
+        let run_str = forecast_run.get_name();
+
+        return format!(
+            "{}{}{}{}{}_{}_{}{}",
+            DWD_ICON_D2_BASE_URL,
+            run_str,
+            file_prefix,
+            date_str,
+            run_str,
+            step_str,
+            level,
+            file_suffix
+        );
+    }
 }
 
 

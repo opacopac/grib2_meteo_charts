@@ -8,7 +8,7 @@ use log::info;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
-
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 
 pub struct IconD2HhlReader;
 
@@ -45,8 +45,42 @@ impl IconD2HhlReader {
     }
 
 
+    pub fn read_hhl_grids2(
+        forecast_run: &MeteoForecastRun2,
+        vertical_level_range: &RangeInclusive<u8>,
+    ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
+        let transform_fn = |x| (Length::from_meters_to_feet(x) / 100.0) as u8;
+
+        info!("reading hhl grids...");
+
+        let hhl_grids = vertical_level_range.clone()
+            .into_par_iter()
+            .map(|level| {
+                info!("reading hhl layers for level {}", level);
+                let url = Self::get_file_url2(&forecast_run, level as usize);
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, Self::MISSING_VALUE, transform_fn)?;
+
+                Ok(grid)
+            }).collect();
+
+        info!("reading hhl grids done.");
+
+        hhl_grids
+    }
+
+
     pub fn get_file_url(forecast_run: &DwdForecastRun, level: usize) -> String {
         IconD2File::get_multi_level_time_invariant_file_url(
+            DWD_ICON_D2_HHL_FILE_PREFIX,
+            DWD_ICON_D2_HHL_FILE_SUFFIX,
+            level,
+            forecast_run,
+        )
+    }
+
+
+    pub fn get_file_url2(forecast_run: &MeteoForecastRun2, level: usize) -> String {
+        IconD2File::get_multi_level_time_invariant_file_url2(
             DWD_ICON_D2_HHL_FILE_PREFIX,
             DWD_ICON_D2_HHL_FILE_SUFFIX,
             level,
