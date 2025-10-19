@@ -100,7 +100,7 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_clct = Self::get_forecast_run(&date_ref)?;
+        let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_clct = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
         let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
         let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
@@ -125,7 +125,7 @@ impl IconCh1ForecastRenderer {
             Ok((cloud_precip_layer, ww_layer))
         };
 
-        CloudPrecipForecastRenderer::render(&fc_run_clct, &fc_steps_clct, &step_filter, read_fn)?;
+        CloudPrecipForecastRenderer::render(&fc_run, &fc_steps_clct, &step_filter, read_fn)?;
 
         Ok(())
     }
@@ -136,7 +136,7 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_u10m = Self::get_forecast_run(&date_ref)?;
+        let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_u10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
         let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
         let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref)?;
@@ -153,7 +153,7 @@ impl IconCh1ForecastRenderer {
             )
         };
 
-        Wind10mForecastRenderer::render(&fc_run_u10m, &fc_steps_u10m, &step_filter, read_fn)?;
+        Wind10mForecastRenderer::render(&fc_run, &fc_steps_u10m, &step_filter, read_fn)?;
 
         Ok(())
     }
@@ -164,13 +164,13 @@ impl IconCh1ForecastRenderer {
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_t2m = Self::get_forecast_run(&date_ref)?;
+        let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_t2m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
         let read_fn = |t2m_step: &MeteoForecastRun2Step| {
             IconChT2mReader::read_layer_from_file(&t2m_step.get_file_url(), &unstructured_grid)
         };
 
-        Temp2mForecastRenderer::render(&fc_run_t2m, &fc_steps_t2m, &step_filter, read_fn)?;
+        Temp2mForecastRenderer::render(&fc_run, &fc_steps_t2m, &step_filter, read_fn)?;
 
         Ok(())
     }
@@ -182,7 +182,7 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_clc = Self::get_forecast_run(&date_ref)?;
+        let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_clc = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
         let read_fn = |clc_step: &MeteoForecastRun2Step| {
             let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
@@ -197,7 +197,7 @@ impl IconCh1ForecastRenderer {
         };
 
         VerticalCloudsForecastRenderer::render(
-            &fc_run_clc,
+            &fc_run,
             &fc_steps_clc,
             step_filter,
             read_fn,
@@ -213,7 +213,7 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
-        let fc_run_u = Self::get_forecast_run(&date_ref)?;
+        let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref)?;
         let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref)?;
         let read_fn = |u_step: &MeteoForecastRun2Step| {
@@ -230,7 +230,7 @@ impl IconCh1ForecastRenderer {
         };
 
         VerticalWindForecastRenderer::render(
-            &fc_run_u,
+            &fc_run,
             &fc_steps_u,
             &step_filter,
             read_fn,
@@ -241,13 +241,13 @@ impl IconCh1ForecastRenderer {
 
 
     fn get_forecast_run(latest_ref_datetime: &IconChForecastReferenceDateTime) -> Result<MeteoForecastRun2, MeteoSwissError> {
-        let forecast_run2 = MeteoForecastRun2::new(
+        let fc_run = MeteoForecastRun2::new(
             MeteoForecastModel::IconCh1,
             latest_ref_datetime.get_date(),
             IconChForecastRunName::create_from_datetime(&latest_ref_datetime.datetime)?.get_name(),
         );
 
-        Ok(forecast_run2)
+        Ok(fc_run)
     }
 
 
@@ -256,13 +256,13 @@ impl IconCh1ForecastRenderer {
         variable: IconChForecastVariable,
         latest_ref_datetime: &IconChForecastReferenceDateTime,
     ) -> Result<Vec<MeteoForecastRun2Step>, MeteoSwissError> {
-        let forecast_steps = IconChForecastSearchService::find_forecast_file_urls(
+        let fc_steps = IconChForecastSearchService::find_forecast_file_urls(
             &model,
             &variable,
             &latest_ref_datetime,
         )?;
 
-        let steps = forecast_steps
+        let steps = fc_steps
             .iter()
             .enumerate()
             .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
