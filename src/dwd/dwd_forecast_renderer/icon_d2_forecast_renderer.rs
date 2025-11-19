@@ -1,30 +1,36 @@
 use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::IconD2CeilingReader;
+use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
 use crate::dwd::dwd_file_reader::icon_d2_cloud_precip_reader::IconD2CloudPrecipReader;
 use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
+use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
 use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_weather_reader::IconD2WeatherReader;
 use crate::dwd::dwd_file_reader::icon_d2_wind_10m_reader::IconD2Wind10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
-use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_cloud_forecast_renderer::IconD2VerticalCloudForecastRenderer;
-use crate::dwd::dwd_forecast_renderer::icon_d2_vertical_wind_forecast_renderer::IconD2VerticalWindForecastRenderer;
 use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
 use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
+use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
+use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
+use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
-
+use std::ops::RangeInclusive;
 
 pub struct IconD2ForecastRenderer;
 
@@ -70,13 +76,13 @@ impl IconD2ForecastRenderer {
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
-                Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &fc_run)?;
+                Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &vertical_levels, &hhl_grids)?;
                 info!("finished rendering vertical cloud forecast");
             }
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
                 info!("rendering vertical wind forecast...");
-                Self::render_vertical_wind_forecast(&step_filter, &latest_run, &fc_run)?;
+                Self::render_vertical_wind_forecast(&step_filter, &latest_run, &vertical_levels, &hhl_grids)?;
                 info!("finished rendering vertical cloud forecast");
             }
         }
@@ -170,18 +176,51 @@ impl IconD2ForecastRenderer {
     fn render_vertical_clouds_forecast(
         step_filter: &Vec<usize>,
         latest_run: &DwdForecastRun,
-        fc_run: &MeteoForecastRun2,
+        vertical_levels: &RangeInclusive<u8>,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), ForecastRendererError> {
-        IconD2VerticalCloudForecastRenderer::render(&latest_run, &step_filter)
+        DwdForecastStep::get_step_range()
+            .try_for_each(|step| {
+                if !step_filter.is_empty() && !step_filter.contains(&step) {
+                    return Ok(());
+                }
+
+                info!("creating vertical cloud charts, time step {}", step);
+                let fc_step = DwdForecastStep::new_from_run(latest_run, step);
+                let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, &vertical_levels)?;
+                let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
+
+                // meteobin
+                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, latest_run, step)?;
+
+                Ok(())
+            })
     }
 
 
     fn render_vertical_wind_forecast(
         step_filter: &Vec<usize>,
         latest_run: &DwdForecastRun,
-        fc_run: &MeteoForecastRun2,
+        vertical_levels: &RangeInclusive<u8>,
+        hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), ForecastRendererError> {
-        IconD2VerticalWindForecastRenderer::render(&latest_run, &step_filter)
+        DwdForecastStep::get_step_range()
+            .try_for_each(|step| {
+                if !step_filter.is_empty() && !step_filter.contains(&step) {
+                    return Ok(());
+                }
+
+                info!("creating vertical cloud charts, time step {}", step);
+                let fc_step = DwdForecastStep::new_from_run(latest_run, step);
+                let u_grids = IconD2UReader::read_u_grids(&fc_step, &vertical_levels)?;
+                let v_grids = IconD2VReader::read_v_grids(&fc_step, &vertical_levels)?;
+                let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
+
+                // meteobin
+                let _ = VerticalWindMeteobin::create_meteobin_file(&layer, latest_run, step)?;
+
+                Ok(())
+            })
     }
 
 
