@@ -60,7 +60,9 @@ mod tests {
     use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
     use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
     use chrono::NaiveDate;
-
+    use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
+    use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+    use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
     #[test]
     fn it_creates_the_correct_file_url() {
@@ -74,6 +76,25 @@ mod tests {
 
         let result = IconD2T2mReader::get_file_url(&forecast_step);
 
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_file_url2() {
+        // given
+        let fc_run = MeteoForecastRun2::new(
+            MeteoForecastModel::IconD2,
+            NaiveDate::from_ymd_opt(2023, 8, 6).unwrap(),
+            "000".to_string()
+        );
+        let fc_step = MeteoForecastRun2Step::new(0, "".to_string()); // TODO: get rid of this...
+
+        // when
+        let result = IconD2T2mReader::get_file_url2(&fc_run, &fc_step);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/000/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

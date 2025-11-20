@@ -161,22 +161,45 @@ mod tests {
     use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
     use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
     use chrono::NaiveDate;
-
+    use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
+    use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+    use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
     #[test]
     fn it_creates_the_correct_single_level_file_url() {
-        let file_prefix = "/xxx/PREFIX_";
-        let file_suffix = "_SUFFIX.grib2.bz2";
+        let file_prefix = "/t_2m/icon-d2_germany_regular-lat-lon_single-level_";
+        let file_suffix = "_2d_t_2m.grib2.bz2";
         let forecast_step = DwdForecastStep::new(
             DwdModelType::IconD2,
-            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
-            IconD2ForecastRunName::Run00,
+            NaiveDate::from_ymd_opt(2025, 11, 20).unwrap(),
+            IconD2ForecastRunName::Run06,
             13,
         );
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/xxx/PREFIX_2022061900_013_SUFFIX.grib2.bz2";
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/t_2m/icon-d2_germany_regular-lat-lon_single-level_2025112006_013_2d_t_2m.grib2.bz2";
 
         let result = IconD2File::get_single_level_file_url(file_prefix, file_suffix, &forecast_step);
 
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_single_level_file_url2() {
+        // given
+        let file_prefix = "/t_2m/icon-d2_germany_regular-lat-lon_single-level_";
+        let file_suffix = "_2d_t_2m.grib2.bz2";
+        let fc_run = MeteoForecastRun2::new(
+            MeteoForecastModel::IconD2,
+            NaiveDate::from_ymd_opt(2025, 11, 20).unwrap(),
+            "06".to_string()
+        );
+        let fc_step = MeteoForecastRun2Step::new(13, "".to_string());
+
+        // when
+        let result = IconD2File::get_single_level_file_url2(file_prefix, file_suffix, &fc_run, &fc_step);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/t_2m/icon-d2_germany_regular-lat-lon_single-level_2025112006_013_2d_t_2m.grib2.bz2";
         assert_eq!(expected, result);
     }
 
@@ -202,18 +225,39 @@ mod tests {
 
     #[test]
     fn it_creates_the_correct_multi_level_time_invariant_file_url() {
-        let file_prefix = "/xxx/PREFIX_";
-        let file_suffix = "_SUFFIX.grib2.bz2";
+        let file_prefix = "/hhl/icon-d2_germany_icosahedral_time-invariant_";
+        let file_suffix = "_hhl.grib2.bz2";
         let level = 66;
         let forecast_run = DwdForecastRun::new(
             DwdModelType::IconD2,
-            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
-            IconD2ForecastRunName::Run00,
+            NaiveDate::from_ymd_opt(2025, 11, 20).unwrap(),
+            IconD2ForecastRunName::Run06,
         );
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/xxx/PREFIX_2022061900_000_66_SUFFIX.grib2.bz2";
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/hhl/icon-d2_germany_icosahedral_time-invariant_2025112006_000_66_hhl.grib2.bz2";
 
         let result = IconD2File::get_multi_level_time_invariant_file_url(file_prefix, file_suffix, level, &forecast_run);
 
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_multi_level_time_invariant_file_url2() {
+        // given
+        let file_prefix = "/hhl/icon-d2_germany_icosahedral_time-invariant_";
+        let file_suffix = "_hhl.grib2.bz2";
+        let level = 66;
+        let fc_run = MeteoForecastRun2::new(
+            MeteoForecastModel::IconD2,
+            NaiveDate::from_ymd_opt(2025, 11, 20).unwrap(),
+            "06".to_string()
+        );
+
+        // when
+        let result = IconD2File::get_multi_level_time_invariant_file_url2(file_prefix, file_suffix, level, &fc_run);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/hhl/icon-d2_germany_icosahedral_time-invariant_2025112006_000_66_hhl.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

@@ -179,6 +179,7 @@ impl IconD2ForecastRenderer {
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), ForecastRendererError> {
+        // TODO: generalize with MeteoSwiss pendant
         DwdForecastStep::get_step_range()
             .try_for_each(|step| {
                 if !step_filter.is_empty() && !step_filter.contains(&step) {
@@ -204,6 +205,7 @@ impl IconD2ForecastRenderer {
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), ForecastRendererError> {
+        // TODO: generalize with MeteoSwiss pendant
         DwdForecastStep::get_step_range()
             .try_for_each(|step| {
                 if !step_filter.is_empty() && !step_filter.contains(&step) {
