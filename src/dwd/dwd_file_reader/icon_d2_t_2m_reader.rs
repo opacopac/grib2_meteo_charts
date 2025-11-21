@@ -86,7 +86,7 @@ mod tests {
         let fc_run = MeteoForecastRun2::new(
             MeteoForecastModel::IconD2,
             NaiveDate::from_ymd_opt(2023, 8, 6).unwrap(),
-            "000".to_string()
+            "00".to_string()
         );
         let fc_step = MeteoForecastRun2Step::new(0, "".to_string()); // TODO: get rid of this...
 
@@ -94,7 +94,7 @@ mod tests {
         let result = IconD2T2mReader::get_file_url2(&fc_run, &fc_step);
 
         // then
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/000/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

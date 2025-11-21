@@ -207,8 +207,8 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps_without_url()?;
         let read_fn = |u_step: &MeteoForecastRun2Step| {
-            let u_grids = IconD2UReader::read_u_grids2(fc_run, u_step, vertical_levels)?;
-            let v_grids = IconD2VReader::read_v_grids2(fc_run, u_step, vertical_levels)?;
+            let u_grids = IconD2UReader::read_u_grids(fc_run, u_step, vertical_levels)?;
+            let v_grids = IconD2VReader::read_v_grids(fc_run, u_step, vertical_levels)?;
             let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
             Ok(layer)

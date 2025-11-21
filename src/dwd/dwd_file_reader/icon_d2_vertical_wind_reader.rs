@@ -17,8 +17,8 @@ impl IconD2VerticalWindReader {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<MeteoVerticalWindLayer, Grib2Error> {
         let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
-        let u_grids = IconD2UReader::read_u_grids2(fc_run, fc_step, &vertical_levels)?;
-        let v_grids = IconD2VReader::read_v_grids2(fc_run, fc_step, &vertical_levels)?;
+        let u_grids = IconD2UReader::read_u_grids(fc_run, fc_step, &vertical_levels)?;
+        let v_grids = IconD2VReader::read_v_grids(fc_run, fc_step, &vertical_levels)?;
 
         let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
