@@ -20,6 +20,8 @@ use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
+use crate::meteo_chart::forecast_renderer::vertical_clouds_forecast_renderer::VerticalCloudsForecastRenderer;
+use crate::meteo_chart::forecast_renderer::vertical_wind_forecast_renderer::VerticalWindForecastRenderer;
 use crate::meteo_chart::forecast_renderer::wind_10m_forecast_renderer::Wind10mForecastRenderer;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
@@ -27,8 +29,6 @@ use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWin
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
-use crate::metobin::vertical_cloud_metobin::VerticalCloudMeteobin;
-use crate::metobin::vertical_wind_metobin::VerticalWindMeteobin;
 use log::info;
 use std::ops::RangeInclusive;
 
@@ -77,13 +77,13 @@ impl IconD2ForecastRenderer {
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
-                Self::render_vertical_clouds_forecast(&step_filter, &latest_run, &vertical_levels, &hhl_grids)?;
+                Self::render_vertical_clouds_forecast(&step_filter, &vertical_levels, &hhl_grids, &fc_run)?;
                 info!("finished rendering vertical cloud forecast");
             }
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
                 info!("rendering vertical wind forecast...");
-                Self::render_vertical_wind_forecast(&step_filter, &latest_run, &vertical_levels, &hhl_grids)?;
+                Self::render_vertical_wind_forecast(&step_filter, &vertical_levels, &hhl_grids, &fc_run)?;
                 info!("finished rendering vertical cloud forecast");
             }
         }
@@ -176,54 +176,52 @@ impl IconD2ForecastRenderer {
 
     fn render_vertical_clouds_forecast(
         step_filter: &Vec<usize>,
-        latest_run: &DwdForecastRun,
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
+        fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        // TODO: generalize with MeteoSwiss pendant
-        DwdForecastStep::get_step_range()
-            .try_for_each(|step| {
-                if !step_filter.is_empty() && !step_filter.contains(&step) {
-                    return Ok(());
-                }
+        let fc_steps = Self::get_forecast_steps_without_url()?;
+        let read_fn = |fc_step: &MeteoForecastRun2Step| {
+            let clc_grids = IconD2ClcReader::read_clc_grids2(fc_run, fc_step, vertical_levels)?;
+            let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
 
-                info!("creating vertical cloud charts, time step {}", step);
-                let fc_step = DwdForecastStep::new_from_run(latest_run, step);
-                let clc_grids = IconD2ClcReader::read_clc_grids(&fc_step, &vertical_levels)?;
-                let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
+            Ok(layer)
+        };
 
-                // meteobin
-                let _ = VerticalCloudMeteobin::create_meteobin_file(&layer, latest_run, step)?;
+        VerticalCloudsForecastRenderer::render(
+            fc_run,
+            &fc_steps,
+            step_filter,
+            read_fn,
+        )?;
 
-                Ok(())
-            })
+        Ok(())
     }
 
 
     fn render_vertical_wind_forecast(
         step_filter: &Vec<usize>,
-        latest_run: &DwdForecastRun,
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
+        fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        // TODO: generalize with MeteoSwiss pendant
-        DwdForecastStep::get_step_range()
-            .try_for_each(|step| {
-                if !step_filter.is_empty() && !step_filter.contains(&step) {
-                    return Ok(());
-                }
+        let fc_steps = Self::get_forecast_steps_without_url()?;
+        let read_fn = |u_step: &MeteoForecastRun2Step| {
+            let u_grids = IconD2UReader::read_u_grids2(fc_run, u_step, vertical_levels)?;
+            let v_grids = IconD2VReader::read_v_grids2(fc_run, u_step, vertical_levels)?;
+            let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
-                info!("creating vertical cloud charts, time step {}", step);
-                let fc_step = DwdForecastStep::new_from_run(latest_run, step);
-                let u_grids = IconD2UReader::read_u_grids(&fc_step, &vertical_levels)?;
-                let v_grids = IconD2VReader::read_v_grids(&fc_step, &vertical_levels)?;
-                let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
+            Ok(layer)
+        };
 
-                // meteobin
-                let _ = VerticalWindMeteobin::create_meteobin_file(&layer, latest_run, step)?;
+        VerticalWindForecastRenderer::render(
+            fc_run,
+            &fc_steps,
+            step_filter,
+            read_fn,
+        )?;
 
-                Ok(())
-            })
+        Ok(())
     }
 
 
@@ -239,6 +237,17 @@ impl IconD2ForecastRenderer {
                 let file_url = fn_get_url(&dwd_step);
                 MeteoForecastRun2Step::new(step_nr, file_url)
             })
+            .collect();
+
+        Ok(steps)
+    }
+
+
+    fn get_forecast_steps_without_url() -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
+        let steps = MeteoForecastModel::IconD2
+            .get_step_range()
+            .into_iter()
+            .map(|step_nr| MeteoForecastRun2Step::new(step_nr, String::new()))
             .collect();
 
         Ok(steps)

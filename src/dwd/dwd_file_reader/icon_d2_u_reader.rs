@@ -36,7 +36,7 @@ impl IconD2UReader {
         let u_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading clc layers for level {}", level);
+                info!("reading u layers for level {}", level);
                 let url = Self::get_file_url(&fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
                     &url,
@@ -71,7 +71,7 @@ impl IconD2UReader {
         let u_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading clc layers for level {}", level);
+                info!("reading u layers for level {}", level);
                 let url = Self::get_file_url2(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
                     &url,
