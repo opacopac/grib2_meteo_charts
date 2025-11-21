@@ -45,7 +45,7 @@ impl IconD2VReader {
     }
 
 
-    pub fn get_file_url(
+    fn get_file_url(
         fc_run: &MeteoForecastRun2,
         fc_step: &MeteoForecastRun2Step,
         level: usize,

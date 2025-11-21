@@ -73,7 +73,7 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
             let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
-            let hhl_grids = IconD2HhlReader::read_hhl_grids(&latest_run, &vertical_levels)?;
+            let hhl_grids = IconD2HhlReader::read_hhl_grids2(&fc_run, &vertical_levels)?;
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
