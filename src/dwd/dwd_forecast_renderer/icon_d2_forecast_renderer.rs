@@ -103,11 +103,11 @@ impl IconD2ForecastRenderer {
         let fc_steps_ww = Self::get_forecast_steps(&latest_run, IconD2WwReader::get_file_url)?;
 
         let read_fn = |clct_step: &MeteoForecastRun2Step| {
-            let step_idx = clct_step.get_step_nr();
-            let precip_step0 = &fc_steps_prec[step_idx - 1];
-            let precip_step1 = &fc_steps_prec[step_idx];
-            let ceiling_step = &fc_steps_ceiling[step_idx];
-            let ww_step = &fc_steps_ww[step_idx];
+            let step_nr = clct_step.get_step_nr();
+            let precip_step0 = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_prec, step_nr - 1)?;
+            let precip_step1 = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_prec, step_nr)?;
+            let ceiling_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_ceiling, step_nr)?;
+            let ww_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_ww, step_nr)?;
 
             let cloud_precip_layer = IconD2CloudPrecipReader::read_layer_from_files(
                 fc_run,
@@ -140,9 +140,9 @@ impl IconD2ForecastRenderer {
         let fc_steps_v10m = Self::get_forecast_steps(latest_run, IconD2V10mReader::get_file_url)?;
         let fc_steps_vmax10m = Self::get_forecast_steps(latest_run, IconD2Vmax10mReader::get_file_url)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
-            let step_idx = u10m_step.get_step_nr();
-            let v10m_step = &fc_steps_v10m[step_idx];
-            let vmax10m_step = &fc_steps_vmax10m[step_idx];
+            let step_nr = u10m_step.get_step_nr();
+            let v10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v10m, step_nr)?;
+            let vmax10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_vmax10m, step_nr)?;
 
             IconD2Wind10mReader::read_layer_from_files(
                 fc_run,

@@ -1,4 +1,3 @@
-use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
@@ -22,7 +21,7 @@ impl VerticalWindForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoVerticalWindLayer, Grib2Error> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoVerticalWindLayer, MeteoChartError> + Sync,
     {
         fc_steps
             .par_iter()

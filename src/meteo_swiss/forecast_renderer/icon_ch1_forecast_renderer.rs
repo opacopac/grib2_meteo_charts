@@ -105,10 +105,10 @@ impl IconCh1ForecastRenderer {
         let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
         let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
         let read_fn = |clct_step: &MeteoForecastRun2Step| {
-            let step_idx = clct_step.get_step_nr();
-            let tot_prec0_step = &fc_steps_tot_prec[step_idx - 1];
-            let tot_prec1_step = &fc_steps_tot_prec[step_idx];
-            let ceiling_step = &fc_steps_ceiling[step_idx];
+            let step_nr = clct_step.get_step_nr();
+            let tot_prec0_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_tot_prec, step_nr - 1)?;
+            let tot_prec1_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_tot_prec, step_nr)?;
+            let ceiling_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_ceiling, step_nr)?;
 
             let cloud_precip_layer = IconChCloudPrecipReader::read_layer_from_files(
                 &clct_step.get_file_url(),
@@ -141,9 +141,9 @@ impl IconCh1ForecastRenderer {
         let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
         let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
-            let step_idx = u10m_step.get_step_nr();
-            let v10m_step = &fc_steps_v10m[step_idx];
-            let vmax10m_step = &fc_steps_vmax10m[step_idx];
+            let step_nr = u10m_step.get_step_nr();
+            let v10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v10m, step_nr)?;
+            let vmax10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_vmax10m, step_nr)?;
 
             IconChWind10mReader::read_layer_from_files(
                 &u10m_step.get_file_url(),
@@ -217,8 +217,8 @@ impl IconCh1ForecastRenderer {
         let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref)?;
         let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref)?;
         let read_fn = |u_step: &MeteoForecastRun2Step| {
-            let step_idx = u_step.get_step_nr();
-            let v_step = &fc_steps_v[step_idx];
+            let step_nr = u_step.get_step_nr();
+            let v_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v, step_nr)?;
             let wind_layer = IconChVerticalWindReader::read_layer_from_file(
                 &u_step.get_file_url(),
                 &v_step.get_file_url(),

@@ -28,11 +28,11 @@ impl Temp2mChartRenderer {
     pub fn render_map_tiles(
         temp_layer: &MeteoTemp2mLayer,
         fc_run: &MeteoForecastRun2,
-        step_idx: usize,
+        step_nr: usize,
     ) -> Result<(), MeteoChartError> {
         let extent = temp_layer.get_lat_lon_extent();
         let save_fn = |tile: &Drawable, zoom: u32, x: u32, y: u32| MapTileFileHelper::save_tile_step(
-            tile, zoom, x, y, &temp_layer.get_type(), fc_run, step_idx,
+            tile, zoom, x, y, &temp_layer.get_type(), fc_run, step_nr,
         );
 
         let _ = MapTileRenderer::create_all_tiles(

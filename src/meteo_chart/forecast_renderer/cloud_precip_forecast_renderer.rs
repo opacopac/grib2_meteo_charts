@@ -1,4 +1,3 @@
-use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPrecipChartRenderer;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
@@ -22,7 +21,7 @@ impl CloudPrecipForecastRenderer {
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<(MeteoCloudPrecipLayer, WeatherLayer), Grib2Error> + Sync,
+        S: Fn(&MeteoForecastRun2Step) -> Result<(MeteoCloudPrecipLayer, WeatherLayer), MeteoChartError> + Sync,
     {
         fc_steps
             .par_iter()

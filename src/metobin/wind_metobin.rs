@@ -18,12 +18,12 @@ impl WindMeteobin {
     pub fn create_meteobin_file(
         layer: &MeteoWind10mLayer,
         fc_run: &MeteoForecastRun2,
-        fc_step: usize,
+        step_nr: usize,
     ) {
         let bin_data = Self::create_bin_values(layer);
         let filename = format!(
             "{}{}",
-            MeteoForecastFileHelper::get_output_path2(fc_run, fc_step, layer.get_type()),
+            MeteoForecastFileHelper::get_output_path2(fc_run, step_nr, layer.get_type()),
             MeteobinType::Wind10m.get_output_file()
         );
 

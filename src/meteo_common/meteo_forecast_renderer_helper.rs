@@ -13,7 +13,7 @@ const FC_STARTDATE_FORMAT: &str = "%Y%m%d";
 impl MeteoForecastFileHelper {
     pub fn get_output_path(
         fc_run: &dyn MeteoForecastRun,
-        fc_step: usize,
+        step_nr: usize,
         layer_type: &MeteoLayerType,
     ) -> String {
         format!(
@@ -22,7 +22,7 @@ impl MeteoForecastFileHelper {
             fc_run.get_model_name(),
             fc_run.get_start_date().format(FC_STARTDATE_FORMAT),
             fc_run.get_name(),
-            fc_step,
+            step_nr,
             &layer_type.get_output_subdir(),
         )
     }
@@ -30,7 +30,7 @@ impl MeteoForecastFileHelper {
 
     pub fn get_output_path2(
         fc_run: &MeteoForecastRun2,
-        fc_step: usize,
+        step_nr: usize,
         layer_type: &MeteoLayerType,
     ) -> String {
         format!(
@@ -39,7 +39,7 @@ impl MeteoForecastFileHelper {
             fc_run.get_model().get_name(),
             fc_run.get_start_date().format(FC_STARTDATE_FORMAT),
             fc_run.get_name(),
-            fc_step,
+            step_nr,
             &layer_type.get_output_subdir(),
         )
     }

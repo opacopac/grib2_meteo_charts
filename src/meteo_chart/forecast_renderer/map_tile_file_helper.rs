@@ -15,11 +15,11 @@ impl MapTileFileHelper {
         y: u32,
         layer_type: &MeteoLayerType,
         fc_run: &MeteoForecastRun2,
-        fc_step: usize,
+        step_nr: usize,
     ) {
         let path = format!(
             "{}{}/{}",
-            MeteoForecastFileHelper::get_output_path2(fc_run, fc_step, layer_type),
+            MeteoForecastFileHelper::get_output_path2(fc_run, step_nr, layer_type),
             zoom,
             x
         );

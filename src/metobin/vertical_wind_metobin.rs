@@ -20,10 +20,10 @@ impl VerticalWindMeteobin {
     pub fn create_meteobin_file(
         layer: &MeteoVerticalWindLayer,
         fc_run: &dyn MeteoForecastRun,
-        fc_step: usize,
+        step_nr: usize,
     ) -> Result<(), MeteoBinError> {
         let bin_data = Self::create_bin_values(layer);
-        let path = MeteoForecastFileHelper::get_output_path(fc_run, fc_step, layer.get_type());
+        let path = MeteoForecastFileHelper::get_output_path(fc_run, step_nr, layer.get_type());
         let filename = format!(
             "{}{}",
             &path,
@@ -44,10 +44,10 @@ impl VerticalWindMeteobin {
     pub fn create_meteobin_file2(
         layer: &MeteoVerticalWindLayer,
         fc_run: &MeteoForecastRun2,
-        fc_step: usize,
+        step_nr: usize,
     ) -> Result<(), MeteoBinError> {
         let bin_data = Self::create_bin_values(layer);
-        let path = MeteoForecastFileHelper::get_output_path2(fc_run, fc_step, layer.get_type());
+        let path = MeteoForecastFileHelper::get_output_path2(fc_run, step_nr, layer.get_type());
         let filename = format!(
             "{}{}",
             &path,
