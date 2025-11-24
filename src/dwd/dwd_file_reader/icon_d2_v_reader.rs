@@ -27,19 +27,19 @@ impl IconD2VReader {
     ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
         let transform_fn = |x: f32| (Speed::from_mps_to_knots(x) + 128.0).round().min(254.0).max(0.0) as u8;
 
-        info!("reading v grids...");
+        info!("reading v grids for {fc_run}...");
 
         let v_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading v layers for level {}", level);
+                info!("reading v layers for step {fc_step}, level {level}");
                 let url = Self::get_file_url(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)
             }).collect();
 
-        info!("reading v grids done");
+        info!("reading v grids for {fc_run} done.");
 
         v_grids
     }

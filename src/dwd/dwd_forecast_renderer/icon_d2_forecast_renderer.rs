@@ -98,7 +98,7 @@ impl IconD2ForecastRenderer {
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps_clct = Self::get_forecast_steps(&latest_run, IconD2TotPrecReader::get_file_url)?;
-        let fc_steps_prec = Self::get_forecast_steps(&latest_run, IconD2TotPrecReader::get_file_url)?;
+        let fc_steps_prec = Self::get_forecast_prec_steps(&latest_run, IconD2TotPrecReader::get_file_url)?;
         let fc_steps_ceiling = Self::get_forecast_steps(&latest_run, IconD2CeilingReader::get_file_url)?;
         let fc_steps_ww = Self::get_forecast_steps(&latest_run, IconD2WwReader::get_file_url)?;
 
@@ -231,6 +231,24 @@ impl IconD2ForecastRenderer {
     ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
         let steps = MeteoForecastModel::IconD2
             .get_step_range()
+            .into_iter()
+            .map(|step_nr| {
+                let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);
+                let file_url = fn_get_url(&dwd_step);
+                MeteoForecastRun2Step::new(step_nr, file_url)
+            })
+            .collect();
+
+        Ok(steps)
+    }
+
+
+    fn get_forecast_prec_steps(
+        dwd_run: &DwdForecastRun,
+        fn_get_url: fn(&DwdForecastStep) -> String,
+    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
+        let steps = MeteoForecastModel::IconD2
+            .get_diff_step_range()
             .into_iter()
             .map(|step_nr| {
                 let dwd_step = DwdForecastStep::new_from_run(dwd_run, step_nr);

@@ -33,12 +33,12 @@ impl IconD2UReader {
                 .max(0.0) as u8
         };
 
-        info!("reading u grids...");
+        info!("reading u grids for {fc_run}...");
 
         let u_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading u layers for level {}", level);
+                info!("reading u layers for forecast step {fc_step}, level {level}");
                 let url = Self::get_file_url2(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
                     &url,

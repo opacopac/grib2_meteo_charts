@@ -27,19 +27,19 @@ impl IconD2HhlReader {
     ) -> Result<Vec<LatLonValueGrid<u8>>, DwdError> {
         let transform_fn = |x| (Length::from_meters_to_feet(x) / 100.0) as u8;
 
-        info!("reading hhl grids...");
+        info!("reading hhl grids for {fc_run}...");
 
         let hhl_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading hhl layers for level {}", level);
+                info!("reading hhl layers for level {level}");
                 let url = Self::get_file_url2(&fc_run, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, Self::MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)
             }).collect();
 
-        info!("reading hhl grids done.");
+        info!("reading hhl grids done for {fc_run}.");
 
         hhl_grids
     }

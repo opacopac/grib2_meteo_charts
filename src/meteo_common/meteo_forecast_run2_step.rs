@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use crate::meteo_common::meteo_common_error::MeteoCommonError;
 
 
@@ -5,6 +6,13 @@ use crate::meteo_common::meteo_common_error::MeteoCommonError;
 pub struct MeteoForecastRun2Step {
     step_nr: usize,
     file_url: String,
+}
+
+
+impl Display for MeteoForecastRun2Step {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.step_nr)
+    }
 }
 
 

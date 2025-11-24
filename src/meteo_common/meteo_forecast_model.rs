@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::ops::RangeInclusive;
 
 
@@ -7,6 +8,13 @@ pub enum MeteoForecastModel {
     IconEu,
     IconD2,
     IconCh1,
+}
+
+
+impl Display for MeteoForecastModel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.get_name())
+    }
 }
 
 
@@ -28,6 +36,14 @@ impl MeteoForecastModel {
             MeteoForecastModel::IconD2 => 2..=48,
             MeteoForecastModel::IconCh1 => 2..=33,
         }
+    }
+
+
+    pub fn get_diff_step_range(&self) -> RangeInclusive<usize> {
+        let std_range = Self::get_step_range(&self);
+
+        // start at 1 instead of 2 because diff between steps
+        (std_range.start() - 1)..=(std_range.end() - 0)
     }
 
 

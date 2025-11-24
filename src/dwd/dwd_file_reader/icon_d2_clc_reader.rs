@@ -27,19 +27,19 @@ impl IconD2ClcReader {
     ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
         let transform_fn = |x| x as u8;
 
-        info!("reading clc grids...");
+        info!("reading clc grids for {fc_run}...");
 
         let clc_grids = vertical_level_range.clone()
             .into_par_iter()
             .map(|level| {
-                info!("reading clc layers for level {}", level);
+                info!("reading clc layers for step {fc_step}, level {level}");
                 let url = Self::get_file_url2(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, MISSING_VALUE, transform_fn)?;
 
                 Ok(grid)
             }).collect();
 
-        info!("reading clc grids done");
+        info!("reading clc grids for {fc_run} done");
 
         clc_grids
     }
