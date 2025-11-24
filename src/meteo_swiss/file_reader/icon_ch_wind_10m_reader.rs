@@ -17,9 +17,9 @@ impl IconChWind10mReader {
         v_max_step: &MeteoForecastRun2Step,
         unstructured_grid: &UnstructuredGrid,
     ) -> Result<MeteoWind10mLayer, MeteoChartError> {
-        let grid_u = IconChWindU10mReader::read_grid_from_file(&u_step.get_file_url(), unstructured_grid)?;
-        let grid_v = IconChWindV10mReader::read_grid_from_file(&v_step.get_file_url(), unstructured_grid)?;
-        let grid_gusts = IconChWindVmax10mReader::read_grid_from_file(&v_max_step.get_file_url(), unstructured_grid)?;
+        let grid_u = IconChWindU10mReader::read_grid_from_file(u_step.get_file_url(), unstructured_grid)?;
+        let grid_v = IconChWindV10mReader::read_grid_from_file(v_step.get_file_url(), unstructured_grid)?;
+        let grid_gusts = IconChWindVmax10mReader::read_grid_from_file(v_max_step.get_file_url(), unstructured_grid)?;
 
         let layer = MeteoWind10mLayer::new(grid_u, grid_v, Some(grid_gusts))?;
 

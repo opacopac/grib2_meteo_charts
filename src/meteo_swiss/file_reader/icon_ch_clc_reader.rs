@@ -20,7 +20,7 @@ impl IconChClcReader {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<MeteoVerticalCloudLayer, Grib2Error> {
-        let regular_clc_grids = Self::read_grids(&clc_step.get_file_url(), unstructured_grid, vertical_level_range)?;
+        let regular_clc_grids = Self::read_grids(clc_step.get_file_url(), unstructured_grid, vertical_level_range)?;
         let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), regular_clc_grids);
 
         Ok(layer)

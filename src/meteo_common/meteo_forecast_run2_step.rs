@@ -27,8 +27,8 @@ impl MeteoForecastRun2Step {
     }
 
 
-    pub fn get_file_url(&self) -> String {
-        self.file_url.clone()
+    pub fn get_file_url(&self) -> &str {
+        self.file_url.as_str()
     }
 
 

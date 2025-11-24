@@ -13,14 +13,14 @@ impl IconChT2mReader {
 
 
     pub fn read_layer_from_file(t2m_step: &MeteoForecastRun2Step, unstructured_grid: &UnstructuredGrid) -> Result<MeteoTemp2mLayer, Grib2Error> {
-        let regular_grid = Self::read_grid_from_file(&t2m_step.get_file_url(), unstructured_grid)?;
+        let regular_grid = Self::read_grid_from_file(t2m_step.get_file_url(), unstructured_grid)?;
         let layer = MeteoTemp2mLayer::new(regular_grid);
 
         Ok(layer)
     }
 
 
-    pub fn read_grid_from_file(file_url: &str, unstructured_grid: &UnstructuredGrid) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+    fn read_grid_from_file(file_url: &str, unstructured_grid: &UnstructuredGrid) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let regular_grid = FileToGridConverter::read_unstructured_grid_from_file_and_transform(
             file_url,
             Self::MISSING_VALUE,

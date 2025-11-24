@@ -19,8 +19,8 @@ impl IconChVerticalWindReader {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<MeteoVerticalWindLayer, Grib2Error> {
         let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
-        let u_grids = IconChUReader::read_grids(&u_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
-        let v_grids = IconChVReader::read_grids(&v_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
+        let u_grids = IconChUReader::read_grids(u_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
+        let v_grids = IconChVReader::read_grids(v_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
 
         let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
