@@ -5,7 +5,7 @@ use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use log::info;
 use std::ops::RangeInclusive;
-
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconChClcReader;
 
@@ -15,12 +15,12 @@ impl IconChClcReader {
 
 
     pub fn read_layer_from_file(
-        file_url: &str,
+        clc_step: &MeteoForecastRun2Step,
         unstructured_grid: &UnstructuredGrid,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<MeteoVerticalCloudLayer, Grib2Error> {
-        let regular_clc_grids = Self::read_grids(file_url, unstructured_grid, vertical_level_range)?;
+        let regular_clc_grids = Self::read_grids(&clc_step.get_file_url(), unstructured_grid, vertical_level_range)?;
         let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), regular_clc_grids);
 
         Ok(layer)
