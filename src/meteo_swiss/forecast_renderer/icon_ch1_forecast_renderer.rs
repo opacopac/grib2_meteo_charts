@@ -101,9 +101,9 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
-        let fc_steps_clct = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clct, &date_ref)?;
-        let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref)?;
-        let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref)?;
+        let fc_steps_clct = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clct, &date_ref, true)?;
+        let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref, false)?;
+        let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref, false)?;
         let read_fn = |clct_step: &MeteoForecastRun2Step| {
             let step_nr = clct_step.get_step_nr();
             let tot_prec0_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_tot_prec, step_nr - 1)?;
@@ -137,9 +137,9 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
-        let fc_steps_u10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U10m, &date_ref)?;
-        let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref)?;
-        let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref)?;
+        let fc_steps_u10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U10m, &date_ref, false)?;
+        let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref, false)?;
+        let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref, false)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
             let step_nr = u10m_step.get_step_nr();
             let v10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v10m, step_nr)?;
@@ -165,7 +165,7 @@ impl IconCh1ForecastRenderer {
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
-        let fc_steps_t2m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::T2m, &date_ref)?;
+        let fc_steps_t2m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::T2m, &date_ref, false)?;
         let read_fn = |t2m_step: &MeteoForecastRun2Step| {
             IconChT2mReader::read_layer_from_file(&t2m_step.get_file_url(), &unstructured_grid)
         };
@@ -183,7 +183,7 @@ impl IconCh1ForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
-        let fc_steps_clc = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clc, &date_ref)?;
+        let fc_steps_clc = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clc, &date_ref, false)?;
         let read_fn = |clc_step: &MeteoForecastRun2Step| {
             let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
             let clc_layer = IconChClcReader::read_layer_from_file(
@@ -214,8 +214,8 @@ impl IconCh1ForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
-        let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref)?;
-        let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref)?;
+        let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref, false)?;
+        let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref, false)?;
         let read_fn = |u_step: &MeteoForecastRun2Step| {
             let step_nr = u_step.get_step_nr();
             let v_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v, step_nr)?;
@@ -255,6 +255,7 @@ impl IconCh1ForecastRenderer {
         model: &IconChForecastModel,
         variable: IconChForecastVariable,
         latest_ref_datetime: &IconChForecastReferenceDateTime,
+        skip_first_step: bool
     ) -> Result<Vec<MeteoForecastRun2Step>, MeteoSwissError> {
         let fc_steps = IconChForecastSearchService::find_forecast_file_urls(
             &model,
@@ -265,7 +266,7 @@ impl IconCh1ForecastRenderer {
         let steps = fc_steps
             .iter()
             .enumerate()
-            .filter(|(i, _step)| i >= &1)
+            .filter(|(i, _step)| !skip_first_step || i >= &1)
             .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
             .collect();
 
