@@ -265,6 +265,7 @@ impl IconCh1ForecastRenderer {
         let steps = fc_steps
             .iter()
             .enumerate()
+            .filter(|(i, _step)| i >= &1)
             .map(|(i, step)| MeteoForecastRun2Step::new(i, step.href.clone()))
             .collect();
 
