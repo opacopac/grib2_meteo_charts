@@ -94,10 +94,10 @@ impl IconD2ForecastRenderer {
         step_filter: &Vec<usize>,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps_clct = Self::get_forecast_steps(fc_run, IconD2TotPrecReader::get_file_url2)?;
-        let fc_steps_prec = Self::get_forecast_prec_steps(fc_run, IconD2TotPrecReader::get_file_url2)?;
-        let fc_steps_ceiling = Self::get_forecast_steps(fc_run, IconD2CeilingReader::get_file_url2)?;
-        let fc_steps_ww = Self::get_forecast_steps(fc_run, IconD2WwReader::get_file_url2)?;
+        let fc_steps_clct = Self::get_forecast_steps(fc_run, IconD2TotPrecReader::get_file_url)?;
+        let fc_steps_prec = Self::get_forecast_prec_steps(fc_run, IconD2TotPrecReader::get_file_url)?;
+        let fc_steps_ceiling = Self::get_forecast_steps(fc_run, IconD2CeilingReader::get_file_url)?;
+        let fc_steps_ww = Self::get_forecast_steps(fc_run, IconD2WwReader::get_file_url)?;
 
         let read_fn = |clct_step: &MeteoForecastRun2Step| {
             let step_nr = clct_step.get_step_nr();
@@ -132,9 +132,9 @@ impl IconD2ForecastRenderer {
         step_filter: &Vec<usize>,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps_u10m = Self::get_forecast_steps(fc_run, IconD2U10mReader::get_file_url2)?;
-        let fc_steps_v10m = Self::get_forecast_steps(fc_run, IconD2V10mReader::get_file_url2)?;
-        let fc_steps_vmax10m = Self::get_forecast_steps(fc_run, IconD2Vmax10mReader::get_file_url2)?;
+        let fc_steps_u10m = Self::get_forecast_steps(fc_run, IconD2U10mReader::get_file_url)?;
+        let fc_steps_v10m = Self::get_forecast_steps(fc_run, IconD2V10mReader::get_file_url)?;
+        let fc_steps_vmax10m = Self::get_forecast_steps(fc_run, IconD2Vmax10mReader::get_file_url)?;
         let read_fn = |u10m_step: &MeteoForecastRun2Step| {
             let step_nr = u10m_step.get_step_nr();
             let v10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v10m, step_nr)?;
@@ -158,7 +158,7 @@ impl IconD2ForecastRenderer {
         step_filter: &Vec<usize>,
         fc_run: &MeteoForecastRun2,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps(fc_run, IconD2T2mReader::get_file_url2)?;
+        let fc_steps = Self::get_forecast_steps(fc_run, IconD2T2mReader::get_file_url)?;
         let read_fn = |step: &MeteoForecastRun2Step| {
             IconD2T2mReader::read_layer_from_file(fc_run, step)
         };

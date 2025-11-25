@@ -16,7 +16,9 @@ use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 use chrono;
 use chrono::{Duration, Utc};
 use std::ops::Add;
-
+use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
+use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
 
 pub struct IconD2ForecastRunFinder;
 
@@ -30,8 +32,10 @@ impl IconD2ForecastRunFinder {
 
         // check each run
         for run in IconD2ForecastRunName::get_all_reversed() {
-            let forecast_step = DwdForecastStep::new(DwdModelType::IconD2, date_today, run, last_step);
-            let probe_file_names = Self::get_probe_file_names(&forecast_step);
+            let forecast_step = DwdForecastStep::new(DwdModelType::IconD2, date_today, run.clone(), last_step); // TODO: get rid of this...
+            let fc_run = MeteoForecastRun2::new(MeteoForecastModel::IconD2, date_today, run.get_name());
+            let fc_step = MeteoForecastRun2Step::new(last_step, "".to_string());
+            let probe_file_names = Self::get_probe_file_names(&fc_run, &fc_step);
 
             // check all probe files
             let mut all_files_found: bool = true;
@@ -65,18 +69,18 @@ impl IconD2ForecastRunFinder {
     }
 
 
-    pub fn get_probe_file_names(step: &DwdForecastStep) -> Vec<String> {
+    pub fn get_probe_file_names(fc_run: &MeteoForecastRun2, fc_step: &MeteoForecastRun2Step) -> Vec<String> {
         vec![
-            IconD2ClctModReader::get_file_url(step),
-            IconD2TotPrecReader::get_file_url(step),
-            IconD2CeilingReader::get_file_url(step),
-            IconD2WwReader::get_file_url(step),
-            IconD2U10mReader::get_file_url(step),
-            IconD2V10mReader::get_file_url(step),
-            IconD2Vmax10mReader::get_file_url(step),
-            IconD2T2mReader::get_file_url(step),
-            IconD2ClcReader::get_file_url(step, 65),
-            IconD2UReader::get_file_url(step, 65)
+            IconD2ClctModReader::get_file_url(fc_run, fc_step),
+            IconD2TotPrecReader::get_file_url(fc_run, fc_step),
+            IconD2CeilingReader::get_file_url(fc_run, fc_step),
+            IconD2WwReader::get_file_url(fc_run, fc_step),
+            IconD2U10mReader::get_file_url(fc_run, fc_step),
+            IconD2V10mReader::get_file_url(fc_run, fc_step),
+            IconD2Vmax10mReader::get_file_url(fc_run, fc_step),
+            IconD2T2mReader::get_file_url(fc_run, fc_step),
+            IconD2ClcReader::get_file_url(fc_run, fc_step, 65),
+            IconD2UReader::get_file_url(fc_run, fc_step, 65)
         ]
     }
 }

@@ -1,5 +1,4 @@
 use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
-use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
@@ -21,7 +20,7 @@ impl IconD2T2mReader {
         fc_step: &MeteoForecastRun2Step,
     ) -> Result<MeteoTemp2mLayer, Grib2Error> {
         let grid = FileToGridConverter::read_rectangular_grid_from_file(
-            Self::get_file_url2(fc_run, fc_step).as_str(),
+            Self::get_file_url(fc_run, fc_step).as_str(),
             MISSING_VALUE,
         )?;
         let layer = MeteoTemp2mLayer::new(grid);
@@ -30,16 +29,7 @@ impl IconD2T2mReader {
     }
 
 
-    pub fn get_file_url(forecast_step: &DwdForecastStep) -> String {
-        IconD2File::get_single_level_file_url(
-            DWD_ICON_D2_T_2M_FILE_PREFIX,
-            DWD_ICON_D2_T_2M_FILE_SUFFIX,
-            forecast_step,
-        )
-    }
-
-
-    pub(crate) fn get_file_url2(
+    pub fn get_file_url(
         fc_run: &MeteoForecastRun2,
         fc_step: &MeteoForecastRun2Step,
     ) -> String {
@@ -56,29 +46,10 @@ impl IconD2T2mReader {
 #[cfg(test)]
 mod tests {
     use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
-    use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-    use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
-    use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
-    use chrono::NaiveDate;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
     use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
-
-    #[test]
-    fn it_creates_the_correct_file_url() {
-        let forecast_step = DwdForecastStep::new(
-            DwdModelType::IconD2,
-            NaiveDate::from_ymd_opt(2023, 8, 6).unwrap(),
-            IconD2ForecastRunName::Run00,
-            0,
-        );
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";
-
-        let result = IconD2T2mReader::get_file_url(&forecast_step);
-
-        assert_eq!(expected, result);
-    }
-
+    use chrono::NaiveDate;
 
     #[test]
     fn it_creates_the_correct_file_url2() {
@@ -86,12 +57,12 @@ mod tests {
         let fc_run = MeteoForecastRun2::new(
             MeteoForecastModel::IconD2,
             NaiveDate::from_ymd_opt(2023, 8, 6).unwrap(),
-            "00".to_string()
+            "00".to_string(),
         );
         let fc_step = MeteoForecastRun2Step::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2T2mReader::get_file_url2(&fc_run, &fc_step);
+        let result = IconD2T2mReader::get_file_url(&fc_run, &fc_step);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";

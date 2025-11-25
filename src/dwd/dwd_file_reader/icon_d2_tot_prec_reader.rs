@@ -1,5 +1,4 @@
 use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
-use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
@@ -20,7 +19,7 @@ impl IconD2TotPrecReader {
         fc_step: &MeteoForecastRun2Step,
     ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
         let grid = FileToGridConverter::read_rectangular_grid_from_file(
-            Self::get_file_url2(fc_run, fc_step).as_str(),
+            Self::get_file_url(fc_run, fc_step).as_str(),
             MISSING_VALUE,
         )?;
 
@@ -28,16 +27,7 @@ impl IconD2TotPrecReader {
     }
 
 
-    pub fn get_file_url(forecast_step: &DwdForecastStep) -> String {
-        IconD2File::get_single_level_file_url(
-            DWD_ICON_D2_TOT_PREC_FILE_PREFIX,
-            DWD_ICON_D2_TOT_PREC_FILE_SUFFIX,
-            forecast_step,
-        )
-    }
-
-
-    pub(crate) fn get_file_url2(
+    pub fn get_file_url(
         fc_run: &MeteoForecastRun2,
         fc_step: &MeteoForecastRun2Step,
     ) -> String {
@@ -54,28 +44,10 @@ impl IconD2TotPrecReader {
 #[cfg(test)]
 mod tests {
     use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
-    use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-    use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
-    use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
     use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
     use chrono::NaiveDate;
-
-
-    #[test]
-    fn it_creates_the_correct_file_url() {
-        let forecast_step = DwdForecastStep::new(
-            DwdModelType::IconD2,
-            NaiveDate::from_ymd_opt(2022, 6, 19).unwrap(),
-            IconD2ForecastRunName::Run00, 0,
-        );
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/icon-d2_germany_regular-lat-lon_single-level_2022061900_000_2d_tot_prec.grib2.bz2";
-
-        let result = IconD2TotPrecReader::get_file_url(&forecast_step);
-
-        assert_eq!(expected, result);
-    }
 
 
     #[test]
@@ -89,7 +61,7 @@ mod tests {
         let fc_step = MeteoForecastRun2Step::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2TotPrecReader::get_file_url2(&fc_run, &fc_step);
+        let result = IconD2TotPrecReader::get_file_url(&fc_run, &fc_step);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/icon-d2_germany_regular-lat-lon_single-level_2022061900_000_2d_tot_prec.grib2.bz2";
