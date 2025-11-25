@@ -31,7 +31,7 @@ impl IconD2Vmax10mReader {
         fc_run: &MeteoForecastRun2,
         fc_step: &MeteoForecastRun2Step,
     ) -> String {
-        IconD2File::get_single_level_file_url2(
+        IconD2File::get_single_level_file_url(
             DWD_ICON_D2_VMAX_10M_FILE_PREFIX,
             DWD_ICON_D2_VMAX_10M_FILE_SUFFIX,
             fc_run,

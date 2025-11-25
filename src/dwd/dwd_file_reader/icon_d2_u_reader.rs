@@ -60,7 +60,7 @@ impl IconD2UReader {
         fc_step: &MeteoForecastRun2Step,
         level: usize,
     ) -> String {
-        IconD2File::get_multi_level_file_url2(
+        IconD2File::get_multi_level_file_url(
             DWD_ICON_D2_U_FILE_PREFIX,
             DWD_ICON_D2_U_FILE_SUFFIX,
             level,

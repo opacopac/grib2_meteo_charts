@@ -9,30 +9,26 @@ use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_10m_reader::IconD2V10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
-use crate::dwd::forecast_run::dwd_forecast_run::DwdForecastRun;
-use crate::dwd::forecast_run::dwd_forecast_step::DwdForecastStep;
-use crate::dwd::forecast_run::dwd_model_type::DwdModelType;
 use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
-use chrono;
-use chrono::{Duration, Utc};
-use std::ops::Add;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use chrono;
+use chrono::{Duration, Utc};
+use std::ops::Add;
 
 pub struct IconD2ForecastRunFinder;
 
 
 impl IconD2ForecastRunFinder {
-    pub fn find_latest_forecast_run() -> Result<DwdForecastRun, DwdError> {
+    pub fn find_latest_forecast_run() -> Result<MeteoForecastRun2, DwdError> {
         let date_today = Utc::now().date_naive();
 
         // return Ok(IconD2ForecastRun::new(date_today, IconD2ForecastRunName::Run12));
-        let last_step = DwdForecastStep::get_step_range().end().clone();
+        let last_step = MeteoForecastModel::IconD2.get_step_range().end().clone();
 
         // check each run
         for run in IconD2ForecastRunName::get_all_reversed() {
-            let forecast_step = DwdForecastStep::new(DwdModelType::IconD2, date_today, run.clone(), last_step); // TODO: get rid of this...
             let fc_run = MeteoForecastRun2::new(MeteoForecastModel::IconD2, date_today, run.get_name());
             let fc_step = MeteoForecastRun2Step::new(last_step, "".to_string());
             let probe_file_names = Self::get_probe_file_names(&fc_run, &fc_step);
@@ -57,15 +53,15 @@ impl IconD2ForecastRunFinder {
             }
 
             if all_files_found {
-                return Ok(forecast_step.run);
+                return Ok(fc_run);
             }
         }
 
         // TODO: check if yesterday's files really exist
         let date_yesterday = Utc::now().date_naive().add(Duration::days(-1));
-        let fc_run = DwdForecastRun::new(DwdModelType::IconD2, date_yesterday, IconD2ForecastRunName::Run21);
+        let fc_run_yesterday = MeteoForecastRun2::new(MeteoForecastModel::IconD2, date_yesterday, IconD2ForecastRunName::Run21.get_name());
 
-        Ok(fc_run)
+        Ok(fc_run_yesterday)
     }
 
 

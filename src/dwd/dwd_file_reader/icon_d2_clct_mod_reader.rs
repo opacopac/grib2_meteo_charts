@@ -29,7 +29,7 @@ impl IconD2ClctModReader {
 
 
     pub fn get_file_url(fc_run: &MeteoForecastRun2, fc_step: &MeteoForecastRun2Step) -> String {
-        IconD2File::get_single_level_file_url2(
+        IconD2File::get_single_level_file_url(
             DWD_ICON_D2_CLCT_MOD_FILE_PREFIX,
             DWD_ICON_D2_CLCT_MOD_FILE_SUFFIX,
             fc_run,

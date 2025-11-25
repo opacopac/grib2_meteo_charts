@@ -42,14 +42,8 @@ impl IconD2ForecastRenderer {
         info!("creating latest dwd forecasts...");
 
         info!("search available forecasts...");
-        let latest_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
-        info!("latest run found: {:?}", &latest_run);
-
-        let fc_run = MeteoForecastRun2::new(
-            MeteoForecastModel::IconD2,
-            latest_run.start_date,
-            latest_run.run_name.get_name(),
-        );
+        let fc_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
+        info!("latest run found: {:?}", &fc_run);
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
             info!("rendering cloud & precipitation forecast...");
