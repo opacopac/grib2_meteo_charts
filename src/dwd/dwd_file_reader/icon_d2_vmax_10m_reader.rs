@@ -37,7 +37,7 @@ impl IconD2Vmax10mReader {
     }
 
 
-    fn get_file_url2(
+    pub(crate) fn get_file_url2(
         fc_run: &MeteoForecastRun2,
         fc_step: &MeteoForecastRun2Step,
     ) -> String {
