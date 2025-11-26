@@ -2,8 +2,8 @@ use crate::meteo_chart::forecast_renderer::cloud_precip_chart_renderer::CloudPre
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
 use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::metobin::precip_metobin::PrecipMeteoBin;
 use crate::metobin::weather_metobin::WeatherMeteoBin;
 use log::info;
@@ -15,13 +15,13 @@ pub struct CloudPrecipForecastRenderer;
 
 impl CloudPrecipForecastRenderer {
     pub fn render<S>(
-        fc_run: &MeteoForecastRun2,
-        fc_steps: &Vec<MeteoForecastRun2Step>,
+        fc_run: &MeteoForecastRun,
+        fc_steps: &Vec<MeteoForecastRunStep>,
         step_filter: &Vec<usize>,
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<(MeteoCloudPrecipLayer, WeatherLayer), MeteoChartError> + Sync,
+        S: Fn(&MeteoForecastRunStep) -> Result<(MeteoCloudPrecipLayer, WeatherLayer), MeteoChartError> + Sync,
     {
         fc_steps
             .par_iter()

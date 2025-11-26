@@ -1,5 +1,4 @@
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 
 
@@ -12,24 +11,7 @@ const FC_STARTDATE_FORMAT: &str = "%Y%m%d";
 
 impl MeteoForecastFileHelper {
     pub fn get_output_path(
-        fc_run: &dyn MeteoForecastRun,
-        step_nr: usize,
-        layer_type: &MeteoLayerType,
-    ) -> String {
-        format!(
-            "{}{}/{}{}/{:03}/{}/",
-            FORECAST_BASE_DIR,
-            fc_run.get_model_name(),
-            fc_run.get_start_date().format(FC_STARTDATE_FORMAT),
-            fc_run.get_name(),
-            step_nr,
-            &layer_type.get_output_subdir(),
-        )
-    }
-
-
-    pub fn get_output_path2(
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
         step_nr: usize,
         layer_type: &MeteoLayerType,
     ) -> String {

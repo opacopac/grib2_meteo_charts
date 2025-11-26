@@ -1,7 +1,7 @@
 use crate::imaging::drawable::Drawable;
 use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use std::fs;
 
 pub struct MapTileFileHelper;
@@ -14,12 +14,12 @@ impl MapTileFileHelper {
         x: u32,
         y: u32,
         layer_type: &MeteoLayerType,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
         step_nr: usize,
     ) {
         let path = format!(
             "{}{}/{}",
-            MeteoForecastFileHelper::get_output_path2(fc_run, step_nr, layer_type),
+            MeteoForecastFileHelper::get_output_path(fc_run, step_nr, layer_type),
             zoom,
             x
         );

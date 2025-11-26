@@ -2,8 +2,8 @@ use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::physics::speed::Speed;
 use log::info;
 use rayon::iter::ParallelIterator;
@@ -21,8 +21,8 @@ const MISSING_VALUE: u8 = 0xFF;
 
 impl IconD2VReader {
     pub fn read_v_grids(
-        fc_run: &MeteoForecastRun2,
-        fc_step: &MeteoForecastRun2Step,
+        fc_run: &MeteoForecastRun,
+        fc_step: &MeteoForecastRunStep,
         vertical_level_range: &RangeInclusive<u8>,
     ) -> Result<Vec<LatLonValueGrid<u8>>, Grib2Error> {
         let transform_fn = |x: f32| (Speed::from_mps_to_knots(x) + 128.0).round().min(254.0).max(0.0) as u8;
@@ -46,8 +46,8 @@ impl IconD2VReader {
 
 
     fn get_file_url(
-        fc_run: &MeteoForecastRun2,
-        fc_step: &MeteoForecastRun2Step,
+        fc_run: &MeteoForecastRun,
+        fc_step: &MeteoForecastRunStep,
         level: usize,
     ) -> String {
         IconD2File::get_multi_level_file_url(
@@ -65,20 +65,20 @@ impl IconD2VReader {
 mod tests {
     use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
-    use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-    use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+    use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+    use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
     use chrono::NaiveDate;
 
 
     #[test]
-    fn it_creates_the_correct_file_url2() {
+    fn it_creates_the_correct_file_url() {
         // given
-        let fc_run = MeteoForecastRun2::new(
+        let fc_run = MeteoForecastRun::new(
             MeteoForecastModel::IconD2,
             NaiveDate::from_ymd_opt(2023, 03, 21).unwrap(),
             "00".to_string(),
         );
-        let fc_step = MeteoForecastRun2Step::new(43, "".to_string()); // TODO: get rid of this...
+        let fc_step = MeteoForecastRunStep::new(43, "".to_string()); // TODO: get rid of this...
 
         // when
         let result = IconD2VReader::get_file_url(&fc_run, &fc_step, 48);

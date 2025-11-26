@@ -4,7 +4,7 @@ use crate::meteo_chart::forecast_renderer::map_tile_file_helper::MapTileFileHelp
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::physics::temperature::Temperature;
 
 
@@ -27,7 +27,7 @@ impl Temp2mChartRenderer {
 
     pub fn render_map_tiles(
         temp_layer: &MeteoTemp2mLayer,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
         step_nr: usize,
     ) -> Result<(), MeteoChartError> {
         let extent = temp_layer.get_lat_lon_extent();

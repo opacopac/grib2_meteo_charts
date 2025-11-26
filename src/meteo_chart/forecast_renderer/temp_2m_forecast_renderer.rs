@@ -2,8 +2,8 @@ use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::temp_2m_chart_renderer::Temp2mChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::metobin::temp_metobin::TempMeteoBin;
 use log::info;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
@@ -14,13 +14,13 @@ pub struct Temp2mForecastRenderer;
 
 impl Temp2mForecastRenderer {
     pub fn render<S>(
-        fc_run: &MeteoForecastRun2,
-        fc_steps: &Vec<MeteoForecastRun2Step>,
+        fc_run: &MeteoForecastRun,
+        fc_steps: &Vec<MeteoForecastRunStep>,
         step_filter: &Vec<usize>,
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoTemp2mLayer, Grib2Error> + Sync,
+        S: Fn(&MeteoForecastRunStep) -> Result<MeteoTemp2mLayer, Grib2Error> + Sync,
     {
         fc_steps
             .par_iter()

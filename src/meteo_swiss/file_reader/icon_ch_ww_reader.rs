@@ -1,7 +1,7 @@
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::weather_layer::WeatherLayer;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::meteo_swiss::file_reader::icon_ch_ceiling_reader::IconChCeilingReader;
 use crate::meteo_swiss::file_reader::icon_ch_clct_reader::IconChClctReader;
 
@@ -11,8 +11,8 @@ pub struct IconChWwReader;
 
 impl IconChWwReader {
     pub fn read_layer_from_files(
-        clct_step: &MeteoForecastRun2Step,
-        ceiling_step: &MeteoForecastRun2Step,
+        clct_step: &MeteoForecastRunStep,
+        ceiling_step: &MeteoForecastRunStep,
         unstructured_grid: &UnstructuredGrid,
     ) -> Result<WeatherLayer, Grib2Error> {
         let file_url_clct = &clct_step.get_file_url();

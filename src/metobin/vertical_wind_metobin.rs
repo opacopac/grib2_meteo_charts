@@ -1,7 +1,6 @@
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 use crate::meteo_common::meteo_forecast_renderer_helper::MeteoForecastFileHelper;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
 use crate::metobin::meteobin_error::MeteoBinError;
 use crate::metobin::meteobin_type::MeteobinType;
 use log::info;
@@ -19,35 +18,11 @@ impl VerticalWindMeteobin {
 
     pub fn create_meteobin_file(
         layer: &MeteoVerticalWindLayer,
-        fc_run: &dyn MeteoForecastRun,
+        fc_run: &MeteoForecastRun,
         step_nr: usize,
     ) -> Result<(), MeteoBinError> {
         let bin_data = Self::create_bin_values(layer);
         let path = MeteoForecastFileHelper::get_output_path(fc_run, step_nr, layer.get_type());
-        let filename = format!(
-            "{}{}",
-            &path,
-            MeteobinType::VerticalWind.get_output_file()
-        );
-
-        info!("writing vertical wind meteobin file {}", &filename);
-
-        fs::create_dir_all(&path)?;
-        let mut file = BufWriter::new(File::create(&filename)
-            .expect("Unable to create vertical wind meteobin file"));
-        let _ = file.write_all(&bin_data)?;
-
-        Ok(())
-    }
-
-
-    pub fn create_meteobin_file2(
-        layer: &MeteoVerticalWindLayer,
-        fc_run: &MeteoForecastRun2,
-        step_nr: usize,
-    ) -> Result<(), MeteoBinError> {
-        let bin_data = Self::create_bin_values(layer);
-        let path = MeteoForecastFileHelper::get_output_path2(fc_run, step_nr, layer.get_type());
         let filename = format!(
             "{}{}",
             &path,

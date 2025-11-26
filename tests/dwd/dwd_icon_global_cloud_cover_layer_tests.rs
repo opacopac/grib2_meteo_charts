@@ -26,7 +26,7 @@ fn it_successfully_reads_an_icon_global_clct_test_file() {
     let netcdf_doc =
         NetCdfDocumentReader::read_file(NETCDF_FILE, vec![CLAT_VAR_NAME, CLON_VAR_NAME]).unwrap();
     TStamp::print_us("NetCdftoGridConverter::get_lat_lon_values_from_netcdf2...");
-    let coordinates = NetCdftoGridConverter::get_lat_lon_values_from_netcdf2(&netcdf_doc).unwrap();
+    let coordinates = NetCdftoGridConverter::get_lat_lon_values_from_netcdf(&netcdf_doc).unwrap();
     TStamp::print_us("UnstructuredGridConverter::create...");
     let grid = UnstructuredGridConverter::create(
         &grib2_doc,

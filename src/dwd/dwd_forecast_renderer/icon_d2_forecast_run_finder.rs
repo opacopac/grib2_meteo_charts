@@ -11,8 +11,8 @@ use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
 use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use chrono;
 use chrono::{Duration, Utc};
 use std::ops::Add;
@@ -21,7 +21,7 @@ pub struct IconD2ForecastRunFinder;
 
 
 impl IconD2ForecastRunFinder {
-    pub fn find_latest_forecast_run() -> Result<MeteoForecastRun2, DwdError> {
+    pub fn find_latest_forecast_run() -> Result<MeteoForecastRun, DwdError> {
         let date_today = Utc::now().date_naive();
 
         // return Ok(IconD2ForecastRun::new(date_today, IconD2ForecastRunName::Run12));
@@ -29,8 +29,8 @@ impl IconD2ForecastRunFinder {
 
         // check each run
         for run in IconD2ForecastRunName::get_all_reversed() {
-            let fc_run = MeteoForecastRun2::new(MeteoForecastModel::IconD2, date_today, run.get_name());
-            let fc_step = MeteoForecastRun2Step::new(last_step, "".to_string());
+            let fc_run = MeteoForecastRun::new(MeteoForecastModel::IconD2, date_today, run.get_name());
+            let fc_step = MeteoForecastRunStep::new(last_step, "".to_string());
             let probe_file_names = Self::get_probe_file_names(&fc_run, &fc_step);
 
             // check all probe files
@@ -59,13 +59,13 @@ impl IconD2ForecastRunFinder {
 
         // TODO: check if yesterday's files really exist
         let date_yesterday = Utc::now().date_naive().add(Duration::days(-1));
-        let fc_run_yesterday = MeteoForecastRun2::new(MeteoForecastModel::IconD2, date_yesterday, IconD2ForecastRunName::Run21.get_name());
+        let fc_run_yesterday = MeteoForecastRun::new(MeteoForecastModel::IconD2, date_yesterday, IconD2ForecastRunName::Run21.get_name());
 
         Ok(fc_run_yesterday)
     }
 
 
-    pub fn get_probe_file_names(fc_run: &MeteoForecastRun2, fc_step: &MeteoForecastRun2Step) -> Vec<String> {
+    pub fn get_probe_file_names(fc_run: &MeteoForecastRun, fc_step: &MeteoForecastRunStep) -> Vec<String> {
         vec![
             IconD2ClctModReader::get_file_url(fc_run, fc_step),
             IconD2TotPrecReader::get_file_url(fc_run, fc_step),

@@ -2,7 +2,7 @@ use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::meteo_swiss::common::icon_ch1_model_config::IconCh1ModelConfig;
 use crate::meteo_swiss::file_reader::icon_ch_u_reader::IconChUReader;
 use crate::meteo_swiss::file_reader::icon_ch_v_reader::IconChVReader;
@@ -13,8 +13,8 @@ pub struct IconChVerticalWindReader;
 
 impl IconChVerticalWindReader {
     pub fn read_layer_from_file(
-        u_step: &MeteoForecastRun2Step,
-        v_step: &MeteoForecastRun2Step,
+        u_step: &MeteoForecastRunStep,
+        v_step: &MeteoForecastRunStep,
         unstructured_grid: &UnstructuredGrid,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<MeteoVerticalWindLayer, Grib2Error> {

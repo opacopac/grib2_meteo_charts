@@ -1,8 +1,8 @@
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::wind_10m_chart_renderer::Wind10mChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_wind_10m_layer::MeteoWind10mLayer;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::metobin::wind_metobin::WindMeteobin;
 use log::info;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
@@ -13,13 +13,13 @@ pub struct Wind10mForecastRenderer;
 
 impl Wind10mForecastRenderer {
     pub fn render<S>(
-        fc_run: &MeteoForecastRun2,
-        fc_steps: &Vec<MeteoForecastRun2Step>,
+        fc_run: &MeteoForecastRun,
+        fc_steps: &Vec<MeteoForecastRunStep>,
         step_filter: &Vec<usize>,
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
-        S: Fn(&MeteoForecastRun2Step) -> Result<MeteoWind10mLayer, MeteoChartError> + Sync,
+        S: Fn(&MeteoForecastRunStep) -> Result<MeteoWind10mLayer, MeteoChartError> + Sync,
     {
         fc_steps
             .par_iter()
@@ -32,7 +32,7 @@ impl Wind10mForecastRenderer {
                 let layer = read_layer_fn(&fc_step)?;
 
                 // map tiles
-                let _ = Wind10mChartRenderer::render_map_tiles2(&layer, fc_run, fc_step.get_step_nr());
+                let _ = Wind10mChartRenderer::render_map_tiles(&layer, fc_run, fc_step.get_step_nr());
 
                 // meteobin
                 let _ = WindMeteobin::create_meteobin_file(&layer, fc_run, fc_step.get_step_nr());

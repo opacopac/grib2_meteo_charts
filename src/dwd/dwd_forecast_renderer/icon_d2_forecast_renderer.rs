@@ -25,8 +25,8 @@ use crate::meteo_chart::meteo_layer::meteo_layer_type::MeteoLayerType;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
 use crate::meteo_chart::meteo_layer::meteo_vertical_wind_layer::MeteoVerticalWindLayer;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
-use crate::meteo_common::meteo_forecast_run2_step::MeteoForecastRun2Step;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use log::info;
 use std::ops::RangeInclusive;
 
@@ -65,7 +65,7 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
             let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
-            let hhl_grids = IconD2HhlReader::read_hhl_grids2(&fc_run, &vertical_levels)?;
+            let hhl_grids = IconD2HhlReader::read_hhl_grids(&fc_run, &vertical_levels)?;
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");
@@ -86,19 +86,19 @@ impl IconD2ForecastRenderer {
 
     fn render_cloud_precip_forecast(
         step_filter: &Vec<usize>,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps_clct = Self::get_forecast_steps(fc_run, IconD2TotPrecReader::get_file_url)?;
         let fc_steps_prec = Self::get_forecast_prec_steps(fc_run, IconD2TotPrecReader::get_file_url)?;
         let fc_steps_ceiling = Self::get_forecast_steps(fc_run, IconD2CeilingReader::get_file_url)?;
         let fc_steps_ww = Self::get_forecast_steps(fc_run, IconD2WwReader::get_file_url)?;
 
-        let read_fn = |clct_step: &MeteoForecastRun2Step| {
+        let read_fn = |clct_step: &MeteoForecastRunStep| {
             let step_nr = clct_step.get_step_nr();
-            let precip_step0 = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_prec, step_nr - 1)?;
-            let precip_step1 = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_prec, step_nr)?;
-            let ceiling_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_ceiling, step_nr)?;
-            let ww_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_ww, step_nr)?;
+            let precip_step0 = MeteoForecastRunStep::get_step_by_nr(&fc_steps_prec, step_nr - 1)?;
+            let precip_step1 = MeteoForecastRunStep::get_step_by_nr(&fc_steps_prec, step_nr)?;
+            let ceiling_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_ceiling, step_nr)?;
+            let ww_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_ww, step_nr)?;
 
             let cloud_precip_layer = IconD2CloudPrecipReader::read_layer_from_files(
                 fc_run,
@@ -124,15 +124,15 @@ impl IconD2ForecastRenderer {
 
     fn render_wind10m_forecast(
         step_filter: &Vec<usize>,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps_u10m = Self::get_forecast_steps(fc_run, IconD2U10mReader::get_file_url)?;
         let fc_steps_v10m = Self::get_forecast_steps(fc_run, IconD2V10mReader::get_file_url)?;
         let fc_steps_vmax10m = Self::get_forecast_steps(fc_run, IconD2Vmax10mReader::get_file_url)?;
-        let read_fn = |u10m_step: &MeteoForecastRun2Step| {
+        let read_fn = |u10m_step: &MeteoForecastRunStep| {
             let step_nr = u10m_step.get_step_nr();
-            let v10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_v10m, step_nr)?;
-            let vmax10m_step = MeteoForecastRun2Step::get_step_by_nr(&fc_steps_vmax10m, step_nr)?;
+            let v10m_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_v10m, step_nr)?;
+            let vmax10m_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_vmax10m, step_nr)?;
 
             IconD2Wind10mReader::read_layer_from_files(
                 fc_run,
@@ -150,10 +150,10 @@ impl IconD2ForecastRenderer {
 
     fn render_temp2m_forecast(
         step_filter: &Vec<usize>,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps(fc_run, IconD2T2mReader::get_file_url)?;
-        let read_fn = |step: &MeteoForecastRun2Step| {
+        let read_fn = |step: &MeteoForecastRunStep| {
             IconD2T2mReader::read_layer_from_file(fc_run, step)
         };
 
@@ -167,11 +167,11 @@ impl IconD2ForecastRenderer {
         step_filter: &Vec<usize>,
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps_without_url()?;
-        let read_fn = |fc_step: &MeteoForecastRun2Step| {
-            let clc_grids = IconD2ClcReader::read_clc_grids2(fc_run, fc_step, vertical_levels)?;
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            let clc_grids = IconD2ClcReader::read_clc_grids(fc_run, fc_step, vertical_levels)?;
             let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
 
             Ok(layer)
@@ -192,10 +192,10 @@ impl IconD2ForecastRenderer {
         step_filter: &Vec<usize>,
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps_without_url()?;
-        let read_fn = |u_step: &MeteoForecastRun2Step| {
+        let read_fn = |u_step: &MeteoForecastRunStep| {
             let u_grids = IconD2UReader::read_u_grids(fc_run, u_step, vertical_levels)?;
             let v_grids = IconD2VReader::read_v_grids(fc_run, u_step, vertical_levels)?;
             let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
@@ -215,16 +215,16 @@ impl IconD2ForecastRenderer {
 
 
     fn get_forecast_steps(
-        fc_run: &MeteoForecastRun2,
-        fn_get_url: fn(fc_run: &MeteoForecastRun2, fc_step: &MeteoForecastRun2Step) -> String,
-    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
+        fc_run: &MeteoForecastRun,
+        fn_get_url: fn(fc_run: &MeteoForecastRun, fc_step: &MeteoForecastRunStep) -> String,
+    ) -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
         let steps = MeteoForecastModel::IconD2
             .get_step_range()
             .into_iter()
             .map(|step_nr| {
-                let fc_step = MeteoForecastRun2Step::new(step_nr, String::new());
+                let fc_step = MeteoForecastRunStep::new(step_nr, String::new());
                 let file_url = fn_get_url(fc_run, &fc_step);
-                MeteoForecastRun2Step::new(step_nr, file_url)
+                MeteoForecastRunStep::new(step_nr, file_url)
             })
             .collect();
 
@@ -233,16 +233,16 @@ impl IconD2ForecastRenderer {
 
 
     fn get_forecast_prec_steps(
-        fc_run: &MeteoForecastRun2,
-        fn_get_url: fn(fc_run: &MeteoForecastRun2, fc_step: &MeteoForecastRun2Step) -> String,
-    ) -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
+        fc_run: &MeteoForecastRun,
+        fn_get_url: fn(fc_run: &MeteoForecastRun, fc_step: &MeteoForecastRunStep) -> String,
+    ) -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
         let steps = MeteoForecastModel::IconD2
             .get_diff_step_range()
             .into_iter()
             .map(|step_nr| {
-                let fc_step = MeteoForecastRun2Step::new(step_nr, String::new());
+                let fc_step = MeteoForecastRunStep::new(step_nr, String::new());
                 let file_url = fn_get_url(fc_run, &fc_step);
-                MeteoForecastRun2Step::new(step_nr, file_url)
+                MeteoForecastRunStep::new(step_nr, file_url)
             })
             .collect();
 
@@ -250,11 +250,11 @@ impl IconD2ForecastRenderer {
     }
 
 
-    fn get_forecast_steps_without_url() -> Result<Vec<MeteoForecastRun2Step>, ForecastRendererError> {
+    fn get_forecast_steps_without_url() -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
         let steps = MeteoForecastModel::IconD2
             .get_step_range()
             .into_iter()
-            .map(|step_nr| MeteoForecastRun2Step::new(step_nr, String::new()))
+            .map(|step_nr| MeteoForecastRunStep::new(step_nr, String::new()))
             .collect();
 
         Ok(steps)

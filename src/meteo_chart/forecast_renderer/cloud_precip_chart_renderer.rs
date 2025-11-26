@@ -4,7 +4,7 @@ use crate::meteo_chart::forecast_renderer::map_tile_file_helper::MapTileFileHelp
 use crate::meteo_chart::forecast_renderer::meteo_chart_error::MeteoChartError;
 use crate::meteo_chart::forecast_renderer::single_chart_renderer::SingleChartRenderer;
 use crate::meteo_chart::meteo_layer::meteo_cloud_precip_layer::MeteoCloudPrecipLayer;
-use crate::meteo_common::meteo_forecast_run2::MeteoForecastRun2;
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 
 
 pub struct CloudPrecipChartRenderer;
@@ -26,7 +26,7 @@ impl CloudPrecipChartRenderer {
 
     pub fn render_map_tiles(
         cloud_layer: &MeteoCloudPrecipLayer,
-        fc_run: &MeteoForecastRun2,
+        fc_run: &MeteoForecastRun,
         step_nr: usize,
     ) -> Result<(), MeteoChartError> {
         let extent = cloud_layer.get_lat_lon_extent();
