@@ -11,6 +11,20 @@ pub struct IconD2Wind10mReader;
 
 
 impl IconD2Wind10mReader {
+    pub fn read_layer(
+        fc_run: &MeteoForecastRun,
+        fc_step: &MeteoForecastRunStep,
+    ) -> Result<MeteoWind10mLayer, MeteoChartError> {
+        let grid_u = IconD2U10mReader::read_grid_from_file(fc_run, fc_step)?;
+        let grid_v = IconD2V10mReader::read_grid_from_file(fc_run, fc_step)?;
+        let grid_gusts = IconD2Vmax10mReader::read_grid_from_file(fc_run, fc_step)?;
+
+        let layer = MeteoWind10mLayer::new(grid_u, grid_v, Some(grid_gusts))?;
+
+        Ok(layer)
+    }
+
+
     pub fn read_layer_from_files(
         fc_run: &MeteoForecastRun,
         fc_step_u10m: &MeteoForecastRunStep,

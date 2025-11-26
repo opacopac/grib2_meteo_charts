@@ -40,4 +40,47 @@ impl Wind10mForecastRenderer {
                 Ok(())
             })
     }
+
+
+    // TODO: new
+    pub fn render_all_steps<S>(
+        fc_run: &MeteoForecastRun,
+        fc_steps: &Vec<MeteoForecastRunStep>,
+        step_filter: &Vec<usize>,
+        read_layer_fn: S,
+    ) -> Result<(), MeteoChartError>
+    where
+        S: Fn(&MeteoForecastRun, &MeteoForecastRunStep) -> Result<MeteoWind10mLayer, MeteoChartError> + Sync + Send,
+    {
+        fc_steps
+            .par_iter()
+            .try_for_each(|fc_step| {
+                if !step_filter.is_empty() && !step_filter.contains(&fc_step.get_step_nr()) {
+                    return Ok(());
+                }
+
+                Self::render_single_step(fc_run, fc_step, &read_layer_fn)
+            })
+    }
+
+
+    pub fn render_single_step<S>(
+        fc_run: &MeteoForecastRun,
+        fc_step: &MeteoForecastRunStep,
+        read_layer_fn: S,
+    ) -> Result<(), MeteoChartError>
+    where
+        S: Fn(&MeteoForecastRun, &MeteoForecastRunStep) -> Result<MeteoWind10mLayer, MeteoChartError> + Sync,
+    {
+        info!("creating wind 10m charts, time step {}", fc_step.get_step_nr());
+        let layer = read_layer_fn(fc_run, fc_step)?;
+
+        // map tiles
+        let _ = Wind10mChartRenderer::render_map_tiles(&layer, fc_run, fc_step.get_step_nr());
+
+        // meteobin
+        let _ = WindMeteobin::create_meteobin_file(&layer, fc_run, fc_step.get_step_nr());
+
+        Ok(())
+    }
 }
