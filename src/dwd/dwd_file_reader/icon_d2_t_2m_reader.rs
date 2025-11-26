@@ -15,7 +15,7 @@ const MISSING_VALUE: f32 = -1.0;
 
 
 impl IconD2T2mReader {
-    pub fn read_layer_from_file(
+    pub fn read_layer(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
     ) -> Result<MeteoTemp2mLayer, Grib2Error> {
@@ -27,8 +27,8 @@ impl IconD2T2mReader {
 
         Ok(layer)
     }
-
-
+    
+    
     pub fn get_file_url(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
