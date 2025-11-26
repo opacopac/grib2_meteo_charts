@@ -32,7 +32,7 @@ impl MeteoForecastRunStep {
     }
 
 
-    pub fn get_step_by_nr(step_list: &Vec<MeteoForecastRunStep>, step_nr: usize) -> Result<&MeteoForecastRunStep, MeteoCommonError> {
+    pub fn get_step_by_nr(step_list: &[MeteoForecastRunStep], step_nr: usize) -> Result<&MeteoForecastRunStep, MeteoCommonError> {
         let step = step_list
             .iter()
             .find(|s| s.get_step_nr() == step_nr);

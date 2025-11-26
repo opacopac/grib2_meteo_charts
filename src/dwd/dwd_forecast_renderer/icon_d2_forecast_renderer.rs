@@ -36,8 +36,8 @@ pub struct IconD2ForecastRenderer;
 
 impl IconD2ForecastRenderer {
     pub fn render_latest_forecasts(
-        variable_filter: &Vec<String>,
-        step_filter: &Vec<usize>,
+        variable_filter: &[String],
+        step_filter: &[usize],
     ) -> Result<(), ForecastRendererError> {
         info!("creating latest dwd forecasts...");
 
@@ -85,7 +85,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_cloud_precip_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps_clct = Self::get_forecast_steps(fc_run, IconD2TotPrecReader::get_file_url)?;
@@ -123,7 +123,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_wind10m_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps_u10m = Self::get_forecast_steps(fc_run, IconD2U10mReader::get_file_url)?;
@@ -149,7 +149,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_temp2m_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps(fc_run, IconD2T2mReader::get_file_url)?;
@@ -164,7 +164,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_vertical_clouds_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         fc_run: &MeteoForecastRun,
@@ -189,7 +189,7 @@ impl IconD2ForecastRenderer {
 
 
     fn render_vertical_wind_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         vertical_levels: &RangeInclusive<u8>,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         fc_run: &MeteoForecastRun,

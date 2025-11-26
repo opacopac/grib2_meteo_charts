@@ -51,7 +51,7 @@ impl LatLonExtent {
             && point.lon < self.max_coord.lon
     }
 
-    pub fn calc_min_bounding_extent(coordinates: &Vec<LatLon>) -> LatLonExtent {
+    pub fn calc_min_bounding_extent(coordinates: &[LatLon]) -> LatLonExtent {
         let mut min_lat = LatLon::MAX_LAT;
         let mut max_lat = LatLon::MIN_LAT;
         let mut min_lon = LatLon::MAX_LON;

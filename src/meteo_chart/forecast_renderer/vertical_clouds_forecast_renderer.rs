@@ -17,8 +17,8 @@ const MAX_PARALLEL_STEPS: usize = 3;
 impl VerticalCloudsForecastRenderer {
     pub fn render<S>(
         fc_run: &MeteoForecastRun,
-        fc_steps: &Vec<MeteoForecastRunStep>,
-        step_filter: &Vec<usize>,
+        fc_steps: &[MeteoForecastRunStep],
+        step_filter: &[usize],
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where

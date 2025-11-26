@@ -14,8 +14,8 @@ pub struct Wind10mForecastRenderer;
 impl Wind10mForecastRenderer {
     pub fn render<S>(
         fc_run: &MeteoForecastRun,
-        fc_steps: &Vec<MeteoForecastRunStep>,
-        step_filter: &Vec<usize>,
+        fc_steps: &[MeteoForecastRunStep],
+        step_filter: &[usize],
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where
@@ -45,8 +45,8 @@ impl Wind10mForecastRenderer {
     // TODO: new
     pub fn render_all_steps<S>(
         fc_run: &MeteoForecastRun,
-        fc_steps: &Vec<MeteoForecastRunStep>,
-        step_filter: &Vec<usize>,
+        fc_steps: &[MeteoForecastRunStep],
+        step_filter: &[usize],
         read_layer_fn: S,
     ) -> Result<(), MeteoChartError>
     where

@@ -36,8 +36,8 @@ const MODEL: IconChForecastModel = IconChForecastModel::IconCh1;
 
 impl IconCh1ForecastRenderer {
     pub fn render_latest_forecasts(
-        variable_filter: &Vec<String>,
-        step_filter: &Vec<usize>,
+        variable_filter: &[String],
+        step_filter: &[usize],
     ) -> Result<(), MeteoSwissError> {
         info!("rendering latest icon ch1 forecasts...");
 
@@ -96,7 +96,7 @@ impl IconCh1ForecastRenderer {
 
 
     fn render_cloud_precip_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
@@ -123,7 +123,7 @@ impl IconCh1ForecastRenderer {
 
 
     fn render_wind_10m_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
@@ -146,7 +146,7 @@ impl IconCh1ForecastRenderer {
 
 
     fn render_temp_2m_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
     ) -> Result<(), MeteoSwissError> {
@@ -163,7 +163,7 @@ impl IconCh1ForecastRenderer {
 
 
     fn render_vertical_clouds_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
@@ -189,7 +189,7 @@ impl IconCh1ForecastRenderer {
 
 
     fn render_vertical_wind_forecast(
-        step_filter: &Vec<usize>,
+        step_filter: &[usize],
         unstructured_grid: &UnstructuredGrid,
         date_ref: &IconChForecastReferenceDateTime,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
