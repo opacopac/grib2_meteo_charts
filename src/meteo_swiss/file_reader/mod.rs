@@ -14,4 +14,3 @@ pub mod icon_ch_wind_10m_reader;
 pub mod icon_ch_vertical_wind_reader;
 pub mod icon_ch_cloud_precip_reader;
 pub mod icon_ch_ww_reader;
-pub mod icon_ch1_file_service;

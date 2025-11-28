@@ -11,15 +11,21 @@ pub struct IconChWind10mReader;
 
 
 impl IconChWind10mReader {
-    pub fn read_layer_from_files(
-        u_step: &MeteoForecastRunStep,
-        v_step: &MeteoForecastRunStep,
-        v_max_step: &MeteoForecastRunStep,
+    pub fn read_layer(
+        fc_step: &MeteoForecastRunStep,
+        all_u10m_steps: &[MeteoForecastRunStep],
+        all_v10m_steps: &[MeteoForecastRunStep],
+        all_vmax10m_steps: &[MeteoForecastRunStep],
         unstructured_grid: &UnstructuredGrid,
     ) -> Result<MeteoWind10mLayer, MeteoChartError> {
-        let grid_u = IconChWindU10mReader::read_grid_from_file(u_step.get_file_url(), unstructured_grid)?;
-        let grid_v = IconChWindV10mReader::read_grid_from_file(v_step.get_file_url(), unstructured_grid)?;
-        let grid_gusts = IconChWindVmax10mReader::read_grid_from_file(v_max_step.get_file_url(), unstructured_grid)?;
+        let step_nr = fc_step.get_step_nr();
+        let u10m_step = MeteoForecastRunStep::get_step_by_nr(&all_u10m_steps, step_nr)?;
+        let v10m_step = MeteoForecastRunStep::get_step_by_nr(&all_v10m_steps, step_nr)?;
+        let vmax10m_step = MeteoForecastRunStep::get_step_by_nr(&all_vmax10m_steps, step_nr)?;
+
+        let grid_u = IconChWindU10mReader::read_grid_from_file(u10m_step.get_file_url(), unstructured_grid)?;
+        let grid_v = IconChWindV10mReader::read_grid_from_file(v10m_step.get_file_url(), unstructured_grid)?;
+        let grid_gusts = IconChWindVmax10mReader::read_grid_from_file(vmax10m_step.get_file_url(), unstructured_grid)?;
 
         let layer = MeteoWind10mLayer::new(grid_u, grid_v, Some(grid_gusts))?;
 

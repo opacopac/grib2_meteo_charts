@@ -12,18 +12,22 @@ pub struct IconChVerticalWindReader;
 
 
 impl IconChVerticalWindReader {
-    pub fn read_layer_from_file(
-        u_step: &MeteoForecastRunStep,
-        v_step: &MeteoForecastRunStep,
+    pub fn read_layer(
+        fc_step: &MeteoForecastRunStep,
+        all_u_steps: &[MeteoForecastRunStep],
+        all_v_steps: &[MeteoForecastRunStep],
         unstructured_grid: &UnstructuredGrid,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
     ) -> Result<MeteoVerticalWindLayer, Grib2Error> {
+        let step_nr = fc_step.get_step_nr();
+        let u_step = MeteoForecastRunStep::get_step_by_nr(&all_u_steps, step_nr).unwrap(); // TODO
+        let v_step = MeteoForecastRunStep::get_step_by_nr(&all_v_steps, step_nr).unwrap(); // TODO
+
         let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
         let u_grids = IconChUReader::read_grids(u_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
         let v_grids = IconChVReader::read_grids(v_step.get_file_url(), &unstructured_grid, Some(&vertical_levels))?;
 
         let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
-
 
         Ok(layer)
     }

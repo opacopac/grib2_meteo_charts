@@ -3,9 +3,10 @@ use crate::geo::grid::unstructured_grid::UnstructuredGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_chart::meteo_layer::meteo_vertical_cloud_layer::MeteoVerticalCloudLayer;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
+use crate::meteo_swiss::common::icon_ch1_model_config::IconCh1ModelConfig;
 use log::info;
 use std::ops::RangeInclusive;
-use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
 pub struct IconChClcReader;
@@ -15,20 +16,23 @@ impl IconChClcReader {
     const MISSING_VALUE: u8 = 0;
 
 
-    pub fn read_layer_from_file(
-        clc_step: &MeteoForecastRunStep,
+    pub fn read_layer(
+        fc_step: &MeteoForecastRunStep,
+        all_clct_steps: &[MeteoForecastRunStep],
         unstructured_grid: &UnstructuredGrid,
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
-        vertical_level_range: Option<&RangeInclusive<usize>>,
     ) -> Result<MeteoVerticalCloudLayer, Grib2Error> {
-        let regular_clc_grids = Self::read_grids(clc_step.get_file_url(), unstructured_grid, vertical_level_range)?;
+        let vertical_level_range = IconCh1ModelConfig::get_vertical_level_range();
+        let clc_step = MeteoForecastRunStep::get_step_by_nr(all_clct_steps, fc_step.get_step_nr()).unwrap(); // TODO
+        let regular_clc_grids = Self::read_grids(clc_step.get_file_url(), unstructured_grid, Some(&vertical_level_range))?;
+
         let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), regular_clc_grids);
 
         Ok(layer)
     }
 
 
-    pub fn read_grids(
+    fn read_grids(
         file_url: &str,
         unstructured_grid: &UnstructuredGrid,
         vertical_level_range: Option<&RangeInclusive<usize>>,

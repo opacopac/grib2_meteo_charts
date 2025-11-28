@@ -104,15 +104,10 @@ impl IconCh1ForecastRenderer {
         let fc_steps_clct = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clct, &date_ref, true)?;
         let fc_steps_tot_prec = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::TotPrec, &date_ref, false)?;
         let fc_steps_ceiling = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Ceiling, &date_ref, false)?;
-        let read_fn = |clct_step: &MeteoForecastRunStep| {
-            let step_nr = clct_step.get_step_nr();
-            let tot_prec0_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_tot_prec, step_nr - 1)?;
-            let tot_prec1_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_tot_prec, step_nr)?;
-            let ceiling_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_ceiling, step_nr)?;
-
-            let cloud_precip_layer = IconChCloudPrecipReader::read_layer_from_files(clct_step, tot_prec0_step, tot_prec1_step, &unstructured_grid)?;
-            let ww_layer = IconChWwReader::read_layer_from_files(clct_step, ceiling_step, unstructured_grid)?;
-
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            let cloud_precip_layer = IconChCloudPrecipReader::read_layer(fc_step, &fc_steps_clct, &fc_steps_tot_prec, unstructured_grid)?;
+            let ww_layer = IconChWwReader::read_layer(fc_step, &fc_steps_clct, &fc_steps_ceiling, unstructured_grid)?;
+            
             Ok((cloud_precip_layer, ww_layer))
         };
 
@@ -131,12 +126,8 @@ impl IconCh1ForecastRenderer {
         let fc_steps_u10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U10m, &date_ref, false)?;
         let fc_steps_v10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V10m, &date_ref, false)?;
         let fc_steps_vmax10m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::VMax10m, &date_ref, false)?;
-        let read_fn = |u10m_step: &MeteoForecastRunStep| {
-            let step_nr = u10m_step.get_step_nr();
-            let v10m_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_v10m, step_nr)?;
-            let vmax10m_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_vmax10m, step_nr)?;
-
-            IconChWind10mReader::read_layer_from_files(u10m_step, v10m_step, vmax10m_step, unstructured_grid)
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            IconChWind10mReader::read_layer(fc_step, &fc_steps_u10m, &fc_steps_v10m, &fc_steps_vmax10m, unstructured_grid)
         };
 
         Wind10mForecastRenderer::render(&fc_run, &fc_steps_u10m, &step_filter, read_fn)?;
@@ -152,8 +143,8 @@ impl IconCh1ForecastRenderer {
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_t2m = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::T2m, &date_ref, false)?;
-        let read_fn = |t2m_step: &MeteoForecastRunStep| {
-            IconChT2mReader::read_layer_from_file(t2m_step, unstructured_grid)
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            IconChT2mReader::read_layer(fc_step, &fc_steps_t2m, unstructured_grid)
         };
 
         Temp2mForecastRenderer::render(&fc_run, &fc_steps_t2m, &step_filter, read_fn)?;
@@ -170,11 +161,8 @@ impl IconCh1ForecastRenderer {
     ) -> Result<(), MeteoSwissError> {
         let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_clc = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::Clc, &date_ref, false)?;
-        let read_fn = |clc_step: &MeteoForecastRunStep| {
-            let vertical_levels = IconCh1ModelConfig::get_vertical_level_range();
-            let clc_layer = IconChClcReader::read_layer_from_file(clc_step, unstructured_grid, hhl_grids, Some(&vertical_levels));
-
-            clc_layer
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            IconChClcReader::read_layer(fc_step, &fc_steps_clc, unstructured_grid, hhl_grids)
         };
 
         VerticalCloudsForecastRenderer::render(
@@ -197,12 +185,8 @@ impl IconCh1ForecastRenderer {
         let fc_run = Self::get_forecast_run(&date_ref)?;
         let fc_steps_u = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::U, &date_ref, false)?;
         let fc_steps_v = Self::get_forecast_run_steps(&MODEL, IconChForecastVariable::V, &date_ref, false)?;
-        let read_fn = |u_step: &MeteoForecastRunStep| {
-            let step_nr = u_step.get_step_nr();
-            let v_step = MeteoForecastRunStep::get_step_by_nr(&fc_steps_v, step_nr)?;
-            let wind_layer = IconChVerticalWindReader::read_layer_from_file(u_step, v_step, unstructured_grid, hhl_grids)?;
-
-            Ok(wind_layer)
+        let read_fn = |fc_step: &MeteoForecastRunStep| {
+            IconChVerticalWindReader::read_layer(fc_step, &fc_steps_u, &fc_steps_v, unstructured_grid, hhl_grids)
         };
 
         VerticalWindForecastRenderer::render(

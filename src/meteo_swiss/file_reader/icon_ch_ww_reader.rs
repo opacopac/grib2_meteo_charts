@@ -10,11 +10,16 @@ pub struct IconChWwReader;
 
 
 impl IconChWwReader {
-    pub fn read_layer_from_files(
-        clct_step: &MeteoForecastRunStep,
-        ceiling_step: &MeteoForecastRunStep,
+    pub fn read_layer(
+        fc_step: &MeteoForecastRunStep,
+        all_clct_steps: &[MeteoForecastRunStep],
+        all_ceiling_steps: &[MeteoForecastRunStep],
         unstructured_grid: &UnstructuredGrid,
     ) -> Result<WeatherLayer, Grib2Error> {
+        let step_nr = fc_step.get_step_nr();
+        let clct_step = MeteoForecastRunStep::get_step_by_nr(&all_clct_steps, step_nr).unwrap(); // TODO
+        let ceiling_step = MeteoForecastRunStep::get_step_by_nr(&all_ceiling_steps, step_nr).unwrap(); // TODO
+
         let file_url_clct = &clct_step.get_file_url();
         let file_url_ceiling = &ceiling_step.get_file_url();
         let clct_grid = IconChClctReader::read_grid_from_file(file_url_clct, &unstructured_grid)?;
