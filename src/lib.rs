@@ -11,5 +11,3 @@ pub mod physics;
 pub mod system;
 pub mod map_tile;
 pub mod di_container;
-pub mod prod_di_container;
-pub mod test_di_container;

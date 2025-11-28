@@ -1,9 +1,9 @@
 extern crate core;
 
 use clap::Parser;
+use meteo_grib2_renderer::di_container::DiContainer;
 use meteo_grib2_renderer::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer::IconD2ForecastRenderer;
 use meteo_grib2_renderer::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
-use meteo_grib2_renderer::prod_di_container::ProdDiContainer;
 
 
 #[derive(Parser, Debug)]
@@ -25,7 +25,9 @@ struct Args {
 
 fn main() {
     env_logger::init();
-    let _ = ProdDiContainer::new();
+    let di_container = DiContainer::create_productive();
+    let dwd_di_container = di_container.get_dwd_di_container();
+    
 
     let args = Args::parse();
 
