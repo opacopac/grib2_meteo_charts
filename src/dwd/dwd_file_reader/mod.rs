@@ -15,3 +15,4 @@ pub mod icon_d2_wind_10m_reader;
 pub mod icon_d2_cloud_precip_reader;
 pub mod icon_d2_weather_reader;
 pub mod icon_d2_vertical_wind_reader;
+pub(crate) mod icon_d2_file_service;

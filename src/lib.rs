@@ -10,3 +10,4 @@ pub mod netcdf;
 pub mod physics;
 pub mod system;
 pub mod map_tile;
+pub mod di_container;
