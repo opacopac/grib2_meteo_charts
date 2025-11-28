@@ -53,7 +53,11 @@ impl Temp2mChartRenderer {
         let value_c = Temperature::from_kelvin_to_celsius(value_k);
 
         // todo: lower/higher values?
-        if value_c < -12.0 {
+        if value_c < -16.0 {
+            [255, 66, 255, TRANSPARENCY] // dark pink
+        } else if value_c < -14.0 {
+            [255, 109, 255, TRANSPARENCY] // darker pink
+        } else if value_c < -12.0 {
             [255, 153, 255, TRANSPARENCY] // pink
         } else if value_c < -10.0 {
             [255, 204, 255, TRANSPARENCY] // white pink
