@@ -1,9 +1,9 @@
 extern crate core;
 
 use clap::Parser;
-use meteo_grib2_renderer::di_container::ProdDiContainer;
 use meteo_grib2_renderer::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer::IconD2ForecastRenderer;
 use meteo_grib2_renderer::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
+use meteo_grib2_renderer::prod_di_container::ProdDiContainer;
 
 
 #[derive(Parser, Debug)]
@@ -16,7 +16,7 @@ struct Args {
     /// name of the variables to render (e.g. wind_10m, temp_2m, cloud_precip) or empty for all
     #[arg(short, long, num_args = 1..)]
     variables: Vec<String>,
-    
+
     /// number of the steps to render (e.g. 2, 3, 4...) or empty for all
     #[arg(short, long, num_args = 1..)]
     steps: Vec<usize>,
@@ -62,7 +62,7 @@ mod tests {
         let variable_filter = vec!["vertical_cloud".to_string()]; // vec!["temp_2m".to_string()];
         let step_filter = vec![2];
 
-         // when
+        // when
         let result = IconCh1ForecastRenderer::render_latest_forecasts(&variable_filter, &step_filter);
 
         // then

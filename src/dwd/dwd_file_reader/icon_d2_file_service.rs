@@ -1,3 +1,6 @@
+use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
+
 pub struct IconD2FileService;
 
 
@@ -6,8 +9,8 @@ impl IconD2FileService {
         IconD2FileService {}
     }
 
-    pub fn read_icon_d2_file(&self, file_path: &str) -> Result<(), String> {
-        // Implement the logic to read ICON-D2 files here
-        Ok(())
+    
+    pub fn get_file_url(&self, fc_run: &MeteoForecastRun, fc_step: &MeteoForecastRunStep) -> String {
+        todo!("not implemented yet")
     }
 }
