@@ -14,6 +14,11 @@ impl DwdDiContainer {
     }
 
 
+    pub fn create_mock() -> Self {
+        todo!("not implemented yet")
+    }
+
+
     pub fn get_icon_d2_file_service(&self) -> &IconD2FileService {
         &self.icon_d2_file_service
     }

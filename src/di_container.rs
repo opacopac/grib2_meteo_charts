@@ -17,6 +17,14 @@ impl DiContainer {
     }
 
 
+    pub fn create_mock() -> Self {
+        Self {
+            dwd_di_container: DwdDiContainer::create_mock(),
+            meteo_swiss_di_container: MeteoSwissDiContainer::create_mock(),
+        }
+    }
+
+
     pub fn get_dwd_di_container(&self) -> &DwdDiContainer {
         &self.dwd_di_container
     }

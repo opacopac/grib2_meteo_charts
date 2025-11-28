@@ -14,6 +14,12 @@ impl MeteoSwissDiContainer {
     }
 
 
+    pub fn create_mock() -> Self {
+        todo!("not implemented yet")
+    }
+
+
+
     pub fn get_icon_ch1_file_service(&self) -> &IconCh1FileService {
         &self.icon_d2_file_service
     }
