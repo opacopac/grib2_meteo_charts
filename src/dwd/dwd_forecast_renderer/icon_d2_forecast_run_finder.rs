@@ -1,6 +1,6 @@
 use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_file_reader::dwd_icon_ceiling_reader::DwdIconCeilingReader;
-use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
+use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
 use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
@@ -75,7 +75,7 @@ impl IconD2ForecastRunFinder {
             IconD2V10mReader::get_file_url(fc_run, fc_step),
             IconD2Vmax10mReader::get_file_url(fc_run, fc_step),
             IconD2T2mReader::get_file_url(fc_run, fc_step),
-            IconD2ClcReader::get_file_url(fc_run, fc_step, 65),
+            DwdIconClcReader::get_file_url(fc_run, fc_step, 65),
             IconD2UReader::get_file_url(fc_run, fc_step, 65)
         ]
     }

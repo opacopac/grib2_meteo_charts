@@ -2,6 +2,7 @@ use crate::dwd::dwd_file_reader::dwd_icon_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use log::info;
@@ -10,15 +11,17 @@ use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
 
 
-pub struct IconD2ClcReader;
+pub struct DwdIconClcReader;
 
 
 const DWD_ICON_D2_CLC_FILE_PREFIX: &str = "/clc/icon-d2_germany_regular-lat-lon_model-level_";
+const DWD_ICON_EU_CLC_FILE_PREFIX: &str = "/clc/icon-eu_europe_regular-lat-lon_model-level_";
 const DWD_ICON_D2_CLC_FILE_SUFFIX: &str = "_clc.grib2.bz2";
+const DWD_ICON_EU_CLC_FILE_SUFFIX: &str = "_CLC.grib2.bz2";
 const MISSING_VALUE: u8 = 0;
 
 
-impl IconD2ClcReader {
+impl DwdIconClcReader {
     pub fn read_clc_grids(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
@@ -49,20 +52,35 @@ impl IconD2ClcReader {
         fc_step: &MeteoForecastRunStep,
         level: usize,
     ) -> String {
+        let (file_prefix, file_suffix) = Self::get_file_prefix_suffix(fc_run);
+
         DwdIconFile::get_multi_level_file_url(
-            DWD_ICON_D2_CLC_FILE_PREFIX,
-            DWD_ICON_D2_CLC_FILE_SUFFIX,
+            file_prefix,
+            file_suffix,
             level,
             fc_run,
             fc_step,
         )
+    }
+
+
+    fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
+        match fc_run.get_model() {
+            MeteoForecastModel::IconD2 => {
+                (DWD_ICON_D2_CLC_FILE_PREFIX, DWD_ICON_D2_CLC_FILE_SUFFIX)
+            }
+            MeteoForecastModel::IconEu => {
+                (DWD_ICON_EU_CLC_FILE_PREFIX, DWD_ICON_EU_CLC_FILE_SUFFIX)
+            }
+            _ => panic!("Unsupported model for CLC data: {}", fc_run.get_model()),
+        }
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
@@ -80,7 +98,7 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2ClcReader::get_file_url(&fc_run, &fc_step, 65);
+        let result = DwdIconClcReader::get_file_url(&fc_run, &fc_step, 65);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/clc/icon-d2_germany_regular-lat-lon_model-level_2022122200_000_65_clc.grib2.bz2";

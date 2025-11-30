@@ -1,5 +1,5 @@
 use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
-use crate::dwd::dwd_file_reader::icon_d2_clc_reader::IconD2ClcReader;
+use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
 use crate::dwd::dwd_file_reader::icon_d2_cloud_precip_reader::IconD2CloudPrecipReader;
 use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
@@ -134,7 +134,7 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
-            let clc_grids = IconD2ClcReader::read_clc_grids(fc_run, fc_step, vertical_levels)?;
+            let clc_grids = DwdIconClcReader::read_clc_grids(fc_run, fc_step, vertical_levels)?;
             let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
 
             Ok(layer)
