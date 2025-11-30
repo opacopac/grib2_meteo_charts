@@ -1,4 +1,4 @@
-use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
+use crate::dwd::dwd_file_reader::dwd_icon_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
@@ -61,7 +61,7 @@ impl DwdIconCeilingReader {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::DwdIconCeilingReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_ceiling_reader::DwdIconCeilingReader;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
     use chrono::NaiveDate;

@@ -98,7 +98,7 @@ impl DwdIconFile {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
+    use crate::dwd::dwd_file_reader::dwd_icon_file::DwdIconFile;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;

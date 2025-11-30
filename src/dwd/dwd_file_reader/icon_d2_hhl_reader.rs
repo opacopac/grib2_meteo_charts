@@ -1,5 +1,5 @@
 use crate::dwd::common::dwd_error::DwdError;
-use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
+use crate::dwd::dwd_file_reader::dwd_icon_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;

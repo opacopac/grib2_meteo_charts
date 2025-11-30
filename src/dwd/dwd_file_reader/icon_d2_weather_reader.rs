@@ -1,4 +1,4 @@
-use crate::dwd::dwd_file_reader::icon_d2_ceiling_reader::DwdIconCeilingReader;
+use crate::dwd::dwd_file_reader::dwd_icon_ceiling_reader::DwdIconCeilingReader;
 use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
 use crate::grib2::common::grib2_error::Grib2Error;
