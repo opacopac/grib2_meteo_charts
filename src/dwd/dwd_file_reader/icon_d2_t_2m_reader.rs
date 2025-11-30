@@ -1,4 +1,4 @@
-use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
+use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_chart::meteo_layer::meteo_temp_2m_layer::MeteoTemp2mLayer;
@@ -33,7 +33,7 @@ impl IconD2T2mReader {
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
     ) -> String {
-        IconD2File::get_single_level_file_url(
+        DwdIconFile::get_single_level_file_url(
             DWD_ICON_D2_T_2M_FILE_PREFIX,
             DWD_ICON_D2_T_2M_FILE_SUFFIX,
             fc_run,

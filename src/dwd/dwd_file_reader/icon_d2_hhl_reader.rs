@@ -1,5 +1,5 @@
 use crate::dwd::common::dwd_error::DwdError;
-use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
+use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
@@ -46,7 +46,7 @@ impl IconD2HhlReader {
 
 
     fn get_file_url(forecast_run: &MeteoForecastRun, level: usize) -> String {
-        IconD2File::get_multi_level_time_invariant_file_url(
+        DwdIconFile::get_multi_level_time_invariant_file_url(
             DWD_ICON_D2_HHL_FILE_PREFIX,
             DWD_ICON_D2_HHL_FILE_SUFFIX,
             level,

@@ -1,4 +1,4 @@
-use crate::dwd::dwd_file_reader::icon_d2_file::IconD2File;
+use crate::dwd::dwd_file_reader::icon_d2_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
@@ -32,7 +32,7 @@ impl IconD2CeilingReader {
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
     ) -> String {
-        IconD2File::get_single_level_file_url(
+        DwdIconFile::get_single_level_file_url(
             DWD_ICON_D2_CEILING_FILE_PREFIX,
             DWD_ICON_D2_CEILING_FILE_SUFFIX,
             fc_run,
