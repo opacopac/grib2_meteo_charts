@@ -106,7 +106,7 @@ mod tests {
 
 
     #[test]
-    fn it_creates_the_correct_single_level_file_url() {
+    fn it_creates_the_correct_single_level_icon_d2_file_url() {
         // given
         let file_prefix = "/t_2m/icon-d2_germany_regular-lat-lon_single-level_";
         let file_suffix = "_2d_t_2m.grib2.bz2";
@@ -126,8 +126,31 @@ mod tests {
     }
 
 
+
     #[test]
-    fn it_creates_the_correct_multi_level_time_invariant_file_url() {
+    fn it_creates_the_correct_multi_level_icon_eu_file_url() {
+        // given
+        let file_prefix = "/clc/icon-eu_europe_regular-lat-lon_model-level_";
+        let file_suffix = "_CLC.grib2.bz2";
+        let level = 32;
+        let fc_run = MeteoForecastRun::new(
+            MeteoForecastModel::IconEu,
+            NaiveDate::from_ymd_opt(2025, 12, 1).unwrap(),
+            "06".to_string(),
+        );
+        let fc_step = MeteoForecastRunStep::new(0, "".to_string());
+
+        // when
+        let result = DwdIconFile::get_multi_level_file_url(file_prefix, file_suffix, level, &fc_run, &fc_step);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/clc/icon-eu_europe_regular-lat-lon_model-level_2025120106_000_32_CLC.grib2.bz2";
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_multi_level_time_invariant_icon_d2_file_url() {
         // given
         let file_prefix = "/hhl/icon-d2_germany_icosahedral_time-invariant_";
         let file_suffix = "_hhl.grib2.bz2";

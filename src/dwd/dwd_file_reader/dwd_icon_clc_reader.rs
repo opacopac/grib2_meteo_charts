@@ -88,7 +88,7 @@ mod tests {
 
 
     #[test]
-    fn it_creates_the_correct_file_url() {
+    fn it_creates_the_correct_icon_d2_file_url() {
         // given
         let fc_run = MeteoForecastRun::new(
             MeteoForecastModel::IconD2,
@@ -102,6 +102,25 @@ mod tests {
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/clc/icon-d2_germany_regular-lat-lon_model-level_2022122200_000_65_clc.grib2.bz2";
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_icon_eu_file_url() {
+        // given
+        let fc_run = MeteoForecastRun::new(
+            MeteoForecastModel::IconEu,
+            NaiveDate::from_ymd_opt(2025, 12, 01).unwrap(),
+            "06".to_string(),
+        );
+        let fc_step = MeteoForecastRunStep::new(4, "".to_string()); // TODO: get rid of this...
+
+        // when
+        let result = DwdIconClcReader::get_file_url(&fc_run, &fc_step, 32);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/clc/icon-eu_europe_regular-lat-lon_model-level_2025120106_004_32_CLC.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

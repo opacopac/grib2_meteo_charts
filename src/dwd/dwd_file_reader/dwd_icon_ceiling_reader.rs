@@ -66,7 +66,7 @@ mod tests {
 
 
     #[test]
-    fn it_creates_the_correct_file_url() {
+    fn it_creates_the_correct_icon_d2_file_url() {
         // given
         let fc_run = MeteoForecastRun::new(
             crate::meteo_common::meteo_forecast_model::MeteoForecastModel::IconD2,
@@ -80,6 +80,25 @@ mod tests {
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/ceiling/icon-d2_germany_regular-lat-lon_single-level_2025112006_025_2d_ceiling.grib2.bz2";
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_icon_eu_file_url() {
+        // given
+        let fc_run = MeteoForecastRun::new(
+            crate::meteo_common::meteo_forecast_model::MeteoForecastModel::IconEu,
+            NaiveDate::from_ymd_opt(2025, 12, 01).unwrap(),
+            "06".to_string(),
+        );
+        let fc_step = MeteoForecastRunStep::new(19, "".to_string());
+
+        // when
+        let result = DwdIconCeilingReader::get_file_url(&fc_run, &fc_step);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/ceiling/icon-eu_europe_regular-lat-lon_single-level_2025120106_019_CEILING.grib2.bz2";
         assert_eq!(expected, result);
     }
 }
