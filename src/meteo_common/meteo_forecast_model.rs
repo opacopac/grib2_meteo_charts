@@ -45,7 +45,7 @@ impl MeteoForecastModel {
     pub fn get_step_range(&self) -> RangeInclusive<usize> {
         match self {
             MeteoForecastModel::IconGlobal => 2..=78, // TODO: check and adjust
-            MeteoForecastModel::IconEu => 2..=78, // TODO: check and adjust
+            MeteoForecastModel::IconEu => 2..=78, // steps above 78 are currently skipped (3h intervals)
             MeteoForecastModel::IconD2 => 2..=48,
             MeteoForecastModel::IconCh1 => 2..=33,
         }
@@ -81,10 +81,13 @@ impl MeteoForecastModel {
     }
 
 
+    // remarks:
+    //  - higher levels have lower numbers
+    //  - restrict vertical levels to about 20000ft for better performance
     pub fn get_vertical_level_range(&self) -> RangeInclusive<u8> {
         match self {
             MeteoForecastModel::IconGlobal => 25..=90, // TODO: check and adjust
-            MeteoForecastModel::IconEu => 25..=60, // TODO: check and adjust
+            MeteoForecastModel::IconEu => 25..=74, // TODO: check and adjust
             MeteoForecastModel::IconD2 => 25..=65,
             MeteoForecastModel::IconCh1 => 31..=79,
         }
