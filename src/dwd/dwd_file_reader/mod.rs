@@ -1,4 +1,4 @@
-pub mod icon_d2_hhl_reader;
+pub mod dwd_icon_hhl_reader;
 pub mod dwd_icon_clc_reader;
 pub mod dwd_icon_ceiling_reader;
 pub mod dwd_icon_clct_mod_reader;

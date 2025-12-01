@@ -1,7 +1,7 @@
 use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
 use crate::dwd::dwd_file_reader::dwd_icon_cloud_precip_reader::DwdIconCloudPrecipReader;
-use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
+use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
@@ -59,7 +59,7 @@ impl IconD2ForecastRenderer {
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
             let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
-            let hhl_grids = IconD2HhlReader::read_hhl_grids(&fc_run, &vertical_levels)?;
+            let hhl_grids = DwdIconHhlReader::read_hhl_grids(&fc_run, &vertical_levels)?;
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
                 info!("rendering vertical cloud forecast...");

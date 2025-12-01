@@ -11,10 +11,10 @@ use std::ops::RangeInclusive;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 
 
-pub struct IconD2HhlReader;
+pub struct DwdIconHhlReader;
 
 
-impl IconD2HhlReader {
+impl DwdIconHhlReader {
     const DWD_ICON_D2_HHL_FILE_PREFIX: &str = "/hhl/icon-d2_germany_regular-lat-lon_time-invariant_";
     const DWD_ICON_EU_HHL_FILE_PREFIX: &str = "/hhl/icon-eu_europe_regular-lat-lon_time-invariant_";
     const DWD_ICON_D2_HHL_FILE_SUFFIX: &str = "_hhl.grib2.bz2";
@@ -70,7 +70,7 @@ impl IconD2HhlReader {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use chrono::NaiveDate;
@@ -86,7 +86,7 @@ mod tests {
         );
 
         // when
-        let result = IconD2HhlReader::get_file_url(&fc_run, 10);
+        let result = DwdIconHhlReader::get_file_url(&fc_run, 10);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/hhl/icon-d2_germany_regular-lat-lon_time-invariant_2022122200_000_10_hhl.grib2.bz2";
@@ -104,7 +104,7 @@ mod tests {
         );
 
         // when
-        let result = IconD2HhlReader::get_file_url(&fc_run, 9);
+        let result = DwdIconHhlReader::get_file_url(&fc_run, 9);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/hhl/icon-eu_europe_regular-lat-lon_time-invariant_2025120106_9_HHL.grib2.bz2";

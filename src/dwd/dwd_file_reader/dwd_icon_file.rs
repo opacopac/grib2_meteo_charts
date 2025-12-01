@@ -73,7 +73,7 @@ impl DwdIconFile {
         let step_str = match fc_run.get_model() {
             MeteoForecastModel::IconD2 => "000_",
             MeteoForecastModel::IconEu => "",
-            _ => panic!("Unsupported model for DWD ICON time-invariant file URL generation"),
+            _ => panic!("Unsupported model for DWD ICON time-invariant file URL generation: {}", fc_run.get_model()),
         };
 
 
@@ -95,7 +95,7 @@ impl DwdIconFile {
         match fc_run.get_model() {
             MeteoForecastModel::IconD2 => DWD_ICON_D2_BASE_URL,
             MeteoForecastModel::IconEu => DWD_ICON_EU_BASE_URL,
-            _ => panic!("Unsupported model for DWD ICON file URL generation"),
+            _ => panic!("Unsupported model for DWD ICON file URL generation: {}", fc_run.get_model()),
         }
     }
 }
