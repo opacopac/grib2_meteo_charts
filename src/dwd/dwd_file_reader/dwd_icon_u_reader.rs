@@ -2,6 +2,7 @@ use crate::dwd::dwd_file_reader::dwd_icon_file::DwdIconFile;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::grib2::common::grib2_error::Grib2Error;
 use crate::grib2::converter::file_to_grid_converter::FileToGridConverter;
+use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use crate::physics::speed::Speed;
@@ -10,16 +11,17 @@ use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
 
-
-pub struct IconD2UReader;
-
-
-const DWD_ICON_D2_U_FILE_PREFIX: &str = "/u/icon-d2_germany_regular-lat-lon_model-level_";
-const DWD_ICON_D2_U_FILE_SUFFIX: &str = "_u.grib2.bz2";
-const MISSING_VALUE: u8 = 0xFF;
+pub struct DwdIconUReader;
 
 
-impl IconD2UReader {
+impl DwdIconUReader {
+    const DWD_ICON_D2_U_FILE_PREFIX: &str = "/u/icon-d2_germany_regular-lat-lon_model-level_";
+    const DWD_ICON_EU_U_FILE_PREFIX: &str = "/u/icon-eu_europe_regular-lat-lon_model-level_";
+    const DWD_ICON_D2_U_FILE_SUFFIX: &str = "_u.grib2.bz2";
+    const DWD_ICON_EU_U_FILE_SUFFIX: &str = "_U.grib2.bz2";
+    const MISSING_VALUE: u8 = 0xFF;
+
+
     pub fn read_u_grids(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
@@ -41,7 +43,7 @@ impl IconD2UReader {
                 let url = Self::get_file_url(fc_run, fc_step, level as usize);
                 let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
                     &url,
-                    MISSING_VALUE,
+                    Self::MISSING_VALUE,
                     transform_fn,
                 )?;
 
@@ -60,20 +62,31 @@ impl IconD2UReader {
         fc_step: &MeteoForecastRunStep,
         level: usize,
     ) -> String {
+        let (file_prefix, file_suffix) = Self::get_file_prefix_suffix(fc_run);
+
         DwdIconFile::get_multi_level_file_url(
-            DWD_ICON_D2_U_FILE_PREFIX,
-            DWD_ICON_D2_U_FILE_SUFFIX,
+            file_prefix,
+            file_suffix,
             level,
             fc_run,
             fc_step,
         )
+    }
+
+
+    fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
+        match fc_run.get_model() {
+            MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_U_FILE_PREFIX, Self::DWD_ICON_D2_U_FILE_SUFFIX),
+            MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_U_FILE_PREFIX, Self::DWD_ICON_EU_U_FILE_SUFFIX),
+            _ => panic!("Unsupported model for U data: {}", fc_run.get_model()),
+        }
     }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_u_reader::DwdIconUReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
@@ -81,7 +94,7 @@ mod tests {
 
 
     #[test]
-    fn it_creates_the_correct_file_url() {
+    fn it_creates_the_correct_icon_d2_file_url() {
         // given
         let fc_run = MeteoForecastRun::new(
             MeteoForecastModel::IconD2,
@@ -91,10 +104,29 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(4, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2UReader::get_file_url(&fc_run, &fc_step, 11);
+        let result = DwdIconUReader::get_file_url(&fc_run, &fc_step, 11);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/u/icon-d2_germany_regular-lat-lon_model-level_2023032100_004_11_u.grib2.bz2";
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_icon_eu_file_url() {
+        // given
+        let fc_run = MeteoForecastRun::new(
+            MeteoForecastModel::IconEu,
+            NaiveDate::from_ymd_opt(2025, 12, 01).unwrap(),
+            "06".to_string(),
+        );
+        let fc_step = MeteoForecastRunStep::new(3, "".to_string());
+
+        // when
+        let result = DwdIconUReader::get_file_url(&fc_run, &fc_step, 19);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/u/icon-eu_europe_regular-lat-lon_model-level_2025120106_003_19_U.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

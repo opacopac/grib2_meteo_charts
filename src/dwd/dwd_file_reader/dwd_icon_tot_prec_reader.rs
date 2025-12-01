@@ -51,7 +51,7 @@ impl DwdIconTotPrecReader {
         match fc_run.get_model() {
             MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_TOT_PREC_FILE_PREFIX, Self::DWD_ICON_D2_TOT_PREC_FILE_SUFFIX),
             MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_TOT_PREC_FILE_PREFIX, Self::DWD_ICON_EU_TOT_PREC_FILE_SUFFIX),
-            _ => panic!("Unsupported model for T 2M data: {}", fc_run.get_model()),
+            _ => panic!("Unsupported model for TOT PREC data: {}", fc_run.get_model()),
         }
     }
 }

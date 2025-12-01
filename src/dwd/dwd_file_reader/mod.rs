@@ -3,7 +3,7 @@ pub mod dwd_icon_clc_reader;
 pub mod dwd_icon_ceiling_reader;
 pub mod dwd_icon_clct_mod_reader;
 pub mod dwd_icon_tot_prec_reader;
-pub mod icon_d2_u_reader;
+pub mod dwd_icon_u_reader;
 pub mod icon_d2_v_reader;
 pub mod dwd_icon_u_10m_reader;
 pub mod icon_d2_v_10m_reader;

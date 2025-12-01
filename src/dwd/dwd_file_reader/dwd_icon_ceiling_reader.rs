@@ -51,7 +51,7 @@ impl DwdIconCeilingReader {
         match fc_run.get_model() {
             MeteoForecastModel::IconD2 => (DWD_ICON_D2_CEILING_FILE_PREFIX, DWD_ICON_D2_CEILING_FILE_SUFFIX),
             MeteoForecastModel::IconEu => (DWD_ICON_EU_CEILING_FILE_PREFIX, DWD_ICON_EU_CEILING_FILE_SUFFIX),
-            _ => panic!("Unsupported model for DWD ICON ceiling file URL generation"),
+            _ => panic!("Unsupported model for CEILING data: {}", fc_run.get_model()),
         }
     }
 }

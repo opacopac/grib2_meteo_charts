@@ -62,7 +62,7 @@ impl DwdIconHhlReader {
         match fc_run.get_model() {
             MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_HHL_FILE_PREFIX, Self::DWD_ICON_D2_HHL_FILE_SUFFIX),
             MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_HHL_FILE_PREFIX, Self::DWD_ICON_EU_HHL_FILE_SUFFIX),
-            _ => panic!("Unsupported model for CLCT MOD data: {}", fc_run.get_model()),
+            _ => panic!("Unsupported model for HHL data: {}", fc_run.get_model()),
         }
     }
 }
