@@ -2,7 +2,8 @@ extern crate core;
 
 
 use clap::Parser;
-use meteo_grib2_renderer::dwd::dwd_forecast_renderer::icon_d2_forecast_renderer::IconD2ForecastRenderer;
+use meteo_grib2_renderer::dwd::dwd_forecast_renderer::dwd_icon_forecast_renderer::DwdIconForecastRenderer;
+use meteo_grib2_renderer::meteo_common::meteo_forecast_model::MeteoForecastModel;
 use meteo_grib2_renderer::meteo_swiss::forecast_renderer::icon_ch1_forecast_renderer::IconCh1ForecastRenderer;
 
 
@@ -36,9 +37,16 @@ fn main() {
                 });
         }
         "icon-d2" => {
-            let _ = IconD2ForecastRenderer::render_latest_forecasts(&args.variables, &args.steps)
+            let _ = DwdIconForecastRenderer::render_latest_forecasts(&MeteoForecastModel::IconD2, &args.variables, &args.steps)
                 .or_else(|e| {
                     println!("error while rendering icon-d2 forecast: {}", e);
+                    Err(e)
+                });
+        }
+        "icon-eu" => {
+            let _ = DwdIconForecastRenderer::render_latest_forecasts(&MeteoForecastModel::IconEu, &args.variables, &args.steps)
+                .or_else(|e| {
+                    println!("error while rendering icon-eu forecast: {}", e);
                     Err(e)
                 });
         }

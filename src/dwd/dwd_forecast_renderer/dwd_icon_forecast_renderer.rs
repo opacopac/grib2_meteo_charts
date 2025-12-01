@@ -7,8 +7,8 @@ use crate::dwd::dwd_file_reader::dwd_icon_u_reader::DwdIconUReader;
 use crate::dwd::dwd_file_reader::dwd_icon_v_reader::DwdIconVReader;
 use crate::dwd::dwd_file_reader::dwd_icon_weather_reader::DwdIconWeatherReader;
 use crate::dwd::dwd_file_reader::dwd_icon_wind_10m_reader::DwdIconWind10mReader;
-use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::dwd_icon_forecast_run_finder::DwdIconForecastRunFinder;
+use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
@@ -25,18 +25,19 @@ use log::info;
 use std::ops::RangeInclusive;
 
 
-pub struct IconD2ForecastRenderer;
+pub struct DwdIconForecastRenderer;
 
 
-impl IconD2ForecastRenderer {
+impl DwdIconForecastRenderer {
     pub fn render_latest_forecasts(
+        fc_model: &MeteoForecastModel,
         variable_filter: &[String],
         step_filter: &[usize],
     ) -> Result<(), ForecastRendererError> {
         info!("creating latest dwd forecasts...");
 
         info!("search available forecasts...");
-        let fc_run = DwdIconForecastRunFinder::find_latest_forecast_run(MeteoForecastModel::IconD2)?;
+        let fc_run = DwdIconForecastRunFinder::find_latest_forecast_run(fc_model)?;
         info!("latest run found: {:?}", &fc_run);
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
@@ -82,7 +83,7 @@ impl IconD2ForecastRenderer {
         step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_diff_steps()?;
+        let fc_steps = fc_run.get_model().get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
             let cloud_precip_layer = DwdIconCloudPrecipReader::read_layer(fc_run, fc_step)?;
             let weather_layer = DwdIconWeatherReader::read_layer(fc_run, fc_step)?;
@@ -100,7 +101,7 @@ impl IconD2ForecastRenderer {
         step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps()?;
+        let fc_steps = fc_run.get_model().get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
             DwdIconWind10mReader::read_layer(fc_run, fc_step)
         };
@@ -115,7 +116,7 @@ impl IconD2ForecastRenderer {
         step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps()?;
+        let fc_steps = fc_run.get_model().get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
             DwdIconT2mReader::read_layer(fc_run, fc_step)
         };
@@ -132,7 +133,7 @@ impl IconD2ForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps()?;
+        let fc_steps = fc_run.get_model().get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
             let clc_grids = DwdIconClcReader::read_clc_grids(fc_run, fc_step, vertical_levels)?;
             let layer = MeteoVerticalCloudLayer::new(hhl_grids.clone(), clc_grids);
@@ -157,7 +158,7 @@ impl IconD2ForecastRenderer {
         hhl_grids: &Vec<LatLonValueGrid<u8>>,
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = Self::get_forecast_steps()?;
+        let fc_steps = fc_run.get_model().get_forecast_steps()?;
         let read_fn = |u_step: &MeteoForecastRunStep| {
             let u_grids = DwdIconUReader::read_u_grids(fc_run, u_step, vertical_levels)?;
             let v_grids = DwdIconVReader::read_v_grids(fc_run, u_step, vertical_levels)?;
@@ -174,27 +175,5 @@ impl IconD2ForecastRenderer {
         )?;
 
         Ok(())
-    }
-
-
-    fn get_forecast_steps() -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
-        let steps = MeteoForecastModel::IconD2
-            .get_step_range()
-            .into_iter()
-            .map(|step_nr| MeteoForecastRunStep::new(step_nr, String::new()))
-            .collect();
-
-        Ok(steps)
-    }
-
-
-    fn get_forecast_diff_steps() -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
-        let steps = MeteoForecastModel::IconD2
-            .get_diff_step_range()
-            .into_iter()
-            .map(|step_nr| MeteoForecastRunStep::new(step_nr, String::new()))
-            .collect();
-
-        Ok(steps)
     }
 }

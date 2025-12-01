@@ -1,3 +1,5 @@
+use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
+use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 use std::fmt::Display;
 use std::ops::RangeInclusive;
 
@@ -29,6 +31,17 @@ impl MeteoForecastModel {
     }
 
 
+    pub fn get_forecast_steps(&self) -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
+        let steps = self
+            .get_step_range()
+            .into_iter()
+            .map(|step_nr| MeteoForecastRunStep::new(step_nr, String::new()))
+            .collect();
+
+        Ok(steps)
+    }
+
+
     pub fn get_step_range(&self) -> RangeInclusive<usize> {
         match self {
             MeteoForecastModel::IconGlobal => 2..=78, // TODO: check and adjust
@@ -36,6 +49,17 @@ impl MeteoForecastModel {
             MeteoForecastModel::IconD2 => 2..=48,
             MeteoForecastModel::IconCh1 => 2..=33,
         }
+    }
+
+
+    pub fn get_forecast_diff_steps(&self) -> Result<Vec<MeteoForecastRunStep>, ForecastRendererError> {
+        let steps = self
+            .get_diff_step_range()
+            .into_iter()
+            .map(|step_nr| MeteoForecastRunStep::new(step_nr, String::new()))
+            .collect();
+
+        Ok(steps)
     }
 
 

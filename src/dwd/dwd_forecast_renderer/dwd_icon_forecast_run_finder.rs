@@ -22,7 +22,7 @@ pub struct DwdIconForecastRunFinder;
 
 
 impl DwdIconForecastRunFinder {
-    pub fn find_latest_forecast_run(fc_model: MeteoForecastModel) -> Result<MeteoForecastRun, DwdError> {
+    pub fn find_latest_forecast_run(fc_model: &MeteoForecastModel) -> Result<MeteoForecastRun, DwdError> {
         let date_today = Utc::now().date_naive();
         let last_step = fc_model.get_step_range().end().clone();
 
