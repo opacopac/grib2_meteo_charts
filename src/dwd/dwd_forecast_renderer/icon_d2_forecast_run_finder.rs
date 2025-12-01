@@ -1,7 +1,7 @@
 use crate::dwd::common::dwd_error::DwdError;
 use crate::dwd::dwd_file_reader::dwd_icon_ceiling_reader::DwdIconCeilingReader;
 use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
-use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
+use crate::dwd::dwd_file_reader::dwd_icon_clct_mod_reader::DwdIconClctModReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_10m_reader::IconD2U10mReader;
@@ -67,7 +67,7 @@ impl IconD2ForecastRunFinder {
 
     pub fn get_probe_file_names(fc_run: &MeteoForecastRun, fc_step: &MeteoForecastRunStep) -> Vec<String> {
         vec![
-            IconD2ClctModReader::get_file_url(fc_run, fc_step),
+            DwdIconClctModReader::get_file_url(fc_run, fc_step),
             IconD2TotPrecReader::get_file_url(fc_run, fc_step),
             DwdIconCeilingReader::get_file_url(fc_run, fc_step),
             IconD2WwReader::get_file_url(fc_run, fc_step),

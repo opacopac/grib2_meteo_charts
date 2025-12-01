@@ -7,10 +7,10 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2ClctModReader;
+pub struct DwdIconClctModReader;
 
 
-impl IconD2ClctModReader {
+impl DwdIconClctModReader {
     const DWD_ICON_D2_CLCT_MOD_FILE_PREFIX: &str = "/clct_mod/icon-d2_germany_regular-lat-lon_single-level_";
     const DWD_ICON_EU_CLCT_MOD_FILE_PREFIX: &str = "/clct_mod/icon-eu_europe_regular-lat-lon_single-level_";
     const DWD_ICON_D2_CLCT_MOD_FILE_SUFFIX: &str = "_2d_clct_mod.grib2.bz2";
@@ -55,7 +55,7 @@ impl IconD2ClctModReader {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_clct_mod_reader::IconD2ClctModReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_clct_mod_reader::DwdIconClctModReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
@@ -73,7 +73,7 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2ClctModReader::get_file_url(&fc_run, &fc_step);
+        let result = DwdIconClctModReader::get_file_url(&fc_run, &fc_step);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/clct_mod/icon-d2_germany_regular-lat-lon_single-level_2022061900_000_2d_clct_mod.grib2.bz2";
