@@ -69,11 +69,16 @@ impl DwdIconFile {
     ) -> String {
         let base_url = Self::get_base_url(fc_run);
         let date_str = fc_run.get_start_date().format(DWD_DATE_FORMAT).to_string();
-        let step_str = "000";
         let run_str = fc_run.get_name();
+        let step_str = match fc_run.get_model() {
+            MeteoForecastModel::IconD2 => "000_",
+            MeteoForecastModel::IconEu => "",
+            _ => panic!("Unsupported model for DWD ICON time-invariant file URL generation"),
+        };
+
 
         format!(
-            "{}{}{}{}{}_{}_{}{}",
+            "{}{}{}{}{}_{}{}{}",
             base_url,
             run_str,
             file_prefix,
@@ -124,7 +129,6 @@ mod tests {
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/06/t_2m/icon-d2_germany_regular-lat-lon_single-level_2025112006_013_2d_t_2m.grib2.bz2";
         assert_eq!(expected, result);
     }
-
 
 
     #[test]

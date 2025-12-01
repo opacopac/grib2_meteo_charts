@@ -8,16 +8,17 @@ use log::info;
 use rayon::iter::ParallelIterator;
 use rayon::prelude::IntoParallelIterator;
 use std::ops::RangeInclusive;
+use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
 
 
 pub struct IconD2HhlReader;
 
 
-const DWD_ICON_D2_HHL_FILE_PREFIX: &str = "/hhl/icon-d2_germany_regular-lat-lon_time-invariant_";
-const DWD_ICON_D2_HHL_FILE_SUFFIX: &str = "_hhl.grib2.bz2";
-
-
 impl IconD2HhlReader {
+    const DWD_ICON_D2_HHL_FILE_PREFIX: &str = "/hhl/icon-d2_germany_regular-lat-lon_time-invariant_";
+    const DWD_ICON_EU_HHL_FILE_PREFIX: &str = "/hhl/icon-eu_europe_regular-lat-lon_time-invariant_";
+    const DWD_ICON_D2_HHL_FILE_SUFFIX: &str = "_hhl.grib2.bz2";
+    const DWD_ICON_EU_HHL_FILE_SUFFIX: &str = "_HHL.grib2.bz2";
     const MISSING_VALUE: u8 = 0;
 
 
@@ -46,12 +47,23 @@ impl IconD2HhlReader {
 
 
     fn get_file_url(forecast_run: &MeteoForecastRun, level: usize) -> String {
+        let (file_prefix, file_suffix) = Self::get_file_prefix_suffix(forecast_run);
+
         DwdIconFile::get_multi_level_time_invariant_file_url(
-            DWD_ICON_D2_HHL_FILE_PREFIX,
-            DWD_ICON_D2_HHL_FILE_SUFFIX,
+            file_prefix,
+            file_suffix,
             level,
             forecast_run,
         )
+    }
+
+
+    fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
+        match fc_run.get_model() {
+            MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_HHL_FILE_PREFIX, Self::DWD_ICON_D2_HHL_FILE_SUFFIX),
+            MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_HHL_FILE_PREFIX, Self::DWD_ICON_EU_HHL_FILE_SUFFIX),
+            _ => panic!("Unsupported model for CLCT MOD data: {}", fc_run.get_model()),
+        }
     }
 }
 
@@ -65,7 +77,7 @@ mod tests {
 
 
     #[test]
-    fn it_creates_the_correct_file_url() {
+    fn it_creates_the_correct_icon_dw_file_url() {
         // given
         let fc_run = MeteoForecastRun::new(
             MeteoForecastModel::IconD2,
@@ -78,6 +90,24 @@ mod tests {
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/hhl/icon-d2_germany_regular-lat-lon_time-invariant_2022122200_000_10_hhl.grib2.bz2";
+        assert_eq!(expected, result);
+    }
+
+
+    #[test]
+    fn it_creates_the_correct_icon_eu_file_url() {
+        // given
+        let fc_run = MeteoForecastRun::new(
+            MeteoForecastModel::IconEu,
+            NaiveDate::from_ymd_opt(2025, 12, 1).unwrap(),
+            "06".to_string(),
+        );
+
+        // when
+        let result = IconD2HhlReader::get_file_url(&fc_run, 9);
+
+        // then
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/hhl/icon-eu_europe_regular-lat-lon_time-invariant_2025120106_9_HHL.grib2.bz2";
         assert_eq!(expected, result);
     }
 }

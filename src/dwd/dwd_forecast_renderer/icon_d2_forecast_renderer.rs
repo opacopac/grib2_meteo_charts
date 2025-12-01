@@ -1,6 +1,6 @@
 use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
-use crate::dwd::dwd_file_reader::icon_d2_cloud_precip_reader::IconD2CloudPrecipReader;
+use crate::dwd::dwd_file_reader::dwd_icon_cloud_precip_reader::DwdIconCloudPrecipReader;
 use crate::dwd::dwd_file_reader::icon_d2_hhl_reader::IconD2HhlReader;
 use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
@@ -84,7 +84,7 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_diff_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
-            let cloud_precip_layer = IconD2CloudPrecipReader::read_layer(fc_run, fc_step)?;
+            let cloud_precip_layer = DwdIconCloudPrecipReader::read_layer(fc_run, fc_step)?;
             let weather_layer = IconD2WeatherReader::read_layer(fc_run, fc_step)?;
 
             Ok((cloud_precip_layer, weather_layer))

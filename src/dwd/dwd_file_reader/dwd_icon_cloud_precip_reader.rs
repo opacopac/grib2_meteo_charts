@@ -6,10 +6,10 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2CloudPrecipReader;
+pub struct DwdIconCloudPrecipReader;
 
 
-impl IconD2CloudPrecipReader {
+impl DwdIconCloudPrecipReader {
     pub fn read_layer(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
