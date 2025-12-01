@@ -8,7 +8,7 @@ use crate::dwd::dwd_file_reader::dwd_icon_v_reader::DwdIconVReader;
 use crate::dwd::dwd_file_reader::dwd_icon_weather_reader::DwdIconWeatherReader;
 use crate::dwd::dwd_file_reader::dwd_icon_wind_10m_reader::DwdIconWind10mReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
-use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
+use crate::dwd::dwd_forecast_renderer::dwd_icon_forecast_run_finder::DwdIconForecastRunFinder;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
 use crate::meteo_chart::forecast_renderer::cloud_precip_forecast_renderer::CloudPrecipForecastRenderer;
 use crate::meteo_chart::forecast_renderer::temp_2m_forecast_renderer::Temp2mForecastRenderer;
@@ -36,7 +36,7 @@ impl IconD2ForecastRenderer {
         info!("creating latest dwd forecasts...");
 
         info!("search available forecasts...");
-        let fc_run = IconD2ForecastRunFinder::find_latest_forecast_run()?;
+        let fc_run = DwdIconForecastRunFinder::find_latest_forecast_run(MeteoForecastModel::IconD2)?;
         info!("latest run found: {:?}", &fc_run);
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::CloudPrecip.get_name()) {
