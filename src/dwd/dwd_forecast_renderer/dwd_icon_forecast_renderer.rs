@@ -33,7 +33,7 @@ impl DwdIconForecastRenderer {
         variable_filter: &[String],
         step_filter: &[usize],
     ) -> Result<(), ForecastRendererError> {
-        info!("creating latest dwd forecasts...");
+        info!("creating latest dwd forecasts for model {fc_model}...");
 
         info!("search available forecasts...");
         let fc_run = DwdIconForecastRunFinder::find_latest_forecast_run(fc_model)?;
