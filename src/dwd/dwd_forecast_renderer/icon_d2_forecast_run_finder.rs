@@ -7,7 +7,7 @@ use crate::dwd::dwd_file_reader::dwd_icon_tot_prec_reader::DwdIconTotPrecReader;
 use crate::dwd::dwd_file_reader::dwd_icon_u_10m_reader::DwdIconU10mReader;
 use crate::dwd::dwd_file_reader::dwd_icon_u_reader::DwdIconUReader;
 use crate::dwd::dwd_file_reader::dwd_icon_v_10m_reader::DwdIconV10mReader;
-use crate::dwd::dwd_file_reader::icon_d2_vmax_10m_reader::IconD2Vmax10mReader;
+use crate::dwd::dwd_file_reader::dwd_icon_vmax_10m_reader::DwdIconVmax10mReader;
 use crate::dwd::dwd_file_reader::icon_d2_ww_reader::IconD2WwReader;
 use crate::dwd::forecast_run::icon_d2_forecast_run_name::IconD2ForecastRunName;
 use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
@@ -73,7 +73,7 @@ impl IconD2ForecastRunFinder {
             IconD2WwReader::get_file_url(fc_run, fc_step),
             DwdIconU10mReader::get_file_url(fc_run, fc_step),
             DwdIconV10mReader::get_file_url(fc_run, fc_step),
-            IconD2Vmax10mReader::get_file_url(fc_run, fc_step),
+            DwdIconVmax10mReader::get_file_url(fc_run, fc_step),
             DwdIconT2mReader::get_file_url(fc_run, fc_step),
             DwdIconClcReader::get_file_url(fc_run, fc_step, 65),
             DwdIconUReader::get_file_url(fc_run, fc_step, 65)

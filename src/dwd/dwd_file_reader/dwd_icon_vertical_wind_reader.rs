@@ -8,10 +8,10 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2VerticalWindReader;
+pub struct DwdIconVerticalWindReader;
 
 
-impl IconD2VerticalWindReader {
+impl DwdIconVerticalWindReader {
     pub fn read_layer_from_file(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
