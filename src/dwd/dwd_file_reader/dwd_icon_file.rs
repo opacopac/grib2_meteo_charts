@@ -22,7 +22,7 @@ impl DwdIconFile {
         let step_str = format!("{:03}", fc_step.get_step_nr());
         let run_str = fc_run.get_name();
 
-        return format!(
+        format!(
             "{}{}{}{}{}_{}{}",
             base_url,
             run_str,
@@ -31,7 +31,7 @@ impl DwdIconFile {
             run_str,
             step_str,
             file_suffix
-        );
+        )
     }
 
 
@@ -47,7 +47,7 @@ impl DwdIconFile {
         let step_str = format!("{:03}", fc_step.get_step_nr());
         let run_str = &fc_run.get_name();
 
-        return format!(
+        format!(
             "{}{}{}{}{}_{}_{}{}",
             base_url,
             run_str,
@@ -57,7 +57,7 @@ impl DwdIconFile {
             step_str,
             level,
             file_suffix
-        );
+        )
     }
 
 
@@ -72,7 +72,7 @@ impl DwdIconFile {
         let step_str = "000";
         let run_str = fc_run.get_name();
 
-        return format!(
+        format!(
             "{}{}{}{}{}_{}_{}{}",
             base_url,
             run_str,
@@ -82,7 +82,7 @@ impl DwdIconFile {
             step_str,
             level,
             file_suffix
-        );
+        )
     }
 
 

@@ -14,14 +14,14 @@ use std::ops::RangeInclusive;
 pub struct DwdIconClcReader;
 
 
-const DWD_ICON_D2_CLC_FILE_PREFIX: &str = "/clc/icon-d2_germany_regular-lat-lon_model-level_";
-const DWD_ICON_EU_CLC_FILE_PREFIX: &str = "/clc/icon-eu_europe_regular-lat-lon_model-level_";
-const DWD_ICON_D2_CLC_FILE_SUFFIX: &str = "_clc.grib2.bz2";
-const DWD_ICON_EU_CLC_FILE_SUFFIX: &str = "_CLC.grib2.bz2";
-const MISSING_VALUE: u8 = 0;
-
-
 impl DwdIconClcReader {
+    const DWD_ICON_D2_CLC_FILE_PREFIX: &str = "/clc/icon-d2_germany_regular-lat-lon_model-level_";
+    const DWD_ICON_EU_CLC_FILE_PREFIX: &str = "/clc/icon-eu_europe_regular-lat-lon_model-level_";
+    const DWD_ICON_D2_CLC_FILE_SUFFIX: &str = "_clc.grib2.bz2";
+    const DWD_ICON_EU_CLC_FILE_SUFFIX: &str = "_CLC.grib2.bz2";
+    const MISSING_VALUE: u8 = 0;
+
+
     pub fn read_clc_grids(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
@@ -36,7 +36,11 @@ impl DwdIconClcReader {
             .map(|level| {
                 info!("reading clc layers for step {fc_step}, level {level}");
                 let url = Self::get_file_url(fc_run, fc_step, level as usize);
-                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(&url, MISSING_VALUE, transform_fn)?;
+                let grid = FileToGridConverter::read_rectangular_grid_from_file_and_transform(
+                    &url,
+                    Self::MISSING_VALUE,
+                    transform_fn
+                )?;
 
                 Ok(grid)
             }).collect();
@@ -66,12 +70,8 @@ impl DwdIconClcReader {
 
     fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
         match fc_run.get_model() {
-            MeteoForecastModel::IconD2 => {
-                (DWD_ICON_D2_CLC_FILE_PREFIX, DWD_ICON_D2_CLC_FILE_SUFFIX)
-            }
-            MeteoForecastModel::IconEu => {
-                (DWD_ICON_EU_CLC_FILE_PREFIX, DWD_ICON_EU_CLC_FILE_SUFFIX)
-            }
+            MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_CLC_FILE_PREFIX, Self::DWD_ICON_D2_CLC_FILE_SUFFIX),
+            MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_CLC_FILE_PREFIX, Self::DWD_ICON_EU_CLC_FILE_SUFFIX),
             _ => panic!("Unsupported model for CLC data: {}", fc_run.get_model()),
         }
     }

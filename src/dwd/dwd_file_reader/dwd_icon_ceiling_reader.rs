@@ -22,8 +22,9 @@ impl DwdIconCeilingReader {
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
     ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        let file_url = &Self::get_file_url(fc_run, fc_step);
         let grid = FileToGridConverter::read_rectangular_grid_from_file(
-            Self::get_file_url(fc_run, fc_step).as_str(),
+            file_url,
             MISSING_VALUE,
         )?;
 
@@ -36,6 +37,7 @@ impl DwdIconCeilingReader {
         fc_step: &MeteoForecastRunStep,
     ) -> String {
         let (file_prefix, file_suffix) = Self::get_file_prefix_suffix(fc_run);
+
         DwdIconFile::get_single_level_file_url(
             file_prefix,
             file_suffix,
@@ -47,12 +49,8 @@ impl DwdIconCeilingReader {
 
     fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
         match fc_run.get_model() {
-            MeteoForecastModel::IconD2 => {
-                (DWD_ICON_D2_CEILING_FILE_PREFIX, DWD_ICON_D2_CEILING_FILE_SUFFIX)
-            }
-            MeteoForecastModel::IconEu => {
-                (DWD_ICON_EU_CEILING_FILE_PREFIX, DWD_ICON_EU_CEILING_FILE_SUFFIX)
-            }
+            MeteoForecastModel::IconD2 => (DWD_ICON_D2_CEILING_FILE_PREFIX, DWD_ICON_D2_CEILING_FILE_SUFFIX),
+            MeteoForecastModel::IconEu => (DWD_ICON_EU_CEILING_FILE_PREFIX, DWD_ICON_EU_CEILING_FILE_SUFFIX),
             _ => panic!("Unsupported model for DWD ICON ceiling file URL generation"),
         }
     }
