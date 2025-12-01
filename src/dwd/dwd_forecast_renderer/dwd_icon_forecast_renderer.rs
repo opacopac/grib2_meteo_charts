@@ -1,4 +1,3 @@
-use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
 use crate::dwd::dwd_file_reader::dwd_icon_cloud_precip_reader::DwdIconCloudPrecipReader;
 use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
@@ -59,7 +58,7 @@ impl DwdIconForecastRenderer {
         }
 
         if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) || variable_filter.contains(&MeteoLayerType::VerticalWind.get_name()) {
-            let vertical_levels = IconD2ModelConfig::get_vertical_level_range();
+            let vertical_levels = fc_run.get_model().get_vertical_level_range();
             let hhl_grids = DwdIconHhlReader::read_hhl_grids(&fc_run, &vertical_levels)?;
 
             if variable_filter.is_empty() || variable_filter.contains(&MeteoLayerType::VerticalCloud.get_name()) {
