@@ -9,7 +9,7 @@ pub mod icon_d2_u_10m_reader;
 pub mod icon_d2_v_10m_reader;
 pub mod icon_d2_vmax_10m_reader;
 pub mod icon_d2_ww_reader;
-pub mod icon_d2_t_2m_reader;
+pub mod dwd_icon_t_2m_reader;
 pub mod dwd_icon_file;
 pub mod icon_d2_wind_10m_reader;
 pub mod dwd_icon_cloud_precip_reader;

@@ -2,7 +2,7 @@ use crate::dwd::common::icon_d2_model_config::IconD2ModelConfig;
 use crate::dwd::dwd_file_reader::dwd_icon_clc_reader::DwdIconClcReader;
 use crate::dwd::dwd_file_reader::dwd_icon_cloud_precip_reader::DwdIconCloudPrecipReader;
 use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
-use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
+use crate::dwd::dwd_file_reader::dwd_icon_t_2m_reader::DwdIconT2mReader;
 use crate::dwd::dwd_file_reader::icon_d2_u_reader::IconD2UReader;
 use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
 use crate::dwd::dwd_file_reader::icon_d2_weather_reader::IconD2WeatherReader;
@@ -117,7 +117,7 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
-            IconD2T2mReader::read_layer(fc_run, fc_step)
+            DwdIconT2mReader::read_layer(fc_run, fc_step)
         };
 
         Temp2mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;

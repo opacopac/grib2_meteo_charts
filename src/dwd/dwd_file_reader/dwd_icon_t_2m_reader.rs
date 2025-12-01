@@ -7,10 +7,10 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2T2mReader;
+pub struct DwdIconT2mReader;
 
 
-impl IconD2T2mReader {
+impl DwdIconT2mReader {
     const DWD_ICON_D2_T_2M_FILE_PREFIX: &str = "/t_2m/icon-d2_germany_regular-lat-lon_single-level_";
     const DWD_ICON_EU_T_2M_FILE_PREFIX: &str = "/t_2m/icon-eu_europe_regular-lat-lon_single-level_";
     const DWD_ICON_D2_T_2M_FILE_SUFFIX: &str = "_2d_t_2m.grib2.bz2";
@@ -60,7 +60,7 @@ impl IconD2T2mReader {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_t_2m_reader::IconD2T2mReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_t_2m_reader::DwdIconT2mReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
@@ -77,7 +77,7 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2T2mReader::get_file_url(&fc_run, &fc_step);
+        let result = DwdIconT2mReader::get_file_url(&fc_run, &fc_step);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/t_2m/icon-d2_germany_regular-lat-lon_single-level_2023080600_000_2d_t_2m.grib2.bz2";
@@ -96,7 +96,7 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(75, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2T2mReader::get_file_url(&fc_run, &fc_step);
+        let result = DwdIconT2mReader::get_file_url(&fc_run, &fc_step);
 
         // then
         let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/t_2m/icon-eu_europe_regular-lat-lon_single-level_2025120106_075_T_2M.grib2.bz2";
