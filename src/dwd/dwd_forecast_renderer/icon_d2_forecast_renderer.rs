@@ -4,7 +4,7 @@ use crate::dwd::dwd_file_reader::dwd_icon_cloud_precip_reader::DwdIconCloudPreci
 use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
 use crate::dwd::dwd_file_reader::dwd_icon_t_2m_reader::DwdIconT2mReader;
 use crate::dwd::dwd_file_reader::dwd_icon_u_reader::DwdIconUReader;
-use crate::dwd::dwd_file_reader::icon_d2_v_reader::IconD2VReader;
+use crate::dwd::dwd_file_reader::dwd_icon_v_reader::DwdIconVReader;
 use crate::dwd::dwd_file_reader::icon_d2_weather_reader::IconD2WeatherReader;
 use crate::dwd::dwd_file_reader::icon_d2_wind_10m_reader::IconD2Wind10mReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
@@ -160,7 +160,7 @@ impl IconD2ForecastRenderer {
         let fc_steps = Self::get_forecast_steps()?;
         let read_fn = |u_step: &MeteoForecastRunStep| {
             let u_grids = DwdIconUReader::read_u_grids(fc_run, u_step, vertical_levels)?;
-            let v_grids = IconD2VReader::read_v_grids(fc_run, u_step, vertical_levels)?;
+            let v_grids = DwdIconVReader::read_v_grids(fc_run, u_step, vertical_levels)?;
             let layer = MeteoVerticalWindLayer::new(hhl_grids.clone(), u_grids, v_grids);
 
             Ok(layer)
