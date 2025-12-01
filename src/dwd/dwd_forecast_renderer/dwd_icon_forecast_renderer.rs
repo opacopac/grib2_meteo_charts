@@ -83,15 +83,21 @@ impl DwdIconForecastRenderer {
         step_filter: &[usize],
         fc_run: &MeteoForecastRun,
     ) -> Result<(), ForecastRendererError> {
-        let fc_steps = fc_run.get_model().get_forecast_steps()?;
+        let clct_steps = fc_run.get_model().get_forecast_steps()?;
+        let tot_precip_steps = fc_run.get_model().get_forecast_diff_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
-            let cloud_precip_layer = DwdIconCloudPrecipReader::read_layer(fc_run, fc_step)?;
+            let cloud_precip_layer = DwdIconCloudPrecipReader::read_layer(
+                fc_run,
+                fc_step,
+                &clct_steps,
+                &tot_precip_steps,
+            )?;
             let weather_layer = DwdIconWeatherReader::read_layer(fc_run, fc_step)?;
 
             Ok((cloud_precip_layer, weather_layer))
         };
 
-        CloudPrecipForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
+        CloudPrecipForecastRenderer::render(&fc_run, &clct_steps, &step_filter, read_fn)?;
 
         Ok(())
     }
