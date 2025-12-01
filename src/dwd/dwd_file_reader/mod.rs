@@ -6,7 +6,7 @@ pub mod dwd_icon_tot_prec_reader;
 pub mod dwd_icon_u_reader;
 pub mod icon_d2_v_reader;
 pub mod dwd_icon_u_10m_reader;
-pub mod icon_d2_v_10m_reader;
+pub mod dwd_icon_v_10m_reader;
 pub mod icon_d2_vmax_10m_reader;
 pub mod icon_d2_ww_reader;
 pub mod dwd_icon_t_2m_reader;
