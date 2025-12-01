@@ -7,14 +7,14 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2TotPrecReader;
+pub struct DwdIconU10mReader;
 
 
-impl IconD2TotPrecReader {
-    const DWD_ICON_D2_TOT_PREC_FILE_PREFIX: &str = "/tot_prec/icon-d2_germany_regular-lat-lon_single-level_";
-    const DWD_ICON_EU_TOT_PREC_FILE_PREFIX: &str = "/tot_prec/icon-eu_europe_regular-lat-lon_single-level_";
-    const DWD_ICON_D2_TOT_PREC_FILE_SUFFIX: &str = "_2d_tot_prec.grib2.bz2";
-    const DWD_ICON_EU_TOT_PREC_FILE_SUFFIX: &str = "_TOT_PREC.grib2.bz2";
+impl DwdIconU10mReader {
+    const DWD_ICON_D2_U_10M_FILE_PREFIX: &str = "/u_10m/icon-d2_germany_regular-lat-lon_single-level_";
+    const DWD_ICON_EU_U_10M_FILE_PREFIX: &str = "/u_10m/icon-eu_europe_regular-lat-lon_single-level_";
+    const DWD_ICON_D2_U_10M_FILE_SUFFIX: &str = "_2d_u_10m.grib2.bz2";
+    const DWD_ICON_EU_U_10M_FILE_SUFFIX: &str = "_U_10M.grib2.bz2";
     const MISSING_VALUE: f32 = -1.0;
 
 
@@ -22,10 +22,11 @@ impl IconD2TotPrecReader {
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,
     ) -> Result<LatLonValueGrid<f32>, Grib2Error> {
+        let missing_value = Self::MISSING_VALUE;
         let file_url = &Self::get_file_url(fc_run, fc_step);
         let grid = FileToGridConverter::read_rectangular_grid_from_file(
             file_url,
-            Self::MISSING_VALUE,
+            missing_value,
         )?;
 
         Ok(grid)
@@ -49,8 +50,8 @@ impl IconD2TotPrecReader {
 
     fn get_file_prefix_suffix(fc_run: &MeteoForecastRun) -> (&str, &str) {
         match fc_run.get_model() {
-            MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_TOT_PREC_FILE_PREFIX, Self::DWD_ICON_D2_TOT_PREC_FILE_SUFFIX),
-            MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_TOT_PREC_FILE_PREFIX, Self::DWD_ICON_EU_TOT_PREC_FILE_SUFFIX),
+            MeteoForecastModel::IconD2 => (Self::DWD_ICON_D2_U_10M_FILE_PREFIX, Self::DWD_ICON_D2_U_10M_FILE_SUFFIX),
+            MeteoForecastModel::IconEu => (Self::DWD_ICON_EU_U_10M_FILE_PREFIX, Self::DWD_ICON_EU_U_10M_FILE_SUFFIX),
             _ => panic!("Unsupported model for T 2M data: {}", fc_run.get_model()),
         }
     }
@@ -59,7 +60,7 @@ impl IconD2TotPrecReader {
 
 #[cfg(test)]
 mod tests {
-    use crate::dwd::dwd_file_reader::icon_d2_tot_prec_reader::IconD2TotPrecReader;
+    use crate::dwd::dwd_file_reader::dwd_icon_u_10m_reader::DwdIconU10mReader;
     use crate::meteo_common::meteo_forecast_model::MeteoForecastModel;
     use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
     use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
@@ -77,10 +78,10 @@ mod tests {
         let fc_step = MeteoForecastRunStep::new(0, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2TotPrecReader::get_file_url(&fc_run, &fc_step);
+        let result = DwdIconU10mReader::get_file_url(&fc_run, &fc_step);
 
         // then
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/tot_prec/icon-d2_germany_regular-lat-lon_single-level_2022061900_000_2d_tot_prec.grib2.bz2";
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-d2/grib/00/u_10m/icon-d2_germany_regular-lat-lon_single-level_2022061900_000_2d_u_10m.grib2.bz2";
         assert_eq!(expected, result);
     }
 
@@ -93,13 +94,13 @@ mod tests {
             NaiveDate::from_ymd_opt(2025, 12, 01).unwrap(),
             "06".to_string(),
         );
-        let fc_step = MeteoForecastRunStep::new(54, "".to_string()); // TODO: get rid of this...
+        let fc_step = MeteoForecastRunStep::new(20, "".to_string()); // TODO: get rid of this...
 
         // when
-        let result = IconD2TotPrecReader::get_file_url(&fc_run, &fc_step);
+        let result = DwdIconU10mReader::get_file_url(&fc_run, &fc_step);
 
         // then
-        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/tot_prec/icon-eu_europe_regular-lat-lon_single-level_2025120106_054_TOT_PREC.grib2.bz2";
+        let expected = "https://opendata.dwd.de/weather/nwp/icon-eu/grib/06/u_10m/icon-eu_europe_regular-lat-lon_single-level_2025120106_020_U_10M.grib2.bz2";
         assert_eq!(expected, result);
     }
 }
