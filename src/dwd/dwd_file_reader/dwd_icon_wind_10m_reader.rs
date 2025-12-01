@@ -7,10 +7,10 @@ use crate::meteo_common::meteo_forecast_run::MeteoForecastRun;
 use crate::meteo_common::meteo_forecast_run_step::MeteoForecastRunStep;
 
 
-pub struct IconD2Wind10mReader;
+pub struct DwdIconWind10mReader;
 
 
-impl IconD2Wind10mReader {
+impl DwdIconWind10mReader {
     pub fn read_layer(
         fc_run: &MeteoForecastRun,
         fc_step: &MeteoForecastRunStep,

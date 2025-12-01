@@ -5,8 +5,8 @@ use crate::dwd::dwd_file_reader::dwd_icon_hhl_reader::DwdIconHhlReader;
 use crate::dwd::dwd_file_reader::dwd_icon_t_2m_reader::DwdIconT2mReader;
 use crate::dwd::dwd_file_reader::dwd_icon_u_reader::DwdIconUReader;
 use crate::dwd::dwd_file_reader::dwd_icon_v_reader::DwdIconVReader;
-use crate::dwd::dwd_file_reader::icon_d2_weather_reader::IconD2WeatherReader;
-use crate::dwd::dwd_file_reader::icon_d2_wind_10m_reader::IconD2Wind10mReader;
+use crate::dwd::dwd_file_reader::dwd_icon_weather_reader::DwdIconWeatherReader;
+use crate::dwd::dwd_file_reader::dwd_icon_wind_10m_reader::DwdIconWind10mReader;
 use crate::dwd::dwd_forecast_renderer::forecast_renderer_error::ForecastRendererError;
 use crate::dwd::dwd_forecast_renderer::icon_d2_forecast_run_finder::IconD2ForecastRunFinder;
 use crate::geo::grid::lat_lon_value_grid::LatLonValueGrid;
@@ -85,7 +85,7 @@ impl IconD2ForecastRenderer {
         let fc_steps = Self::get_forecast_diff_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
             let cloud_precip_layer = DwdIconCloudPrecipReader::read_layer(fc_run, fc_step)?;
-            let weather_layer = IconD2WeatherReader::read_layer(fc_run, fc_step)?;
+            let weather_layer = DwdIconWeatherReader::read_layer(fc_run, fc_step)?;
 
             Ok((cloud_precip_layer, weather_layer))
         };
@@ -102,7 +102,7 @@ impl IconD2ForecastRenderer {
     ) -> Result<(), ForecastRendererError> {
         let fc_steps = Self::get_forecast_steps()?;
         let read_fn = |fc_step: &MeteoForecastRunStep| {
-            IconD2Wind10mReader::read_layer(fc_run, fc_step)
+            DwdIconWind10mReader::read_layer(fc_run, fc_step)
         };
 
         Wind10mForecastRenderer::render(&fc_run, &fc_steps, &step_filter, read_fn)?;
